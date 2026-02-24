@@ -1,0 +1,442 @@
+[
+  {
+    "id": "fin_001",
+    "category": "term_clustering",
+    "term": "Munzam karşılık",
+    "similar_terms": ["Zorunlu karşılık", "Reserve requirement", "Required reserves"],
+    "dissimilar_terms": ["Kredi limiti", "Faiz oranı", "Döviz kuru"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_002",
+    "category": "term_clustering",
+    "term": "TCMB",
+    "similar_terms": ["Merkez Bankası", "Central Bank of Turkey", "TC Merkez Bankası"],
+    "dissimilar_terms": ["BDDK", "SPK", "TMSF"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_003",
+    "category": "term_clustering",
+    "term": "POS komisyonu",
+    "similar_terms": ["Terminal ücreti", "Kart ödeme komisyonu", "MDR"],
+    "dissimilar_terms": ["ATM ücreti", "Havale ücreti", "Hesap işletim ücreti"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_004",
+    "category": "regulation",
+    "term": "5411 sayılı Bankacılık Kanunu",
+    "similar_terms": ["Bankacılık mevzuatı", "Banking Law", "Banka düzenleme yasası"],
+    "dissimilar_terms": ["6102 Türk Ticaret Kanunu", "4857 İş Kanunu", "KVKK"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_005",
+    "category": "product",
+    "term": "Vadeli mevduat",
+    "similar_terms": ["Time deposit", "Sabit vadeli hesap", "Bono"],
+    "dissimilar_terms": ["Vadesiz hesap", "Cari hesap", "Kredi"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_006",
+    "category": "financial_ratio",
+    "term": "Sermaye yeterliliği rasyosu",
+    "similar_terms": ["Capital adequacy ratio", "CAR", "Basel standartları"],
+    "dissimilar_terms": ["Likidite rasyosu", "Kar marjı", "Aktif karlılık"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_007",
+    "category": "payment_system",
+    "term": "FAST sistemi",
+    "similar_terms": ["Anında ödeme", "Instant payment", "7/24 havale"],
+    "dissimilar_terms": ["EFT", "SWIFT", "Western Union"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_008",
+    "category": "risk_management",
+    "term": "Takipteki alacaklar",
+    "similar_terms": ["NPL", "Non-performing loans", "Sorunlu krediler"],
+    "dissimilar_terms": ["Tahsili gecikmiş alacaklar", "Tahakkuk etmiş faiz", "Kredili mevduat"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_009",
+    "category": "digital_banking",
+    "term": "BKM (Bankalararası Kart Merkezi)",
+    "similar_terms": ["Kart sistemleri birliği", "Interbank card center", "Troy"],
+    "dissimilar_terms": ["Visa", "Mastercard", "American Express"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_010",
+    "category": "credit_product",
+    "term": "Kredili mevduat hesabı",
+    "similar_terms": ["Overdraft account", "İhtiyaç kredisi hesabı", "Limit dahilinde çekim"],
+    "dissimilar_terms": ["Vadeli mevduat", "Döviz hesabı", "Altın hesabı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_011",
+    "category": "compliance",
+    "term": "AML (Anti Money Laundering)",
+    "similar_terms": ["Kara para aklamayı önleme", "MASAK", "Mali suçlarla mücadele"],
+    "dissimilar_terms": ["KVKK", "Tüketici hakları", "Sözleşme hukuku"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_012",
+    "category": "investment",
+    "term": "Repo işlemi",
+    "similar_terms": ["Geri alım vaadi", "Repurchase agreement", "Ters repo"],
+    "dissimilar_terms": ["Hisse senedi alımı", "Fon yatırımı", "Altın alımı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_013",
+    "category": "card_type",
+    "term": "Debit card",
+    "similar_terms": ["Banka kartı", "ATM kartı", "Hesaba bağlı kart"],
+    "dissimilar_terms": ["Kredi kartı", "Ön ödemeli kart", "Sanal kart"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_014",
+    "category": "interest",
+    "term": "BSMV (Banka ve Sigorta Muameleleri Vergisi)",
+    "similar_terms": ["Bankacılık işlem vergisi", "Kredi kullanım vergisi", "Faiz üzerinden vergi"],
+    "dissimilar_terms": ["KDV", "Damga vergisi", "Stopaj"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_015",
+    "category": "foreign_exchange",
+    "term": "Döviz alış kuru",
+    "similar_terms": ["FX buying rate", "Bankanın aldığı kur", "Exchange rate buy"],
+    "dissimilar_terms": ["Döviz satış kuru", "Çapraz kur", "Forward kur"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_016",
+    "category": "loan_structure",
+    "term": "Azalan bakiyeli kredi",
+    "similar_terms": ["Declining balance loan", "Taksit tutarı azalan kredi", "Mortgage tipi kredi"],
+    "dissimilar_terms": ["Eşit taksitli kredi", "Balon ödemeli kredi", "Tek çekim kredisi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_017",
+    "category": "collateral",
+    "term": "İpotek",
+    "similar_terms": ["Mortgage", "Taşınmaz rehini", "Gayrimenkul teminatı"],
+    "dissimilar_terms": ["Kefalat", "Nakit teminat", "Menkul kıymet rehni"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_018",
+    "category": "account_statement",
+    "term": "Hesap ekstresi",
+    "similar_terms": ["Bank statement", "İşlem dökümü", "Hesap özeti"],
+    "dissimilar_terms": ["Fatura", "Dekont", "Makbuz"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_019",
+    "category": "insurance",
+    "term": "Ferdi kaza sigortası",
+    "similar_terms": ["Personal accident insurance", "Kaza teminatı", "Vefat ve maluliyet sigortası"],
+    "dissimilar_terms": ["Kasko sigortası", "Konut sigortası", "Sağlık sigortası"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_020",
+    "category": "authentication",
+    "term": "3D Secure",
+    "similar_terms": ["Güvenli ödeme", "SMS onaylı işlem", "Verified by Visa"],
+    "dissimilar_terms": ["CVV kodu", "PIN kodu", "Biyometrik doğrulama"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_021",
+    "category": "branch_code",
+    "term": "IBAN",
+    "similar_terms": ["TR ile başlayan hesap numarası", "Uluslararası hesap numarası", "26 haneli hesap"],
+    "dissimilar_terms": ["SWIFT kodu", "Müşteri numarası", "Hesap numarası"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_022",
+    "category": "fee",
+    "term": "Hesap işletim ücreti",
+    "similar_terms": ["Aylık hesap masrafı", "Bakım ücreti", "Account maintenance fee"],
+    "dissimilar_terms": ["Kredi faizi", "Kart yıllık ücreti", "ATM ücreti"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_023",
+    "category": "credit_card_fee",
+    "term": "Asgari ödeme tutarı",
+    "similar_terms": ["Minimum payment", "En az ödenmesi gereken tutar", "Min. ödeme"],
+    "dissimilar_terms": ["Ekstre toplamı", "Kalan borç", "Faiz tutarı"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_024",
+    "category": "pension",
+    "term": "Bireysel emeklilik sistemi (BES)",
+    "similar_terms": ["Private pension", "Otomatik katılım", "Emeklilik fonu"],
+    "dissimilar_terms": ["SGK", "SSK", "Emekli maaşı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_025",
+    "category": "fintech",
+    "term": "Open Banking",
+    "similar_terms": ["Açık bankacılık", "API bankacılığı", "PSD2"],
+    "dissimilar_terms": ["Mobile banking", "Internet banking", "ATM"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_026",
+    "category": "corporate_finance",
+    "term": "Sendikasyon kredisi",
+    "similar_terms": ["Syndicated loan", "Konsorsiyum kredisi", "Çoklu banka kredisi"],
+    "dissimilar_terms": ["Bireysel kredi", "Mikro kredi", "Kredili mevduat hesabı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_027",
+    "category": "derivatives",
+    "term": "Türev araçlar",
+    "similar_terms": ["Derivatives", "Vadeli işlem sözleşmeleri", "Opsiyonlar"],
+    "dissimilar_terms": ["Spot piyasa işlemleri", "Nakit işlemler", "Hisse senedi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_028",
+    "category": "trade_finance",
+    "term": "Teminat mektubu",
+    "similar_terms": ["Letter of guarantee", "Banka garantisi", "Kefalet mektubu"],
+    "dissimilar_terms": ["Akreditif", "Çek", "Senet"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_029",
+    "category": "trade_finance",
+    "term": "Akreditif",
+    "similar_terms": ["Letter of credit", "L/C", "Vesaik mukabili ödeme"],
+    "dissimilar_terms": ["Peşin ödeme", "Açık hesap", "Mal mukabili ödeme"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_030",
+    "category": "derivatives",
+    "term": "SWAP",
+    "similar_terms": ["Takas sözleşmesi", "Para takası", "Faiz takası"],
+    "dissimilar_terms": ["Forward", "Future", "Spot işlem"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_031",
+    "category": "macroeconomics",
+    "term": "Libor",
+    "similar_terms": ["London Interbank Offered Rate", "Referans faiz oranı", "Euribor"],
+    "dissimilar_terms": ["TÜFE", "ÜFE", "Büyüme oranı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_032",
+    "category": "financial_ratio",
+    "term": "EBITDA",
+    "similar_terms": ["FAVÖK", "Faiz, amortisman ve vergi öncesi kar", "Operasyonel kar"],
+    "dissimilar_terms": ["Net kar", "Brüt kar", "Ciro"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_033",
+    "category": "risk_management",
+    "term": "NPL rasyosu",
+    "similar_terms": ["Takipteki krediler oranı", "Non-performing loan ratio", "Sorunlu kredi oranı"],
+    "dissimilar_terms": ["Sermaye yeterlilik rasyosu", "Likidite oranı", "Kredi/Mevduat oranı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_034",
+    "category": "banking_operations",
+    "term": "Tahsilli senet",
+    "similar_terms": ["Collection bill", "Bankaya tahsile verilen senet", "Protestolu senet"],
+    "dissimilar_terms": ["Teminat senedi", "İskonto senedi", "İştira senedi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_035",
+    "category": "corporate_finance",
+    "term": "Faktoring",
+    "similar_terms": ["Alacak devri", "Factoring", "Alacak finansmanı"],
+    "dissimilar_terms": ["Leasing", "Forfaiting", "Proje finansmanı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_036",
+    "category": "corporate_finance",
+    "term": "Leasing",
+    "similar_terms": ["Finansal kiralama", "Kiralama yoluyla finansman", "Operasyonel kiralama"],
+    "dissimilar_terms": ["Faktoring", "Tüketici kredisi", "İpotekli kredi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_037",
+    "category": "trade_finance",
+    "term": "Forfaiting",
+    "similar_terms": ["İhracat alacaklarının iskontosu", "Orta vadeli alacak finansmanı", "Rücusuz alacak devri"],
+    "dissimilar_terms": ["Faktoring", "Leasing", "Akreditif"],
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "fin_038",
+    "category": "taxation",
+    "term": "KKDF",
+    "similar_terms": ["Kaynak Kullanımını Destekleme Fonu", "Kredi vergisi", "Tüketici kredisi kesintisi"],
+    "dissimilar_terms": ["BSMV", "KDV", "ÖTV"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_039",
+    "category": "central_banking",
+    "term": "Mevduat munzam karşılığı",
+    "similar_terms": ["Zorunlu karşılık oranı", "Reserve requirement ratio", "TCMB bloke hesabı"],
+    "dissimilar_terms": ["Disponibilite oranı", "Reeskont oranı", "Gecelik faiz oranı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_040",
+    "category": "central_banking",
+    "term": "Reeskont kredisi",
+    "similar_terms": ["İskonto kredisi", "TCMB reeskont penceresi", "Senet iskontosu"],
+    "dissimilar_terms": ["Yatırım kredisi", "İhracat kredisi", "Rotatif kredi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_041",
+    "category": "credit_product",
+    "term": "Rotatif kredi",
+    "similar_terms": ["BCH", "Borçlu cari hesap", "Revolving credit"],
+    "dissimilar_terms": ["Spot kredi", "Taksitli ticari kredi", "İskonto kredisi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_042",
+    "category": "credit_product",
+    "term": "Spot kredi",
+    "similar_terms": ["Sabit faizli kısa vadeli kredi", "Spot loan", "Vadesi ve faizi baştan belli kredi"],
+    "dissimilar_terms": ["Rotatif kredi", "BCH", "Kredili mevduat hesabı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_043",
+    "category": "interest",
+    "term": "Temerrüt faizi",
+    "similar_terms": ["Gecikme faizi", "Default interest", "Cezai faiz"],
+    "dissimilar_terms": ["Akdi faiz", "Bileşik faiz", "Basit faiz"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_044",
+    "category": "interest",
+    "term": "Bileşik faiz",
+    "similar_terms": ["Compound interest", "Faizin faizi", "Mürekkep faiz"],
+    "dissimilar_terms": ["Basit faiz", "Nominal faiz", "Reel faiz"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_045",
+    "category": "interest",
+    "term": "Reel faiz",
+    "similar_terms": ["Real interest rate", "Enflasyondan arındırılmış faiz", "Gerçek getiri"],
+    "dissimilar_terms": ["Nominal faiz", "Bileşik faiz", "Basit faiz"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_046",
+    "category": "investment_banking",
+    "term": "Halka arz",
+    "similar_terms": ["IPO", "Initial Public Offering", "Borsaya açılma"],
+    "dissimilar_terms": ["Tahvil ihracı", "Özel sermaye yatırımı", "Melek yatırım"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_047",
+    "category": "capital_markets",
+    "term": "Tahvil",
+    "similar_terms": ["Bond", "Borçlanma senedi", "Sabit getirili menkul kıymet"],
+    "dissimilar_terms": ["Hisse senedi", "Yatırım fonu", "Türev ürün"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_048",
+    "category": "capital_markets",
+    "term": "Eurobond",
+    "similar_terms": ["Uluslararası tahvil", "Yabancı para cinsinden tahvil", "Dış borçlanma senedi"],
+    "dissimilar_terms": ["Devlet iç borçlanma senedi", "Hazine bonosu", "Yerel tahvil"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_049",
+    "category": "capital_markets",
+    "term": "Hazine bonosu",
+    "similar_terms": ["Treasury bill", "Kısa vadeli DİBS", "Devlet bonosu"],
+    "dissimilar_terms": ["Devlet tahvili", "Eurobond", "Özel sektör tahvili"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_050",
+    "category": "asset_management",
+    "term": "Varlık yönetim şirketi",
+    "similar_terms": ["Asset management company", "Gecikmiş alacak devralan şirket", "NPL alıcısı"],
+    "dissimilar_terms": ["Portföy yönetim şirketi", "Aracı kurum", "Yatırım bankası"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_051",
+    "category": "asset_management",
+    "term": "Portföy yönetim şirketi",
+    "similar_terms": ["Portfolio management company", "Yatırım fonu yöneticisi", "Varlık yöneticisi"],
+    "dissimilar_terms": ["Varlık yönetim şirketi", "Faktoring şirketi", "Leasing şirketi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_052",
+    "category": "capital_markets",
+    "term": "Aracı kurum",
+    "similar_terms": ["Brokerage firm", "Menkul değerler şirketi", "Borsa aracısı"],
+    "dissimilar_terms": ["Mevduat bankası", "Katılım bankası", "Kalkınma bankası"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fin_053",
+    "category": "banking_types",
+    "term": "Katılım bankacılığı",
+    "similar_terms": ["Faizsiz bankacılık", "İslami bankacılık", "Islamic banking"],
+    "dissimilar_terms": ["Mevduat bankacılığı", "Yatırım bankacılığı", "Kıyı bankacılığı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fin_054",
+    "category": "capital_markets",
+    "term": "Sukuk",
+    "similar_terms": ["Kira sertifikası", "İslami tahvil", "Faizsiz borçlanma aracı"],
+    "dissimilar_terms": ["Eurobond", "Hazine bonosu", "Devlet tahvili"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fin_055",
+    "category": "banking_types",
+    "term": "Kıyı bankacılığı",
+    "similar_terms": ["Offshore banking", "Serbest bölge bankacılığı", "Vergi cenneti bankacılığı"],
+    "dissimilar_terms": ["Yurtiçi bankacılık", "Katılım bankacılığı", "Perakende bankacılık"],
+    "difficulty": "hard"
+  }
+]

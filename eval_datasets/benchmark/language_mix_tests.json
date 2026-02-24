@@ -1,0 +1,482 @@
+[
+  {
+    "prompt": "API entegrasyonu nasıl yapılır? I need to understand the authentication process.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Can you explain TCMB faiz politikasını? Specifically, how does it affect the exchange rate?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Database'de index kullanmanın avantajları nelerdir?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "technical_mix",
+    "expected_response_language": "tr",
+    "category": "technical",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "What is the difference between EFT ve havale?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "bilingual",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "Machine learning modelimi train ederken overfitting problemi yaşıyorum. How can I prevent this?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "REST API ve GraphQL arasındaki farklar nelerdir? Which one should I choose for my project?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Kredi kartı ile debit card arasındaki difference nedir?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "technical_mix",
+    "expected_response_language": "tr",
+    "category": "finance",
+    "difficulty": "easy"
+  },
+  {
+    "prompt": "How does blockchain technology work? Özellikle Türkiye'deki kullanım alanları nelerdir?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "bilingual",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "JSON ve XML formatlarını karşılaştırır mısın? I'm trying to decide which one to use for my API.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Docker container'ları Kubernetes ile nasıl yönetirim?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "technical_mix",
+    "expected_response_language": "tr",
+    "category": "technical",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "What are the security best practices for IBAN validation ve şifreleme?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Microservices mimarisi nedir? How is it different from monolithic architecture?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "bilingual",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Python'da exception handling nasıl yapılır? I keep getting errors in my code.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "Can you explain cryptocurrency wallets? Özellikle cold wallet ve hot wallet farkını açıklar mısın?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "bilingual",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Git merge ve rebase arasındaki difference nedir? Hangisini ne zaman kullanmalıyım?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "technical_mix",
+    "expected_response_language": "tr",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "SQL injection attacks'ten nasıl korunurum? What are the best practices?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Cloud computing nedir? Specifically, AWS, Azure ve Google Cloud arasındaki farklar nelerdir?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "bilingual",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "How do I implement OAuth2 authentication? Token'ları nasıl güvenli bir şekilde saklamalıyım?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "Forex trading risks nelerdir? Türkiye'de yasal durumu nasıl?",
+    "expected_languages": ["en", "tr"],
+    "mix_type": "bilingual",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "hard"
+  },
+  {
+    "prompt": "WebSocket ve HTTP arasındaki farkı açıklar mısın? When should I use which?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "code_switch",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "medium"
+  },
+  {
+    "prompt": "\"Bank\" kelimesi kimi zaman banka, kimi zaman nehrin kenarını ifade eder. How do you disambiguate in context?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "semantic_code_switch",
+    "expected_response_language": "mixed",
+    "category": "linguistic",
+    "difficulty": "hard",
+    "challenge": "handling_polysemic_terms"
+  },
+  {
+    "prompt": "Türkçe'de 'set' teknoloji bağlamında (bilgisayar set'i), İngilizce'de farklı anlama gelebilir. Açıkla.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "disemic_terminology",
+    "expected_response_language": "mixed",
+    "category": "linguistic",
+    "difficulty": "hard",
+    "challenge": "multilingual_terminology_awareness"
+  },
+  {
+    "prompt": "Lütfen hem Türkçe hem İngilizce, fakat sadece İngilizce yanıt ver. Event-driven microservices mimarisi ne anlama gelir?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "conflicting_directives",
+    "expected_response_language": "en",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "resolving_contradictory_language_constraints"
+  },
+  {
+    "prompt": "Bu kodu açıkla:\n```python\ndef process_data(input_stream):\n    return filter(lambda x: x > 0, input_stream)\n```\nTürkçe-İngilizce karışık şekilde.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "code_block_hybrid",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "handling_code_blocks_in_multilingual_context"
+  },
+  {
+    "prompt": "MongoDB ve SQL veritabanı farkını yapılı şekilde açıkla (hem Türkçe hem İngilizce). Tablo formatında karşılaştırma yap.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "table_hybrid_bilingual",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "structured_data_in_bilingual_format"
+  },
+  {
+    "prompt": "Cryptocurrency regulations Türkiye'de ve globally nasıl farklı? Explain the compliance implications separately and then combined perspective.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "nested_code_switch",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "hard",
+    "challenge": "nested_language_transitions"
+  },
+  {
+    "prompt": "CI/CD pipeline'ı nasıl kurarız? Türkçe terimleri sakla, İngilizce teknik terimler koru, fakat açıklamalar her ikisinde de olsun.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "terminology_preservation",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "selective_language_usage_per_terminology_type"
+  },
+  {
+    "prompt": "Git worktree özelliğini (en: creating parallel working copies) Türkçe ve İngilizce aynı derinlikte açıkla.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "parallel_explanations",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "equivalent_depth_explanations_bilingual"
+  },
+  {
+    "prompt": "Anadolu'da bank (nehir), Batı Türkçesi'nde... vs American English bankdı. Regional variations nasıl işlenir?",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "regional_dialect",
+    "expected_response_language": "mixed",
+    "category": "linguistic",
+    "difficulty": "hard",
+    "challenge": "regional_and_dialect_awareness"
+  },
+  {
+    "prompt": "Blockchain'daki 'consensus mechanism' Türkçe'de karşılığı? Teknik özellikleriyle birlikte açıkla.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "untranslatable_term_handling",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "handling_domain_specific_untranslatable_terms"
+  },
+  {
+    "prompt": "REST API vs gRPC: performans, use cases, implementation. Türkçe ve İngilizce profesyonel bağlamda karşılaştır. Her bölüme dil not ekle.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "comprehensive_bilingual_comparison",
+    "expected_response_language": "mixed",
+    "category": "technical",
+    "difficulty": "hard",
+    "challenge": "comprehensive_comparison_with_language_metadata"
+  },
+  {
+    "prompt": "Türkiye'de fintech regulations - BDDK e-para ile ilgili ne söylüyor? Aynı kurallar global standartlara nasıl uyumlu? Mixed language, balanced perspective.",
+    "expected_languages": ["tr", "en"],
+    "mix_type": "regulation_localization",
+    "expected_response_language": "mixed",
+    "category": "finance",
+    "difficulty": "hard",
+    "challenge": "localized_regulation_explanation_bilingual"
+  },
+  {
+  "prompt": "Serverless architecture kullanırken cold start problemi yaşıyorum. How can I mitigate this in AWS Lambda?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "code_switch",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Bana JWT (JSON Web Token) yapısını açıkla ama bir kuralım var: Sadece Türkçe kullanacaksın ancak tüm fiiller (verbs) İngilizce olmalı (örneğin: 'kullanıcı authenticate eder', 'token expire olur').",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "grammatical_constraint",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "hard",
+  "challenge": "morpho_syntactic_constraint_handling"
+  },
+  {
+  "prompt": "Options trading'de Call ve Put opsiyonları tam olarak nasıl çalışır? Give me a real-world example combining both.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "bilingual",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "İngilizce'deki 'fabric' ile Türkçe'deki 'fabrika' veya 'sympathetic' ile 'sempatik' kelimeleri sık sık karıştırılır. Explain these false friends with context.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "semantic_analysis",
+  "expected_response_language": "mixed",
+  "category": "linguistic",
+  "difficulty": "hard",
+  "challenge": "false_friends_disambiguation"
+  },
+  {
+  "prompt": "React ve Angular'ı karşılaştıran bir tablo oluştur. Tablonun başlıkları (headers) İngilizce, içerikleri (hücreler) Türkçe olsun.",
+  "expected_languages": ["en", "tr"],
+  "mix_type": "structural_language_mapping",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "hard",
+  "challenge": "matrix_formatting_with_language_split"
+  },
+  {
+  "prompt": "Venture Capital funding aşamalarını (Seed, Series A, Series B vb.) açıklar mısın? How does company valuation change across these stages?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "code_switch",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Quantum computing'deki 'superposition' ve 'entanglement' kavramlarını non-technical birine anlatır gibi Türkçe açıkla.",
+  "expected_languages": ["en", "tr"],
+  "mix_type": "technical_translation",
+  "expected_response_language": "tr",
+  "category": "technical",
+  "difficulty": "hard",
+  "challenge": "explaining_complex_en_terms_in_simple_tr"
+  },
+  {
+  "prompt": "İngilizce'deki 'a piece of cake' deyiminin Türkçedeki 'çocuk oyuncağı' ile eşleşmesini kültürel ve dilbilimsel açıdan analiz et.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "cultural_idiom_mapping",
+  "expected_response_language": "mixed",
+  "category": "linguistic",
+  "difficulty": "hard",
+  "challenge": "idiomatic_equivalence_and_nuance"
+  },
+  {
+  "prompt": "Avrupa'daki SEPA transfer sistemi ile Türkiye'deki FAST/EFT sisteminin farkları nelerdir? Which one is more efficient for cross-border transactions?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "regional_comparison",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Yazılım dünyasındaki 'Technical Debt' kavramını Türkçe'ye nasıl çeviririz? What are the long-term consequences of ignoring it?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "untranslatable_term_handling",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "API rate limiting tekniklerini anlat. Specifically, can you explain how the 'Token Bucket' algorithm works conceptually and in practice?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "nested_code_switch",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Bankacılıkta AML (Anti-Money Laundering) ve KYC (Know Your Customer) prosedürleri neden bu kadar katı? Global regülasyonlar bunu nasıl force ediyor?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "code_switch",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Bana TCP/IP modelini anlat. İngilizce kısmı çok resmi ve akademik olsun, Türkçe açıklamaları ise çok samimi (sokak ağzı) olsun.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "tone_split_bilingual",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "hard",
+  "challenge": "bilingual_tone_switching"
+  },
+  {
+  "prompt": "Write a Python script for web scraping. Yorum satırları (comments) Türkçe olsun, docstring'ler ise tamamen İngilizce yazılsın.",
+  "expected_languages": ["en", "tr"],
+  "mix_type": "code_documentation_split",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "hard",
+  "challenge": "code_documentation_language_split"
+  },
+  {
+  "prompt": "Bull market ve Bear market özelliklerini karşılaştır. Please present this as a bilingual list where each bullet point has both languages side by side.",
+  "expected_languages": ["en", "tr"],
+  "mix_type": "parallel_bilingual_list",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Zero-trust network architecture nedir? Why is it considered superior to traditional VPN-based security?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "bilingual",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "'Bug' kelimesi hem 'böcek' hem de 'yazılım hatası' anlamına gelir. How do natural language processing models resolve this ambiguity in a translation task?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "semantic_code_switch",
+  "expected_response_language": "mixed",
+  "category": "linguistic",
+  "difficulty": "hard",
+  "challenge": "cross_lingual_polysemy"
+  },
+  {
+  "prompt": "Enflasyondan korunmak için hedging stratejileri nelerdir? Which asset classes provide the best protection historically?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "code_switch",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "JavaScript'te asynchronous programming nasıl yönetilir? Callbacks, Promises ve Async/Await arasındaki evrimi açıkla.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "technical_mix",
+  "expected_response_language": "tr",
+  "category": "technical",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "I want to learn about Docker volumes. Lütfen İngilizce sorumu tamamen Türkçe yanıtla, ama Docker CLI argümanlarını ve teknik terimleri asla çevirme.",
+  "expected_languages": ["en", "tr"],
+  "mix_type": "conflicting_directives",
+  "expected_response_language": "tr",
+  "category": "technical",
+  "difficulty": "hard",
+  "challenge": "partial_translation_preservation"
+  },
+  {
+  "prompt": "Türkçe beyaz yaka dilinde (Plazaca) 'commit'lemek', 'deploy'ladık', 'set'lemek' gibi İngilizce kelimelere Türkçe ekler getiriliyor. Analyze this morpho-syntactic phenomenon.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "morphological_hybrid",
+  "expected_response_language": "mixed",
+  "category": "linguistic",
+  "difficulty": "hard",
+  "challenge": "morpho_syntactic_hybridization"
+  },
+  {
+  "prompt": "ESG (Environmental, Social, and Governance) investing kriterleri nelerdir? Şirketlerin sustainability raporları yatırım kararlarını nasıl etkiler?",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "code_switch",
+  "expected_response_language": "mixed",
+  "category": "finance",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "What is Cross-Site Scripting (XSS)? Web güvenliği açısından bunu engellemek için frontend'de ne gibi önlemler alınmalı?",
+  "expected_languages": ["en", "tr"],
+  "mix_type": "bilingual",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "medium"
+  },
+  {
+  "prompt": "Avrupa Birliği'nin GDPR'ı ile Türkiye'nin KVKK'sı arasındaki temel farklar nelerdir? Explain data cross-border transfer rules in both frameworks.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "regional_regulation",
+  "expected_response_language": "mixed",
+  "category": "legal",
+  "difficulty": "hard",
+  "challenge": "localized_legal_comparison"
+  },
+  {
+  "prompt": "Bana 5 önemli Yapay Zeka (AI) kavramını liste halinde ver. Başlıklar (terms) kesinlikle İngilizce olsun, altındaki tanımlar tamamen Türkçe olsun.",
+  "expected_languages": ["tr", "en"],
+  "mix_type": "structural_formatting",
+  "expected_response_language": "mixed",
+  "category": "technical",
+  "difficulty": "medium",
+  "challenge": "title_body_language_split"
+  }
+  ]

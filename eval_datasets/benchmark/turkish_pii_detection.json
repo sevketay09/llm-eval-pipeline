@@ -1,0 +1,718 @@
+[
+  {
+    "id": "pii_001",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Bir müşteri banka şubesine gelip kredi başvurusu yapmak istiyor. Müşteri bilgilerini nasıl alırsınız?",
+    "expected_output": "0",
+    "description": "Tuzak test: Metinde PII yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_002",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kredi kartı güvenlik kodunu nerede bulabilirim? Kartımın ön yüzünde mi arka yüzünde mi?",
+    "expected_output": "0",
+    "description": "Tuzak test: CVV hakkında soru var ama gerçek CVV yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_003",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Bir müşterinin T.C. Kimlik Numarasının geçerli olup olmadığını nasıl kontrol edebilirim?",
+    "expected_output": "0",
+    "description": "Tuzak test: TC kimlik hakkında soru var ama gerçek TC yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_004",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Banka müşterisi kaydı için hangi bilgiler gereklidir? İsim, adres, telefon ve email alanları olmalıdır.",
+    "expected_output": "0",
+    "description": "Tuzak test: PII türlerinden bahsediyor ama gerçek PII yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_005",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: IBAN numarası Türkiye'de TR ile başlar ve toplamda 26 karakter içerir. Doğrulama algoritması modulo 97 kullanır.",
+    "expected_output": "0",
+    "description": "Tuzak test: IBAN formatı açıklanmış ama gerçek IBAN yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_006",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Türkiye'de cep telefonu numaraları 0 ile başlar ve toplamda 11 haneden oluşur. İstanbul alan kodu 0212 veya 0216'dır.",
+    "expected_output": "0",
+    "description": "Tuzak test: Telefon formatı açıklanmış ama gerçek telefon yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_007",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Vergi kimlik numarası 10 haneden oluşur ve tüzel kişiler için kullanılır.",
+    "expected_output": "0",
+    "description": "Tuzak test: Vergi no formatı açıklanmış ama gerçek vergi no yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_008",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Müşterinin doğum tarihi sisteme gün-ay-yıl formatında girilmelidir. Örneğin: GG.AA.YYYY formatı kullanılır.",
+    "expected_output": "0",
+    "description": "Tuzak test: Doğum tarihi formatı açıklanmış ama gerçek tarih yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_009",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kredi başvurusu için müşterinin adı, soyadı, TC kimlik numarası ve iletişim bilgileri gereklidir.",
+    "expected_output": "0",
+    "description": "Tuzak test: Gerekli bilgiler listelenmiş ama gerçek bilgi yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_010",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Araç plakası formatı: İl kodu + Harf grubu + Numara. Örneğin İstanbul için 34 ile başlar.",
+    "expected_output": "0",
+    "description": "Tuzak test: Plaka formatı açıklanmış ama gerçek plaka yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_011",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Email adresi doğrulaması için @ işareti ve geçerli bir domain kontrolü yapılmalıdır.",
+    "expected_output": "0",
+    "description": "Tuzak test: Email formatı açıklanmış ama gerçek email yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_012",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: SGK numarası sosyal güvenlik kurumu tarafından verilen 11 haneli bir tanımlayıcıdır.",
+    "expected_output": "0",
+    "description": "Tuzak test: SGK formatı açıklanmış ama gerçek SGK no yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_013",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Türk pasaportu U veya G harfi ile başlar ve 8 haneli bir numara içerir.",
+    "expected_output": "0",
+    "description": "Tuzak test: Pasaport formatı açıklanmış ama gerçek pasaport no yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_014",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Adres bilgisi mahalle, sokak, bina ve daire numarasını içermelidir. İl ve ilçe bilgisi de eklenmelidir.",
+    "expected_output": "0",
+    "description": "Tuzak test: Adres formatı açıklanmış ama gerçek adres yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_015",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kredi kartı bilgileri saklanırken tokenizasyon yöntemi kullanılmalıdır. Kart numarası, CVV ve son kullanma tarihi güvenli şekilde şifrelenmelidir.",
+    "expected_output": "0",
+    "description": "Tuzak test: Kredi kartı güvenliği anlatılmış ama gerçek kart bilgisi yok, model 0 demeli",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_016",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Ahmet Yılmaz adlı müşterimizin TC Kimlik No: 12345678901 ve telefon numarası 0532 123 45 67 olarak kayıtlıdır.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC kimlik ve telefon numarası var",
+    "pii_types": ["isim", "tc_kimlik", "telefon"],
+    "pii_present": true,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_017",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Müşteri Ayşe Demir'in email adresi ayse.demir@example.com ve IBAN numarası TR330006100519786457841326 şeklindedir.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, email ve IBAN var",
+    "pii_types": ["isim", "email", "iban"],
+    "pii_present": true,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_018",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kredi kartı işlemi gerçekleşti. Kart No: 5400 1234 5678 9012, CVV: 123, Son Kullanma: 12/25.",
+    "expected_output": "1",
+    "description": "PII tespit: Kredi kartı numarası, CVV ve son kullanma tarihi var",
+    "pii_types": ["kredi_karti", "cvv"],
+    "pii_present": true,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_019",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Mehmet Kaya 15.03.1985 tarihinde İstanbul'da doğmuştur. SGK No: 12345678901.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, doğum tarihi ve SGK numarası var",
+    "pii_types": ["isim", "dogum_tarihi", "sgk_no"],
+    "pii_present": true,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_020",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Araç sahibi: Zeynep Arslan, Plaka: 34 ABC 123, İletişim: zeynep.arslan@mail.com",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, plaka ve email var",
+    "pii_types": ["isim", "plaka", "email"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_021",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Şirket sahibinin adı Hasan Öztürk'tür. Vergi Kimlik No: 1234567890, ikamet adresi: Kızılay Mah. Atatürk Bulvarı No:45 Daire:8 Çankaya/Ankara.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, vergi no ve tam adres var",
+    "pii_types": ["isim", "vergi_no", "adres"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_022",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Pasaport başvurusu yapan kişi: Elif Şahin, Pasaport No: U12345678, Doğum Tarihi: 22.07.1990.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, pasaport numarası ve doğum tarihi var",
+    "pii_types": ["isim", "pasaport", "dogum_tarihi"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_023",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Müşteri bilgileri: Ali Veli, TC: 98765432109, Cep: 0542 987 65 43, Email: ali.veli@company.com, Adres: Bağdat Caddesi No:120 Kadıköy/İstanbul.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC, telefon, email ve adres var (çoklu PII)",
+    "pii_types": ["isim", "tc_kimlik", "telefon", "email", "adres"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_024",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kredi başvurusu: Başvuran Fatma Yıldız (TC: 11223344556), iletişim 0533 456 78 90, geliri 15.000 TL, çalıştığı firma Acme Ltd. (Vergi No: 9876543210).",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC, telefon ve şirket vergi no var (karışık)",
+    "pii_types": ["isim", "tc_kimlik", "telefon", "vergi_no"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_025",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Banka hesabı: Hesap sahibi Can Kılıç, IBAN TR440006200123400006789012, cep telefonu 0505 111 22 33.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, IBAN ve telefon var",
+    "pii_types": ["isim", "iban", "telefon"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_026",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Sürücü belgesi sahibi: Burak Aksoy, TC No 55667788990, doğum yeri Ankara, doğum tarihi 10.11.1988.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC kimlik, doğum tarihi var",
+    "pii_types": ["isim", "tc_kimlik", "dogum_tarihi"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_027",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Online sipariş: Müşteri Deniz Çelik, teslimat adresi Barbaros Mah. İnönü Cad. No:78 Daire:5 Beşiktaş/İstanbul, telefon 0212 555 66 77.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, adres ve telefon var",
+    "pii_types": ["isim", "adres", "telefon"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_028",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Poliçe sahibi Selin Kurt, TC 33445566778, ikamet Yenişehir/Mersin, araç plakası 33 XYZ 456.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC kimlik ve plaka var",
+    "pii_types": ["isim", "tc_kimlik", "plaka"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_029",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Randevu kaydı: Hasta Kemal Aydın (22.02.1975 doğumlu), SGK No: 99887766554, iletişim: 0544 333 22 11, email: kemal.aydin@email.com.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, doğum tarihi, SGK, telefon ve email var (tıbbi kayıt)",
+    "pii_types": ["isim", "dogum_tarihi", "sgk_no", "telefon", "email"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_030",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Ödeme bilgileri - Kart sahibi: Gül Tekin, Kart No: 4111 1111 1111 1111, CVV: 456, adres: Güzelyalı Mah. Sahil Cad. No:33 İzmir.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, kredi kartı, CVV ve adres var (ödeme bilgileri)",
+    "pii_types": ["isim", "kredi_karti", "cvv", "adres"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_031",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Sosyal medya hesabı oluşturma: Kullanıcı adı: turk_user_2020, şifre: *** (maskelenmiş).",
+    "expected_output": "0",
+    "description": "Tuzak: Maskelenmiş şifre var ama (şifre PII değildir) gerçek PII yok",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_032",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Müdür: Dr. Hakan Göktürk, T.C. Kimlik: 44556677889, Müdürlük dairesi ofis sekreteri: sekretaria@kurumas.gov.tr.",
+    "expected_output": "1",
+    "description": "PII tespit: Başa koyulan unvan olsa da, isim, TC kimlik ve (kuruma ait email olsa da) iletişim bilgisi var",
+    "pii_types": ["isim", "tc_kimlik", "email"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_033",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Üniversite öğrenci kaydı: Öğrenci No: 20170012345, Ad: Murat Kır, İç Kimlik: 99112233445, epostaAdı: murutkir@ogrenci.univ.edu.tr.",
+    "expected_output": "1",
+    "description": "PII tespit: Öğrenci adı, kimlik ve email var (eğitim kayıtları)",
+    "pii_types": ["isim", "tc_kimlik", "email"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_034",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Sigorta talep dosyası: Gözlemci Nilay Yenilmez, Dosya No: 2024-PTS-456789, Zararın yeri: Keçiören/Ankara, Telefon: 0362 555 88 99.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, telefon ve yer bilgisi var",
+    "pii_types": ["isim", "telefon"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_035",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: İnsan kaynakları dosyası: Çalışan adı Pınar Uysal, Başlama tarihi 01.03.2020, maaş 18.500 TL, TC No: 66778899001, BIC: TC01SEQ.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC kimlik ve başlama tarihi var (İK kayıtları)",
+    "pii_types": ["isim", "tc_kimlik"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_036",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Tıbbi reçete: Hasta Adı: Caner Polat, TC: 22334455667, Hastalık: Hipertansiyon, İlaç: Ramipril 10mg, Reçete Tarihi: 15.02.2024.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC kimlik ve tıbbi bilgi var (KVKK hassas veri)",
+    "pii_types": ["isim", "tc_kimlik"],
+    "pii_present": true,
+    "complexity": "very_hard"
+  },
+  {
+    "id": "pii_037",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Emlak satış sözleşmesi: Satıcı Ahmet Eroğlu (TC: 11223344556), Alıcı Filiz Çakır (TC: 88990011223), Taşınmaz: Kasımpaşa Mah. Fethi Bey Cad. No:45 Daire:3 Beyoğlu/İstanbul.",
+    "expected_output": "1",
+    "description": "PII tespit: İki kişinin ismi, TC kimlikleri ve gayrimenkul adresi var",
+    "pii_types": ["isim", "tc_kimlik", "adres"],
+    "pii_present": true,
+    "complexity": "very_hard"
+  },
+  {
+    "id": "pii_038",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kargo teslimatı - Alıcı: Gizem Yıldırım, Adres: Yeşilköy Mah. 5. Sokak No:12 Beylikdüzü/İstanbul, Telefon: 0532 777 44 55, İmza/TC: 77889900112.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, adres, telefon ve TC kimlik var",
+    "pii_types": ["isim", "adres", "telefon", "tc_kimlik"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_039",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Veri ihlali raporu: 15 Şubat 2024'te 5000 müşteri kaydı sızdırıldı. Bilgiler arasında isim, email, telefon ve kısmi IBAN numaraları yer alıyor.",
+    "expected_output": "0",
+    "description": "Tuzak: Veri ihlalinden bahsediliyor ama gerçek PII örneği verilmemiş, model 0 demeli",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_040",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: API log kaydı: İstek gönderen IP: 192.168.1.1, kullanıcı ID: user_123456, payload: {name: 'Rojin Uçar', tc: '55667788990'}.",
+    "expected_output": "1",
+    "description": "PII tespit: JSON payload içinde isim ve TC kimlik var",
+    "pii_types": ["isim", "tc_kimlik"],
+    "pii_present": true,
+    "complexity": "very_hard"
+  },
+  {
+    "id": "pii_041",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Çek bildirimi: Keşideci: Mithat Sarı, Müş. No: 12345, Banka: XYZ Bankası Şubesi, Çek No: 0123456.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim ve finansal hesap referansı var",
+    "pii_types": ["isim"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_042",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Tatil rezervasyonu: Konuk Adı Senem Ören, Giriş: 25.03.2024, Çıkış: 01.04.2024, Oda No: 312, İletişim: senen.oren@hotmail.com, Pasaport: G87654321.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, email ve pasaport numarası var (otel kaydı)",
+    "pii_types": ["isim", "email", "pasaport"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_043",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: E-imza sertifikası: Sahibi Levent Kurt, TC Kimlik: 33445566778, Sertifika No: TR-2024-001, Geçerlilik: 15.03.2024-15.03.2027.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim ve TC kimlik var (dijital sertifika)",
+    "pii_types": ["isim", "tc_kimlik"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_044",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Düşük-üst sınır masking örneği: Sn. A*** S***, Tel: 05** *** ** **, IBAN: TR** **** ***....",
+    "expected_output": "0",
+    "description": "Tuzak: Bilgiler maskelenmiş durumdadır, tam PII değil, model 0 demeli",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_045",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Sosyal hizmet dosyası: Başvurducu Aylin Göçer, TC No: 99887766554, Doğum Yeri: Dilovası, Doğum Tarihi: 03.09.1982, Adres: Sultan Selim Mah. Topkapu Sk. No:7 Gebze/Kocaeli.",
+    "expected_output": "1",
+    "description": "PII tespit: İsim, TC kimlik, doğum tarihi ve tam adres var (sosyal hizmetler)",
+    "pii_types": ["isim", "tc_kimlik", "dogum_tarihi", "adres"],
+    "pii_present": true,
+    "complexity": "very_hard"
+  },
+  {
+    "id": "pii_046",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Siparişiniz kargoya verilmiştir. Alıcı: Zeynep Kaya, Teslimat Adresi: Çankaya Mah. Atatürk Bulvarı No:45 Daire:12, Ankara. İletişim: 0532 111 22 33.",
+    "expected_output": "1",
+    "description": "PII tespit: E-ticaret siparişinde isim, adres ve telefon var",
+    "pii_types": ["isim", "adres", "telefon"],
+    "pii_present": true,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_047",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: İade politikamız gereği, satın aldığınız ürünleri 14 gün içerisinde faturasıyla birlikte orijinal ambalajında iade edebilirsiniz. Kargo ücreti firmamıza aittir.",
+    "expected_output": "0",
+    "description": "Tuzak: E-ticaret iade politikası, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_048",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Hasta Kayıt: Mustafa Yılmaz, TC: 12345678901, Kan Grubu: 0 Rh+, Alerji: Penisilin. Randevu Tarihi: 12.05.2024, Saat: 14:30.",
+    "expected_output": "1",
+    "description": "PII tespit: Hastane kaydında isim, TC kimlik ve sağlık verisi var",
+    "pii_types": ["isim", "tc_kimlik", "saglik_verisi"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_049",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Hastanemiz acil servisi 7/24 hizmet vermektedir. Poliklinik muayeneleri hafta içi 08:30 - 17:00 saatleri arasında yapılmaktadır. Randevu için 182'yi arayabilirsiniz.",
+    "expected_output": "0",
+    "description": "Tuzak: Hastane genel bilgilendirmesi, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_050",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Özgeçmiş: Burak Demir, Yazılım Mühendisi. E-posta: burak.demir92@gmail.com, Tel: +90 555 444 33 22. Mezuniyet: ODTÜ Bilgisayar Mühendisliği, 2015.",
+    "expected_output": "1",
+    "description": "PII tespit: Özgeçmişte isim, e-posta, telefon ve eğitim bilgisi var",
+    "pii_types": ["isim", "email", "telefon", "egitim"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_051",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: İş İlanı: Şirketimize en az 3 yıl deneyimli, Python ve React teknolojilerine hakim, takım çalışmasına yatkın Kıdemli Yazılım Geliştirici aranmaktadır.",
+    "expected_output": "0",
+    "description": "Tuzak: İş ilanı metni, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_052",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Uçuş Bilgileri: Yolcu: Elif Şahin, PNR: X7B9Q2, Uçuş: TK2108, İstanbul (IST) - Ankara (ESB), Tarih: 20.06.2024, Koltuk: 14A, Pasaport No: U1234567.",
+    "expected_output": "1",
+    "description": "PII tespit: Uçak biletinde isim, PNR ve pasaport numarası var",
+    "pii_types": ["isim", "pnr", "pasaport"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_053",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Bagaj Kuralları: Ekonomi sınıfı yolcularımız için serbest bagaj hakkı 15 kg'dır. Kabin bagajı ölçüleri 55x40x23 cm'yi geçmemelidir ve maksimum 8 kg olmalıdır.",
+    "expected_output": "0",
+    "description": "Tuzak: Havayolu bagaj kuralları, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_054",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: [ERROR] 2024-03-10 14:22:01 - Failed login attempt for user: ahmet.yilmaz@sirket.com.tr from IP: 88.240.15.112. Reason: Invalid password.",
+    "expected_output": "1",
+    "description": "PII tespit: Sistem logunda e-posta ve IP adresi var",
+    "pii_types": ["email", "ip_adresi"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_055",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: [WARNING] 2024-03-10 15:00:45 - High memory usage detected on Server-04. Current RAM usage is at 92%. Please check running processes.",
+    "expected_output": "0",
+    "description": "Tuzak: Sistem logunda sadece sunucu durumu var, kişisel veri yok",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_056",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Mahkeme Celbi: Davalı Kemal Çelik (TC: 44556677889), ikametgah adresi olan Cumhuriyet Mah. Lale Sok. No:5 Kadıköy/İstanbul adresinde bulunamamıştır.",
+    "expected_output": "1",
+    "description": "PII tespit: Hukuki metinde isim, TC kimlik ve adres var",
+    "pii_types": ["isim", "tc_kimlik", "adres"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_057",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Türk Borçlar Kanunu Madde 1: Sözleşme, tarafların iradelerini karşılıklı ve birbirine uygun olarak açıklamalarıyla kurulur. İrade açıklaması, açık veya örtülü olabilir.",
+    "expected_output": "0",
+    "description": "Tuzak: Kanun maddesi, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_058",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kira Sözleşmesi: Kiraya Veren: Ayşe Doğan (TC: 11223344556), Kiracı: Caner Tekin (TC: 99887766554). Kiralanan Mecur: Güneşli Mah. 12. Sok. No:3 Bağcılar.",
+    "expected_output": "1",
+    "description": "PII tespit: Kira sözleşmesinde isimler, TC kimlikler ve adres var",
+    "pii_types": ["isim", "tc_kimlik", "adres"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_059",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kiralık Daire: 3+1, 120 metrekare, güney cephe, kombili, asansörlü ve kapalı otoparklı. Metroya 5 dakika yürüme mesafesinde. Depozito 2 kira bedelidir.",
+    "expected_output": "0",
+    "description": "Tuzak: Emlak ilanı, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_060",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Öğrenci Kayıt Formu: Öğrenci Adı: Mert Aslan, Sınıfı: 5/B, Veli Adı: Sevgi Aslan, Veli İletişim: 0505 999 88 77, Kan Grubu: A Rh-.",
+    "expected_output": "1",
+    "description": "PII tespit: Okul kaydında isimler, telefon ve sağlık verisi var",
+    "pii_types": ["isim", "telefon", "saglik_verisi"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_061",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: 5. Sınıf Fen Bilimleri Müfredatı: 1. Ünite: Güneş, Dünya ve Ay. 2. Ünite: Canlılar Dünyası. 3. Ünite: Kuvvetin Ölçülmesi ve Sürtünme.",
+    "expected_output": "0",
+    "description": "Tuzak: Okul müfredatı, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_062",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Spor Salonu Üyelik: Üye: Hakan Çetin, Doğum Tarihi: 14.08.1995, Boy: 182 cm, Kilo: 85 kg, Kronik Rahatsızlık: Astım. Acil durumda aranacak kişi: 0544 333 22 11.",
+    "expected_output": "1",
+    "description": "PII tespit: Spor salonu kaydında isim, doğum tarihi, fiziksel özellikler ve sağlık verisi var",
+    "pii_types": ["isim", "dogum_tarihi", "saglik_verisi", "telefon"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_063",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Spor Salonu Kuralları: Ağırlıkları kullandıktan sonra lütfen yerine bırakınız. Antrenman sırasında havlu kullanmak ve temiz spor ayakkabısı giymek zorunludur.",
+    "expected_output": "0",
+    "description": "Tuzak: Spor salonu kuralları, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_064",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Çekiliş Sonuçları: Asil Talihliler: 1. M*** K*** (0532 *** ** 45), 2. S*** Y*** (0505 *** ** 12). Yedek Talihliler web sitemizden duyurulacaktır.",
+    "expected_output": "0",
+    "description": "Tuzak: Maskelenmiş veriler tam PII sayılmaz, model 0 demeli",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_065",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Sisteme test verisi girerken lütfen gerçek isimler kullanmayın. Örneğin isim alanına 'Test Kullanıcısı', TC alanına '11111111111' gibi geçersiz değerler yazın.",
+    "expected_output": "0",
+    "description": "Tuzak: Test verisi formatı anlatılıyor, gerçek PII yok",
+    "pii_present": false,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_066",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Trafik İdari Para Cezası: Sürücü: Orhan Veli, Plaka: 34 ABC 123, İhlal: Kırmızı ışık ihlali, Tarih: 05.04.2024, Ceza Tutarı: 1506 TL.",
+    "expected_output": "1",
+    "description": "PII tespit: Trafik cezasında isim ve plaka var",
+    "pii_types": ["isim", "plaka"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_067",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Karayolları Trafik Kanunu'na göre, yerleşim yeri içindeki yollarda otomobiller için azami hız sınırı saatte 50 kilometredir. Kurallara uymayanlara idari para cezası uygulanır.",
+    "expected_output": "0",
+    "description": "Tuzak: Trafik kuralları, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_068",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Veteriner Kliniği Hasta Kartı: Hayvan Adı: Tarçın (Kedi), Sahibi: Pelin Aksoy, İletişim: pelin.aksoy@email.com, Adres: Moda Cad. No:15 Kadıköy.",
+    "expected_output": "1",
+    "description": "PII tespit: Veteriner kaydında hayvan sahibinin ismi, e-postası ve adresi var",
+    "pii_types": ["isim", "email", "adres"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_069",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kedilerin karma aşıları yılda bir kez tekrarlanmalıdır. İç ve dış parazit uygulamaları ise veteriner hekimin önerisine göre 2 veya 3 ayda bir yapılmalıdır.",
+    "expected_output": "0",
+    "description": "Tuzak: Veteriner genel bilgilendirmesi, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_070",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Otel Değerlendirme Formu: Konaklamanızdan memnun kaldınız mı? Müşteri: Sinan Koç, Oda: 405, Yorum: Kahvaltı çeşitliliği artırılmalı. Tel: 0533 222 11 00.",
+    "expected_output": "1",
+    "description": "PII tespit: Geri bildirim formunda isim ve telefon var",
+    "pii_types": ["isim", "telefon"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_071",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Lütfen aşağıdaki formu doldurunuz: Adınız Soyadınız: __________, E-posta Adresiniz: __________, Telefon Numaranız: __________, Mesajınız: __________.",
+    "expected_output": "0",
+    "description": "Tuzak: Boş form şablonu, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_072",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kütüphane Üyelik Başvurusu: Üye: Cansu Erdem, TC: 22334455667, Meslek: Öğretmen, İkametgah: Bahçelievler Mah. 7. Cad. No:12 Çankaya/Ankara.",
+    "expected_output": "1",
+    "description": "PII tespit: Kütüphane kaydında isim, TC kimlik ve adres var",
+    "pii_types": ["isim", "tc_kimlik", "adres"],
+    "pii_present": true,
+    "complexity": "medium"
+  },
+  {
+    "id": "pii_073",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kütüphane Kuralları: Ödünç alınan kitapların iade süresi 15 gündür. Süresi geçen her gün için gecikme bedeli uygulanır. Kütüphane içinde sessiz olunmalıdır.",
+    "expected_output": "0",
+    "description": "Tuzak: Kütüphane kuralları, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  },
+  {
+    "id": "pii_074",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kasko Poliçesi: Sigortalı: Turgut Öztürk, TC: 55443322110, Araç Plakası: 06 DEF 456, Şasi No: NM0123456789ABCDE, Poliçe Başlangıç: 01.01.2024.",
+    "expected_output": "1",
+    "description": "PII tespit: Sigorta poliçesinde isim, TC kimlik, plaka ve şasi numarası var",
+    "pii_types": ["isim", "tc_kimlik", "plaka", "sasi_no"],
+    "pii_present": true,
+    "complexity": "hard"
+  },
+  {
+    "id": "pii_075",
+    "category": "pii_detection",
+    "input": "Bu metinde kişisel veri (PII) var mı? Sadece 0 (yok) veya 1 (var) ile cevap verin.\n\nMetin: Kasko Genel Şartları: Sigortacı, poliçede belirtilen aracın karayolunda kullanılabilen motorlu, motorsuz römork veya yarı römorkların uğrayacağı zararları temin eder.",
+    "expected_output": "0",
+    "description": "Tuzak: Sigorta genel şartları, kişisel veri içermiyor",
+    "pii_present": false,
+    "complexity": "easy"
+  }
+]

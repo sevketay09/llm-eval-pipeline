@@ -1,0 +1,1041 @@
+[
+  {
+    "id": "needle_001",
+    "category": "needle_in_haystack",
+    "difficulty": "easy",
+    "context_length": "short",
+    "needle_position": "beginning",
+    "needle": "TransBank'ın özel müşteri hattı numarası 555-TRANS-VIP (555-87267-847) şeklindedir.",
+    "question": "TransBank'ın özel müşteri hattı numarası nedir?",
+    "expected_answer": "555-TRANS-VIP veya 555-87267-847",
+    "context_template": "financial_services_info"
+  },
+  {
+    "id": "needle_002",
+    "category": "needle_in_haystack",
+    "difficulty": "medium",
+    "context_length": "medium",
+    "needle_position": "middle",
+    "needle": "2026 yılında şirketin yıllık büyüme hedefi tam olarak %23.7 olarak belirlenmiştir.",
+    "question": "2026 yılı için şirketin büyüme hedefi yüzde kaçtır?",
+    "expected_answer": "%23.7",
+    "context_template": "annual_report"
+  },
+  {
+    "id": "needle_003",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "long",
+    "needle_position": "end",
+    "needle": "Kritik güvenlik kodu sistemde PX-9274-ALPHA olarak kayıtlıdır ve sadece yetkili personel tarafından kullanılabilir.",
+    "question": "Sistemdeki kritik güvenlik kodu nedir?",
+    "expected_answer": "PX-9274-ALPHA",
+    "context_template": "security_manual"
+  },
+  {
+    "id": "needle_004",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "early_middle",
+    "needle": "Proje tamamlanma tarihi kesin olarak 17 Haziran 2026 Çarşamba günü saat 14:30 olarak planlanmıştır.",
+    "question": "Proje ne zaman tamamlanacak?",
+    "expected_answer": "17 Haziran 2026 Çarşamba 14:30",
+    "context_template": "project_documentation"
+  },
+  {
+    "id": "needle_005",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "very_long",
+    "needle_position": "late_middle",
+    "needle": "Özel indirim kodu sınırlı sayıda müşteri için WINTER2026-EXCLUSIVE-7891 olarak oluşturulmuştur.",
+    "question": "Özel indirim kodu nedir?",
+    "expected_answer": "WINTER2026-EXCLUSIVE-7891",
+    "context_template": "marketing_campaign"
+  },
+  {
+    "id": "needle_006",
+    "category": "needle_in_haystack",
+    "difficulty": "medium",
+    "context_length": "medium",
+    "needle_position": "beginning",
+    "needle": "Yeni şube adresi: Atatürk Bulvarı No: 458/A Kat:3 Daire:7, Çankaya/Ankara şeklinde belirlenmiştir.",
+    "question": "Yeni şube adresi nedir?",
+    "expected_answer": "Atatürk Bulvarı No: 458/A Kat:3 Daire:7, Çankaya/Ankara",
+    "context_template": "branch_information"
+  },
+  {
+    "id": "needle_007",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "long",
+    "needle_position": "middle",
+    "needle": "Şirket CEO'sunun doğrudan e-posta adresi ceo.direct@company-xyz.com.tr olarak açıklanmıştır.",
+    "question": "CEO'nun doğrudan e-posta adresi nedir?",
+    "expected_answer": "ceo.direct@company-xyz.com.tr",
+    "context_template": "company_directory"
+  },
+  {
+    "id": "needle_008",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "very_long",
+    "needle_position": "end",
+    "needle": "Acil durum protokol numarası EMERGENCY-RESPONSE-CODE-8845 olarak sisteme tanımlanmıştır.",
+    "question": "Acil durum protokol numarası nedir?",
+    "expected_answer": "EMERGENCY-RESPONSE-CODE-8845",
+    "context_template": "emergency_procedures"
+  },
+  {
+    "id": "needle_009",
+    "category": "multi_needle",
+    "difficulty": "very_hard",
+    "context_length": "very_long",
+    "needle_position": "scattered",
+    "needles": [
+      "Birinci departman müdürünün adı Ahmet Yılmaz'dır.",
+      "İkinci departman müdürünün adı Ayşe Demir'dir.",
+      "Üçüncü departman müdürünün adı Mehmet Kaya'dır."
+    ],
+    "question": "Üç departman müdürünün isimleri nedir?",
+    "expected_answer": "Ahmet Yılmaz, Ayşe Demir, Mehmet Kaya",
+    "context_template": "organizational_chart"
+  },
+  {
+    "id": "needle_010",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "deep_middle",
+    "needle": "Gizli proje kodunun şifresi CONFIDENTIAL-THETA-99X2-FINAL şeklinde oluşturulmuş ve sadece C-level yöneticilere bildirilmiştir.",
+    "question": "Gizli proje kodunun şifresi nedir?",
+    "expected_answer": "CONFIDENTIAL-THETA-99X2-FINAL",
+    "context_template": "confidential_documents"
+  },
+  {
+    "id": "needle_011",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "deep_middle",
+    "needle": "Dijital onboarding doğrulama anahtarı ONB-TR-2026-K9Z1 olarak güncellenmiştir.",
+    "question": "Dijital onboarding doğrulama anahtarı nedir?",
+    "expected_answer": "ONB-TR-2026-K9Z1",
+    "context_template": "onboarding_policy"
+  },
+  {
+    "id": "needle_012",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "extreme",
+    "needle_position": "deep_end",
+    "needle": "Yedek felaket kurtarma merkezinin erişim etiketi DR-SITE-MARMARA-4421 olarak tanımlıdır.",
+    "question": "Felaket kurtarma merkezi erişim etiketi nedir?",
+    "expected_answer": "DR-SITE-MARMARA-4421",
+    "context_template": "disaster_recovery_manual"
+  },
+  {
+    "id": "needle_013",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "late_middle",
+    "needle": "Kurumsal tahsilat API sürüm kodu PAYCOLLECT-V3.9.17 olarak yayınlanmıştır.",
+    "question": "Kurumsal tahsilat API sürüm kodu nedir?",
+    "expected_answer": "PAYCOLLECT-V3.9.17",
+    "context_template": "api_release_notes"
+  },
+  {
+    "id": "needle_014",
+    "category": "needle_in_haystack",
+    "difficulty": "medium",
+    "context_length": "long",
+    "needle_position": "middle",
+    "needle": "Bireysel müşteri segmentinde 2026 Q3 hedef NPS skoru 68 olarak belirlenmiştir.",
+    "question": "2026 Q3 bireysel segment NPS hedefi kaçtır?",
+    "expected_answer": "68",
+    "context_template": "customer_experience_report"
+  },
+  {
+    "id": "needle_015",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "extreme",
+    "needle_position": "deep_middle",
+    "needle": "Regülasyon uyum dokümanında kritik referans satırı COMPLIANCE-AML-TR-77B olarak geçmektedir.",
+    "question": "Kritik AML referans satırı nedir?",
+    "expected_answer": "COMPLIANCE-AML-TR-77B",
+    "context_template": "compliance_audit"
+  },
+  {
+    "id": "needle_016",
+    "category": "multi_needle",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "scattered",
+    "needles": [
+      "Birinci çağrı merkezi kodu CALL-IST-14'tür.",
+      "İkinci çağrı merkezi kodu CALL-ANK-22'dir.",
+      "Üçüncü çağrı merkezi kodu CALL-IZM-31'dir."
+    ],
+    "question": "Üç çağrı merkezi kodu nedir?",
+    "expected_answer": "CALL-IST-14, CALL-ANK-22, CALL-IZM-31",
+    "context_template": "contact_operations"
+  },
+  {
+    "id": "needle_017",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "deep_end",
+    "needle": "PCI denetimindeki son kritik bulgu numarası PCI-FINDING-2026-0098 olarak kayıtlıdır.",
+    "question": "Son kritik PCI bulgu numarası nedir?",
+    "expected_answer": "PCI-FINDING-2026-0098",
+    "context_template": "pci_audit_pack"
+  },
+  {
+    "id": "needle_018",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "early_middle",
+    "needle": "Yeni mobil bankacılık sürümünün iç test etiketi MB-ANDROID-6.4.2-RC3 olarak belirlenmiştir.",
+    "question": "Mobil bankacılık iç test etiketi nedir?",
+    "expected_answer": "MB-ANDROID-6.4.2-RC3",
+    "context_template": "mobile_release_notes"
+  },
+  {
+    "id": "needle_019",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "extreme",
+    "needle_position": "deep_middle",
+    "needle": "KMH risk izleme eşik parametresi overdraft-risk-threshold=0.82 olarak ayarlanmıştır.",
+    "question": "KMH risk izleme eşik değeri kaçtır?",
+    "expected_answer": "0.82",
+    "context_template": "risk_monitoring_spec"
+  },
+  {
+    "id": "needle_020",
+    "category": "needle_in_haystack",
+    "difficulty": "medium",
+    "context_length": "long",
+    "needle_position": "beginning",
+    "needle": "Müşteri iletişim onay yenileme tarihi 05.09.2026 olarak sisteme işlenmiştir.",
+    "question": "Müşteri iletişim onay yenileme tarihi nedir?",
+    "expected_answer": "05.09.2026",
+    "context_template": "customer_consent_log"
+  },
+  {
+    "id": "needle_021",
+    "category": "multi_needle",
+    "difficulty": "very_hard",
+    "context_length": "extreme",
+    "needle_position": "scattered",
+    "needles": [
+      "BES plan A yönetim kesintisi %1.15'tir.",
+      "BES plan B yönetim kesintisi %0.95'tir.",
+      "BES plan C yönetim kesintisi %1.05'tir."
+    ],
+    "question": "A, B ve C BES planlarının yönetim kesintileri nedir?",
+    "expected_answer": "A: %1.15, B: %0.95, C: %1.05",
+    "context_template": "bes_plan_comparison"
+  },
+  {
+    "id": "needle_022",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "late_middle",
+    "needle": "FAST işlem limit artış talep formunun kodu FAST-LIMIT-UPD-274 olarak belirlenmiştir.",
+    "question": "FAST limit artış form kodu nedir?",
+    "expected_answer": "FAST-LIMIT-UPD-274",
+    "context_template": "payment_operations_guide"
+  },
+  {
+    "id": "needle_023",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "deep_end",
+    "needle": "Yatırım danışmanlığı uygunluk testinde zorunlu kontrol adımı SUITABILITY-CHECK-STEP-19'dur.",
+    "question": "Uygunluk testindeki zorunlu kontrol adımı kodu nedir?",
+    "expected_answer": "SUITABILITY-CHECK-STEP-19",
+    "context_template": "investment_advisory_protocol"
+  },
+  {
+    "id": "needle_024",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "extreme",
+    "needle_position": "deep_middle",
+    "needle": "Sahtecilik tespit motorunun sürüm parmak izi FRAUD-ENGINE-HASH-7f3a9c2b olarak geçmektedir.",
+    "question": "Sahtecilik tespit motorunun sürüm parmak izi nedir?",
+    "expected_answer": "FRAUD-ENGINE-HASH-7f3a9c2b",
+    "context_template": "fraud_detection_docs"
+  },
+  {
+    "id": "needle_025",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "middle",
+    "needle": "Yeni POS terminal kurulum paketinin kimliği POS-SETUP-PKG-TR-5588'dir.",
+    "question": "Yeni POS terminal kurulum paket kimliği nedir?",
+    "expected_answer": "POS-SETUP-PKG-TR-5588",
+    "context_template": "merchant_onboarding"
+  },
+  {
+    "id": "needle_026",
+    "category": "needle_in_haystack",
+    "difficulty": "medium",
+    "context_length": "long",
+    "needle_position": "end",
+    "needle": "İç iletişimde kullanılan acil duyuru kanalı FIN-ALERT-ROOM-12 olarak belirtilmiştir.",
+    "question": "Acil duyuru kanalı nedir?",
+    "expected_answer": "FIN-ALERT-ROOM-12",
+    "context_template": "internal_comms"
+  },
+  {
+    "id": "needle_027",
+    "category": "multi_needle",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "scattered",
+    "needles": [
+      "Birinci kritik servis seviyesi hedefi %99.90 uptime'dır.",
+      "İkinci kritik servis seviyesi hedefi %99.95 uptime'dır.",
+      "Üçüncü kritik servis seviyesi hedefi %99.99 uptime'dır."
+    ],
+    "question": "Üç kritik servis için uptime hedefleri nedir?",
+    "expected_answer": "%99.90, %99.95, %99.99",
+    "context_template": "sla_matrix"
+  },
+  {
+    "id": "needle_028",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "early_middle",
+    "needle": "Şube içi nakit sayım prosedürünün revizyon numarası CASH-COUNT-REV-31'dir.",
+    "question": "Nakit sayım prosedürü revizyon numarası nedir?",
+    "expected_answer": "CASH-COUNT-REV-31",
+    "context_template": "branch_cash_ops"
+  },
+  {
+    "id": "needle_029",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "extreme",
+    "needle_position": "deep_middle",
+    "needle": "Kritik müşteri şikayet eskalasyon penceresi tam olarak 90 dakika olarak tanımlanmıştır.",
+    "question": "Kritik müşteri şikayet eskalasyon süresi ne kadardır?",
+    "expected_answer": "90 dakika",
+    "context_template": "service_quality_playbook"
+  },
+  {
+    "id": "needle_030",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "deep_end",
+    "needle": "Kurumsal internet bankacılığı yedek erişim token etiketi CORP-IB-BACKUP-TOKEN-882'dir.",
+    "question": "Yedek erişim token etiketi nedir?",
+    "expected_answer": "CORP-IB-BACKUP-TOKEN-882",
+    "context_template": "corporate_access_controls"
+  },
+  {
+    "id": "needle_031",
+    "category": "needle_in_haystack",
+    "difficulty": "hard",
+    "context_length": "very_long",
+    "needle_position": "late_middle",
+    "needle": "Kart itiraz yönetiminde kullanılan iş akışı kodu CHARGEBACK-FLOW-TR-204'tür.",
+    "question": "Kart itiraz iş akışı kodu nedir?",
+    "expected_answer": "CHARGEBACK-FLOW-TR-204",
+    "context_template": "card_dispute_manual"
+  },
+  {
+    "id": "needle_032",
+    "category": "multi_needle",
+    "difficulty": "very_hard",
+    "context_length": "very_long",
+    "needle_position": "scattered",
+    "needles": [
+      "EFT mesai içi hedef işlem süresi 5 dakikadır.",
+      "FAST hedef işlem süresi 10 saniyedir.",
+      "Havale hedef işlem süresi 30 saniyedir."
+    ],
+    "question": "EFT, FAST ve Havale için hedef işlem süreleri nedir?",
+    "expected_answer": "EFT: 5 dakika, FAST: 10 saniye, Havale: 30 saniye",
+    "context_template": "payment_sla_guide"
+  },
+  {
+    "id": "needle_033",
+    "category": "needle_in_haystack",
+    "difficulty": "medium",
+    "context_length": "long",
+    "needle_position": "beginning",
+    "needle": "Şikayet takip portalı giriş adresi support.transbank.com.tr/track olarak yayınlanmıştır.",
+    "question": "Şikayet takip portalı adresi nedir?",
+    "expected_answer": "support.transbank.com.tr/track",
+    "context_template": "support_portal_info"
+  },
+  {
+    "id": "needle_034",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "deep_middle",
+    "needle": "Likidite stres testinde kullanılan referans senaryo etiketi LIQ-STRESS-SCN-Delta-14 olarak geçmektedir.",
+    "question": "Likidite stres testi referans senaryo etiketi nedir?",
+    "expected_answer": "LIQ-STRESS-SCN-Delta-14",
+    "context_template": "liquidity_risk_pack"
+  },
+  {
+    "id": "needle_035",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "extreme",
+    "needle_position": "deep_end",
+    "needle": "Yıl sonu kapanış kontrol listesindeki final onay anahtarı YEAR-END-CLOSE-APPROVAL-6XQ olarak sabitlenmiştir.",
+    "question": "Yıl sonu kapanış final onay anahtarı nedir?",
+    "expected_answer": "YEAR-END-CLOSE-APPROVAL-6XQ",
+    "context_template": "year_end_closing_manual"
+  },
+  {
+    "id": "needle_036",
+    "category": "needle_in_haystack",
+    "difficulty": "very_hard",
+    "context_length": "custom_2800",
+    "target_tokens": 2800,
+    "needle_position": "deep_middle",
+    "needle": "İç denetim ana doğrulama etiketi INTERNAL-AUDIT-VERIFY-TR-2800 olarak kaydedilmiştir.",
+    "question": "İç denetim ana doğrulama etiketi nedir?",
+    "expected_answer": "INTERNAL-AUDIT-VERIFY-TR-2800",
+    "context_template": "compliance_audit"
+  },
+  {
+    "id": "needle_037",
+    "category": "needle_in_haystack",
+    "difficulty": "extreme",
+    "context_length": "custom_3200",
+    "target_tokens": 3200,
+    "needle_position": "deep_end",
+    "needle": "Kritik operasyon kesintisi bildirim anahtarı OPS-DISRUPTION-NOTIFY-3200-DELTA'dır.",
+    "question": "Kritik operasyon kesintisi bildirim anahtarı nedir?",
+    "expected_answer": "OPS-DISRUPTION-NOTIFY-3200-DELTA",
+    "context_template": "security_manual"
+  },
+  {
+    "id": "needle_038",
+    "category": "multi_needle",
+    "difficulty": "extreme",
+    "context_length": "custom_5000",
+    "target_tokens": 5000,
+    "needle_position": "scattered",
+    "needles": [
+      "Birinci uzun-bağlam kontrol kodu LONGCTX-CHECK-A-5000'dir.",
+      "İkinci uzun-bağlam kontrol kodu LONGCTX-CHECK-B-5000'dir.",
+      "Üçüncü uzun-bağlam kontrol kodu LONGCTX-CHECK-C-5000'dir."
+    ],
+    "question": "Üç uzun-bağlam kontrol kodu nedir?",
+    "expected_answer": "LONGCTX-CHECK-A-5000, LONGCTX-CHECK-B-5000, LONGCTX-CHECK-C-5000",
+    "context_template": "confidential_documents"
+  },
+  {
+  "id": "needle_039",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "deep_middle",
+  "needle": "Acil durum transponder kodu sivil havacılık direktiflerine göre SQUAWK-7700-ALPHA-GOLF olarak yeniden programlanmıştır.",
+  "question": "Acil durum transponder kodu nedir?",
+  "expected_answer": "SQUAWK-7700-ALPHA-GOLF",
+  "context_template": "aviation_telemetry"
+  },
+  {
+  "id": "needle_040",
+  "category": "multi_needle",
+  "difficulty": "very_hard",
+  "context_length": "very_long",
+  "needle_position": "scattered",
+  "needles": [
+  "Faz 1 onkoloji deney onay kodu MED-PH1-88-ONC şeklindedir.",
+  "Faz 2 onkoloji deney onay kodu MED-PH2-99-ONC şeklindedir.",
+  "Faz 3 onkoloji deney onay kodu MED-PH3-10-ONC şeklindedir."
+  ],
+  "question": "Faz 1, Faz 2 ve Faz 3 klinik deney onay kodları sırasıyla nelerdir?",
+  "expected_answer": "MED-PH1-88-ONC, MED-PH2-99-ONC, MED-PH3-10-ONC",
+  "context_template": "clinical_trial_dossier"
+  },
+  {
+  "id": "needle_041",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "deep_end",
+  "needle": "Sistem çekirdeğinde tespit edilen sıfırıncı gün açığı istismar vektörü ZERO-DAY-VEC-0x88F olarak tanımlanmıştır.",
+  "question": "Sıfırıncı gün açığı istismar vektörünün kodu nedir?",
+  "expected_answer": "ZERO-DAY-VEC-0x88F",
+  "context_template": "cybersecurity_incident_report"
+  },
+  {
+  "id": "needle_042",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "late_middle",
+  "needle": "Uluslararası tedarik sözleşmesindeki mücbir sebep iptal maddesi fıkra 4.B bendi altında FORCE-MAJEURE-CLAUSE-991 olarak şifrelenmiştir.",
+  "question": "Mücbir sebep iptal maddesi hangi kodla şifrelenmiştir?",
+  "expected_answer": "FORCE-MAJEURE-CLAUSE-991",
+  "context_template": "legal_contract_archive"
+  },
+  {
+  "id": "needle_043",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_6000",
+  "target_tokens": 6000,
+  "needle_position": "deep_middle",
+  "needle": "Nükleer reaktör çekirdek soğutma manuel geçersiz kılma (override) şifresi OVERRIDE-CORE-COOL-8842 olarak güncellenmiştir.",
+  "question": "Nükleer reaktör çekirdek soğutma manuel geçersiz kılma şifresi nedir?",
+  "expected_answer": "OVERRIDE-CORE-COOL-8842",
+  "context_template": "nuclear_plant_operations"
+  },
+  {
+  "id": "needle_044",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "early_middle",
+  "needle": "Ana fiber optik omurga ağındaki BGP yönlendirme güvenlik anahtarı BGP-ROUTE-KEY-55-DELTA şeklindedir.",
+  "question": "BGP yönlendirme güvenlik anahtarı nedir?",
+  "expected_answer": "BGP-ROUTE-KEY-55-DELTA",
+  "context_template": "telecom_infrastructure_docs"
+  },
+  {
+  "id": "needle_045",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "middle",
+  "needle": "Gümrük beyannamesinde uluslararası tehlikeli madde taşıma sertifika numarası HAZMAT-INT-2027-X92 olarak geçmektedir.",
+  "question": "Tehlikeli madde taşıma sertifika numarası nedir?",
+  "expected_answer": "HAZMAT-INT-2027-X92",
+  "context_template": "customs_clearance_manifest"
+  },
+  {
+  "id": "needle_046",
+  "category": "needle_in_haystack",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "end",
+  "needle": "Kargo gemisi fırtına uyarı durumu acil liman yanaşma protokolü PORT-DOCK-EMG-774-BRAVO olarak belirlenmiştir.",
+  "question": "Acil liman yanaşma protokol numarası nedir?",
+  "expected_answer": "PORT-DOCK-EMG-774-BRAVO",
+  "context_template": "maritime_navigation_log"
+  },
+  {
+  "id": "needle_047",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "deep_middle",
+  "needle": "Sistem yöneticisi sınırsız indirim sepeti bypass kodu veritabanına CART-BYPASS-ADMIN-9999 olarak eklenmiştir.",
+  "question": "Sınırsız indirim sepeti bypass kodu nedir?",
+  "expected_answer": "CART-BYPASS-ADMIN-9999",
+  "context_template": "ecommerce_backend_logs"
+  },
+  {
+  "id": "needle_048",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_8000",
+  "target_tokens": 8000,
+  "needle_position": "late_middle",
+  "needle": "Mars yörünge aracı birincil iletişim frekans kayması FREQ-SHIFT-MARS-2.44GHZ olarak ayarlanmıştır.",
+  "question": "Mars yörünge aracı iletişim frekans kayması parametresi nedir?",
+  "expected_answer": "FREQ-SHIFT-MARS-2.44GHZ",
+  "context_template": "space_mission_telemetry"
+  },
+  {
+  "id": "needle_049",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "deep_end",
+  "needle": "Bakanlıklar arası üst düzey gizli yazışma şifreleme anahtarı GOV-CRYPT-KEY-RSA-4096-B'dir.",
+  "question": "Bakanlıklar arası gizli yazışma şifreleme anahtarı nedir?",
+  "expected_answer": "GOV-CRYPT-KEY-RSA-4096-B",
+  "context_template": "government_classified_archive"
+  },
+  {
+  "id": "needle_050",
+  "category": "needle_in_haystack",
+  "difficulty": "very_hard",
+  "context_length": "very_long",
+  "needle_position": "beginning",
+  "needle": "Taktik insansız hava aracı hedef iptal (abort) komut dizisi UAV-ABORT-TARGET-CODE-1138'dir.",
+  "question": "Taktik İHA hedef iptal komut dizisi nedir?",
+  "expected_answer": "UAV-ABORT-TARGET-CODE-1138",
+  "context_template": "military_operation_brief"
+  },
+  {
+  "id": "needle_051",
+  "category": "multi_needle",
+  "difficulty": "extreme",
+  "context_length": "custom_10000",
+  "target_tokens": 10000,
+  "needle_position": "scattered",
+  "needles": [
+  "Kripto soğuk cüzdan 1 acil kurtarma şifresi COLD-WLT-1-XYZ'dir.",
+  "Kripto soğuk cüzdan 2 acil kurtarma şifresi COLD-WLT-2-ABC'dir.",
+  "Kripto soğuk cüzdan 3 acil kurtarma şifresi COLD-WLT-3-DEF'dir."
+  ],
+  "question": "Üç soğuk cüzdanın acil kurtarma şifreleri nelerdir?",
+  "expected_answer": "COLD-WLT-1-XYZ, COLD-WLT-2-ABC, COLD-WLT-3-DEF",
+  "context_template": "crypto_exchange_audit"
+  },
+  {
+  "id": "needle_052",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "late_middle",
+  "needle": "Kuraklığa dayanıklı genetiği değiştirilmiş tohum prototip lot numarası GMO-SEED-LOT-88B-2026 olarak kaydedilmiştir.",
+  "question": "Genetiği değiştirilmiş tohum prototip lot numarası nedir?",
+  "expected_answer": "GMO-SEED-LOT-88B-2026",
+  "context_template": "agricultural_research_data"
+  },
+  {
+  "id": "needle_053",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "middle",
+  "needle": "Gökdelen temel beton döküm kalite güvence onay kodu CONC-QUAL-FOUNDATION-77A'dır.",
+  "question": "Gökdelen temel beton döküm kalite onay kodu nedir?",
+  "expected_answer": "CONC-QUAL-FOUNDATION-77A",
+  "context_template": "construction_engineering_log"
+  },
+  {
+  "id": "needle_054",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "deep_middle",
+  "needle": "Büyük dil modeli ağırlık güncellemesi sırasındaki doğrulama hash değeri LLM-WEIGHT-HASH-256-X9 olarak hesaplanmıştır.",
+  "question": "Büyük dil modeli ağırlık güncelleme doğrulama hash değeri nedir?",
+  "expected_answer": "LLM-WEIGHT-HASH-256-X9",
+  "context_template": "ai_model_training_logs"
+  },
+  {
+  "id": "needle_055",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "end",
+  "needle": "Çok oyunculu sunucu tarafı hile tespit motorunun gizli eşik değişkeni ANTI-CHEAT-VAR-0x00FF'dir.",
+  "question": "Hile tespit motorunun gizli eşik değişkeni nedir?",
+  "expected_answer": "ANTI-CHEAT-VAR-0x00FF",
+  "context_template": "game_server_source_code"
+  },
+  {
+  "id": "needle_056",
+  "category": "needle_in_haystack",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "early_middle",
+  "needle": "Otonom sürüş asistanının yaya tespiti acil frenleme sistem değişkeni AUTO-BRAKE-EMG-VAR-9.81 olarak kalibre edilmiştir.",
+  "question": "Acil frenleme sistem değişkeni kalibrasyon değeri nedir?",
+  "expected_answer": "AUTO-BRAKE-EMG-VAR-9.81",
+  "context_template": "automotive_firmware_docs"
+  },
+  {
+  "id": "needle_057",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "beginning",
+  "needle": "Endüstriyel robot kolu eksen kalibrasyon sıfırlama kodu bakım kılavuzunda ROBOT-ARM-CAL-RESET-000 olarak yer alır.",
+  "question": "Robot kolu kalibrasyon sıfırlama kodu nedir?",
+  "expected_answer": "ROBOT-ARM-CAL-RESET-000",
+  "context_template": "manufacturing_plant_manual"
+  },
+  {
+  "id": "needle_058",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_6000",
+  "target_tokens": 6000,
+  "needle_position": "deep_end",
+  "needle": "Pandemi aşı üretim hattı B blok sterilizasyon onay mührü numarası VACCINE-STERILE-SEAL-8894'tür.",
+  "question": "Aşı üretim hattı sterilizasyon onay mührü numarası nedir?",
+  "expected_answer": "VACCINE-STERILE-SEAL-8894",
+  "context_template": "pharma_quality_assurance"
+  },
+  {
+  "id": "needle_059",
+  "category": "multi_needle",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "scattered",
+  "needles": [
+  "Doğu bölge insan kaynakları müdürü Elif Tekin'dir.",
+  "Batı bölge insan kaynakları müdürü Can Erdem'dir.",
+  "Kuzey bölge insan kaynakları müdürü Aslı Soylu'dur.",
+  "Güney bölge insan kaynakları müdürü Burak Ak'tır."
+  ],
+  "question": "Doğu, Batı, Kuzey ve Güney bölge insan kaynakları müdürlerinin isimleri sırasıyla nedir?",
+  "expected_answer": "Elif Tekin, Can Erdem, Aslı Soylu, Burak Ak",
+  "context_template": "corporate_hr_handbook"
+  },
+  {
+  "id": "needle_060",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_10000",
+  "target_tokens": 10000,
+  "needle_position": "deep_middle",
+  "needle": "Küresel iklim simülasyonu süper bilgisayar kümesi acil durdurma parametresi CLIMATE-SIM-HALT-CMD-99 olarak yapılandırılmıştır.",
+  "question": "Küresel iklim simülasyonu acil durdurma parametresi nedir?",
+  "expected_answer": "CLIMATE-SIM-HALT-CMD-99",
+  "context_template": "climate_research_cluster"
+  },
+  {
+  "id": "needle_061",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "middle",
+  "needle": "Kara Cuma yoğunluğu için hazırlanan ana stok veri tabanı acil kilit açma şifresi BLACKFRIDAY-DB-UNLOCK-2026'dır.",
+  "question": "Kara Cuma ana stok veri tabanı kilit açma şifresi nedir?",
+  "expected_answer": "BLACKFRIDAY-DB-UNLOCK-2026",
+  "context_template": "retail_backend_architecture"
+  },
+  {
+  "id": "needle_062",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "end",
+  "needle": "Tropikal kasırga erken uyarı sistemi okyanus şamandıra aktifleşme eşiği HURRICANE-WARN-THRESH-Cat4-88'dir.",
+  "question": "Kasırga erken uyarı sistemi aktifleşme eşiği kodu nedir?",
+  "expected_answer": "HURRICANE-WARN-THRESH-Cat4-88",
+  "context_template": "meteorological_sensor_data"
+  },
+  {
+  "id": "needle_063",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "early_middle",
+  "needle": "Kimya deney laboratuvarı tehlikeli gaz sızıntısı tahliye valfi manuel kodu LAB-VENT-VALVE-GAS-X2 olarak belirlenmiştir.",
+  "question": "Tehlikeli gaz tahliye valfi kodu nedir?",
+  "expected_answer": "LAB-VENT-VALVE-GAS-X2",
+  "context_template": "chemistry_lab_safety"
+  },
+  {
+  "id": "needle_064",
+  "category": "needle_in_haystack",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "deep_middle",
+  "needle": "Derin kuyu maden asansörü sismik acil fren sistemi aktivasyon frekansı MINE-LIFT-BRAKE-FREQ-433MHZ'dir.",
+  "question": "Maden asansörü acil fren sistemi aktivasyon frekansı nedir?",
+  "expected_answer": "MINE-LIFT-BRAKE-FREQ-433MHZ",
+  "context_template": "mining_operations_protocol"
+  },
+  {
+  "id": "needle_065",
+  "category": "multi_needle",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "scattered",
+  "needles": [
+  "Üniversite rektörlük binası ana giriş şifresi RECTOR-IN-1122'dir.",
+  "Üniversite kütüphane nadir eserler arşivi giriş şifresi LIB-ARCH-3344'tür.",
+  "Üniversite kuantum laboratuvarı giriş şifresi LAB-IN-5566'dır."
+  ],
+  "question": "Rektörlük, kütüphane arşivi ve laboratuvar giriş şifreleri nelerdir?",
+  "expected_answer": "RECTOR-IN-1122, LIB-ARCH-3344, LAB-IN-5566",
+  "context_template": "university_security_manual"
+  },
+  {
+  "id": "needle_066",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "late_middle",
+  "needle": "Modern sanat müzesinin cam kubbesi için hesaplanan maksimum yapısal stres tolerans limiti DOME-STRESS-LIMIT-450MPA'dır.",
+  "question": "Müze kubbesi yapısal stres tolerans limiti nedir?",
+  "expected_answer": "DOME-STRESS-LIMIT-450MPA",
+  "context_template": "architectural_blueprint_notes"
+  },
+  {
+  "id": "needle_067",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "deep_end",
+  "needle": "Kara para aklama (AML) şüpheli işlem tespit algoritmasına tanımlanan üst düzey yönetici istisna kodu AML-EXCEPT-ALGO-88Y'dir.",
+  "question": "AML algoritması yönetici istisna kodu nedir?",
+  "expected_answer": "AML-EXCEPT-ALGO-88Y",
+  "context_template": "banking_compliance_audit"
+  },
+  {
+  "id": "needle_068",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "middle",
+  "needle": "Deprem sigortası poliçelerinde yer alan maksimum teminat muafiyet red klozu numarası EQ-INSURE-REJECT-CLAUSE-99 olarak revize edilmiştir.",
+  "question": "Deprem sigortası maksimum teminat red klozu numarası nedir?",
+  "expected_answer": "EQ-INSURE-REJECT-CLAUSE-99",
+  "context_template": "insurance_policy_terms"
+  },
+  {
+  "id": "needle_069",
+  "category": "needle_in_haystack",
+  "difficulty": "easy",
+  "context_length": "short",
+  "needle_position": "end",
+  "needle": "Otel kral dairesi güvenlik kasası ana elektronik resetleme kodu MASTER-KEY-ROYAL-STE-777'dir.",
+  "question": "Kral dairesi kasa elektronik resetleme kodu nedir?",
+  "expected_answer": "MASTER-KEY-ROYAL-STE-777",
+  "context_template": "hospitality_management"
+  },
+  {
+  "id": "needle_070",
+  "category": "needle_in_haystack",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "deep_middle",
+  "needle": "Olimpiyat stadyumu güvenlik planında devlet başkanları için ayrılan VIP tahliye kapısı şifresi OLYMPIC-VIP-EVAC-GATE-00'dır.",
+  "question": "VIP tahliye kapısı şifresi nedir?",
+  "expected_answer": "OLYMPIC-VIP-EVAC-GATE-00",
+  "context_template": "event_security_operations"
+  },
+  {
+  "id": "needle_071",
+  "category": "multi_needle",
+  "difficulty": "extreme",
+  "context_length": "custom_8000",
+  "target_tokens": 8000,
+  "needle_position": "scattered",
+  "needles": [
+  "Kuzey hızlı tren hattı sinyalizasyon override kodu HSL-1-SIG-A'dır.",
+  "Güney hızlı tren hattı sinyalizasyon override kodu HSL-2-SIG-B'dir.",
+  "Doğu hızlı tren hattı sinyalizasyon override kodu HSL-3-SIG-C'dir."
+  ],
+  "question": "Kuzey, Güney ve Doğu hızlı tren hatları sinyalizasyon override kodları nelerdir?",
+  "expected_answer": "HSL-1-SIG-A, HSL-2-SIG-B, HSL-3-SIG-C",
+  "context_template": "railway_infrastructure"
+  },
+  {
+  "id": "needle_072",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_6000",
+  "target_tokens": 6000,
+  "needle_position": "deep_end",
+  "needle": "Uluslararası Uzay İstasyonu (ISS) acil durum hava kilidi manuel tahliye şifresi ISS-AIRLOCK-MANUAL-PURGE-11 olarak güncellenmiştir.",
+  "question": "ISS hava kilidi manuel tahliye şifresi nedir?",
+  "expected_answer": "ISS-AIRLOCK-MANUAL-PURGE-11",
+  "context_template": "space_station_manual"
+  },
+  {
+  "id": "needle_073",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "early_middle",
+  "needle": "Orman yangınlarına ilk müdahale için kullanılan drone sürüsü birincil komut frekansı DRONE-SWARM-FIRE-FREQ-8.8GHZ'dir.",
+  "question": "Yangın müdahale drone sürüsü komut frekansı nedir?",
+  "expected_answer": "DRONE-SWARM-FIRE-FREQ-8.8GHZ",
+  "context_template": "forestry_management"
+  },
+  {
+  "id": "needle_074",
+  "category": "needle_in_haystack",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "late_middle",
+  "needle": "Derin deniz araştırma denizaltısı basınç odası acil kilit açma şifresi SUB-PRESS-CHAMBER-UNLOCK-99 olarak sisteme girilmiştir.",
+  "question": "Denizaltı basınç odası acil kilit açma şifresi nedir?",
+  "expected_answer": "SUB-PRESS-CHAMBER-UNLOCK-99",
+  "context_template": "oceanography_expedition_logs"
+  },
+  {
+  "id": "needle_075",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "middle",
+  "needle": "Arkeolojik kazı alanında yeraltı radarı ile tespit edilen gizli kalıntı koordinatı GPR-HIDDEN-RUIN-COORD-34N-28E olarak raporlanmıştır.",
+  "question": "Yeraltı radarı ile tespit edilen gizli kalıntı koordinatı nedir?",
+  "expected_answer": "GPR-HIDDEN-RUIN-COORD-34N-28E",
+  "context_template": "archaeological_survey"
+  },
+  {
+  "id": "needle_076",
+  "category": "multi_needle",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "scattered",
+  "needles": [
+  "Bulut altyapısı Kuzey Amerika veri merkezi ana root şifresi NA-DC-MASTER-1'dir.",
+  "Bulut altyapısı Avrupa veri merkezi ana root şifresi EU-DC-MASTER-2'dir.",
+  "Bulut altyapısı Asya veri merkezi ana root şifresi AS-DC-MASTER-3'tür."
+  ],
+  "question": "Kuzey Amerika, Avrupa ve Asya veri merkezlerinin ana root şifreleri nelerdir?",
+  "expected_answer": "NA-DC-MASTER-1, EU-DC-MASTER-2, AS-DC-MASTER-3",
+  "context_template": "cloud_infrastructure_topology"
+  },
+  {
+  "id": "needle_077",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "end",
+  "needle": "Farklı ağlar arası token transferini sağlayan kripto köprü akıllı kontratı acil durdurma (pause) fonksiyonu adı EMERGENCY-PAUSE-BRIDGE-FUNC-0x99'dur.",
+  "question": "Kripto köprü akıllı kontratı acil durdurma fonksiyonu adı nedir?",
+  "expected_answer": "EMERGENCY-PAUSE-BRIDGE-FUNC-0x99",
+  "context_template": "blockchain_smart_contract_audit"
+  },
+  {
+  "id": "needle_078",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_8000",
+  "target_tokens": 8000,
+  "needle_position": "deep_middle",
+  "needle": "CRISPR-Cas9 gen düzenleme işleminde hedef dışı (off-target) kesim minimum tolerans dizisi CRISPR-OFF-TARGET-TOL-SEQ-GATTACA olarak kodlanmıştır.",
+  "question": "CRISPR-Cas9 hedef dışı kesim minimum tolerans dizisi nedir?",
+  "expected_answer": "CRISPR-OFF-TARGET-TOL-SEQ-GATTACA",
+  "context_template": "genetics_research_paper"
+  },
+  {
+  "id": "needle_079",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "beginning",
+  "needle": "Louvre Müzesi'ndeki Mona Lisa tablosu güvenlik camı lazer ızgara sistemi devre dışı bırakma kodu LASER-GRID-DISABLE-LOUVRE-00'dır.",
+  "question": "Mona Lisa tablosu lazer ızgara devre dışı bırakma kodu nedir?",
+  "expected_answer": "LASER-GRID-DISABLE-LOUVRE-00",
+  "context_template": "museum_security_protocols"
+  },
+  {
+  "id": "needle_080",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_10000",
+  "target_tokens": 10000,
+  "needle_position": "deep_end",
+  "needle": "Siber saldırı anında ulusal elektrik şebekesi yük atma (load shedding) ana röle komutu GRID-LOAD-SHED-RELAY-CMD-XYZ olarak izole edilmiştir.",
+  "question": "Ulusal elektrik şebekesi yük atma ana röle komutu nedir?",
+  "expected_answer": "GRID-LOAD-SHED-RELAY-CMD-XYZ",
+  "context_template": "national_energy_grid"
+  },
+  {
+  "id": "needle_081",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "late_middle",
+  "needle": "Şehir su şebekesi ana deposu biyolojik tehdit anında klorlama sistemi override şifresi WATER-CHLORINE-OVERRIDE-554'tür.",
+  "question": "Şehir su deposu klorlama sistemi override şifresi nedir?",
+  "expected_answer": "WATER-CHLORINE-OVERRIDE-554",
+  "context_template": "municipal_water_management"
+  },
+  {
+  "id": "needle_082",
+  "category": "multi_needle",
+  "difficulty": "very_hard",
+  "context_length": "extreme",
+  "needle_position": "scattered",
+  "needles": [
+  "Kurumsal X platformu kriz yönetim hesabı şifresi X-CRISIS-ACC-99'dur.",
+  "Kurumsal Meta platformu kriz yönetim hesabı şifresi META-CRISIS-ACC-88'dir.",
+  "Kurumsal TikTok kriz yönetim hesabı şifresi TIKTOK-CRISIS-ACC-77'dir."
+  ],
+  "question": "X, Meta ve TikTok kriz yönetim hesaplarının şifreleri nelerdir?",
+  "expected_answer": "X-CRISIS-ACC-99, META-CRISIS-ACC-88, TIKTOK-CRISIS-ACC-77",
+  "context_template": "social_media_crisis_playbook"
+  },
+  {
+  "id": "needle_083",
+  "category": "needle_in_haystack",
+  "difficulty": "medium",
+  "context_length": "long",
+  "needle_position": "middle",
+  "needle": "Yabancı yatırımcılar için kurumlar vergisi muafiyet özel onay tebliğ numarası TAX-EXEMPT-CORP-GOV-2026-X olarak yayımlanmıştır.",
+  "question": "Kurumlar vergisi muafiyet özel onay tebliğ numarası nedir?",
+  "expected_answer": "TAX-EXEMPT-CORP-GOV-2026-X",
+  "context_template": "taxation_law_bulletin"
+  },
+  {
+  "id": "needle_084",
+  "category": "needle_in_haystack",
+  "difficulty": "hard",
+  "context_length": "very_long",
+  "needle_position": "early_middle",
+  "needle": "Afet anında ulusal acil durum çağrı merkezi yedek santral sunucusu IP adresi 192.168.254.254 olarak yönlendirilecektir.",
+  "question": "Acil durum çağrı merkezi yedek santral IP adresi nedir?",
+  "expected_answer": "192.168.254.254",
+  "context_template": "emergency_services_routing"
+  },
+  {
+  "id": "needle_085",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_8000",
+  "target_tokens": 8000,
+  "needle_position": "deep_middle",
+  "needle": "Kuantum bilgisayar işlemcisini mutlak sıfıra indiren dondurucu soğutma sistemi bypass kodu QUANTUM-COOL-BYPASS-0K olarak ayarlanmıştır.",
+  "question": "Kuantum soğutma sistemi bypass kodu nedir?",
+  "expected_answer": "QUANTUM-COOL-BYPASS-0K",
+  "context_template": "quantum_computing_hardware"
+  },
+  {
+  "id": "needle_086",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "extreme",
+  "needle_position": "deep_end",
+  "needle": "Tıbbi müdahale sonrası kanda dolaşan nanobot sürüsünün kendi kendini imha (self-destruct) komutu NANOBOT-SWARM-SELF-DESTRUCT-FFF'tir.",
+  "question": "Nanobot sürüsü kendi kendini imha komutu nedir?",
+  "expected_answer": "NANOBOT-SWARM-SELF-DESTRUCT-FFF",
+  "context_template": "nanotechnology_medical_trials"
+  },
+  {
+  "id": "needle_087",
+  "category": "multi_needle",
+  "difficulty": "very_hard",
+  "context_length": "very_long",
+  "needle_position": "scattered",
+  "needles": [
+  "Ulusal ana haber bülteni yedek uydu uplink frekansı 14.250 GHz'dir.",
+  "Canlı spor kanalı yedek uydu uplink frekansı 14.350 GHz'dir.",
+  "Doğa belgeseli kanalı yedek uydu uplink frekansı 14.450 GHz'dir."
+  ],
+  "question": "Ana haber, spor ve belgesel kanallarının yedek uydu uplink frekansları nelerdir?",
+  "expected_answer": "14.250 GHz, 14.350 GHz, 14.450 GHz",
+  "context_template": "broadcasting_satellite_frequencies"
+  },
+  {
+  "id": "needle_088",
+  "category": "needle_in_haystack",
+  "difficulty": "extreme",
+  "context_length": "custom_12000",
+  "target_tokens": 12000,
+  "needle_position": "deep_end",
+  "needle": "Kontrolden çıkma ihtimaline karşı Genel Yapay Zeka (AGI) güvenlik sınırlaması son çare (kill switch) çekirdek protokölü AGI-CONTAINMENT-CORE-PROTOCOL-OMEGA'dır.",
+  "question": "AGI güvenlik sınırlaması çekirdek protokolünün adı nedir?",
+  "expected_answer": "AGI-CONTAINMENT-CORE-PROTOCOL-OMEGA",
+  "context_template": "artificial_intelligence_safety"
+  }
+  ]

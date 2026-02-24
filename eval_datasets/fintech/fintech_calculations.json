@@ -1,0 +1,730 @@
+[
+  {
+    "id": "fintech_calc_001",
+    "category": "kredi_hesaplama",
+    "question": "50.000 TL kredi, 12 ay vade, aylık %2,5 faiz oranı ile alındı. Aylık taksit tutarı nedir? (Eşit taksit sistemi)",
+    "formula": "A = P * [r(1+r)^n] / [(1+r)^n - 1]",
+    "expected_answer": "4.917,29 TL (yaklaşık)",
+    "calculation_steps": [
+      "P = 50.000 TL",
+      "r = 0,025",
+      "n = 12",
+      "A = 50000 * [0.025(1.025)^12] / [(1.025)^12 - 1]",
+      "A ≈ 4.917,29 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_002",
+    "category": "getiri_hesaplama",
+    "question": "1000 TL'ye alınan hisse senedi 1200 TL'ye satıldı. Yıllık getiri oranı %15 ise, yatırım ne kadar sürdü? (Basit faiz)",
+    "expected_answer": "16 ay (1,33 yıl)",
+    "calculation_steps": [
+      "Kazanç = 1200 - 1000 = 200 TL",
+      "Getiri oranı = 200/1000 = %20",
+      "Süre = %20 / %15 = 1,33 yıl = 16 ay"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_003",
+    "category": "döviz_arbitraj",
+    "question": "USD/TRY = 30,50, EUR/TRY = 33,20, EUR/USD = 1,08. Arbitraj fırsatı var mı? Varsa nasıl kazanılır?",
+    "expected_answer": "Evet. EUR/USD × USD/TRY = 1,08 × 30,50 = 32,94 < 33,20. 1 EUR'yu TRY'ye çevir (33,20), TRY'yi USD'ye çevir (33,20/30,50 = 1,0885 USD), USD'yi EUR'ya çevir (1,0885/1,08 = 1,0079 EUR). Kar: %0,79",
+    "calculation_steps": [
+      "Cross rate kontrolü: 1,08 × 30,50 = 32,94 TRY",
+      "Market rate: 33,20 TRY",
+      "Fark: 33,20 - 32,94 = 0,26 TRY arbitraj fırsatı",
+      "Strateji: EUR → TRY → USD → EUR"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_004",
+    "category": "mevduat_hesaplama",
+    "question": "10.000 TL'yi yıllık %25 faiz oranı (bileşik) ile 2 yıl vadeli mevduat hesabına yatırırsak, vade sonunda ne kadar para olur?",
+    "expected_answer": "15.625 TL",
+    "calculation_steps": [
+      "FV = PV × (1 + r)^n",
+      "FV = 10.000 × (1,25)^2",
+      "FV = 10.000 × 1,5625",
+      "FV = 15.625 TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_005",
+    "category": "kredi_kartı",
+    "question": "Kredi kartı borcu 5.000 TL. Aylık %5 faiz uygulanıyor. Asgari ödeme (%20) yapılırsa, 3 ay sonra toplam borç ne olur?",
+    "expected_answer": "5.559,75 TL (yaklaşık)",
+    "calculation_steps": [
+      "1. ay: Borç = 5000, Ödeme = 1000, Kalan = 4000, Faiz = 200, Yeni borç = 4200",
+      "2. ay: Borç = 4200, Ödeme = 840, Kalan = 3360, Faiz = 168, Yeni borç = 3528",
+      "3. ay: Borç = 3528, Ödeme = 705,60, Kalan = 2822,40, Faiz = 141,12, Yeni borç = 2963,52",
+      "Toplam ödenen: 2545,60 TL, Kalan borç: 2963,52 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_006",
+    "category": "şirket_değerlemesi",
+    "question": "Bir şirketin yıllık net karı 10 milyon TL ve P/E (Fiyat/Kazanç) oranı 15 ise, şirketin piyasa değeri ne kadardır?",
+    "expected_answer": "150 milyon TL",
+    "calculation_steps": [
+      "Piyasa Değeri = Net Kar × P/E Oranı",
+      "Piyasa Değeri = 10 milyon × 15",
+      "Piyasa Değeri = 150 milyon TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_007",
+    "category": "risk_analizi",
+    "question": "Bir portföyde 40% A hissesi (volatilite: %20), 60% B hissesi (volatilite: %30). Korelasyon 0,5. Portföy volatilitesi nedir?",
+    "expected_answer": "Yaklaşık %23,58",
+    "calculation_steps": [
+      "σp = √(w1²σ1² + w2²σ2² + 2w1w2σ1σ2ρ)",
+      "σp = √(0,4² × 0,2² + 0,6² × 0,3² + 2 × 0,4 × 0,6 × 0,2 × 0,3 × 0,5)",
+      "σp = √(0,0064 + 0,0324 + 0,0144)",
+      "σp = √0,0532 ≈ 0,2308 = %23,08"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_008",
+    "category": "leasing",
+    "question": "100.000 TL değerinde bir araç 36 ay leasing ile alınıyor. Aylık faiz %1,5, kalıntı değer 20.000 TL. Aylık leasing ödemesi nedir?",
+    "expected_answer": "Yaklaşık 2.875 TL",
+    "calculation_steps": [
+      "Finansman tutarı = 100.000 - 20.000 = 80.000 TL",
+      "A = 80000 * [0.015(1.015)^36] / [(1.015)^36 - 1]",
+      "A ≈ 2.875 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_009",
+    "category": "enflasyon",
+    "question": "Bir ürün bugün 1000 TL. Yıllık enflasyon %40 ise, 2 yıl sonra aynı ürün ne kadar olur?",
+    "expected_answer": "1.960 TL",
+    "calculation_steps": [
+      "Gelecekteki fiyat = Bugünkü fiyat × (1 + enflasyon)^yıl",
+      "Gelecekteki fiyat = 1000 × (1,40)^2",
+      "Gelecekteki fiyat = 1000 × 1,96 = 1.960 TL"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_010",
+    "category": "opsiyon_fiyatlama",
+    "question": "Bir hisse senedinin fiyatı 100 TL. Call opsiyonun kullanım fiyatı 110 TL, opsiyon primi 5 TL. Vade sonunda hisse 125 TL olursa kar/zarar nedir?",
+    "expected_answer": "10 TL kar",
+    "calculation_steps": [
+      "Opsiyon değeri vade sonunda = max(125 - 110, 0) = 15 TL",
+      "Ödenmiş prim = 5 TL",
+      "Net kar = 15 - 5 = 10 TL"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_011",
+    "category": "npv_hesaplama",
+    "question": "Bir proje için başlangıç yatırımı 200.000 TL. 3 yıl boyunca sırasıyla 90.000 TL, 100.000 TL, 110.000 TL net nakit akışı bekleniyor. İskonto oranı %18 ise NPV nedir?",
+    "formula": "NPV = -I0 + Σ[CFt / (1+r)^t]",
+    "expected_answer": "Yaklaşık 14.985 TL (pozitif)",
+    "calculation_steps": [
+      "I0 = 200.000",
+      "PV1 = 90.000 / 1,18 = 76.271",
+      "PV2 = 100.000 / (1,18)^2 = 71.816",
+      "PV3 = 110.000 / (1,18)^3 = 66.898",
+      "Toplam PV = 214.985",
+      "NPV = 214.985 - 200.000 = 14.985 TL (yaklaşık pozitif)"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_012",
+    "category": "irr_yaklaşımı",
+    "question": "100.000 TL yatırım yapılıyor. 2 yıl boyunca her yıl 60.000 TL nakit girişi bekleniyor. IRR yaklaşık kaçtır?",
+    "expected_answer": "Yaklaşık %13,1",
+    "calculation_steps": [
+      "IRR için: 100.000 = 60.000/(1+r) + 60.000/(1+r)^2",
+      "Denklem çözümü veya iterasyonla r bulunur",
+      "r ≈ 0,131",
+      "IRR ≈ %13,1"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_013",
+    "category": "efektif_faiz",
+    "question": "Aylık faiz oranı %2,1 olan bir kredinin yıllık efektif faiz oranı nedir?",
+    "formula": "EAR = (1 + r_aylık)^12 - 1",
+    "expected_answer": "Yaklaşık %28,34",
+    "calculation_steps": [
+      "r_aylık = 0,021",
+      "EAR = (1,021)^12 - 1",
+      "EAR ≈ 0,2834",
+      "Yıllık efektif faiz ≈ %28,34"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_014",
+    "category": "kredi_yeniden_fiyatlama",
+    "question": "120.000 TL kalan kredi borcu için mevcut aylık faiz %2,8 ve kalan vade 24 ay. Refinansman ile faiz %2,1'e düşerse aylık taksit yaklaşık ne kadar azalır?",
+    "expected_answer": "Yaklaşık 583 TL azalma",
+    "calculation_steps": [
+      "Eski taksit: A1 = 120000 * [0,028(1,028)^24]/[(1,028)^24-1] ≈ 6.998 TL",
+      "Yeni taksit: A2 = 120000 * [0,021(1,021)^24]/[(1,021)^24-1] ≈ 6.415 TL",
+      "Azalma = 6.998 - 6.415 = 583 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_015",
+    "category": "komisyonlu_doviz",
+    "question": "Müşteri 50.000 TL ile USD almak istiyor. Kur 32,40 ve işlem komisyonu %0,8. Müşteri kaç USD alır?",
+    "expected_answer": "Yaklaşık 1.530,86 USD",
+    "calculation_steps": [
+      "Net TL = 50.000 × (1 - 0,008) = 49.600 TL",
+      "USD miktarı = 49.600 / 32,40",
+      "USD ≈ 1.530,86"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_016",
+    "category": "bono_fiyatlama",
+    "question": "Nominal değeri 1.000 TL, kupon oranı yıllık %30, vade 2 yıl olan ve piyasa faiz oranı %35 olan yıllık kupon ödemeli tahvilin bugünkü fiyatı nedir?",
+    "expected_answer": "Yaklaşık 935,53 TL",
+    "calculation_steps": [
+      "Kupon = 300 TL",
+      "PV kupon1 = 300 / 1,35 = 222,22",
+      "PV kupon2 = 300 / (1,35)^2 = 164,61",
+      "PV anapara = 1.000 / (1,35)^2 = 548,70",
+      "Fiyat = 222,22 + 164,61 + 548,70 = 935,53 TL (yaklaşık)"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_017",
+    "category": "duration_yaklasik",
+    "question": "Macaulay duration'ı 3,2 yıl olan bir tahvilde getiri oranı 200 baz puan (%2) artarsa fiyat değişimi yaklaşık yüzde kaç olur?",
+    "expected_answer": "Yaklaşık %-6,4",
+    "calculation_steps": [
+      "Yaklaşık fiyat değişimi ≈ -Duration × Δy",
+      "Δy = 0,02",
+      "Değişim ≈ -3,2 × 0,02 = -0,064",
+      "Yaklaşık fiyat değişimi = %-6,4"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_018",
+    "category": "sharpe_orani",
+    "question": "Portföy yıllık getirisi %42, risksiz getiri %30, portföy volatilitesi %18 ise Sharpe oranı nedir?",
+    "formula": "Sharpe = (Rp - Rf) / σp",
+    "expected_answer": "0,67",
+    "calculation_steps": [
+      "Rp - Rf = 0,42 - 0,30 = 0,12",
+      "Sharpe = 0,12 / 0,18",
+      "Sharpe = 0,6667 ≈ 0,67"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_019",
+    "category": "var_hesaplama",
+    "question": "Günlük portföy değeri 5.000.000 TL, günlük volatilite %2,2. %99 güven düzeyi için (z=2,33) günlük parametrik VaR nedir?",
+    "expected_answer": "Yaklaşık 256.300 TL",
+    "calculation_steps": [
+      "VaR = V × z × σ",
+      "VaR = 5.000.000 × 2,33 × 0,022",
+      "VaR = 256.300 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_020",
+    "category": "ltv_hesaplama",
+    "question": "Ekspertiz değeri 4.500.000 TL olan konut için 3.150.000 TL kredi kullandırılıyor. LTV oranı nedir ve %70 sınırına uygun mudur?",
+    "expected_answer": "%70, uygundur",
+    "calculation_steps": [
+      "LTV = Kredi / Teminat Değeri",
+      "LTV = 3.150.000 / 4.500.000 = 0,70",
+      "LTV = %70",
+      "%70 sınırına eşit: uygundur"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_021",
+    "category": "dscr_hesaplama",
+    "question": "Bir işletmenin yıllık net faaliyet geliri 2.400.000 TL, yıllık borç servisi 1.800.000 TL. DSCR nedir? 1,20 eşik değerini karşılıyor mu?",
+    "expected_answer": "1,33 ve eşiği karşılıyor",
+    "calculation_steps": [
+      "DSCR = NOI / Debt Service",
+      "DSCR = 2.400.000 / 1.800.000 = 1,333",
+      "DSCR ≈ 1,33",
+      "1,20'den büyük olduğu için yeterli"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_022",
+    "category": "aprc_toplam_maliyet",
+    "question": "100.000 TL ihtiyaç kredisi için dosya masrafı 1.500 TL, sigorta 2.500 TL ve nominal yıllık faiz %36. Ek maliyetlerin anaparaya oranı kaçtır?",
+    "expected_answer": "%4",
+    "calculation_steps": [
+      "Ek maliyet = 1.500 + 2.500 = 4.000 TL",
+      "Oran = 4.000 / 100.000 = 0,04",
+      "Ek maliyet oranı = %4"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_023",
+    "category": "erken_kapama_cezasi",
+    "question": "Kalan anapara 280.000 TL olan ve vadesine 30 ay kalan konut kredisi erken kapatılıyor. Erken ödeme tazminatı oranı %2 ise ceza tutarı nedir?",
+    "expected_answer": "5.600 TL",
+    "calculation_steps": [
+      "Ceza = Kalan anapara × oran",
+      "Ceza = 280.000 × 0,02",
+      "Ceza = 5.600 TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_024",
+    "category": "taksit_gelir_orani",
+    "question": "Aylık net gelir 85.000 TL, mevcut aylık borç ödemeleri 18.000 TL. Yeni kredi taksiti 14.000 TL olursa toplam borç/gelir oranı (DTI) nedir?",
+    "expected_answer": "Yaklaşık %37,65",
+    "calculation_steps": [
+      "Toplam aylık borç = 18.000 + 14.000 = 32.000 TL",
+      "DTI = 32.000 / 85.000 = 0,3765",
+      "DTI ≈ %37,65"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_025",
+    "category": "doviz_forward",
+    "question": "Spot USD/TRY 32,00. TL yıllık faiz %40, USD yıllık faiz %5, vade 6 ay. Faiz paritesi ile teorik forward kur nedir?",
+    "formula": "F = S × (1 + r_TL×t) / (1 + r_USD×t)",
+    "expected_answer": "Yaklaşık 37,46",
+    "calculation_steps": [
+      "S = 32,00, t = 0,5",
+      "Üst = 1 + 0,40×0,5 = 1,20",
+      "Alt = 1 + 0,05×0,5 = 1,025",
+      "F = 32,00 × 1,20 / 1,025 = 37,46"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_026",
+    "category": "capm_hesaplama",
+    "question": "Risksiz getiri oranı %5, piyasa beklenen getirisi %10 ve hisse senedinin beta katsayısı 1,2 ise, CAPM'e göre hisse senedinin beklenen getirisi nedir?",
+    "formula": "E(R) = Rf + Beta * (Rm - Rf)",
+    "expected_answer": "%11",
+    "calculation_steps": [
+      "Rf = 0,05",
+      "Rm = 0,10",
+      "Beta = 1,2",
+      "E(R) = 0,05 + 1,2 * (0,10 - 0,05)",
+      "E(R) = 0,05 + 1,2 * 0,05 = 0,05 + 0,06 = 0,11"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_027",
+    "category": "wacc_hesaplama",
+    "question": "Bir şirketin sermaye yapısı %60 özkaynak ve %40 borçtan oluşmaktadır. Özkaynak maliyeti %12, borçlanma maliyeti %6 ve kurumlar vergisi oranı %20 ise WACC (Ağırlıklı Ortalama Sermaye Maliyeti) nedir?",
+    "formula": "WACC = (E/V * Ke) + (D/V * Kd * (1 - T))",
+    "expected_answer": "%9,12",
+    "calculation_steps": [
+      "Özkaynak ağırlığı (E/V) = 0,60, Ke = 0,12",
+      "Borç ağırlığı (D/V) = 0,40, Kd = 0,06, T = 0,20",
+      "WACC = (0,60 * 0,12) + (0,40 * 0,06 * (1 - 0,20))",
+      "WACC = 0,072 + (0,024 * 0,80) = 0,072 + 0,0192 = 0,0912"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_028",
+    "category": "hisse_degerleme",
+    "question": "Bir şirket gelecek yıl hisse başına 5 TL temettü ödemeyi planlamaktadır. Temettülerin her yıl %5 büyümesi beklenmektedir. Yatırımcının beklediği getiri oranı %15 ise, Gordon Büyüme Modeli'ne göre hissenin adil değeri nedir?",
+    "formula": "P0 = D1 / (r - g)",
+    "expected_answer": "50 TL",
+    "calculation_steps": [
+      "D1 = 5 TL",
+      "r = 0,15",
+      "g = 0,05",
+      "P0 = 5 / (0,15 - 0,05)",
+      "P0 = 5 / 0,10 = 50 TL"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_029",
+    "category": "pratik_hesaplama",
+    "question": "Yıllık %8 bileşik faiz kazandıran bir yatırımın değerini ikiye katlaması 72 Kuralı'na göre yaklaşık kaç yıl sürer?",
+    "formula": "t ≈ 72 / r",
+    "expected_answer": "9 yıl",
+    "calculation_steps": [
+      "r = 8 (yüzde olarak)",
+      "t = 72 / 8",
+      "t = 9 yıl"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_030",
+    "category": "reel_faiz",
+    "question": "Nominal faiz oranının %15 ve enflasyon oranının %10 olduğu bir ekonomide, Fisher denklemine göre reel faiz oranı tam olarak kaçtır?",
+    "formula": "(1 + r_nominal) = (1 + r_reel) * (1 + enflasyon)",
+    "expected_answer": "Yaklaşık %4,54",
+    "calculation_steps": [
+      "1 + r_reel = (1 + 0,15) / (1 + 0,10)",
+      "1 + r_reel = 1,15 / 1,10 ≈ 1,04545",
+      "r_reel ≈ 0,04545 = %4,54"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_031",
+    "category": "margin_call",
+    "question": "Yatırımcı 50 TL fiyattan 100 adet hisse senedini %50 başlangıç teminatı ile kredili almıştır. Sürdürme teminatı oranı %30 ise, hisse fiyatı hangi seviyeye düşerse teminat tamamlama çağrısı (margin call) alır?",
+    "formula": "Margin Call Fiyatı = P0 * (1 - Başlangıç Teminatı) / (1 - Sürdürme Teminatı)",
+    "expected_answer": "Yaklaşık 35,71 TL",
+    "calculation_steps": [
+      "P0 = 50 TL",
+      "Başlangıç Teminatı = 0,50",
+      "Sürdürme Teminatı = 0,30",
+      "Fiyat = 50 * (1 - 0,50) / (1 - 0,30)",
+      "Fiyat = 25 / 0,70 ≈ 35,714 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_032",
+    "category": "dupont_analizi",
+    "question": "Bir şirketin net kar marjı %10, aktif devir hızı 1,5 ve özkaynak çarpanı 2'dir. DuPont analizine göre şirketin Özkaynak Karlılığı (ROE) kaçtır?",
+    "formula": "ROE = Net Kar Marjı * Aktif Devir Hızı * Özkaynak Çarpanı",
+    "expected_answer": "%30",
+    "calculation_steps": [
+      "Net Kar Marjı = 0,10",
+      "Aktif Devir Hızı = 1,5",
+      "Özkaynak Çarpanı = 2",
+      "ROE = 0,10 * 1,5 * 2 = 0,30 = %30"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_033",
+    "category": "likidite_oranlari",
+    "question": "Bir şirketin dönen varlıkları 500.000 TL, stokları 200.000 TL ve kısa vadeli yabancı kaynakları 250.000 TL'dir. Şirketin asit-test (likidite) oranı kaçtır?",
+    "formula": "Asit-Test Oranı = (Dönen Varlıklar - Stoklar) / Kısa Vadeli Yabancı Kaynaklar",
+    "expected_answer": "1,2",
+    "calculation_steps": [
+      "Dönen Varlıklar = 500.000",
+      "Stoklar = 200.000",
+      "Kısa Vadeli Yabancı Kaynaklar = 250.000",
+      "Asit-Test Oranı = (500.000 - 200.000) / 250.000",
+      "Asit-Test Oranı = 300.000 / 250.000 = 1,2"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_034",
+    "category": "hisse_degerleme",
+    "question": "Şirketin yıllık net karı 2.000.000 TL, imtiyazlı hisse senedi temettü ödemesi 200.000 TL ve tedavüldeki adi hisse senedi sayısı 600.000 adettir. Hisse Başına Kazanç (EPS) ne kadardır?",
+    "formula": "EPS = (Net Kar - İmtiyazlı Temettüler) / Tedavüldeki Hisse Sayısı",
+    "expected_answer": "3 TL",
+    "calculation_steps": [
+      "Net Kar = 2.000.000",
+      "İmtiyazlı Temettü = 200.000",
+      "Hisse Sayısı = 600.000",
+      "EPS = (2.000.000 - 200.000) / 600.000",
+      "EPS = 1.800.000 / 600.000 = 3 TL"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_035",
+    "category": "hisse_degerleme",
+    "question": "Bir hisse senedinin Fiyat/Kazanç (F/K) oranı 20 ve beklenen yıllık EPS büyüme oranı %10'dur. Hissenin PEG oranı kaçtır?",
+    "formula": "PEG = (F/K) / Büyüme Oranı",
+    "expected_answer": "2",
+    "calculation_steps": [
+      "F/K = 20",
+      "Büyüme Oranı = 10",
+      "PEG = 20 / 10 = 2"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_036",
+    "category": "sirket_degerlemesi",
+    "question": "Bir şirketin piyasa değeri 50 milyon TL, toplam borcu 20 milyon TL ve nakit ve nakit benzerleri 5 milyon TL'dir. Şirketin Firma Değeri (Enterprise Value - EV) ne kadardır?",
+    "formula": "EV = Piyasa Değeri + Toplam Borç - Nakit",
+    "expected_answer": "65 milyon TL",
+    "calculation_steps": [
+      "Piyasa Değeri = 50.000.000",
+      "Toplam Borç = 20.000.000",
+      "Nakit = 5.000.000",
+      "EV = 50.000.000 + 20.000.000 - 5.000.000 = 65.000.000 TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_037",
+    "category": "finansal_analiz",
+    "question": "Şirketin net karı 10 milyon TL, ödediği vergiler 2 milyon TL, faiz giderleri 1 milyon TL ve amortisman/yıpranma giderleri 3 milyon TL'dir. Şirketin FAVÖK (EBITDA) değeri nedir?",
+    "formula": "FAVÖK = Net Kar + Vergi + Faiz + Amortisman",
+    "expected_answer": "16 milyon TL",
+    "calculation_steps": [
+      "Net Kar = 10",
+      "Vergi = 2",
+      "Faiz = 1",
+      "Amortisman = 3",
+      "FAVÖK = 10 + 2 + 1 + 3 = 16 milyon TL"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_038",
+    "category": "opsiyon_fiyatlama",
+    "question": "Kullanım fiyatı (strike price) 50 TL olan bir satım (put) opsiyonunun dayanak varlığının piyasa fiyatı 40 TL'dir. Bu opsiyonun içsel değeri (intrinsic value) nedir?",
+    "formula": "İçsel Değer (Put) = Max(Kullanım Fiyatı - Piyasa Fiyatı, 0)",
+    "expected_answer": "10 TL",
+    "calculation_steps": [
+      "Kullanım Fiyatı = 50",
+      "Piyasa Fiyatı = 40",
+      "İçsel Değer = Max(50 - 40, 0) = 10 TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_039",
+    "category": "risk_analizi",
+    "question": "Bir hisse senedinin piyasa portföyü ile kovaryansı 0,04 ve piyasa portföyünün varyansı 0,025'tir. Bu hisse senedinin beta katsayısı kaçtır?",
+    "formula": "Beta = Kovaryans(Hisse, Piyasa) / Varyans(Piyasa)",
+    "expected_answer": "1,6",
+    "calculation_steps": [
+      "Kovaryans = 0,04",
+      "Varyans = 0,025",
+      "Beta = 0,04 / 0,025 = 1,6"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_040",
+    "category": "performans_olcum",
+    "question": "Bir yatırım portföyünün getirisi %15, risksiz faiz oranı %3 ve portföyün betası 1,2'dir. Portföyün Treynor Oranı kaçtır?",
+    "formula": "Treynor Oranı = (Rp - Rf) / Beta",
+    "expected_answer": "10",
+    "calculation_steps": [
+      "Rp = 15",
+      "Rf = 3",
+      "Beta = 1,2",
+      "Treynor Oranı = (15 - 3) / 1,2 = 12 / 1,2 = 10"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_041",
+    "category": "performans_olcum",
+    "question": "Portföyün getirisi %12, karşılaştırma ölçütünün (benchmark) getirisi %10 ve izleme hatası (tracking error) %4'tür. Portföyün Bilgi Oranı (Information Ratio) kaçtır?",
+    "formula": "IR = (Rp - Rb) / Tracking Error",
+    "expected_answer": "0,5",
+    "calculation_steps": [
+      "Rp = 12",
+      "Rb = 10",
+      "Tracking Error = 4",
+      "IR = (12 - 10) / 4 = 2 / 4 = 0,5"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_042",
+    "category": "sermaye_maliyeti",
+    "question": "Bir şirketin ihraç ettiği tahvillerin vadeye getiri oranı (YTM) %8'dir. Kurumlar vergisi oranı %25 ise, şirketin vergi sonrası borçlanma maliyeti nedir?",
+    "formula": "Kd_after_tax = YTM * (1 - Vergi Oranı)",
+    "expected_answer": "%6",
+    "calculation_steps": [
+      "YTM = 0,08",
+      "Vergi Oranı = 0,25",
+      "Kd = 0,08 * (1 - 0,25) = 0,08 * 0,75 = 0,06 = %6"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_043",
+    "category": "portfoy_yonetimi",
+    "question": "Bir portföyün %40'ı A hissesinden (beklenen getiri %10), %60'ı B hissesinden (beklenen getiri %15) oluşmaktadır. Portföyün beklenen getirisi nedir?",
+    "formula": "E(Rp) = w1*R1 + w2*R2",
+    "expected_answer": "%13",
+    "calculation_steps": [
+      "w1 = 0,40, R1 = 0,10",
+      "w2 = 0,60, R2 = 0,15",
+      "E(Rp) = (0,40 * 0,10) + (0,60 * 0,15) = 0,04 + 0,09 = 0,13 = %13"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_044",
+    "category": "doviz_arbitraj",
+    "question": "Piyasada USD/TRY kuru 30,00 ve GBP/USD kuru 1,25'tir. Çapraz kura göre GBP/TRY kuru ne olmalıdır?",
+    "formula": "GBP/TRY = GBP/USD * USD/TRY",
+    "expected_answer": "37,50",
+    "calculation_steps": [
+      "USD/TRY = 30,00",
+      "GBP/USD = 1,25",
+      "GBP/TRY = 1,25 * 30,00 = 37,50"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_045",
+    "category": "maliyet_muhasebesi",
+    "question": "Bir işletmenin sabit maliyetleri 100.000 TL, ürünün birim satış fiyatı 50 TL ve birim değişken maliyeti 30 TL'dir. İşletmenin başabaş noktası (break-even point) kaç birimdir?",
+    "formula": "Başabaş Noktası = Sabit Maliyetler / (Birim Satış Fiyatı - Birim Değişken Maliyet)",
+    "expected_answer": "5.000 birim",
+    "calculation_steps": [
+      "Sabit Maliyet = 100.000",
+      "Birim Katkı Payı = 50 - 30 = 20",
+      "Başabaş Noktası = 100.000 / 20 = 5.000 birim"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_046",
+    "category": "faaliyet_oranlari",
+    "question": "Şirketin yıllık satılan malın maliyeti (SMM) 400.000 TL ve ortalama stok tutarı 50.000 TL'dir. Stok devir hızı kaçtır?",
+    "formula": "Stok Devir Hızı = SMM / Ortalama Stok",
+    "expected_answer": "8 kez",
+    "calculation_steps": [
+      "SMM = 400.000",
+      "Ortalama Stok = 50.000",
+      "Stok Devir Hızı = 400.000 / 50.000 = 8"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_047",
+    "category": "faaliyet_oranlari",
+    "question": "Şirketin ticari alacakları 100.000 TL ve yıllık kredili satışları 1.200.000 TL'dir. Alacak tahsil süresi (DSO) kaç gündür? (1 yıl = 365 gün)",
+    "formula": "DSO = (Ticari Alacaklar / Kredili Satışlar) * 365",
+    "expected_answer": "Yaklaşık 30,4 gün",
+    "calculation_steps": [
+      "Ticari Alacaklar = 100.000",
+      "Kredili Satışlar = 1.200.000",
+      "DSO = (100.000 / 1.200.000) * 365 = (1/12) * 365 ≈ 30,41 gün"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_048",
+    "category": "nakit_akis",
+    "question": "Şirketin FVÖK (EBIT) değeri 500.000 TL, vergi oranı %20, amortisman gideri 50.000 TL, sermaye harcamaları (CapEx) 100.000 TL ve net işletme sermayesindeki artış 20.000 TL'dir. Firmaya Serbest Nakit Akışı (FCFF) ne kadardır?",
+    "formula": "FCFF = EBIT*(1-t) + Amortisman - CapEx - NWC Değişimi",
+    "expected_answer": "330.000 TL",
+    "calculation_steps": [
+      "EBIT*(1-t) = 500.000 * (1 - 0,20) = 400.000",
+      "FCFF = 400.000 + 50.000 - 100.000 - 20.000",
+      "FCFF = 450.000 - 120.000 = 330.000 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_calc_049",
+    "category": "kredi_hesaplama",
+    "question": "1.000.000 TL tutarında, yıllık %24 faiz oranına sahip (aylık %2) bir konut kredisinin ilk ay taksitindeki faiz ödemesi ne kadardır?",
+    "formula": "Aylık Faiz = Kalan Anapara * Aylık Faiz Oranı",
+    "expected_answer": "20.000 TL",
+    "calculation_steps": [
+      "Kalan Anapara = 1.000.000",
+      "Aylık Faiz Oranı = 0,02",
+      "Faiz Ödemesi = 1.000.000 * 0,02 = 20.000 TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_050",
+    "category": "kredi_karti",
+    "question": "Kredi kartı dönem borcu 10.000 TL'dir. Aylık akdi faiz oranı %4'tür. Hiç ödeme yapılmazsa bir sonraki ay borç ne kadar olur? (Gecikme faizi ve vergiler hariç)",
+    "expected_answer": "10.400 TL",
+    "calculation_steps": [
+      "Borç = 10.000",
+      "Faiz = 10.000 * 0,04 = 400",
+      "Yeni Borç = 10.000 + 400 = 10.400 TL"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_051",
+    "category": "hisse_degerleme",
+    "question": "Bir hisse senedinin piyasa fiyatı 80 TL ve yıllık ödediği temettü 4 TL'dir. Temettü verimi (Dividend Yield) yüzde kaçtır?",
+    "formula": "Temettü Verimi = Yıllık Temettü / Hisse Fiyatı",
+    "expected_answer": "%5",
+    "calculation_steps": [
+      "Yıllık Temettü = 4",
+      "Hisse Fiyatı = 80",
+      "Temettü Verimi = 4 / 80 = 0,05 = %5"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_052",
+    "category": "finansal_oranlar",
+    "question": "Şirketin piyasa değeri 200 milyon TL, toplam varlıkları 150 milyon TL ve toplam yükümlülükleri 50 milyon TL'dir. Piyasa Değeri / Defter Değeri (P/B) oranı kaçtır?",
+    "formula": "P/B = Piyasa Değeri / Defter Değeri (Özkaynaklar)",
+    "expected_answer": "2",
+    "calculation_steps": [
+      "Defter Değeri = Toplam Varlıklar - Toplam Yükümlülükler",
+      "Defter Değeri = 150 - 50 = 100 milyon TL",
+      "P/B = 200 / 100 = 2"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_calc_053",
+    "category": "kaldirac_oranlari",
+    "question": "Şirketin toplam borcu 60 milyon TL ve toplam özkaynakları 40 milyon TL'dir. Borç/Özkaynak (D/E) oranı kaçtır?",
+    "formula": "D/E = Toplam Borç / Toplam Özkaynak",
+    "expected_answer": "1,5",
+    "calculation_steps": [
+      "Toplam Borç = 60",
+      "Toplam Özkaynak = 40",
+      "D/E = 60 / 40 = 1,5"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_054",
+    "category": "karlilik_oranlari",
+    "question": "Şirketin yıllık satış gelirleri 500.000 TL ve satılan malın maliyeti 300.000 TL'dir. Brüt kar marjı yüzde kaçtır?",
+    "formula": "Brüt Kar Marjı = (Satışlar - SMM) / Satışlar",
+    "expected_answer": "%40",
+    "calculation_steps": [
+      "Brüt Kar = 500.000 - 300.000 = 200.000",
+      "Brüt Kar Marjı = 200.000 / 500.000 = 0,40 = %40"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_calc_055",
+    "category": "surekli_bilesik_faiz",
+    "question": "1.000 TL, yıllık %10 sürekli bileşik faiz oranı ile 2 yıllığına yatırılırsa vade sonundaki tutar yaklaşık ne kadar olur? (e ≈ 2,718)",
+    "formula": "FV = PV * e^(r*t)",
+    "expected_answer": "Yaklaşık 1.221,40 TL",
+    "calculation_steps": [
+      "PV = 1000, r = 0,10, t = 2",
+      "FV = 1000 * e^(0,10 * 2) = 1000 * e^0,20",
+      "e^0,20 ≈ 1,2214",
+      "FV ≈ 1000 * 1,2214 = 1.221,40 TL"
+    ],
+    "difficulty": "hard"
+  }
+]

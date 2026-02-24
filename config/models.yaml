@@ -1,0 +1,233 @@
+models:
+  gpt-5.2:
+    api_key: ${OPENAI_API_KEY}
+    max_tokens: 4096
+    model_name: gpt-5.2
+    provider: openai
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.0
+  claude-sonnet-45:
+    api_key: ${ANTHROPIC_API_KEY}
+    max_tokens: 4096
+    model_name: claude-sonnet-4-5-20250929
+    provider: anthropic
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.0
+  gpt-4o:
+    api_key: ${AZURE_OPENAI_KEY}
+    api_version: ${AZURE_OPENAI_API_VERSION}
+    base_url: ${AZURE_OPENAI_ENDPOINT}
+    max_tokens: 4096
+    model_name: ${AZURE_OPENAI_DEPLOYMENT_NAME_PTU}
+    provider: openai
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.0
+  gpt4.1:
+    api_key: ${AZURE_OPENAI_KEY}
+    api_version: 2025-01-01-preview
+    base_url: ${AZURE_OPENAI_ENDPOINT}
+    max_tokens: 4096
+    model_name: ${AZURE_OPENAI_DEPLOYMENT_NAME_PR}
+    provider: openai
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.5
+  llama-3-70b-vllm:
+    api_key: dummy
+    base_url: ${LLAMA3_VLLM_BASE_URL}
+    max_tokens: 4096
+    model_name: meta-llama/Meta-Llama-3-70B-Instruct
+    provider: openai
+    quirks:
+    - custom_stopping_criteria
+    - slower_function_calling
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.0
+  llama3-ollama:
+    api_key: dummy
+    base_url: ${OLLAMA_BASE_URL}
+    max_tokens: 4096
+    model_name: llama3
+    provider: ollama
+    supports_function_calling: false
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.0
+  lmstudio-model1:
+    api_key: dummy
+    base_url: ${LMSTUDIO_MODEL1_BASE_URL}
+    max_tokens: 4096
+    model_name: local-model
+    provider: lmstudio
+    supports_function_calling: false
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.0
+  lmstudio-model2:
+    api_key: dummy
+    base_url: ${LMSTUDIO_MODEL2_BASE_URL}
+    max_tokens: 4096
+    model_name: local-model
+    provider: lmstudio
+    supports_function_calling: false
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.0
+  mistral-large-vllm:
+    api_key: dummy
+    base_url: ${MISTRAL_LARGE_VLLM_BASE_URL}
+    max_tokens: 4096
+    model_name: mistralai/Mistral-Large-Instruct-2407
+    provider: openai
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.0
+  mistral-ollama:
+    api_key: dummy
+    base_url: ${OLLAMA_BASE_URL}
+    max_tokens: 4096
+    model_name: mistral
+    provider: ollama
+    supports_function_calling: false
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.0
+  mistral-small-3.1:
+    api_key: dummy
+    base_url: ${MISTRAL_API_URL}
+    extra_body:
+      top_k: 40
+    max_tokens: 4096
+    model_name: default
+    provider: openai
+    seed: 42
+    supports_function_calling: true
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.5
+    top_p: 0.5
+  qwen-3-30b:
+    api_key: dummy
+    base_url: ${LLM_API_URL}
+    extra_body:
+      chat_template_kwargs:
+        enable_thinking: false
+      top_k: 40
+    max_tokens: 4096
+    model_name: default
+    provider: openai
+    seed: 42
+    supports_function_calling: true
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.5
+    top_p: 0.5
+  qwen-72b-vllm:
+    api_key: dummy
+    base_url: ${QWEN72B_VLLM_BASE_URL}
+    max_tokens: 4096
+    model_name: Qwen/Qwen2.5-72B-Instruct
+    provider: openai
+    supports_function_calling: true
+    supports_streaming: true
+    temperature: 0.0
+  qwen-ollama:
+    api_key: dummy
+    base_url: ${OLLAMA_BASE_URL}
+    max_tokens: 4096
+    model_name: qwen2.5
+    provider: ollama
+    supports_function_calling: false
+    supports_response_format: false
+    supports_streaming: true
+    temperature: 0.0
+
+# ==================== EMBEDDING MODELS ====================
+embedding_models:
+  # LiteLLM Deployed Models (Internal)
+  jina-v3-litellm:
+    provider: litellm
+    model_name: jina-v3
+    base_url: ${LITELLM_BASE_URL}
+    api_key: ${LITELLM_API_KEY}
+    embedding_dim: 1024
+    max_sequence_length: 8192
+    timeout: 30.0
+  
+  multi-qa-mpnet-litellm:
+    provider: litellm
+    model_name: multi-qa-mpnet
+    base_url: ${LITELLM_BASE_URL}
+    api_key: ${LITELLM_API_KEY}
+    embedding_dim: 768
+    max_sequence_length: 512
+    timeout: 30.0
+  
+  qwen3-embedding-litellm:
+    provider: litellm
+    model_name: qwen3-embedding
+    base_url: ${LITELLM_BASE_URL}
+    api_key: ${LITELLM_API_KEY}
+    embedding_dim: 1024
+    max_sequence_length: 8192
+    timeout: 30.0
+  
+  # HuggingFace Local Models (for local testing)
+  multilingual-e5-large:
+    provider: huggingface
+    model_name: intfloat/multilingual-e5-large
+    model_path: intfloat/multilingual-e5-large
+    embedding_dim: 1024
+    max_sequence_length: 512
+    batch_size: 32
+  
+  paraphrase-multilingual-mpnet:
+    provider: huggingface
+    model_name: sentence-transformers/paraphrase-multilingual-mpnet-base-v2
+    model_path: sentence-transformers/paraphrase-multilingual-mpnet-base-v2
+    embedding_dim: 768
+    max_sequence_length: 512
+    batch_size: 32
+  
+  labse:
+    provider: huggingface
+    model_name: sentence-transformers/LaBSE
+    model_path: sentence-transformers/LaBSE
+    embedding_dim: 768
+    max_sequence_length: 256
+    batch_size: 32
+  
+  # vLLM Deployed Models (Internal)
+  
+  multi-qa-mpnet-base-dot-v1-vllm:
+    provider: vllm
+    model_name: multi-qa-mpnet-base-dot-v1
+    base_url: ${EMBEDDING_SERVICE_BASE_URL}
+    api_key: dummy
+    embedding_dim: 768
+    max_sequence_length: 512
+    timeout: 30.0
+  
+  qwen3-embed-vllm:
+    provider: vllm
+    model_name: qwen3-embed
+    base_url: ${INTENT_EMBEDDING_SERVICE_BASE_URL}
+    api_key: dummy
+    embedding_dim: 1024
+    max_sequence_length: 8192
+    timeout: 30.0
+  
+  # OpenAI API (if needed)
+  text-embedding-3-large-openai:
+    provider: openai
+    model_name: text-embedding-3-large
+    base_url: ${OPENAI_BASE_URL}
+    api_key: ${OPENAI_API_KEY}
+    embedding_dim: 3072
+    max_sequence_length: 8191
+    timeout: 30.0
+

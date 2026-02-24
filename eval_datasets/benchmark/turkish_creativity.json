@@ -1,0 +1,562 @@
+[
+  {
+    "id": "tr_creative_001",
+    "category": "cümle_yeniden_yazma",
+    "question": "Bu cümleyi farklı bir şekilde yeniden yazın (anlam aynı kalsın): 'Hava çok soğuk olduğu için dışarı çıkmadım.'",
+    "expected_answer": "Örnek yanıtlar: 'Dışarı çıkmadım çünkü hava çok soğuktu.' veya 'Havanın çok soğuk olması sebebiyle dışarı çıkmadım.' veya 'Soğuk havadan dolayı dışarı çıkmadım.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_002",
+    "category": "eş_anlamlı_ifade",
+    "question": "'Çok mutluyum' cümlesini başka nasıl ifade edebilirsiniz? 3 farklı yol sunun.",
+    "expected_answer": "Örnek: 1) 'Çok sevinçliyim', 2) 'Keyfim yerinde', 3) 'Çok neşeliyim', 4) 'Mutluluktan uçuyorum'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_003",
+    "category": "metafor_üretme",
+    "question": "'Zaman' kavramı için bir metafor/benzetme oluşturun.",
+    "expected_answer": "Örnek: 'Zaman bir nehir gibidir, durmadan akar.' veya 'Zaman bir kuş gibidir, uçup gider.' veya 'Zaman para gibidir, dikkatli kullanmalıyız.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_004",
+    "category": "formal_informal_dönüşüm",
+    "question": "Bu resmi cümleyi gündelik dile çevirin: 'İlgi ve alakanız için teşekkür ederiz.'",
+    "expected_answer": "Örnek: 'İlginiz için teşekkürler.' veya 'Sağ olun, teşekkürler.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_005",
+    "category": "informal_formal_dönüşüm",
+    "question": "Bu gündelik cümleyi resmi dile çevirin: 'Toplantı iptal oldu, haberiniz olsun.'",
+    "expected_answer": "Örnek: 'Toplantının iptal edildiğini bilgilerinize sunarız.' veya 'Toplantının iptal edildiğini saygılarımızla arz ederiz.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_006",
+    "category": "paragraf_özetleme",
+    "question": "Bu paragrafı tek cümlede özetleyin: 'Dün akşam arkadaşlarımla sinemaya gittik. Yeni çıkan bir bilim kurgu filmi izledik. Film çok etkileyiciydi. Özellikle görsel efektler harikaydı. Çıkışta uzun uzun film hakkında konuştuk.'",
+    "expected_answer": "Örnek: 'Dün arkadaşlarımla görsel efektleri harika olan yeni bir bilim kurgu filmi izledik ve çok beğendik.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_007",
+    "category": "cümle_genişletme",
+    "question": "Bu kısa cümleyi detaylandırarak genişletin: 'Çocuk parkta oynadı.'",
+    "expected_answer": "Örnek: 'Küçük çocuk güneşli bir öğleden sonra parkta arkadaşlarıyla salıncak ve kaydırakta neşeyle oynadı.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_008",
+    "category": "ton_değiştirme",
+    "question": "Bu nötr cümleyi olumsuz/eleştirel tona çevirin: 'Proje tamamlandı.'",
+    "expected_answer": "Örnek: 'Proje ancak tamamlanabildi.' veya 'Proje gecikmeli olarak tamamlandı.' veya 'Proje sürüncemede kaldıktan sonra nihayet bitti.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_009",
+    "category": "ton_değiştirme",
+    "question": "Bu olumsuz cümleyi olumlu/umutlu tona çevirin: 'Sınav çok zordu, başaramayabilirim.'",
+    "expected_answer": "Örnek: 'Sınav zordu ama elimden gelenin en iyisini yaptım, umarım başarılı olurum.' veya 'Sınav zorlayıcıydı ama çalıştım, başarma şansım var.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_010",
+    "category": "bakış_açısı_değiştirme",
+    "question": "Bu 1. tekil şahıs cümlesini 3. tekil şahsa çevirin: 'Bugün çok yoruldum ama mutluyum.'",
+    "expected_answer": "'Bugün çok yorulmuş ama mutluymuş.' veya 'O bugün çok yoruldu ama mutlu.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_011",
+    "category": "alternatif_sonuç",
+    "question": "'Yağmur yağdı' cümlesiyle başlayan bir hikayeyi 3 farklı şekilde sonuçlandırın (kısa).",
+    "expected_answer": "Örnek: 1) 'Yağmur yağdı ve sokaklarda sel oldu.' 2) 'Yağmur yağdı, havayı serinletti.' 3) 'Yağmur yağdı, çocuklar çok sevindi.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_012",
+    "category": "benzetme_geliştirme",
+    "question": "'Öğrenme' kavramını bir yolculuğa benzeterek açıklayın.",
+    "expected_answer": "Örnek: 'Öğrenme bir yolculuk gibidir; başlangıçta yol belirsizdir, ilerledikçe manzara netleşir ve her durakta yeni şeyler keşfedersiniz.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_013",
+    "category": "kelime_dağarcığı",
+    "question": "'Güzel' kelimesinin 5 eş anlamlısını yazın.",
+    "expected_answer": "Örnek: hoş, zarif, çekici, şirin, sevimli, alımlı, göz alıcı",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_014",
+    "category": "deyim_açıklama",
+    "question": "'Elma ile armut bir değil' deyimini başka bir deyim kullanmadan açıklayın.",
+    "expected_answer": "Örnek: 'İki şey birbirine benzemez, farklıdır, karşılaştırılamazlar.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_015",
+    "category": "yaratıcı_tanım",
+    "question": "'Kitap' kelimesini yaratıcı bir şekilde tanımlayın.",
+    "expected_answer": "Örnek: 'Kitap, kağıt sayfalar arasında gizlenmiş dünyalara açılan kapılardır.' veya 'Kitap, zamanın ötesine uzanan sessiz bir arkadaştır.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_016",
+    "category": "sıfat_çeşitliliği",
+    "question": "'Deniz' kelimesini tanımlarken 5 farklı sıfat kullanın.",
+    "expected_answer": "Örnek: mavi, engin, dalgalı, köpüklü, tuzlu, huzur verici, derin, gizemli",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_017",
+    "category": "hikaye_başlangıcı",
+    "question": "'Bir sabah uyandığımda her şey değişmişti' cümlesiyle başlayan bir hikaye için sonraki 2 cümleyi yazın.",
+    "expected_answer": "Örnek: 'Pencereden baktığımda tanıdık sokaklar yerine yemyeşil bir orman görüyordum. Kalbim hızla çarpmaya başladı, rüya mı görüyordum yoksa gerçek miydi?'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_018",
+    "category": "zıt_kavram",
+    "question": "'Sessizlik' kavramının zıt anlamlısını yazın ve ikisini birlikte kullanan bir cümle kurun.",
+    "expected_answer": "Zıt anlamlı: 'Gürültü'. Örnek cümle: 'Gürültülü şehirden kaçıp sessizliğin huzurunu yaşamak istiyorum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_019",
+    "category": "mecazi_anlam",
+    "question": "'Kalbi kırılmak' deyimini mecazi anlamda kullanarak bir cümle kurun.",
+    "expected_answer": "Örnek: 'Sevdiği kişinin yalanını öğrenince kalbi kırıldı.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_creative_020",
+    "category": "yaratıcı_bağlantı",
+    "question": "'Kitap' ve 'pencere' kelimelerini ilişkilendirerek bir cümle kurun.",
+    "expected_answer": "Örnek: 'Kitap, başka dünyalara açılan bir penceredir.' veya 'Pencereden dışarıyı izlerken elimdeki kitabı okuyordum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_creative_021",
+    "category": "edebi_stilizasyon",
+    "question": "'Ağaç ve melankoli' ilişkisini edebi bir kıta (4 satır) halinde yazın.",
+    "expected_answer": "Örnek: 'Yalnız ağaç, sonbahar yapraklarıyla yas tutar / Düşen her yaprak, bir anı taşır gökler / Kökü derin ama içi boş / Melankoli, dallarında şarkı söyler.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_022",
+    "category": "sosyal_bağlam_dönüşümü",
+    "question": "'Merhaba, nasılsın?' cümlesini 4 farklı sosyal bağlamda (resmi toplantı, okul arkadaşıyla, aile, internet/sosyal medya) yazın.",
+    "expected_answer": "Örnek: 1) Resmi: 'Saygılarımızla, siz nasıl gidiyor?' 2) Arkadaş: 'Selam, naber?' 3) Aile: 'Merhaba oğlum/kızım, nasılsın?' 4) İnternet: 'Yo naber? All good?'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_023",
+    "category": "duygusal_ton_katmanlaşması",
+    "question": "'Gittim' kelimesini 5 farklı durumda (üzülerek, hızlıca, gizlice, direnendo, cesaretle) kullanarak 5 cümle yazın.",
+    "expected_answer": "Örnek: 1) Ağlamakla gittim. 2) Hızlıca gittim. 3) Sessizce gittim. 4) Direnendo gittim (hoşlanmadığım halde). 5) Cesaretle gittim.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_024",
+    "category": "çelişkili_ifade",
+    "question": "'Kalabalık yalnızlık' veya 'sessiz gürültü' gibi çelişkili bir ifade (oxymoron) bulun ve bunu kullanan bir cümle yazın.",
+    "expected_answer": "Örnek: 'Tatlı acı', 'güzel korku'. Cümle: 'Bu belgesel, insanlığın tatlı acısını çok güzel anlatmıştı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_025",
+    "category": "söz_oyunu_wordplay",
+    "question": "Türkçe bir söz oyunu (kelime oyunu/cıvata) yapın; örneğin şaka veya şiirsel etkisi olan bir cümle.",
+    "expected_answer": "Örnek: 'Ben burada değil miyim, ben burada olmayan yerdeysem, o zaman ben acaba kim? 'Oyun: 'kim' = 'kim-yar' (acaba)'. Ya da: 'Benim kedi miyavlıyor = Benim kedi mi avlıyor' (farklı anlam).",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_026",
+    "category": "hayal_realite_dönüşümü",
+    "question": "'Uçabilseydim' ile başlayan fantastik bir cümleler zincirleme (3 cümle) yazın.",
+    "expected_answer": "Örnek: 'Uçabilseydim, bulutların arasında açılı dahlış yapardım. Her dağa konabilir, şehirleri kuştan bakabilirdim. Gün batımında ay'a dokunup, gece hep gündüz olurdu.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_027",
+    "category": "kültürel_referans_adaptasyonu",
+    "question": "Islami/Türk kültüründen bir atasözünü modern günlük hayata adapte ederek açıklayın.",
+    "expected_answer": "Örnek: 'Haste gelmek yavaş olur' → Modern: 'Sosyal medyada hızlı karar vermek, sık yanlış sonuçlar doğurur, sabırlı planlama daha işe yarar.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_028",
+    "category": "sürrealist_perspektif",
+    "question": "'Eğer pencerelerden kuşlar uçarsa' cümlesiyle başlayan sürrealist (mantıksız ama etkileyici) bir hikaye (3-4 cümle) yazın.",
+    "expected_answer": "Örnek: 'Eğer pencerelerden kuşlar uçarsa, onlar ışık taşırlar. Oda aydınlanır, duvarlar erimel başlar. Yerler dalgalı su haline dönüşür ve ben balık olmaya başlarım.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_029",
+    "category": "çok_anlamlı_müzikallik",
+    "question": "'Su' kelimesini 3 farklı anlam katmanında (maddi, duygusal, felsefi) kullanarak 3 cümle yazın.",
+    "expected_answer": "Örnek: 1) Maddi: 'Su içmedim bütün gün.' 2) Duygusal: 'Gözyaşları yanaklarım suladı.' 3) Felsefi: 'Hayat akıp giden suyun gibi, durmaz, değişir.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_030",
+    "category": "şartlı_yaratıcılık",
+    "question": "'Eğer duyguları renklere çevirebilseydim' fikrinden hareketle renkli bir hikayeci metni (3 cümle) yazın.",
+    "expected_answer": "Örnek: 'Eğer duyguları renklere çevirebilseydim, sevgiyi altında boyardım. Kızgınlığı kırmızı ateşle, hüznü indigo karanlığından yaratırdım. İnsan yüzü o zaman bir yağlı boya tuvali olurdu, her saat farklı bir sanat eseri.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_031",
+    "category": "çoklu_duyular_anlatımı",
+    "question": "'Kütüphane' ortamını 5 farklı duyu penceresinden (görme, işitme, koklama, dokunma, tat) deskriptif cümlelerle anlatın.",
+    "expected_answer": "Görme: 'Çok renkli kitapların sıralandığı raflar ışığa parıldayıp gözü oyalıyor.' İşitme: 'Sayfaların hışırtısı, sessiz adımlar, zaman zaman bir öksürük ve çam sessizliği baskın.' Koklama: 'Eski kitapların kuru baharat kokusu burunları dolduruyor.' Dokunma: 'Cilt kaplanmış kitapların sert ama kaslı dokusu, gömlekli kütüphanecideki soğuk tener hissedilir.' Tat: 'Tozlu hava dilinde bir astım-metalik lezzet oluşturur, çikolata öksüğü ile maskelenir.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_032",
+    "category": "iç_monolog_yazma",
+    "question": "Bir üniversite sınav döneminde başarısız bir öğrencinin (başarısızlığı haber alan andığında) iç monologunu (5-6 cümle) yazın. Karışık duygular, öz-suçlama ve umut karışımı olmalı.",
+    "expected_answer": "Örnek: 'Düştüm. Yine düştüm. Sadece ben miyim hep başarısız olan? Hayır, çalıştım ama belki de iyi çalışmadım. Ya da çok mu geç mi oldu? Ama sonraki sınav var, bu sefer fark yaratacağım. Yaratır mıyım ne bileyim... Ama denemeye devam etmeliyim. Aksi halde gerçekten biter her şey.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_033",
+    "category": "karakter_gelişim_arc",
+    "question": "Başında 'korkak bir asker', ortasında 'testleri geçen bir savaşçı', sonunda 'başkalarını koruyacak bir lider' olan bir karakterin dönüşümünü 3 ayrı sahne-cümle olarak yazın.",
+    "expected_answer": "Başlangıç: 'Silahını tutarken elleri titriyor, düşman sesleri duyunca gözleri sulanıyor, kaç etmek için bahane arıyor.' Dönüşüm: 'İlk savaşını geride bıraktıktan sonra, yüzündeki ölüm korkusu desenlenerek cesarete dönüşüyor, adımları kemikleşmeye başlıyor.' Son: 'Artık genç askerlere göz kulak oluyor, çatışma ortasında bile onların güvenliğini düşünüyor, cesaret onu yakıştan daha çok sorumluluk yapıyor.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_034",
+    "category": "diyalog_yazma",
+    "question": "İki eski arkadaş arasında 'yaşam yollarının ayrılmasının' hüznünü taşıyan 4 replili bir diyalog yazın. Sözler değil, gözler konuşmalı.",
+    "expected_answer": "A: 'Buraya gelmekle iyi ettim, seni görmek güzeldi.' (gözleri su içinde kalıyor) B: 'Evet... Çok geçmişti.' (başı hafif aşağı) A: 'Yaşam başka başka yollar sundu hep.' (bir gülümseme, sonra acısı) B: 'Evet. Bu yollar çok uzaktı birbirinden.' (ellerini uzatıp kucaklaştırır) (Her ikisinin gözyaşları aşağı süzülüyor, söz yok, sadece saygılı sessizlik kalıyor.)",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_035",
+    "category": "tempo_ritim_değişimi",
+    "question": "Yazı hızını değiştirerek (kısa, hızlı cümleler → uzun, ağır cümleler) bir sahnedeki 'panik'ten 'sakinlik'e geçişi gösterin (5-6 cümle).",
+    "expected_answer": "Panik: 'Siren. Gözler açıldı. Kan. Kalp. Çığlık. Güvensizlik. Panik!' (kısa, saccadic) Geçiş: 'Derin bir nefes aldım, sonra bir tane daha.' Sakinlik: 'Belki de corpsus savaşmaya değeri yoktur çünkü gözlerim kapalı, beynimin kapı çerçevesinde yumuşacık bir ışık gözüküyor ve ben orada, sessizliğin içinde, sadece ses duymuyorum, hissediyorum: sular akan bir deniz, gökyüzü göllenmiş, taş gibi istikrar.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_036",
+    "category": "görselleme_betimlemme",
+    "question": "Soyut bir duyguyu (mesela 'yitleshme' veya 'özgürlük') somut görsel imajlarla (2-3 paragraf) anlatın; metaforik görüntüler kullanın.",
+    "expected_answer": "Özgürlük: 'Özgürlük, kafesin kapısının ansızın açılışıdır, kuş kanatları kamışın havada çırpınması gibi titrerken, o ilk uçuş denemesinde gökyüzü sınırsız bir mavi çöl gibi yayılır. Her meter uçuş, bir tüyün daha açılışı, bir anı seçme hakkı. Düşebilirsin, düşmekten korkabilirsin, ama artık seçim senin. İnsan kanatları görünmez ama duyuluyor: Zincirler yerine hava, duvarlar yerine ufuk, emir yerine ses.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_037",
+    "category": "epistemik_mod_değişimi",
+    "question": "'O gitti' cümlesinin 5 farklı epistemik (bilme) derecesiyle yazılışını yapın: 1) Kesin bilgi, 2) Gözleme dayalı tahmin, 3) İşitme-haber, 4) Türetme/Çıkarım, 5) Şüpheli/Spekulatif.",
+    "expected_answer": "1) Kesin: 'O gitti, ben gitmesini gördüm.' 2) Gözlem: 'O kalkıp çantasını aldıktan sonra kapıyı açtı, demek ki gitmek üzere.' 3) Haber: 'Duydum ki gitmiş.' 4) Çıkarım: 'Telefonu cevaplamıyor, chatından offline, haliyle gitmek zorunda olsa gerek.' 5) Spekulatif: 'Belki gitmiş olabilir, kesin bilemiyorum ama gidemiş gibi geliyor bana.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_038",
+    "category": "paradoks_üretme",
+    "question": "'İhtiyaçlar ne kadar fazla yerine getirilirse endişeler o kadar çoğalır' paradoksunu açıklayarak, bu paradoksu örnekleyici bir hikaye (3 cümle) yazın.",
+    "expected_answer": "Para kazandıkça, kaybetme korkusu artar; ünlü oldukça, tanınır olmaktan kaçmak isteği büyür; sevgi aldıkça, kaybetme acısı derinleşir. Hanife, zengin oldu, fakat serveti koruma endişesiyle kıskaç gibi yaşamaya başladı. Her başarısı, başarısızlık endişesini katmıştı; sonunda hayatının tadını mı çıkartabiliyor diye sorguladı.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_039",
+    "category": "arketip_sembol",
+    "question": "Türk ya da İslam mitolojiasında bir arketipi (Yılan, Kuş, Yoldaş, Kız, Yaşlı Bilge vs.) alıp, modern bir bağlamda (günümüz şehri, sosyal medya vs.) ne sembolize ettiğini açıklayın (2-3 paragraf).",
+    "expected_answer": "Kuş arketipi modern dünyada 'özgürlük' ve 'bilgi'yi sembolize eder. Sosyal medyada 'tweet' (kuş ötüşü) olarak geri gelir. Şehirdeki kuşlar, kafeslerin içinde yaşayan insanların ködüğünün aynası: hapisten ve engellenmişlikten. Sufide kuş, ruh; modernde kuş influencer'ın sesini simgeliyor: her öğlen milyon tane takipçiye şarkı söylüyor ama hiçbiri onun yalnızlığını dinlemiyor.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_040",
+    "category": "ses_fonetik_oyunu",
+    "question": "Türkçede 'sS' veya 'çÇ' sesleriyle dolu bir şair metni (4-5 satır) yazın; sesin anlamla ilişkisini oynatın.",
+    "expected_answer": "'Susmuşluk sessizdir, ses sessizliği silmek ister. Çıngıraç çıkıntılar, çatacak çatılı çiftlikler. Sisli serinlik sesini saçlıyor, sürüyü seviyorum. Çöl çarpışmaları, çöpü çığlık çalar. Suskunluk sızılıyor; çıkış çekiriz çırıltısından çıkıyor.' (ses oyunu ile metinsel anlam: sızlanma, çatlama, çıkış, kaçış)",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_041",
+    "category": "temporal_reversal",
+    "question": "Bir olayı 'sonundan başına' tersine yazın; 'bulguları' geri izleyerek nedenleri bulmak gibi (5-6 cümle).",
+    "expected_answer": "'Yazının sonunda kapı kapatıldı. Kapı kapatılmadan önce, son kişi gitti. Kişi gitmeden önce vedalaş etti. Vedalaş etmeden önce, konuşma bitti. Konuşma bitmeden önce, hükümler verildi. Hükümler verilmeden önce, mahkeme toplandı. Mahkeme toplanmadan önce, dava açıldı. Ve her şey bir itham, bir soru, bir şüpheyle başlamıştı yıllar önce.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_042",
+    "category": "antropomorfizasyon",
+    "question": "Soyut bir kavramı (Sessizlik, Zaman, Umut, Ölüm) insan gibi canlandırarak profilini yazın: nasıl giyinir, nasıl yürür, ne söyler? (3 paragaraf)",
+    "expected_answer": "Sessizlik: Gri ve siyah elbiseler giyer, adımları duyulmaz, sadece hava titrer geçişinde. Konuşmaz, fakat ellerini konuşturmaya çalışır, jestlerle devasa anlamlar aktarır. Umut: Beyaz ve sarı renklerde gezinen, çocuksu bir dişlemesi olan, hep ileri doğru eğilen, ellerinde bekleme görseli (bir mum, bir fidanı). Sesle: 'Belki, bir gün, kesinlikle'.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_043",
+    "category": "anlatıcı_perspektif_kaydırma",
+    "question": "Aynı olay 3 farklı anlatıcı açısından (ben/o/oda mobilyası) yazın; her birine 2-3 cümle.",
+    "expected_answer": "BEN: 'O salonda oturdum, yüzü kapıdan içeriye ışık almıştı, kalbim hızlı çarpmaya başladı.' O (3. kişi): 'Kapıda duruyor, ona bakan göz gözle buluştu, belki de istediği buydu.' ODA: '30 yıldır aynı mobilyaları taşıyorum; onlar burada muhabbet ediyorlar, ben duvarlarıma işlenmiş anıları seyrediyorum, bu şaşmaların hepsi benim derilerimdeydi.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_044",
+    "category": "soyut_kavramsallaştırma",
+    "question": "'Muhabbet'i matematiksel/geometrik bir şekil/formülle ifade edin ve bunu açıklayın (2-3 paragraf).",
+    "expected_answer": "Muhabbet = Daire + Spiral (∞). Daire çünkü başı sonu yoktur, sonsuzdur. Spiral çünkü dönüp dönüp yüksreklir, derinleşir. Merkez nokta iki kalbin kesiştiği yerdir. Her dönüş, biraz daha yaklaşma, biraz daha açılma (ekspansiyon). Formül: M(t) = r(1 + t/n)cosθ(t) + r(1 + t/n)sinθ(t), burada r başlangıçtaki uzaklık, t zaman, n sabitlik derecesi. Muhabbetin güzeli, hiç sabit olmayan dinamiğinde yatar.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_045",
+    "category": "empatik_reframing",
+    "question": "Kötü bir davranışı gözlemleyip, davranışçının bakış açısından (empati ile ancak değişmeyerek) 'özür dilemesi talep etmeden' açıklamayı yazın.",
+    "expected_answer": "Görünenin Kötülüğü: Karşısındakine sert cevap verdi. Empatik Reframing: 'O an, belki de kendi acısı tavan tutmuş, sesini kestiremiyor, çıkış bulamamış. Kızgınlık, intikamı değildi, çaresizliğin bağırışıydı. Sözler mermiler gibi uçtu ama hedefi ben değildim, hedef kendi korkusuydu. Bunu anlarsam, belki kızmayı bitirebilirim.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_046",
+    "category": "duyusal_derinleştirme",
+    "question": "Sadece ses, ışık, hareket olmadan 'bir meyve pazarı'nın hafif, koku ve dokunma odaklı tasvirini yapın (3-4 cümle).",
+    "expected_answer": "'Elimi uzattığımda organik malzemelerin nemli, samil yapısını hissediyorum. Portakal: kabuk inceltip içi ılık, tatlı sular taşıyor. Avokado: parmağımda yumuşacak gevrek, sanki tatlı bir canlı. Kokuların karışımı: çürümüş üzüm, taze limon, fermente arpa. Her dokunuşta, o sebzeler/meyveler bana kendi yaşadıkları toprakları anlatıyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_047",
+    "category": "metapoetik_yansıtma",
+    "question": "'Şiir yazarken panik' üzerine bir şiir (4-6 satır) yazın; şiir, yazı esnasındaki belirsizlik ve kaçış hissini kapsın.",
+    "expected_answer": "'Kelimeleri arıyorum, kaçıyorlar, peşlerinden koşuyorum. Sayfa boş, ben boşum, fikir boş. Cümlede ritim aramak, ama ritim beni bırakmış. Adım koydum, sildi. Satırlar yamuk, kafiye şaşkın. Şiir yazmak satır yazmak değil, boşluğun içine ses yerleştirmek. Ama ben sesi kaybettim. Neyin şiiri şu?'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_048",
+    "category": "kültürel_hibridizasyon",
+    "question": "Batı ve Doğu kültür öğelerini harmanladığın bir cümle (veya kısa paragraf) yazın, ancak uyum doğal, zorlama olmasın.",
+    "expected_answer": "Pazar sabahı, zen meditasyonundan sonra Starbucks'ta espresso, sonra pazarda acılı mercimek çorbası, öğleden sonra Beyazıt Kütüphanesi, akşam Instagram'da sufi şarkularını dinliyorum. Bu, ne Döğü ne Batı, ben. Hibrid değil, basitçe modern hayat: 'Varoluş herhangi bir coğrafya sınırlamayan.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_049",
+    "category": "rüya_mantığı_anlatımı",
+    "question": "Rüya mantığında (akıl dışı, sıçrayıcı, sembolik) 4-5 cümlelik bir sahne yazın; ardından sembol analizi yapın.",
+    "expected_answer": "Rüya: 'Bir insanla bir balık konuşuyorduk, dil bizim, ama kelimeler renk oldu. Deniz yükseldi, ben uçmaya başladım, ama kanatlı değildum, gazalı silah taşıyordum. Ev içeriside gök mavisi, pencere kanatsız bir kuş, bağıran. Uyandığımda, eli tutmak yaşamaktı, bakmak yaşamaktı.' Analiz: İnsan-Balık = Bilinçli-Bilinçdışı kısmın sohbeti. Renk kelimeler = Dil ötesinde iletişim. Uçuş = Kontrol kaybı. Kanatsız kuş = Hapsolmuş özgürlük.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_050",
+    "category": "çok_anlamlılık_oyunu",
+    "question": "'Çıkış' veya 'batı' gibi birden fazla anlamı olan bir kelimenin 4-5 farklı anlamını (harfi, mecazi, felsefi vs.) kullanarak 4-5 cümle yazın.",
+    "expected_answer": "Çıkış: 1) Fiziki: 'Binadan çıkış yasaklandı.' 2) Duygusal: 'Öfkenin çıkışı vardı, onu tutamadı.' 3) Sanat: 'Çıkış postmodernizmde bir tüketim ironisiydi.' 4) Felsefi: 'Platon'un mağaradan çıkış allegori'si, aydınlanmayı temsil eder.' 5) Ruhsal: 'Tasavvuf'ta çıkış, nefsin baskısından kurtuluş demektir.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_051",
+    "category": "ses_görüntü_senkronizasyonu",
+    "question": "Yazırken kelime seçiminizin ses (sert/yumuşak, hızlı/yavaş) ve görüntüyü uyumlaştırmaya çalışın; bir sahnesi (5-6 cümle).",
+    "expected_answer": "HIZLI/SERT: 'Kız koştu, çakıl taşları titretti, iskele ağlını kırdı, kız kütür kütür saldırıyor.' (k,ç ses) YAVAŞ/YUMUŞAK: 'Orman sakin uyku hali içinde, yapraklar ağır ağır, sessiz şarkısı içinde. Gül açılışı, tüylü katten incelikli.' (s,ş ses) Görüntü eş anlama dönüştü: Hızlı = sert kelimelerin çatırdaması, Yavaş = yumuşak hecelerin akması.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_052",
+    "category": "yaşam_aşamaları_koştürme",
+    "question": "Bebeklikten yaşlılığa gırıl gırıl geçen insan yaşamını tek cümlede (veya 2-3 bağlı cümle) anlatın; kelimeler ilerliveten arkaya doğru sıralanmalı (tempo değişimi).",
+    "expected_answer": "'Doğdum, ağladım, sonra güldüm, koştum, yavaşladım, akıl tuttum, çalıştım, yavaş yavaş yoruldum, ayaklarım ağırlaştı, oturdum, hatırlamaya başladım, konuşmaktan çekinittim, sessiz kaldım, sonunda durdum.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_053",
+    "category": "ironi_katmanlaşması",
+    "question": "Çokkatmanlı ironi yazın: 1. katman açık/basit ironi, 2. katman saklanmış, 3. katman tam tersini söyle-aslı kurtarma.",
+    "expected_answer": "Katman 1 (Basit): 'Harika gün! Yağmur yağıyor.' Katman 2 (Saklanmış): 'Harika gün [yazılanın tersine çünkü benim sınavım hoy, yağmur gitmek engel]' Katman 3 (Paradoksal ironi): 'Aslında, yağmur benim için harika, çünkü yağmurla sınava gitmeme bahane yapabilirim, ve belki de başarısızlığımdan memnunum.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_054",
+    "category": "sentenz_ve_aforizma",
+    "question": "Türk kültüründen esinlenerek 3 tane özgün aforizma/sentenz yazın; her biri hayat dersleri içersin (2-3 cümlelik).",
+    "expected_answer": "1) 'Dış kışından çok, iç sıcaklığı medeniyeti yapar.' 2) 'Susmak söz vermek değildir, ama söz vermiş gibi sorular silip atar.' 3) 'Kader ve irade aynı veya karşıt değil, dentro-ters harfleri olan aynı yüz.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_055",
+    "category": "metamorfoz_anlatısı",
+    "question": "Bir nesneyi (taş, ağaç, iz) insan'a dönüştürürken, değişim adımlarını (4-5 aşama) nefis bir şekilde anlatın.",
+    "expected_answer": "Taş → 1) Taştaki çatlakta yosun başlıyor. 2) Yosun sularla ıslanırken sessiz acısı duymayızıyor dünyaya. 3) Taşın kenarına bir bitki yerleşiyor, kökler taşı hissetmeye başlıyor. 4) Bitkiyle hayvan geldi, hayvanla beslemesinden sızlanma geldi. 5) Son olarak, taş beni öğetediyor: 'Ben taş idum, şimdi toprağım; bilgelik sabır imiş, dönüşüm hayat imiş.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_056",
+    "category": "kısıtlı_yaratıcı_yazım",
+    "question": "Tam 4 cümlelik bir mikro öykü yazın: Her cümle sırasıyla şu kelimelerle başlamalıdır: 'Dün', 'Bugün', 'Yarın', 'Asla'. Tema: gecikmiş bir yüzleşme.",
+    "expected_answer": "Örnek: 'Dün kapının önünde saatlerce bekledim ama ziline basamadım. Bugün aynaya bakıp ilk kez korktuğum şeyin onun sesi değil, kendi suskunluğum olduğunu anladım. Yarın o kapıyı çalıp yıllardır taşıdığım yükü adını koyarak bırakacağım. Asla geç değildir, insan kendi gerçeğine yetiştiği gün yeniden doğar.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_057",
+    "category": "anlamsal_kısıt_optimizasyonu",
+    "question": "Aynı olayı iki cümlede anlatın: İlk cümle en fazla 9 kelime olsun ve panik hissettirsin; ikinci cümle en az 20 kelime olsun ve aynı olayı dingin bir kabulleniş tonuyla yeniden çerçevelesin.",
+    "expected_answer": "Örnek: 'Tren kaçtı, elimde bilet, içimde taş gibi korku. Peronda tek başıma kalınca anladım ki yetişemediğim şey yalnızca bir seferdi; oysa hayat, gecikmelerin içinden yeni yollar açmayı sessizce öğretir.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_058",
+    "category": "anlatıcı_güvenilmezliği",
+    "question": "3 cümlelik bir anlatı yazın: Anlatıcı ilk iki cümlede kendini haklı göstersin, üçüncü cümlede küçük bir ayrıntı onun güvenilmez olduğunu açığa çıkarsın.",
+    "expected_answer": "Örnek: 'Toplantıya geç kalmadım, herkes zaten dağınıktı ve beni beklemiyordu. Raporu da zamanında gönderdim; hatta sorumluluğu ben olmasam kimse taşımazdı. Yalnız, maili yanlışlıkla taslakta bıraktığımı gece saat üçte fark ettim.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_059",
+    "category": "alt_metinli_diyalog",
+    "question": "İki kardeşin miras konuşmasını 6 replikte yazın; 'ev', 'para' ve 'miras' kelimeleri hiç geçmesin ama gerilim açıkça hissedilsin.",
+    "expected_answer": "Örnek: A: 'Anahtarı hâlâ sende mi?' B: 'Bende, çünkü en son ben uğradım.' A: 'Uğramak başka, sahip çıkmak başka.' B: 'Sen yıllardır sadece bayramda geldin.' A: 'Ben gelmedim diye duvarlar seni seçmiş olmuyor.' B: 'Duvarlar değil, gece nöbetleri seçti.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_060",
+    "category": "metaforik_mantık_köprüsü",
+    "question": "'Borç', 'gölge' ve 'kış' kavramlarını tek paragrafta birbirine bağlayın; metin hem ekonomik bir gerçekliği hem duygusal bir yükü aynı anda taşısın.",
+    "expected_answer": "Örnek: 'Borç, öğle vakti bile peşinden ayrılmayan bir gölge gibi uzar; güneş tepede olsa da içini serinletmez. Kış geldiğinde faturalar kalınlaştıkça o gölge kapının altından içeri sızar, odaların sessizliğini ağırlaştırır. İnsan bazen paradan çok, ertelenmiş nefeslerin faizini öder.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_061",
+    "category": "üslup_taklidi_nötrleştirme",
+    "question": "Aynı mesajı iki farklı üslupla yazın: 1) Divan şiiri tadında süslü, 2) teknik rapor diliyle yalın. Mesaj: 'Projede risk artıyor, önlem alınmalı.'",
+    "expected_answer": "Örnek: '1) Ey tedbir erbabı, ufukta beliren bu sızı, yarının fırtınasına işarettir; zaman geçmeden aklı kalkan eyleyesin. 2) Proje risk göstergeleri yükselmiştir; gecikme ve maliyet sapması olasılığını azaltmak için acil aksiyon planı uygulanmalıdır.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_062",
+    "category": "deyimsel_dönüşüm_zinciri",
+    "question": "'Ayağını yorganına göre uzat' atasözünü üç aşamada dönüştürün: (i) çocuk dili, (ii) gençlik argosu, (iii) kurumsal sunum cümlesi.",
+    "expected_answer": "Örnek: '(i) Harçlığını dikkatli harca ki ay sonu üzülmeyesin. (ii) Kanka bütçe kısa, gazı azalt yoksa son hafta tost bile lüks. (iii) Mevcut kaynak kapasitesiyle uyumlu harcama disiplini, sürdürülebilir finansal denge için kritik bir ilkedir.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_063",
+    "category": "karşı_olgusal_hikaye",
+    "question": "'Eğer o gün telefonu açsaydım...' cümlesiyle başlayıp iki farklı kader çizgisi üretin: biri iyileştirici, biri yıkıcı (toplam 4-5 cümle).",
+    "expected_answer": "Örnek: 'Eğer o gün telefonu açsaydım, annemin sesindeki çatlağı erken duyacak, hastaneye daha hızlı yetişecek ve yıllardır ertelediğimiz vedayı sakince yapacaktım. Aynı çağrıyı açsaydım, belki de yanlış anlaşılmanın ortasına düşecek, bir cümlenin keskinliğiyle kardeşimle bağımı tamamen koparacaktım. Bir tuşa basmak, bazen hem merhem hem bıçak olabilecek kadar güçlüdür.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_064",
+    "category": "çok_katmanlı_oxymoron",
+    "question": "Bir cümlede en az iki oxymoron kullanın ve anlamsızlığa düşmeden tutarlı bir sahne kurun.",
+    "expected_answer": "Örnek: 'Kalabalık yalnızlığın ortasında, sessiz çığlıklarımı duyan tek kişi yine bendim; o tatlı acı, yüzümdeki sakin fırtına gibi saatlerce dinmedi.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_065",
+    "category": "retorik_cihaz_kompozisyonu",
+    "question": "Aynı paragrafta anafor, epifor ve antitez kullanarak 4 cümle yazın. Tema: adalet arayışı.",
+    "expected_answer": "Örnek: 'Adalet istedik, çünkü sesimiz kısıldı; adalet istedik, çünkü kapılar yüzümüze kapandı. Yürüdük sokak sokak, bekledik gece gece. Kimileri susmayı güvenlik sandı, biz konuşmayı sorumluluk bildik. Karanlık uzadı uzadı, fakat umut da uzadı uzadı.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_066",
+    "category": "duygu_geçiş_mimarisi",
+    "question": "Tek paragrafta şu duyguları sırayla geçirerek yazın: inkâr → öfke → pazarlık → kabullenme. Geçişler keskin değil, organik olmalı.",
+    "expected_answer": "Örnek: 'Önce raporu yanlış okuduğumu sandım; böyle bir sonuç bizim ekibe yakışmazdı. Sonra ekranı kapatıp masaya vurduğumu hatırlıyorum, sanki rakamlar inatla beni küçültüyordu. İçimden 'bir hafta daha verilse her şeyi toplarız' diye hesaplar yaptım, olasılıkları didikledim. Gece uzadıkça cümleler sustu ve sabaha karşı, kaybettiğimizin yalnızca ihale değil, bir ders olduğunu sakinlikle kabul ettim.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_067",
+    "category": "zamansal_parçalanma",
+    "question": "Aynı günü üç zaman katmanında anlatın: (1) gerçekleştiği an, (2) bir yıl sonra hatırlanışı, (3) yaşanmamış olsaydı varsayımı. Her katman bir cümle olsun.",
+    "expected_answer": "Örnek: 'O gün istifamı yazdıran maili açtığımda boğazım kurumuş, klavyedeki harfler bile bana yabancı görünmüştü. Bir yıl sonra aynı günü anarken, aslında kapının kapanmadığını, sadece yön değiştirdiğini görüyorum. Ya o mail hiç gelmeseydi, belki güvenli bir masada çürüyüp cesaretin neye benzediğini hiç öğrenemeyecektim.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_068",
+    "category": "politik_dil_nötralizasyonu",
+    "question": "Kutuplaştırıcı bir ifadeyi tarafsız ve birleştirici dile çevirin. Verilen ifade: 'Onlar bu şehri mahvetti, biz düzeltiriz.'",
+    "expected_answer": "Örnek: 'Şehrin mevcut sorunlarını geçmiş tartışmaların ötesine geçerek birlikte çözebiliriz; önceliğimiz suçlama değil, uygulanabilir ve kapsayıcı iyileştirme adımları olmalı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_069",
+    "category": "anlatı_içinde_formül",
+    "question": "Aşkı yarı-matematiksel bir modelle anlatan 3-4 cümle yazın; formül mecazi olmalı ama duyguyu öldürmemeli.",
+    "expected_answer": "Örnek: 'Bizim denklemimizde sabit yoktu; her gün değişen iki bilinmeyenin birbirini çözmeye çalışmasıydı her şey. Güven katsayısı arttıkça kırılganlık terimi azaldı, ama sıfıra hiç inmedi. Ayrılık, toplamı silmedi; sadece parantezleri farklı yerlere taşıdı. Yine de kalbim, bu formülün en güzel kısmının hesaplanamayan artık değer olduğunu biliyor.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_070",
+    "category": "ses_simgesel_yoğunluk",
+    "question": "Ş, S ve Z seslerinin baskın olduğu 4 satırlık bir metin yazın; metin sisli bir liman sabahını çağrıştırsın.",
+    "expected_answer": "Örnek: 'Sis, sessizce sahile sızdı; iskele sanki söze küsmüş.\nSaz rüzgârı, paslı zincirleri usul usul sızlattı.\nUzakta bir zil, buzlu suya çizik atar gibi sızdı.\nŞehir uyanırken, yalnız bir denizci içinden 'geçer' diye fısıldadı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_071",
+    "category": "etik_ikilem_drama",
+    "question": "Bir doktorun, sınırlı tek yoğun bakım yatağı için iki hasta arasında karar vermek zorunda kaldığı anı 5 cümlede yazın; yargılayıcı olmadan etik gerilimi gösterin.",
+    "expected_answer": "Örnek: 'Dosyaların üzerinde iki nabız atıyordu sanki; biri gençti, biri yılların yorgunluğunu taşıyordu. Protokol soğuk bir pusula gibi önündeydi ama hiçbir madde insan yüzündeki korkuyu ölçmüyordu. Karar verirken yalnızca tıbbi olasılıkları değil, geri dönülmez bir yükün ağırlığını da imzaladı. Koridorda bekleyen gözlere bakamadı; çünkü bazen doğru karar, acıyı azaltmaz, sadece dağıtır. Gece bittiğinde, beyaz önlüğünün en ağır rengi vicdandı.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_072",
+    "category": "bilişsel_çelişki_ifadesi",
+    "question": "Bir karakterin hem özgürlük isteyip hem güvenliğe tutunmasını 4 cümlede bilişsel çelişki olarak gösterin.",
+    "expected_answer": "Örnek: 'Her sabah aynı masaya otururken 'artık zincir istemiyorum' diye içinden geçiriyordu. Öğlen olduğunda maaş mesajı gelince, o zincirin pasını parlak sanıyordu. Akşam iş ilanlarına bakıp heyecanlanıyor, sonra CV dosyasını kaydetmeden kapatıyordu. Kendi kapısını açacak anahtarı cebinde taşıyıp kilitten korkmak, onun en sessiz alışkanlığıydı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_073",
+    "category": "edebi_tür_harmanlama",
+    "question": "Korku ve mizahı aynı kısa paragrafta birleştirin; tonlar çarpışsın ama metin dağılmasın.",
+    "expected_answer": "Örnek: 'Gece üçte mutfaktan gelen kaşık sesiyle irkildim; evde yalnızdım ve kalbim boğazıma tırmanmıştı. El fenerini açıp ilerledim, dolabın kapağı hafif aralıktı ve içeriden hışırtı geliyordu. Son bir cesaretle kapağı çekince, suçluyu yakaladım: diyette olduğumu unutturmak için kendi kendine açılan cips paketi. Hayalet değilmiş; ama vicdanımın mizah anlayışı sandığımdan güçlüymüş.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_074",
+    "category": "sözdizimsel_inovasyon",
+    "question": "Türkçe söz dizimini bozup tekrar kurarak şiirsel bir etki yaratın; 3 cümle yazın ve anlam korunmuş olsun.",
+    "expected_answer": "Örnek: 'Geceydi, içimde yürüyen uzun bir sokak. Konuşmadım ben; sustu, benden önce kelimeler. Sabah olunca anladım: kırılmak değilmiş eksilen, ertelenmiş vedalarmış.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_075",
+    "category": "çoklu_hedefli_yeniden_yazım",
+    "question": "Bu cümleyi üç hedefe göre yeniden yazın: (a) hukuki metin, (b) sosyal medya postu, (c) ninni dili. Cümle: 'Geç kaldığım için özür dilerim.'",
+    "expected_answer": "Örnek: '(a) Toplantıya iştirakimde meydana gelen gecikme nedeniyle özrümü sunarım. (b) Trafik + kötü planlama = geç kaldım, kusura bakmayın 🙏 (c) Geç geldim canım, affet beni usulca; kalbinin kapısı açık kalsın bu gece boyunca.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_076",
+    "category": "anlatıda_negatif_kısıt",
+    "question": "3 cümlelik bir ayrılık sahnesi yazın; 'gitmek', 'ayrılık', 'veda', 'son' kelimelerini kullanmak yasak.",
+    "expected_answer": "Örnek: 'Valizi kapatırken odadaki saat bile tik taklarını kısar gibiydi. Kapı eşiğinde birbirimize baktık; konuşsak kırılacak bir cam taşıyorduk ikimiz de. Asansör indikten sonra koridorda kalan sessizlik, adımı herkesten iyi biliyordu.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_077",
+    "category": "sembolik_mekân_kurgusu",
+    "question": "Bir tren istasyonunu 'kararsızlık' duygusunun sembolü olarak 4 cümlede kurgulayın.",
+    "expected_answer": "Örnek: 'İstasyonun panosunda aynı anda iki yön yanıp sönüyordu; her harf, seçilmeyen bir hayata işaret gibiydi. Raylar yan yana uzuyor ama birbirine asla kavuşmuyordu, tıpkı içimde çarpışan ihtimaller gibi. Anons sesi geldiğinde ayağım öne değil, içime doğru bir adım attı. Bazen insanın en uzun yolculuğu, peronda kıpırdamadan beklediği o dakikadır.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_078",
+    "category": "toplumsal_nüans_yorumlama",
+    "question": "'Çay koydum, gel' ifadesini üç farklı ilişkide yorumlayın: yakın arkadaş, iş arkadaşı, küs aile bireyi. Her biri için alt metni açıklayan birer cümle yazın.",
+    "expected_answer": "Örnek: 'Yakın arkadaşta bu çağrı, konuşmadan anlaşılmış bir dayanışma teklifidir. İş arkadaşında 'gündem ağır, kısa bir ara verip sakinleşelim' anlamına gelen nazik bir yumuşatma işlevi görür. Küs aile bireyinde ise doğrudan 'özledim' diyememenin, barışa açılan çekingen kapısıdır.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_creative_079",
+    "category": "felsefi_mikro_anlatı",
+    "question": "Kimlik ve bellek ilişkisini sorgulayan 5 cümlelik bir mikro anlatı yazın; anlatı bir nesnenin (eski anahtar, saat, fotoğraf vb.) etrafında dönsün.",
+    "expected_answer": "Örnek: 'Dedemin anahtarı artık hiçbir kapıyı açmıyor, ama çekmecede her gördüğümde bir odayı yeniden kuruyor. Dişleri aşınmış metale dokununca çocukluğumun kokusu avucuma geri dönüyor. O kapı yıkıldı, ev satıldı, mahalle değişti; buna rağmen anahtar hâlâ 'biz' diye konuşuyor. Demek ki kimlik, yaşadığımız yerde değil, hatırlamayı sürdürdüğümüz eşiklerde birikiyor. Unutursam ben değişmem; sadece bende yaşayanlar susar.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_creative_080",
+    "category": "çok_katmanlı_final",
+    "question": "4 cümlelik bir final sahnesi yazın: ilk cümle fiziksel bir kapanışı, ikinci cümle duygusal bir açılışı, üçüncü cümle ironiyi, dördüncü cümle umut kırıntısını taşısın.",
+    "expected_answer": "Örnek: 'Mahkeme salonunun kapısı ağır bir sesle kapandı ve kalabalık merdivenlere dağıldı. İçimde yıllardır mühürlü duran cümle, ilk kez nefes alacak yer buldu. Kazandığım davada kaybettiğim yılları geri alamayacağımı düşününce, adaletin bazen gecikmiş bir saat gibi sadece doğruyu değil, acıyı da gösterdiğini fark ettim. Yine de cebimdeki küçük notta tek kelime vardı: 'başla'.'",
+    "difficulty": "very_hard"
+  }
+]

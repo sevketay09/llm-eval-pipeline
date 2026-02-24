@@ -1,0 +1,103 @@
+fatal: not a git repository (or any of the parent directories): .git
+Initializing evaluation pipeline...
+
+================================================================================
+STARTING EVALUATION PIPELINE - Test Suite: smoke
+Models: qwen-31-onprem
+================================================================================
+
+Using 'gpt-4o-ptu' as judge model
+
+################################################################################
+# EVALUATING MODEL: qwen-31-onprem
+################################################################################
+
+============================================================
+Running turkish_qa on default
+============================================================
+turkish_qa:   0%|          | 0/5 [00:00<?, ?it/s]turkish_qa:  20%|██        | 1/5 [00:01<00:07,  1.85s/it]turkish_qa:  40%|████      | 2/5 [00:03<00:04,  1.45s/it]turkish_qa:  60%|██████    | 3/5 [00:04<00:02,  1.42s/it]turkish_qa:  80%|████████  | 4/5 [00:05<00:01,  1.43s/it]turkish_qa: 100%|██████████| 5/5 [00:07<00:00,  1.40s/it]turkish_qa: 100%|██████████| 5/5 [00:07<00:00,  1.44s/it]
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=False
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=False
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=False
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=False
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=False
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+
+============================================================
+Running function_calling on default
+============================================================
+function_calling:   0%|          | 0/5 [00:00<?, ?it/s]function_calling:  20%|██        | 1/5 [00:01<00:05,  1.26s/it]function_calling:  40%|████      | 2/5 [00:02<00:03,  1.30s/it]function_calling:  60%|██████    | 3/5 [00:03<00:02,  1.29s/it]function_calling:  80%|████████  | 4/5 [00:05<00:01,  1.28s/it]function_calling: 100%|██████████| 5/5 [00:06<00:00,  1.31s/it]function_calling: 100%|██████████| 5/5 [00:06<00:00,  1.30s/it]
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=True
+[qwen-31-onprem] Added 2 tools
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=True
+[qwen-31-onprem] Added 1 tools
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=True
+[qwen-31-onprem] Added 2 tools
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=True
+[qwen-31-onprem] Added 2 tools
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+[qwen-31-onprem] _generate_openai called with 2 messages, tools=True
+[qwen-31-onprem] Added 3 tools
+[qwen-31-onprem] Added response_format: json_schema
+[qwen-31-onprem] Calling API with model=default
+[qwen-31-onprem] ERROR in generate: APIConnectionError: Connection error.
+
+================================================================================
+EVALUATION SUMMARY
+================================================================================
+
+
+qwen-31-onprem:
+  Overall Score: 0.000
+  Avg Latency: 1.37s
+  P95 Latency: 1.85s
+  Total Cost: $0.0000
+  Throughput: 0.0 tokens/s
+
+================================================================================
+BEST PERFORMERS BY CATEGORY
+================================================================================
+
+
+================================================================================
+TRENDS & REGRESSIONS
+================================================================================
+
+
+qwen-31-onprem:
+  Trend: stable (0.0%)
+
+================================================================================
+Results saved to: reports/eval_debug.json
+================================================================================
+
+Cache Stats: 0 entries, 0.00 MB
+
+✅ Evaluation completed successfully!
+
+❌ Models below threshold: qwen-31-onprem

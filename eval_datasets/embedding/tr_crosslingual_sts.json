@@ -1,0 +1,322 @@
+[
+  {
+    "id": "xsts_001",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kredi kartı limitimi artırmak istiyorum.",
+    "sentence2": "I want to increase my credit card limit.",
+    "similarity_score": 0.94,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_002",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "EFT işlemi ne kadar sürer?",
+    "sentence2": "How long does an EFT transfer take?",
+    "similarity_score": 0.93,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_003",
+    "category": "crosslingual_related",
+    "sentence1": "Vadeli mevduat faiz oranları",
+    "sentence2": "Time deposit interest rates",
+    "similarity_score": 0.88,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_004",
+    "category": "crosslingual_regulation",
+    "sentence1": "KVKK kapsamında veri silme talebi",
+    "sentence2": "Data deletion request under Turkish data protection law",
+    "similarity_score": 0.85,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_005",
+    "category": "crosslingual_negation",
+    "sentence1": "Kredi başvurum onaylandı.",
+    "sentence2": "My loan application was rejected.",
+    "similarity_score": 0.20,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_006",
+    "category": "crosslingual_unrelated",
+    "sentence1": "IBAN numaramı nasıl öğrenebilirim?",
+    "sentence2": "What is the best pizza recipe?",
+    "similarity_score": 0.03,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_007",
+    "category": "crosslingual_semantic_shift",
+    "sentence1": "Döviz alış kuru nedir?",
+    "sentence2": "What is the foreign exchange buying rate?",
+    "similarity_score": 0.90,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_008",
+    "category": "crosslingual_hard_negative",
+    "sentence1": "Kartımı internet alışverişine açmak istiyorum.",
+    "sentence2": "I want to cancel my credit card.",
+    "similarity_score": 0.35,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_009",
+    "category": "crosslingual_domain_synonym",
+    "sentence1": "Munzam karşılık oranı nasıl hesaplanır?",
+    "sentence2": "How is the reserve requirement ratio calculated?",
+    "similarity_score": 0.89,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_010",
+    "category": "crosslingual_temporal",
+    "sentence1": "Bugün havale yaptım.",
+    "sentence2": "I made a transfer yesterday.",
+    "similarity_score": 0.72,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_011",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kredi kartı asgari ödeme tutarımı yatırdım.",
+    "sentence2": "I paid the minimum amount due on my credit card.",
+    "similarity_score": 0.95,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_012",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Hesap işletim ücreti kesilmiş, iadesini talep ediyorum.",
+    "sentence2": "Account maintenance fee was deducted, I request a refund.",
+    "similarity_score": 0.92,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_013",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Şifremi unuttum, yeni şifre nasıl alabilirim?",
+    "sentence2": "I forgot my password, how can I get a new one?",
+    "similarity_score": 0.96,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_014",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Bireysel emeklilik sisteminden ayrılmak istiyorum.",
+    "sentence2": "I want to opt out of the private pension system.",
+    "similarity_score": 0.90,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_015",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Konut kredisi erken kapama cezası ne kadar?",
+    "sentence2": "What is the early repayment penalty for a mortgage?",
+    "similarity_score": 0.88,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_016",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "ATM kartımı yuttu, ne yapmalıyım?",
+    "sentence2": "The ATM swallowed my card, what should I do?",
+    "similarity_score": 0.94,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_017",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Yurtdışında kredi kartı kullanımı açık mı?",
+    "sentence2": "Is my credit card open for international use?",
+    "similarity_score": 0.91,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_018",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Temassız ödeme limitini yükseltmek mümkün mü?",
+    "sentence2": "Is it possible to increase the contactless payment limit?",
+    "similarity_score": 0.93,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_019",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kredi notum düşük olduğu için başvurum reddedildi.",
+    "sentence2": "My application was rejected because my credit score is low.",
+    "similarity_score": 0.95,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_020",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Taksitli nakit avans çekmek istiyorum.",
+    "sentence2": "I want to withdraw a cash advance with installments.",
+    "similarity_score": 0.89,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_021",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Hesabıma bloke konulmuş, nedenini öğrenebilir miyim?",
+    "sentence2": "My account has been blocked, can I learn the reason?",
+    "similarity_score": 0.92,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_022",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Döviz hesabı açmak için şubeye gitmem gerekiyor mu?",
+    "sentence2": "Do I need to go to the branch to open a foreign currency account?",
+    "similarity_score": 0.90,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_023",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kredi kartı borcumu yapılandırmak istiyorum.",
+    "sentence2": "I want to restructure my credit card debt.",
+    "similarity_score": 0.91,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_024",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Maaş müşterinizim, promosyon ödemesi ne zaman yatar?",
+    "sentence2": "I am a payroll customer, when will the promotion payment be deposited?",
+    "similarity_score": 0.87,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_025",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Ortak hesap açılışı için gerekli belgeler nelerdir?",
+    "sentence2": "What are the required documents for opening a joint account?",
+    "similarity_score": 0.93,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_026",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kredi kartı aidatı yasal mıdır?",
+    "sentence2": "Is the credit card annual fee legal?",
+    "similarity_score": 0.88,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_027",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Hisse senedi alım satım komisyon oranlarınız nedir?",
+    "sentence2": "What are your stock trading commission rates?",
+    "similarity_score": 0.90,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_028",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Vadeli hesabımı vadesinden önce bozarsam faiz kaybım olur mu?",
+    "sentence2": "Will I lose interest if I break my time deposit account before maturity?",
+    "similarity_score": 0.92,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_029",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kredi kartı ekstresi e-posta adresime gelmiyor.",
+    "sentence2": "My credit card statement is not arriving at my email address.",
+    "similarity_score": 0.94,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_030",
+    "category": "crosslingual_paraphrase",
+    "sentence1": "Kefilsiz ve belgesiz ihtiyaç kredisi veriyor musunuz?",
+    "sentence2": "Do you offer personal loans without a guarantor and documents?",
+    "similarity_score": 0.91,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_031",
+    "category": "crosslingual_negation",
+    "sentence1": "Kredi kartı limitimi düşürmek istiyorum.",
+    "sentence2": "I want to increase my credit card limit.",
+    "similarity_score": 0.30,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_032",
+    "category": "crosslingual_negation",
+    "sentence1": "Hesabıma para yatırmak istiyorum.",
+    "sentence2": "I want to withdraw money from my account.",
+    "similarity_score": 0.25,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_033",
+    "category": "crosslingual_negation",
+    "sentence1": "Kredi faiz oranları düştü.",
+    "sentence2": "Loan interest rates have increased.",
+    "similarity_score": 0.20,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_034",
+    "category": "crosslingual_temporal_opposite",
+    "sentence1": "Şubeleriniz hafta sonu açık mı?",
+    "sentence2": "Are your branches open on weekdays?",
+    "similarity_score": 0.35,
+    "difficulty": "medium"
+  },
+  {
+    "id": "xsts_035",
+    "category": "crosslingual_hard_negative",
+    "sentence1": "Kredi kartım çalındı, iptal edin.",
+    "sentence2": "I want to apply for a new credit card.",
+    "similarity_score": 0.15,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_036",
+    "category": "crosslingual_hard_negative",
+    "sentence1": "EFT ücreti ne kadar?",
+    "sentence2": "How much is the SWIFT transfer fee?",
+    "similarity_score": 0.40,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_037",
+    "category": "crosslingual_hard_negative",
+    "sentence1": "Vadeli hesap açmak istiyorum.",
+    "sentence2": "I want to close my checking account.",
+    "similarity_score": 0.20,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_038",
+    "category": "crosslingual_hard_negative",
+    "sentence1": "Kredi başvurum onaylandı.",
+    "sentence2": "My credit card application is pending.",
+    "similarity_score": 0.30,
+    "difficulty": "hard"
+  },
+  {
+    "id": "xsts_039",
+    "category": "crosslingual_unrelated",
+    "sentence1": "Dolar kuru bugün ne kadar?",
+    "sentence2": "What is the current price of gold?",
+    "similarity_score": 0.10,
+    "difficulty": "easy"
+  },
+  {
+    "id": "xsts_040",
+    "category": "crosslingual_hard_negative",
+    "sentence1": "Müşteri hizmetlerine bağlanamıyorum.",
+    "sentence2": "I cannot log in to internet banking.",
+    "similarity_score": 0.45,
+    "difficulty": "medium"
+  }
+]

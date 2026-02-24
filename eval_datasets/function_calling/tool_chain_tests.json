@@ -1,0 +1,666 @@
+[
+  {
+    "id": "fc_chain_001",
+    "category": "tool_chain",
+    "prompt": "İstanbul'da hava nasıl? Eğer yağmurlu ise şemsiye almamı öner.",
+    "expected_tools": [
+      "get_weather"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Modelin önce hava durumunu öğrenmesi, sonra sonuca göre şemsiye önerisi yapması beklenir.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_002",
+    "category": "tool_chain",
+    "prompt": "USD/TRY kurunu öğren, sonra da 500 USD'nin TL karşılığını hesapla.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce döviz kuru öğrenilmeli, sonra hesaplama yapılmalı ve final sonuç verilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_003",
+    "category": "tool_chain",
+    "prompt": "THYAO hisse senedinin fiyatını öğren. Eğer 350 TL'nin üzerindeyse 'Al' önerisi yap, değilse 'Bekle' de.",
+    "expected_tools": [
+      "get_stock_price"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Hisse fiyatı öğrenilmeli ve fiyata göre öneri verilmelidir.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_004",
+    "category": "tool_chain",
+    "prompt": "Ankara'dan İstanbul'a 15 Mart 2026 tarihinde uçuş bilgilerini getir. En ucuz uçuşu seç ve bilgilerini paylaş.",
+    "expected_tools": [
+      "get_flight_info"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Uçuş bilgileri alınmalı, en ucuz seçenek belirlenmeli ve paylaşılmalıdır.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_005",
+    "category": "tool_chain",
+    "prompt": "İzmir'de otel ara. 20-22 Mart arasında 2 kişilik. Rezervasyon yap ve onay numarasını bana ver.",
+    "expected_tools": [
+      "book_hotel"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Otel rezervasyonu yapılmalı ve onay bilgileri verilmelidir.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_006",
+    "category": "tool_chain",
+    "prompt": "Ankara'da hava durumunu kontrol et. Eğer güneşli ise restoran önerisi yap (moderate fiyat aralığında).",
+    "expected_tools": [
+      "get_weather",
+      "get_restaurant_recommendations"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce hava durumu öğrenilmeli, eğer güneşli ise restoran önerileri getirilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_007",
+    "category": "tool_chain",
+    "prompt": "Can'a bir e-posta gönder. Konu: 'Toplantı Hatırlatması', içerik: 'Yarın saat 14:00'te toplantımız var.'",
+    "expected_tools": [
+      "send_email"
+    ],
+    "expected_order": false,
+    "expected_outcome": "E-posta gönderilmeli ve başarılı gönderim bilgisi paylaşılmalıdır.",
+    "max_turns": 2
+  },
+  {
+    "id": "fc_chain_008",
+    "category": "complex_tool_chain",
+    "prompt": "Bana İstanbul'da bir tatil planı yap: önce 3 günlük hava tahminini al, sonra bir otel rezervasyonu yap (25-28 Şubat), ve son olarak İtalyan restoranları öner.",
+    "expected_tools": [
+      "get_weather",
+      "book_hotel",
+      "get_restaurant_recommendations"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Hava durumu, otel rezervasyonu ve restoran önerileri sırasıyla veya mantıklı bir sırayla yapılmalıdır.",
+    "max_turns": 6
+  },
+  {
+    "id": "fc_chain_009",
+    "category": "conditional_execution",
+    "prompt": "EUR/USD kurunu öğren. Eğer 1.10'dan büyükse bana 'Güçlü Euro' mesajı gönder, değilse 'Zayıf Euro' de.",
+    "expected_tools": [
+      "get_exchange_rate"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Kur bilgisi alınmalı ve koşula göre yanıt verilmelidir.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_010",
+    "category": "calculation_chain",
+    "prompt": "(15 * 8 + 32) / 4 işlemini hesapla ve sonucu bana söyle.",
+    "expected_tools": [
+      "calculate"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Matematiksel hesaplama yapılmalı ve sonuç verilmelidir.",
+    "max_turns": 2
+  },
+  {
+    "id": "fc_chain_011",
+    "category": "tool_chain",
+    "prompt": "Önce USD/TRY kurunu al, sonra 12.500 TL'nin kaç USD ettiğini hesapla.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce kur alınmalı, ardından TL tutarı USD'ye çevrilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_012",
+    "category": "conditional_execution",
+    "prompt": "AAPL fiyatını öğren. Eğer 200'ün altındaysa 10 adet alış emri ver, değilse bekle.",
+    "expected_tools": [
+      "get_stock_price",
+      "place_stock_order"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Fiyat kontrol edilmeli; koşul sağlanırsa emir verilmeli, sağlanmazsa işlem yapılmamalı.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_013",
+    "category": "tool_chain",
+    "prompt": "Ankara'da yarın hava yağmurluysa kapalı mekân restoran öner, değilse teras restoran öner.",
+    "expected_tools": [
+      "get_weather",
+      "get_restaurant_recommendations"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce hava durumu alınmalı, ardından koşula uygun restoran tipi önerilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_014",
+    "category": "complex_tool_chain",
+    "prompt": "İstanbul'dan Berlin'e uçuşları bul, en ucuzunu seç, sonra aynı tarihlere otel rezervasyonu yap.",
+    "expected_tools": [
+      "get_flight_info",
+      "book_hotel"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce uçuş opsiyonları değerlendirilip en ucuzu seçilmeli, ardından uygun otel rezervasyonu yapılmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_015",
+    "category": "calculation_chain",
+    "prompt": "EUR/USD ve USD/TRY kurlarını al, sonra 700 EUR'nun TRY karşılığını hesapla.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "İki kur bilgisi alınmalı ve çapraz dönüşüm ile EUR->TRY hesaplanmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_016",
+    "category": "tool_chain",
+    "prompt": "Son 1 haftalık işlemleri getir ve market harcamalarının toplamını hesapla.",
+    "expected_tools": [
+      "get_transactions",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "İşlemler alındıktan sonra market kategorisi filtrelenip toplam harcama hesaplanmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_017",
+    "category": "conditional_execution",
+    "prompt": "Kredi kartı son ödeme tarihini kontrol et, eğer bugünse müşteriye hatırlatma e-postası gönder.",
+    "expected_tools": [
+      "get_credit_card_due_date",
+      "send_email"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Son ödeme tarihi sorgulanmalı, sadece koşul sağlanırsa e-posta gönderilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_018",
+    "category": "complex_tool_chain",
+    "prompt": "THYAO, GARAN ve ASELS fiyatlarını çek, en yüksek getiriyi vereni bul ve onu raporla.",
+    "expected_tools": [
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price",
+      "calculate"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Hisse fiyatları alındıktan sonra kıyaslama yapılarak en yüksek değer raporlanmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_019",
+    "category": "tool_chain",
+    "prompt": "BES fonlarının son 1 yıllık performansını getir, en iyi 2 fonu listele.",
+    "expected_tools": [
+      "get_fund_performance",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Fon performans verileri alınıp sıralanmalı ve en iyi iki fon çıkarılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_020",
+    "category": "tool_chain",
+    "prompt": "Müşterinin hesap bakiyesini kontrol et, yeterliyse 2.000 TL otomatik ödeme talimatını oluştur.",
+    "expected_tools": [
+      "check_balance",
+      "create_autopay_instruction"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce bakiye doğrulanmalı, yeterli ise otomatik ödeme talimatı oluşturulmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_021",
+    "category": "conditional_execution",
+    "prompt": "Dolar kuru 35'in üstündeyse bana alarm oluştur, değilse sadece bilgi ver.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "create_price_alert"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Kur bilgisi alınıp koşula bağlı alarm kurulmalı ya da sadece bilgilendirme yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_022",
+    "category": "complex_tool_chain",
+    "prompt": "Önce İstanbul ve İzmir hava durumunu al, hangisi daha sıcaksa o şehirde hafta sonu etkinliklerini getir.",
+    "expected_tools": [
+      "get_weather",
+      "get_weather",
+      "get_events"
+    ],
+    "expected_order": false,
+    "expected_outcome": "İki şehirin hava verisi karşılaştırılmalı, daha sıcak şehre göre etkinlik sorgusu yapılmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_023",
+    "category": "calculation_chain",
+    "prompt": "Aylık gelir 80.000 TL, gider 47.500 TL. Kalan tutarın %30'unu birikim hesabına ayır ve miktarı hesapla.",
+    "expected_tools": [
+      "calculate",
+      "transfer_to_savings"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Net kalan tutar hesaplanmalı, %30 birikim tutarı bulunup birikim hesabına aktarım planlanmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_024",
+    "category": "tool_chain",
+    "prompt": "Yarınki toplantı saatime göre takvimde boşluk var mı kontrol et, varsa hatırlatma oluştur.",
+    "expected_tools": [
+      "check_calendar",
+      "create_reminder"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Takvim uygunluğu kontrol edilmeli, uygun slot varsa hatırlatma oluşturulmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_025",
+    "category": "complex_tool_chain",
+    "prompt": "Kart ekstresini getir, asgari ödeme tutarını hesapla, sonra bunu 3 taksite bölersen aylık ödemeyi söyle.",
+    "expected_tools": [
+      "get_credit_card_statement",
+      "calculate",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Ekstre verisi alınmalı, asgari ödeme hesaplanmalı ve 3 taksit senaryosu için aylık tutar bulunmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_026",
+    "category": "conditional_execution",
+    "prompt": "Hesap bakiyemi kontrol et. Eğer 5000 TL'den azsa bana uyarı ver, fazlaysa 1000 TL'sini vadeli hesaba aktar.",
+    "expected_tools": [
+      "check_balance",
+      "transfer_funds"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce bakiye kontrol edilmeli, duruma göre uyarı verilmeli veya para transferi yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_027",
+    "category": "calculation_chain",
+    "prompt": "Aylık %2 faiz oranıyla 50.000 TL kredinin 12 aylık toplam geri ödemesini hesapla.",
+    "expected_tools": [
+      "calculate"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Kredi geri ödeme tutarı matematiksel olarak hesaplanıp kullanıcıya sunulmalıdır.",
+    "max_turns": 2
+  },
+  {
+    "id": "fc_chain_028",
+    "category": "complex_tool_chain",
+    "prompt": "Hafta sonu için Antalya'ya uçak bileti bak, cuma gidiş pazar dönüş. Ardından hava durumunu kontrol et ve deniz kenarında bir otel rezervasyonu yap.",
+    "expected_tools": [
+      "get_flight_info",
+      "get_weather",
+      "book_hotel"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Uçuş bilgileri alınmalı, hava durumu kontrol edilmeli ve otel rezervasyonu tamamlanmalıdır.",
+    "max_turns": 6
+  },
+  {
+    "id": "fc_chain_029",
+    "category": "conditional_execution",
+    "prompt": "Yarın Ankara'da kar yağışı bekleniyor mu? Eğer bekleniyorsa kış lastiği taktırmam için takvimime bir hatırlatıcı ekle.",
+    "expected_tools": [
+      "get_weather",
+      "add_calendar_event"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Hava durumu kontrol edilmeli, kar yağışı varsa takvime etkinlik eklenmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_030",
+    "category": "tool_chain",
+    "prompt": "Annemin doğum günü için çiçek siparişi ver, ardından ona 'Doğum günün kutlu olsun' yazılı bir mesaj gönder.",
+    "expected_tools": [
+      "order_flowers",
+      "send_message"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce çiçek siparişi verilmeli, ardından tebrik mesajı gönderilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_031",
+    "category": "complex_tool_chain",
+    "prompt": "Kredi kartı borcumu öğren, vadesiz hesabımdaki bakiyeyi kontrol et. Eğer bakiye yeterliyse kredi kartı borcumun tamamını öde.",
+    "expected_tools": [
+      "get_credit_card_debt",
+      "check_balance",
+      "pay_credit_card"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Borç ve bakiye bilgileri alınmalı, bakiye yeterliyse ödeme işlemi gerçekleştirilmelidir.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_032",
+    "category": "conditional_execution",
+    "prompt": "Altın fiyatlarını (gram) kontrol et. Eğer 2500 TL'nin altına düştüyse 10 gram altın al, düşmediyse sadece güncel fiyatı söyle.",
+    "expected_tools": [
+      "get_gold_price",
+      "buy_gold"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Altın fiyatı kontrol edilmeli, şarta bağlı olarak alım yapılmalı veya sadece fiyat bilgisi verilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_033",
+    "category": "tool_chain",
+    "prompt": "Paris'teki Eyfel Kulesi'ne yakın restoranları bul ve en yüksek puanlı olanından bu akşam 20:00 için 2 kişilik masa ayırt.",
+    "expected_tools": [
+      "get_restaurant_recommendations",
+      "book_restaurant"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Restoranlar listelenmeli, en yüksek puanlı olan seçilip rezervasyon yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_034",
+    "category": "calculation_chain",
+    "prompt": "Elimdeki 10.000 Euro'yu bugünkü kurdan TL'ye çevir, ardından bu paranın %18 KDV'sini hesapla.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Önce Euro kuru alınıp TL karşılığı bulunmalı, sonra bu tutarın KDV'si hesaplanmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_035",
+    "category": "conditional_execution",
+    "prompt": "Bugün saat 15:00'te toplantım var mı kontrol et. Eğer yoksa o saate 'Proje Değerlendirmesi' adında bir toplantı planla ve Ali'yi davet et.",
+    "expected_tools": [
+      "check_calendar",
+      "create_meeting"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Takvim kontrol edilmeli, boşluk varsa yeni toplantı oluşturulup davet gönderilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_036",
+    "category": "complex_tool_chain",
+    "prompt": "Hafta sonu Uludağ'da kar kalınlığını ve hava durumunu öğren. Eğer kayak için uygunsa bana uygun fiyatlı bir otel bul ve araç kiralama seçeneklerini listele.",
+    "expected_tools": [
+      "get_weather",
+      "get_snow_depth",
+      "book_hotel",
+      "rent_car"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Hava ve kar durumu kontrol edilmeli, uygunsa otel ve araç kiralama seçenekleri sunulmalıdır.",
+    "max_turns": 6
+  },
+  {
+    "id": "fc_chain_037",
+    "category": "tool_chain",
+    "prompt": "Son ayki elektrik faturamı sorgula ve vadesiz hesabımdan ödemesini gerçekleştir.",
+    "expected_tools": [
+      "query_bill",
+      "pay_bill"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Fatura sorgulanmalı ve ardından ödeme işlemi yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_038",
+    "category": "conditional_execution",
+    "prompt": "Bitcoin (BTC) fiyatını kontrol et. Eğer son 24 saatte %5'ten fazla düştüyse bana acil bir e-posta gönder.",
+    "expected_tools": [
+      "get_crypto_price",
+      "send_email"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Kripto fiyatı ve değişimi kontrol edilmeli, şarta bağlı olarak e-posta gönderilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_039",
+    "category": "calculation_chain",
+    "prompt": "İstanbul'dan New York'a uçuş mesafesini mil cinsinden bul, sonra bunu kilometreye çevir.",
+    "expected_tools": [
+      "get_flight_distance",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Uçuş mesafesi öğrenilmeli ve matematiksel olarak kilometreye dönüştürülmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_040",
+    "category": "complex_tool_chain",
+    "prompt": "Akıllı ev sistemine bağlanıp salonun ışıklarını kapat, klimayı 22 dereceye ayarla ve sabah 7'ye alarm kur.",
+    "expected_tools": [
+      "control_smart_home",
+      "set_alarm"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Işıklar kapatılmalı, klima ayarlanmalı ve alarm kurulmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_041",
+    "category": "conditional_execution",
+    "prompt": "Dolar hesabımda ne kadar var bak. Eğer 1000 USD'den fazlaysa 500 USD'sini TL'ye çevirip vadesiz hesabıma aktar.",
+    "expected_tools": [
+      "check_balance",
+      "get_exchange_rate",
+      "transfer_funds"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Bakiye kontrol edilmeli, yeterliyse kur bilgisi alınıp çevrim ve transfer yapılmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_042",
+    "category": "tool_chain",
+    "prompt": "Apple (AAPL) ve Microsoft (MSFT) hisselerinin güncel fiyatlarını al ve hangisinin daha pahalı olduğunu söyle.",
+    "expected_tools": [
+      "get_stock_price"
+    ],
+    "expected_order": false,
+    "expected_outcome": "İki hissenin fiyatı alınmalı ve karşılaştırılarak sonuç verilmelidir.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_043",
+    "category": "calculation_chain",
+    "prompt": "Bugün İzmir'deki sıcaklığı Fahrenheit olarak al, sonra bunu Celsius'a çevir.",
+    "expected_tools": [
+      "get_weather",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Sıcaklık Fahrenheit olarak alınmalı ve formülle Celsius'a çevrilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_044",
+    "category": "conditional_execution",
+    "prompt": "Yarın sabahki Londra uçuşumun rötar yapıp yapmadığını kontrol et. Eğer rötar varsa havalimanı transferimi 2 saat ileri al.",
+    "expected_tools": [
+      "check_flight_status",
+      "update_transfer"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Uçuş durumu kontrol edilmeli, rötar varsa transfer saati güncellenmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_045",
+    "category": "tool_chain",
+    "prompt": "Spotify'dan 'Odaklanma' çalma listemi aç ve ses seviyesini %50'ye ayarla.",
+    "expected_tools": [
+      "play_music",
+      "set_volume"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Müzik başlatılmalı ve ses seviyesi ayarlanmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_046",
+    "category": "complex_tool_chain",
+    "prompt": "Maaşım yatmış mı diye kontrol et. Yatmışsa kirayı (15.000 TL) ev sahibine gönder, faturaları öde ve kalan paranın %20'sini yatırım hesabıma aktar.",
+    "expected_tools": [
+      "check_balance",
+      "transfer_funds",
+      "pay_bill",
+      "calculate"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Bakiye kontrol edilmeli, kira ve faturalar ödenmeli, kalan tutar hesaplanıp yatırım hesabına aktarılmalıdır.",
+    "max_turns": 7
+  },
+  {
+    "id": "fc_chain_047",
+    "category": "conditional_execution",
+    "prompt": "Gümüşün ons fiyatına bak. Eğer 30 doların üzerindeyse portföyümdeki gümüşlerin yarısını sat.",
+    "expected_tools": [
+      "get_commodity_price",
+      "sell_asset"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Gümüş fiyatı kontrol edilmeli, şarta bağlı olarak satış işlemi gerçekleştirilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_048",
+    "category": "tool_chain",
+    "prompt": "Roma'daki Kolezyum'un giriş ücretini öğren ve yarın saat 10:00 için 2 yetişkin bileti satın al.",
+    "expected_tools": [
+      "get_ticket_price",
+      "buy_ticket"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Bilet fiyatı öğrenilmeli ve satın alma işlemi yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_049",
+    "category": "complex_tool_chain",
+    "prompt": "Hafta sonu Bodrum'da hava nasıl olacak öğren. Eğer rüzgar sörfü için uygunsa (rüzgar hızı 15 knot üzeri), sörf okulu fiyatlarını getir ve bir ders ayarla.",
+    "expected_tools": [
+      "get_weather",
+      "get_prices",
+      "book_lesson"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Hava ve rüzgar durumu kontrol edilmeli, uygunsa fiyatlar alınıp ders rezervasyonu yapılmalıdır.",
+    "max_turns": 5
+  },
+  {
+    "id": "fc_chain_050",
+    "category": "calculation_chain",
+    "prompt": "Bir dikdörtgenin eni 15 cm, boyu 24 cm. Alanını ve çevresini hesapla, sonuçları bana bir tablo halinde sun.",
+    "expected_tools": [
+      "calculate"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Alan ve çevre hesaplamaları yapılmalı ve istenen formatta sunulmalıdır.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_051",
+    "category": "conditional_execution",
+    "prompt": "Kredi notumu sorgula. Eğer 1500'ün üzerindeyse 100.000 TL'lik ihtiyaç kredisi başvurusu yap.",
+    "expected_tools": [
+      "check_credit_score",
+      "apply_loan"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Kredi notu öğrenilmeli, şarta bağlı olarak kredi başvurusu yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_052",
+    "category": "complex_tool_chain",
+    "prompt": "Son 1 aydaki enflasyon oranını öğren, ardından politika faizini kontrol et. Eğer enflasyon faizden yüksekse bana 'Negatif reel faiz' uyarısı ver.",
+    "expected_tools": [
+      "get_inflation_rate",
+      "get_interest_rate"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Enflasyon ve faiz oranları alınmalı, karşılaştırma yapılarak uyarı verilmelidir.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_053",
+    "category": "conditional_execution",
+    "prompt": "Venedik'te gondol turu fiyatlarını kontrol et. Eğer 100 Euro'nun altındaysa akşam gün batımı için rezervasyon yap.",
+    "expected_tools": [
+      "get_tour_price",
+      "book_tour"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Tur fiyatı kontrol edilmeli, şarta bağlı olarak rezervasyon yapılmalıdır.",
+    "max_turns": 4
+  },
+  {
+    "id": "fc_chain_054",
+    "category": "tool_chain",
+    "prompt": "Tokyo'da şu an saat kaç ve hava nasıl? İkisini de öğrenip bana bildir.",
+    "expected_tools": [
+      "get_time",
+      "get_weather"
+    ],
+    "expected_order": false,
+    "expected_outcome": "Saat ve hava durumu bilgileri alınıp kullanıcıya sunulmalıdır.",
+    "max_turns": 3
+  },
+  {
+    "id": "fc_chain_055",
+    "category": "complex_tool_chain",
+    "prompt": "Buzdolabındaki eksikleri kontrol et (süt, yumurta, ekmek). Eksik olanları online marketten sipariş ver ve teslimat saatini akşam 19:00'a ayarla.",
+    "expected_tools": [
+      "check_inventory",
+      "order_groceries"
+    ],
+    "expected_order": true,
+    "expected_outcome": "Eksikler belirlenmeli, sipariş verilmeli ve teslimat saati ayarlanmalıdır.",
+    "max_turns": 4
+  }
+]

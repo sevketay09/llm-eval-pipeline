@@ -1,0 +1,650 @@
+[
+  {
+    "id": "hr_001",
+    "category": "intent_disambiguation",
+    "query": "kart aidatı iadesi nasıl alınır",
+    "positive_docs": [
+      "Kredi kartı yıllık üyelik ücreti iadesi için müşteri hizmetlerine başvurabilir, harcama geçmişinizle değerlendirme talep edebilirsiniz.",
+      "Aidat iadesi talebinizi mobil uygulamadan oluşturabilir, kampanya şartlarına uygunsanız ücret iadesi alabilirsiniz."
+    ],
+    "hard_negatives": [
+      "Kredi kartı limit artışı için gelir belgesi ve düzenli ödeme geçmişi gereklidir.",
+      "Kart iptali için çağrı merkezi üzerinden güvenlik doğrulaması yapmanız gerekir."
+    ],
+    "random_negatives": [
+      "Bugün İstanbul'da yağış bekleniyor.",
+      "Evde filtre kahve demleme yöntemleri."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_002",
+    "category": "regulatory_vs_product",
+    "query": "kvkk veri silme talebi başvurusu",
+    "positive_docs": [
+      "KVKK kapsamında veri silme talebinizi yazılı veya kayıtlı elektronik posta ile iletebilirsiniz; başvurular 30 gün içinde yanıtlanır.",
+      "Kişisel verilerin silinmesi için bankaya başvuruda bulunabilir, kimlik doğrulaması sonrası süreç başlatılır."
+    ],
+    "hard_negatives": [
+      "Kredi kapama işlemlerinde erken ödeme tazminatı uygulanabilir.",
+      "Vadeli mevduat hesaplarında vade bozulursa faiz kaybı yaşanabilir."
+    ],
+    "random_negatives": [
+      "Makarna 8-10 dakikada haşlanır.",
+      "Mars Güneş'e dördüncü en yakın gezegendir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_003",
+    "category": "channel_confusion",
+    "query": "internet bankacılığı şifresi sıfırlama",
+    "positive_docs": [
+      "İnternet bankacılığı şifrenizi 'Şifremi Unuttum' adımıyla, SMS doğrulaması sonrası yenileyebilirsiniz.",
+      "Şifre sıfırlama için kart bilgisi ve TC kimlik numarası ile güvenlik doğrulaması yapılır."
+    ],
+    "hard_negatives": [
+      "Kartınız kaybolduysa hemen kart iptal hattını arayınız.",
+      "Hesap cüzdanı talebi için şubeden randevu alabilirsiniz."
+    ],
+    "random_negatives": [
+      "Evcil hayvanlar için beslenme önerileri.",
+      "Bisiklet zinciri nasıl yağlanır?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_004",
+    "category": "fee_type_disambiguation",
+    "query": "eft ücreti ne kadar",
+    "positive_docs": [
+      "EFT ücretleri işlem tutarı ve kanalına göre değişir; mobil kanalda daha düşük ücret uygulanabilir.",
+      "Mesai dışı EFT işlemlerinde farklı tarife uygulanabilir; güncel ücretler ücretlendirme sayfasında yer alır."
+    ],
+    "hard_negatives": [
+      "Kredi kartı gecikme faizi aylık belirli bir oran üzerinden hesaplanır.",
+      "POS komisyon oranları sektör ve ciroya göre farklılaşır."
+    ],
+    "random_negatives": [
+      "Deniz seviyesinde su 100 derecede kaynar.",
+      "Futbolda bir maç 90 dakikadır."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_005",
+    "category": "fintech_term_precision",
+    "query": "munzam karşılık oranı",
+    "positive_docs": [
+      "Munzam karşılık, bankaların belirli yükümlülükleri için merkez bankasında tutması gereken zorunlu rezerv oranıdır.",
+      "Zorunlu karşılık oranları para politikası araçlarından biridir ve likiditeyi etkiler."
+    ],
+    "hard_negatives": [
+      "Sermaye yeterliliği rasyosu bankanın risk ağırlıklı varlıklarına göre hesaplanır.",
+      "Likidite karşılama oranı kısa vadeli yükümlülükleri karşılayabilme düzeyini ölçer."
+    ],
+    "random_negatives": [
+      "Güneş doğudan doğar.",
+      "Patates kızartması sıcak servis edilir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_006",
+    "category": "cross_channel_service",
+    "query": "hesap ekstresi nereden alınır",
+    "positive_docs": [
+      "Hesap ekstrenizi mobil uygulama, internet şubesi veya e-posta tercihleri üzerinden alabilirsiniz.",
+      "Aylık hesap dökümü internet bankacılığı menüsündeki ekstre bölümünden indirilebilir."
+    ],
+    "hard_negatives": [
+      "Yeni hesap açılışı için şubeye kimlik ile başvurmanız gerekir.",
+      "Kredi notu sorgulama işlemi ücretli olabilir."
+    ],
+    "random_negatives": [
+      "Fotoğraf makinesinde ISO ayarı ışığa duyarlılığı etkiler.",
+      "Karpuz yaz mevsiminde tüketilir."
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "hr_007",
+    "category": "calculation_logic",
+    "query": "kredi kartı asgari ödeme tutarı nasıl hesaplanır",
+    "positive_docs": [
+      "Asgari ödeme tutarı, kredi kartı limitinize ve yasal düzenlemelere göre dönem borcunuzun belirli bir yüzdesi olarak hesaplanır.",
+      "Kredi kartı ekstrenizdeki asgari ödeme, BDDK'nın belirlediği oranlar çerçevesinde borcunuzun %20'si ile %40'ı arasında değişebilir."
+    ],
+    "hard_negatives": [
+      "Kredi kartı gecikme faizi, asgari ödeme tutarının altında ödeme yapıldığında kalan borç üzerinden günlük olarak işletilir.",
+      "Kredi kartı nakit avans çekimlerinde faiz, işlemin yapıldığı günden itibaren hesaplanmaya başlar."
+    ],
+    "random_negatives": [
+      "Kek yaparken un ve kabartma tozu elenerek eklenmelidir.",
+      "Dünyanın en yüksek dağı Everest'tir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_008",
+    "category": "product_rules",
+    "query": "vadeli hesap erken kapatılırsa ne olur",
+    "positive_docs": [
+      "Vadeli mevduat hesabınızı vadesinden önce kapatırsanız, hesabınıza faiz işletilmez ve anaparanızı faizsiz olarak geri alırsınız.",
+      "Vade bozulduğunda, o güne kadar işlemiş olan faiz hakkınızı kaybedersiniz ve hesap vadesiz hesaba dönüşür."
+    ],
+    "hard_negatives": [
+      "Vadeli hesap faiz oranları, piyasa koşullarına ve Merkez Bankası politika faizine göre değişiklik gösterebilir.",
+      "Vadesiz hesaplardan hesap işletim ücreti alınabilir, ancak maaş müşterileri bu ücretten muaftır."
+    ],
+    "random_negatives": [
+      "Kış aylarında kış lastiği takmak zorunludur.",
+      "Gitar çalmayı öğrenmek düzenli pratik gerektirir."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_009",
+    "category": "product_comparison",
+    "query": "FAST ile EFT arasındaki fark nedir",
+    "positive_docs": [
+      "FAST sistemi 7/24 anında para transferi sağlarken, EFT işlemleri sadece mesai saatleri içinde gerçekleşir.",
+      "EFT ile farklı bankalara mesai saatlerinde para gönderilirken, FAST ile limitler dahilinde günün her saati saniyeler içinde transfer yapılabilir."
+    ],
+    "hard_negatives": [
+      "Havale işlemi, aynı banka içindeki hesaplar arasında yapılan ve 7/24 gerçekleşebilen para transferidir.",
+      "SWIFT işlemi, yurtdışındaki bankalara döviz cinsinden yapılan uluslararası para transferidir."
+    ],
+    "random_negatives": [
+      "Kahve çekirdekleri kavrulduktan sonra öğütülmelidir.",
+      "Satrançta vezir en güçlü taştır."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_010",
+    "category": "credit_score",
+    "query": "kredi notu nasıl yükseltilir",
+    "positive_docs": [
+      "Kredi notunuzu yükseltmek için kredi kartı ve kredi taksitlerinizi son ödeme tarihinden önce düzenli olarak ödemelisiniz.",
+      "Mevcut borçluluk oranınızı düşürmek ve asgari ödeme yerine borcun tamamını ödemek kredi notunuzu olumlu etkiler."
+    ],
+    "hard_negatives": [
+      "Kredi notu sorgulama işlemini Findeks üzerinden veya bankanızın mobil uygulamasından ücretli olarak yapabilirsiniz.",
+      "Kredi başvurunuzun onaylanması için kredi notunuzun bankanın belirlediği asgari seviyenin üzerinde olması gerekir."
+    ],
+    "random_negatives": [
+      "Spor yapmak kalp sağlığını olumlu yönde etkiler.",
+      "Mona Lisa tablosu Louvre Müzesi'nde sergilenmektedir."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_011",
+    "category": "security",
+    "query": "şüpheli işlem bildirimi nasıl yapılır",
+    "positive_docs": [
+      "Kartınızda size ait olmayan bir işlem görürseniz, derhal 0850'li müşteri iletişim merkezimizi arayarak kartınızı iptal ettirmeli ve harcama itirazında bulunmalısınız.",
+      "Şüpheli işlemlerde mobil uygulamadaki 'Kart Ayarları' menüsünden kartınızı geçici olarak kapatabilir ve çağrı merkezine bağlanabilirsiniz."
+    ],
+    "hard_negatives": [
+      "Kredi kartı harcama taksitlendirme işlemini, ekstre kesilmeden önce mobil şube üzerinden yapabilirsiniz.",
+      "Kayıp veya çalıntı durumunda yeni kartınız 7-10 iş günü içinde kurye ile adresinize teslim edilir."
+    ],
+    "random_negatives": [
+      "Domates buzdolabında saklandığında lezzetini kaybedebilir.",
+      "Japonya'nın başkenti Tokyo'dur."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_012",
+    "category": "pension",
+    "query": "bireysel emeklilik iptali",
+    "positive_docs": [
+      "BES sözleşmenizi iptal etmek için emeklilik şirketinizin çağrı merkezini arayabilir veya ayrılma talep formunu doldurarak iletebilirsiniz.",
+      "Bireysel emeklilik sisteminden erken çıkışlarda, devlet katkısı hak ediş oranınız düşer ve stopaj kesintisi uygulanır."
+    ],
+    "hard_negatives": [
+      "Bireysel emeklilik sisteminde fon dağılım değişikliğini yılda 12 kez yapma hakkınız bulunmaktadır.",
+      "Otomatik katılım sistemine (OKS) dahil olan çalışanlar, ilk 2 ay içinde cayma hakkını kullanarak kesintilerini iade alabilirler."
+    ],
+    "random_negatives": [
+      "Kedi ve köpekler farklı beslenme ihtiyaçlarına sahiptir.",
+      "Su 0 derecede donar."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_013",
+    "category": "fee_refund",
+    "query": "konut kredisi ekspertiz ücreti iade edilir mi",
+    "positive_docs": [
+      "Konut kredilerinde tahsil edilen ekspertiz ücreti, üçüncü taraf değerleme firmalarına ödendiği için kredi kullanılmasa dahi iade edilmez.",
+      "Ekspertiz işlemi gerçekleşmişse, kredi başvurunuz reddedilse bile ekspertiz ücretinin iadesi yasal olarak mümkün değildir."
+    ],
+    "hard_negatives": [
+      "Konut kredisi erken kapama durumunda, kalan anapara üzerinden %1 ile %2 arasında erken ödeme tazminatı alınabilir.",
+      "Kredi tahsis ücreti (dosya masrafı), kullanılan kredi tutarının binde beşini geçemez ve yasal bir kesintidir."
+    ],
+    "random_negatives": [
+      "Güneş kremi cildi UV ışınlarından korur.",
+      "Piyano 88 tuştan oluşur."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_014",
+    "category": "channel_limits",
+    "query": "atm günlük para çekme limiti arttırma",
+    "positive_docs": [
+      "ATM günlük para çekme limitinizi mobil bankacılık uygulamasındaki 'Kart Ayarları' menüsünden veya çağrı merkezini arayarak geçici olarak artırabilirsiniz.",
+      "Güvenlik nedeniyle belirlenen standart ATM çekim limitini, şubelerimizden veya internet şubesinden kalıcı olarak güncelleyebilirsiniz."
+    ],
+    "hard_negatives": [
+      "ATM'den kartsız para çekme işlemi için mobil uygulamadan QR kod oluşturmanız veya referans kodu almanız gerekmektedir.",
+      "Kredi kartı nakit avans limiti, toplam kart limitinizin belirli bir yüzdesi ile sınırlandırılmıştır."
+    ],
+    "random_negatives": [
+      "Zürafaların dilleri mavi-siyah renktedir.",
+      "Makarna sosuna fesleğen eklemek aroma katar."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_015",
+    "category": "account_operations",
+    "query": "ortak hesap nasıl açılır",
+    "positive_docs": [
+      "Müşterek (ortak) hesap açılışı için tüm hesap sahiplerinin kimlik belgeleriyle birlikte şubemize şahsen başvurmaları gerekmektedir.",
+      "Ortak hesaplarda imza yetkisi 'tek başına' veya 'birlikte' olarak belirlenebilir, bu işlem sadece şubelerden yapılabilir."
+    ],
+    "hard_negatives": [
+      "Vadesiz mevduat hesabınızı mobil uygulama üzerinden görüntülü görüşme ile şubeye gitmeden anında açabilirsiniz.",
+      "Hesap birleştirme veya hesaplar arası virman işlemlerini internet bankacılığından kolayca gerçekleştirebilirsiniz."
+    ],
+    "random_negatives": [
+      "Kutup ayıları solaktır.",
+      "Çikolata yapımında kakao çekirdekleri kullanılır."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_016",
+    "category": "card_features",
+    "query": "kredi kartı temassız özelliği açma",
+    "positive_docs": [
+      "Kartınızın temassız ödeme özelliğini mobil uygulamadaki 'Kart Ayarları' bölümünden veya müşteri hizmetlerini arayarak aktif hale getirebilirsiniz.",
+      "Yeni gelen kartınızın temassız özelliğinin açılması için ilk işleminizi ATM'den veya POS cihazından şifreli olarak yapmanız gerekmektedir."
+    ],
+    "hard_negatives": [
+      "Temassız ödeme limiti BDDK tarafından belirlenir ve bu limitin üzerindeki işlemlerde şifre girilmesi zorunludur.",
+      "Kredi kartınızı internet alışverişlerine (e-ticaret) açmak için SMS ile onay vermeniz veya mobil şubeyi kullanmanız gerekir."
+    ],
+    "random_negatives": [
+      "Bal bozulmayan tek gıdadır.",
+      "İngilizce dünyada en çok konuşulan dillerden biridir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_017",
+    "category": "fee_type_disambiguation",
+    "query": "döviz hesabı işletim ücreti var mı",
+    "positive_docs": [
+      "Bankamızda açacağınız vadesiz döviz hesaplarından herhangi bir hesap işletim ücreti veya aylık bakım masrafı alınmamaktadır.",
+      "Yasal düzenlemeler gereği, bireysel müşterilerin TL ve döviz vadesiz hesaplarından hesap işletim ücreti tahsil edilmemektedir."
+    ],
+    "hard_negatives": [
+      "Döviz transferi (SWIFT) işlemlerinde, muhabir banka masrafları ve transfer ücreti gönderilen tutardan kesilebilir.",
+      "Döviz alış ve satış işlemlerinde uygulanan kur marjları piyasa koşullarına göre anlık olarak değişiklik gösterir."
+    ],
+    "random_negatives": [
+      "Penguenler sadece Güney Yarımküre'de yaşar.",
+      "Müzik dinlemek stresi azaltabilir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_018",
+    "category": "loan_operations",
+    "query": "kredi yapılandırma şartları nelerdir",
+    "positive_docs": [
+      "Kredi yapılandırması için mevcut kredinizin gecikmede olmaması veya yasal takibe düşmemiş olması, ayrıca gelir durumunuzun yeni taksitleri karşılaması gerekir.",
+      "Borç transferi veya yapılandırma taleplerinizde, güncel faiz oranları üzerinden yeni bir ödeme planı oluşturulur ve vade uzatılabilir."
+    ],
+    "hard_negatives": [
+      "İhtiyaç kredisi başvurusu için son 6 aylık SGK dökümü ve güncel gelir belgesi ibraz edilmesi zorunludur.",
+      "Kredi borcunun tamamının erken kapatılması durumunda, kalan vadeye ait faizler silinir ve sadece anapara tahsil edilir."
+    ],
+    "random_negatives": [
+      "Elma bir meyvedir.",
+      "Gözlük camları mikrofiber bezle silinmelidir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_019",
+    "category": "commercial_products",
+    "query": "bloke çek hesabı nedir",
+    "positive_docs": [
+      "Bloke çek, keşidecinin hesabındaki tutarın çek bedeli kadar bloke edilerek, çekin karşılıksız çıkma riskini ortadan kaldıran güvenli bir ödeme aracıdır.",
+      "Özellikle gayrimenkul ve araç alım satımlarında kullanılan bloke çek, banka tarafından tutarın garanti altına alındığını gösterir."
+    ],
+    "hard_negatives": [
+      "Karşılıksız çek keşide etmek yasal bir suçtur ve çek hesabı açma yasağı ile adli para cezasına yol açabilir.",
+      "Hesabınıza konulan e-haciz veya yasal blokeler, ilgili vergi dairesi veya icra dairesinin yazılı talebi ile kaldırılabilir."
+    ],
+    "random_negatives": [
+      "Kelebeklerin ömrü türüne göre değişir.",
+      "Bisiklet sürmek denge gerektirir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_020",
+    "category": "customer_segment_benefits",
+    "query": "maaş müşterisi eft ücreti öder mi",
+    "positive_docs": [
+      "Maaşını bankamızdan alan müşterilerimiz, internet ve mobil şube üzerinden yapacakları EFT ve Havale işlemlerinden muaf tutulmaktadır.",
+      "Maaş anlaşmalı kurum çalışanları, maaşları bankamıza yattığı sürece dijital kanallardaki para transferleri için ücret ödemezler."
+    ],
+    "hard_negatives": [
+      "Maaş müşterilerimize özel indirimli ihtiyaç kredisi faiz oranlarından faydalanmak için mobil şubemizi ziyaret edebilirsiniz.",
+      "Mesai saatleri dışında yapılan Geç EFT (Nöbetçi EFT) işlemlerinde, işlem tutarına göre ek komisyon yansıtılabilir."
+    ],
+    "random_negatives": [
+      "Kuşlar yumurtlayarak çoğalır.",
+      "Güneş sistemi Samanyolu galaksisinde yer alır."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_021",
+    "category": "credit_card_operations",
+    "query": "kredi kartı borcu taksitlendirme",
+    "positive_docs": [
+      "Ekstre kesildikten sonra, asgari ödeme tutarını yatırdıktan sonra kalan kredi kartı borcunuzu mobil uygulamadan aylık faiz oranıyla taksitlendirebilirsiniz.",
+      "Dönem borcunuzun tamamını ödeyemediğiniz durumlarda, 'Ekstre Taksitlendir' özelliği ile borcunuzu 12 aya kadar bölebilirsiniz."
+    ],
+    "hard_negatives": [
+      "Kredi kartı ile yapılan peşin alışverişleri, işlem provizyondan çıktıktan sonra ve ekstre kesilmeden önce sonradan taksitlendirebilirsiniz.",
+      "Nakit avans çekim işlemlerinizi ATM'den veya mobil şubeden yaparken doğrudan taksitli nakit avans seçeneğini kullanabilirsiniz."
+    ],
+    "random_negatives": [
+      "Deniz suyu tuzludur.",
+      "Ağaçlar fotosentez yapar."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_022",
+    "category": "information_retrieval",
+    "query": "swift kodu nerede yazar",
+    "positive_docs": [
+      "Bankamızın SWIFT (BIC) kodunu internet sitemizin 'Hakkımızda' bölümünde, hesap cüzdanınızda veya mobil uygulamadaki hesap detaylarında bulabilirsiniz.",
+      "Uluslararası para transferlerinde kullanılan 8 veya 11 haneli SWIFT kodunu çağrı merkezimizden veya şubelerimizden de öğrenebilirsiniz."
+    ],
+    "hard_negatives": [
+      "IBAN numaranız, TR ile başlayan 26 haneli bir numara olup, mobil bankacılık ana ekranında hesap adınızın hemen altında yer alır.",
+      "Kredi kartınızın CVV güvenlik kodu, kartınızın arka yüzünde bulunan imza panelinin yanındaki 3 haneli rakamdır."
+    ],
+    "random_negatives": [
+      "Ay, Dünya'nın tek doğal uydusudur.",
+      "Keman telli bir çalgıdır."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_023",
+    "category": "branch_services",
+    "query": "kiralık kasa ücretleri ne zaman alınır",
+    "positive_docs": [
+      "Kiralık kasa kullanım ücretleri yıllık olarak peşin tahsil edilir ve sözleşme yenileme tarihinde hesabınızdan otomatik olarak kesilir.",
+      "Kasa kiralama işlemi sırasında bir yıllık kira bedeli ve bir defaya mahsus depozito ücreti peşin olarak alınmaktadır."
+    ],
+    "hard_negatives": [
+      "Kiralık kasa ziyaretlerinizi şubelerimizin mesai saatleri içerisinde, kimlik ibrazı ve imza karşılığında gerçekleştirebilirsiniz.",
+      "Kiralık kasa anahtarının kaybolması durumunda, çilingir masrafı ve kilit değiştirme ücreti müşteriden tahsil edilir."
+    ],
+    "random_negatives": [
+      "Kaktüsler bitki türüdür.",
+      "Gökkuşağı 7 renkten oluşur."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_024",
+    "category": "calculation_logic",
+    "query": "kmh faizi nasıl hesaplanır",
+    "positive_docs": [
+      "Kredili Mevduat Hesabı (KMH) faizi, eksi bakiyeye düştüğünüz gün sayısına ve kullanılan tutara göre günlük olarak hesaplanır ve ay sonunda tahsil edilir.",
+      "Ek hesaptan kullandığınız tutar için sadece kullandığınız gün kadar faiz işler, hesaba para yatırdığınızda faiz işlemesi durur."
+    ],
+    "hard_negatives": [
+      "İhtiyaç kredisi faiz oranları, çekilen anapara üzerinden aylık eşit taksitler halinde hesaplanarak ödeme planına yansıtılır.",
+      "Kredi kartı nakit avans faizi, paranın çekildiği günden ekstrenin son ödeme tarihine kadar günlük olarak işletilir."
+    ],
+    "random_negatives": [
+      "Kar taneleri altıgendir.",
+      "Zeytinyağı Akdeniz mutfağında sıkça kullanılır."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_025",
+    "category": "merchant_services",
+    "query": "pos cihazı arızası nereye bildirilir",
+    "positive_docs": [
+      "Üye işyeri POS cihazınızda teknik bir arıza yaşamanız durumunda 0850'li Üye İşyeri Destek Hattımızı 7/24 arayarak servis talebinde bulunabilirsiniz.",
+      "POS cihazı ekranında hata kodu görüyorsanız, cihazın arkasındaki destek numarasını arayarak teknik ekibimizden anında yardım alabilirsiniz."
+    ],
+    "hard_negatives": [
+      "POS cihazı gün sonu (Z raporu) alma işlemini cihaz menüsündeki 'İşlemler' sekmesinden manuel olarak başlatabilirsiniz.",
+      "Sanal POS entegrasyonu ve API dokümantasyonu için geliştirici portalımızı ziyaret edebilir veya e-ticaret destek ekibimize yazabilirsiniz."
+    ],
+    "random_negatives": [
+      "Kuşkonmaz sağlıklı bir sebzedir.",
+      "Mars'ın yüzeyi demir oksit nedeniyle kırmızıdır."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_026",
+    "category": "investment_operations",
+    "query": "halka arz hisse senedi nasıl alınır",
+    "positive_docs": [
+      "Halka arz taleplerinizi mobil bankacılık uygulamamızdaki 'Yatırım' menüsü altından 'Halka Arz' sekmesine girerek kolayca iletebilirsiniz.",
+      "Borsada satış yöntemiyle yapılan halka arzlarda, hisse senedi alış ekranından ilgili şirketin kodunu (örn: XXXXX.HE) yazarak talep girebilirsiniz."
+    ],
+    "hard_negatives": [
+      "Hisse senedi alım satım işlemlerinden elde edilen kazançlar üzerinden yasal mevzuat gereği %0 stopaj (vergi) uygulanmaktadır.",
+      "Yatırım fonu alım satım talimatlarınızı TEFAS üzerinden veya bankamızın yatırım menüsünden mesai saatleri içinde verebilirsiniz."
+    ],
+    "random_negatives": [
+      "Köpekbalıkları kıkırdaklı balıklardır.",
+      "Çay demlerken suyun sıcaklığı önemlidir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_027",
+    "category": "card_limits",
+    "query": "kredi kartı limit düşürme",
+    "positive_docs": [
+      "Kredi kartı limitinizi düşürmek için çağrı merkezimizi arayabilir veya şubelerimize yazılı talepte bulunabilirsiniz.",
+      "Mobil uygulama üzerinden limit artırımı yapılabilirken, güvenlik gereği limit düşürme işlemleri sadece müşteri hizmetleri aracılığıyla gerçekleştirilmektedir."
+    ],
+    "hard_negatives": [
+      "Kredi kartı limit artış talebinizi mobil şubedeki 'Kart Ayarları' menüsünden gelirinizi beyan ederek anında iletebilirsiniz.",
+      "Kredi kartınızı tamamen iptal etmek ve kapatmak istiyorsanız, borcunuzun sıfırlanmış olması ve çağrı merkezini aramanız gerekmektedir."
+    ],
+    "random_negatives": [
+      "Gül suyu cilt bakımında kullanılır.",
+      "Dünya kendi ekseni etrafında döner."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_028",
+    "category": "pension_operations",
+    "query": "sgk emekli maaşı taşıma nasıl yapılır",
+    "positive_docs": [
+      "Emekli maaşınızı bankamıza taşımak için e-Devlet üzerinden banka değişikliği yapabilir veya kimliğinizle şubelerimize başvurabilirsiniz.",
+      "Mobil bankacılık uygulamamızdaki 'Başvurular' menüsünden 'Emekli Maaş Taşıma' adımını izleyerek şubeye gitmeden maaşınızı taşıyabilirsiniz."
+    ],
+    "hard_negatives": [
+      "Emekli maaş promosyonu, maaşını 3 yıl boyunca bankamızdan alma taahhüdü veren müşterilerimizin hesaplarına peşin olarak yatırılır.",
+      "SGK prim ödemelerinizi ve Bağ-Kur borçlarınızı internet şubemizdeki 'Ödemeler' menüsünden kredi kartınızla yapabilirsiniz."
+    ],
+    "random_negatives": [
+      "Karpuzun %92'si sudur.",
+      "Gitarın 6 teli vardır."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_029",
+    "category": "commercial_products",
+    "query": "çek defteri nasıl alınır",
+    "positive_docs": [
+      "Çek defteri talebinde bulunmak için ticari veya bireysel vadesiz hesabınızın bulunduğu şubeye şahsen başvurmanız ve sözleşme imzalamanız gerekmektedir.",
+      "İlk kez çek defteri alacak müşterilerimizin KKB çek endeksi değerlendirilir ve şube onayı sonrasında çek defteri basıma gönderilir."
+    ],
+    "hard_negatives": [
+      "Müşterinizden aldığınız çekin karşılığını sorgulamak için Findeks Karekodlu Çek Sistemi'ni kullanabilir veya şubelerimizden bilgi alabilirsiniz.",
+      "Vadesi gelmiş çeklerin tahsilatı için çeki fiziki olarak şubelerimize ibraz etmeniz ve ciro etmeniz gerekmektedir."
+    ],
+    "random_negatives": [
+      "Limon C vitamini açısından zengindir.",
+      "Satranç tahtasında 64 kare vardır."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_030",
+    "category": "loan_operations",
+    "query": "kredi erken kapama indirimi",
+    "positive_docs": [
+      "İhtiyaç kredinizi vadesinden önce tamamen kapatmanız durumunda, henüz vadesi gelmemiş aylara ait faiz, KKDF ve BSMV tutarlarında indirim yapılır.",
+      "Kredinizi erken kapattığınızda sadece kalan anapara tutarını ödersiniz, gelecekteki faiz yükünden kurtulmuş olursunuz."
+    ],
+    "hard_negatives": [
+      "Konut kredilerinde erken ödeme yapılması durumunda, yasal mevzuat gereği kalan anapara üzerinden %2'ye kadar erken ödeme tazminatı alınabilir.",
+      "Kredi taksitlerinizi son ödeme tarihinden sonra yatırmanız durumunda, gecikilen gün sayısı kadar temerrüt faizi işletilir."
+    ],
+    "random_negatives": [
+      "Kelebekler ayaklarıyla tat alırlar.",
+      "Güneş gözlüğü UV korumalı olmalıdır."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_031",
+    "category": "investment_operations",
+    "query": "altın hesabı makas aralığı",
+    "positive_docs": [
+      "Altın hesaplarında uygulanan alış ve satış fiyatı arasındaki fark (makas aralığı), piyasadaki volatiliteye ve mesai saatlerine göre anlık olarak değişmektedir.",
+      "Mesai saatleri dışında ve hafta sonlarında, uluslararası piyasalardaki likidite azaldığı için altın alış-satış makas aralığı genişleyebilir."
+    ],
+    "hard_negatives": [
+      "Fiziki altın teslimatı sadece belirli şubelerimizden yapılmakta olup, gram altın bazında fiziki çekim ücreti uygulanmaktadır.",
+      "Vadeli altın hesabı açarak, birikimlerinizi hem altının değer artışından hem de bankamızın sunduğu faiz getirisinden faydalandırabilirsiniz."
+    ],
+    "random_negatives": [
+      "Kuşlar göç ederken yıldızları kullanabilir.",
+      "Masa tenisi zihinsel gelişimi destekler."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_032",
+    "category": "card_limits",
+    "query": "öğrenci kredi kartı limiti ne kadar",
+    "positive_docs": [
+      "Üniversite öğrencilerine özel kredi kartlarının limiti, yasal düzenlemeler gereği belgelenebilir gelir yoksa maksimum 2.000 TL olarak belirlenmektedir.",
+      "Öğrenci belgenizle başvurduğunuz Genç Kart'ların başlangıç limiti standart olup, düzenli gelir belgesi ibraz edilmedikçe yasal sınırın üzerine çıkılamaz."
+    ],
+    "hard_negatives": [
+      "Öğrenci kredi kartlarından eğitim hayatınız boyunca yıllık kart aidatı veya hesap işletim ücreti tahsil edilmemektedir.",
+      "Kredi kartı limit artış talebiniz, KKB puanınız ve belgelenebilir aylık gelirinizin yasal sınırları (gelirin 4 katı) dahilinde değerlendirilir."
+    ],
+    "random_negatives": [
+      "Papatyalar güneşi sever.",
+      "Klavye bilgisayarın giriş birimidir."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_033",
+    "category": "payment_operations",
+    "query": "vergi ödemesi nasıl yapılır",
+    "positive_docs": [
+      "Motorlu Taşıtlar Vergisi (MTV), Gelir Vergisi ve diğer vergi ödemelerinizi mobil uygulamamızdaki 'Ödemeler > Devlet/Vergi' menüsünden yapabilirsiniz.",
+      "Vergi dairesi ödemelerinizi internet şubemiz üzerinden kredi kartınızla veya vadesiz hesabınızdan 7/24 güvenle gerçekleştirebilirsiniz."
+    ],
+    "hard_negatives": [
+      "Trafik cezası ödemelerinde kredi kartına 3 taksit kampanyamızdan faydalanmak için ödeme öncesi kampanyaya katılım sağlamanız gerekmektedir.",
+      "Vergi iadesi veya mahsup işlemleri bankamız aracılığıyla değil, doğrudan bağlı bulunduğunuz vergi dairesi üzerinden yapılmaktadır."
+    ],
+    "random_negatives": [
+      "Kaktüsler suyu gövdelerinde depolar.",
+      "Gökkuşağı yağmurdan sonra çıkar."
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "hr_034",
+    "category": "security",
+    "query": "kredi kartı şifre alma sms",
+    "positive_docs": [
+      "Kredi kartı şifrenizi SMS ile almak için SIFRE yazıp aralarında boşluk bırakarak kartınızın son 4 hanesini ve kart arkasındaki CVV kodunu 1234'e gönderebilirsiniz.",
+      "Yeni kartınızın şifresini belirlemek için sistemimizde kayıtlı cep telefonunuzdan SIFRE boşluk KART SON 4 HANE yazarak SMS atmanız yeterlidir."
+    ],
+    "hard_negatives": [
+      "Kredi kartınızın internet alışverişi (e-ticaret) yetkisini açmak için ONAY yazıp kartınızın son 4 hanesini SMS ile göndermeniz gerekmektedir.",
+      "İnternet bankacılığı girişinde kullandığınız SMS tek kullanımlık şifreniz (OTP) gelmiyorsa, operatörünüzden SMS blokenizi kontrol ettiriniz."
+    ],
+    "random_negatives": [
+      "Kediler günde 12-16 saat uyuyabilir.",
+      "Elma ağaçları baharda çiçek açar."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "hr_035",
+    "category": "card_features",
+    "query": "banka kartı ile internetten alışveriş yapılır mı",
+    "positive_docs": [
+      "Evet, banka (debit) kartınızın arka yüzünde CVV kodu bulunuyorsa ve e-ticaret yetkisi açıksa internet üzerinden 3D Secure ile alışveriş yapabilirsiniz.",
+      "Vadesiz hesabınıza bağlı banka kartınızı, hesap bakiyeniz yeterli olduğu sürece internet alışverişlerinde güvenle kullanabilirsiniz."
+    ],
+    "hard_negatives": [
+      "Banka kartınızla ATM'lerden günlük para çekme limitiniz dahilinde nakit çekebilir veya POS cihazlarından şifrenizle alışveriş yapabilirsiniz.",
+      "Sanal kredi kartı oluşturarak internet alışverişlerinizi ana kartınızın limitini riske atmadan, belirlediğiniz limit dahilinde yapabilirsiniz."
+    ],
+    "random_negatives": [
+      "Güneş sistemi 8 gezegenden oluşur.",
+      "Müzik aletleri akort edilmelidir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "hr_036",
+    "category": "fee_type_disambiguation",
+    "query": "kredi tahsis ücreti nedir",
+    "positive_docs": [
+      "Kredi tahsis ücreti (dosya masrafı), kredi işlemlerinin operasyonel maliyetlerini karşılamak amacıyla yasal olarak alınan ve kredi tutarının binde 5'ini geçemeyen ücrettir.",
+      "Bankaların kredi kullandırımı sırasında mevzuata uygun olarak tahsil ettiği, anaparanın %0.5'i oranındaki tek seferlik masrafa kredi tahsis ücreti denir."
+    ],
+    "hard_negatives": [
+      "Kredi hayat sigortası primi, yaşınıza, kredi tutarına ve vadesine göre hesaplanarak kredi kullanımı sırasında peşin olarak tahsil edilir.",
+      "Kredi faiz oranları, piyasa koşullarına ve Merkez Bankası kararlarına göre belirlenir ve kredi vadesi boyunca sabit kalır."
+    ],
+    "random_negatives": [
+      "Kuşlar kanat çırparak uçar.",
+      "Deniz seviyesinde basınç 1 atmosferdir."
+    ],
+    "difficulty": "hard"
+  }
+]

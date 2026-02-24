@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+venv/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets.yaml
+secrets.yml
+
+# Build/cache
+.cache/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Runtime outputs
+reports/
+logs/
+
+# HITL annotations (may contain real user data)
+annotations/completed/
+annotations/training_data/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+.github/

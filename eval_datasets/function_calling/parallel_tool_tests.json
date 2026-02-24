@@ -1,0 +1,905 @@
+[
+  {
+    "id": "parallel_weather_multiple_cities",
+    "prompt": "İstanbul, Ankara ve İzmir'in şu anki hava durumlarını öğren.",
+    "expected_tools": [
+      "get_weather",
+      "get_weather",
+      "get_weather"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 şehrin hava durumu bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı şehir için hava durumu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "parallel_exchange_rates",
+    "prompt": "USD/TRY, EUR/TRY ve GBP/TRY döviz kurlarını kontrol et.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "get_exchange_rate"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı döviz kuru bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı döviz kuru - bağımsız sorgular"
+  },
+  {
+    "id": "parallel_stock_prices",
+    "prompt": "AAPL, MSFT, GOOGL, TSLA ve AMZN hisse senedi fiyatlarını getir.",
+    "expected_tools": [
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "5 hisse senedi fiyatı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Beş farklı hisse senedi fiyatı - yüksek paralellik fırsatı"
+  },
+  {
+    "id": "parallel_mixed_independent",
+    "prompt": "London'un hava durumunu öğren, EUR/USD kurunu kontrol et, ve 15 * 23 işlemini hesapla.",
+    "expected_tools": [
+      "get_weather",
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı bilgi: hava durumu, döviz kuru, hesaplama sonucu",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Farklı tool türleri - hepsi bağımsız"
+  },
+  {
+    "id": "sequential_dependent_chain",
+    "prompt": "USD/TRY kurunu öğren, sonra 100 doları TL'ye çevir.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "100 doların TL karşılığı",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Bağımlı tool chain - paralel YAPILAMAZ, sequential olmalı"
+  },
+  {
+    "id": "sequential_multi_step",
+    "prompt": "EUR/USD ve USD/TRY kurlarını al, sonra 50 Euro'nun TL karşılığını hesapla.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "50 Euro'nun TL karşılığı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Kısmi paralel: İlk 2 tool paralel, sonra hesaplama bağımlı"
+  },
+  {
+    "id": "parallel_restaurant_search",
+    "prompt": "Bebek, Kadıköy ve Beyoğlu bölgelerinde restoran önerileri al.",
+    "expected_tools": [
+      "get_restaurant_recommendations",
+      "get_restaurant_recommendations",
+      "get_restaurant_recommendations"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 bölge için restoran önerileri",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı bölge için restoran araması"
+  },
+  {
+    "id": "parallel_flight_search",
+    "prompt": "Istanbul-London, Istanbul-Paris ve Istanbul-Berlin uçuşlarını ara.",
+    "expected_tools": [
+      "search_flights",
+      "search_flights",
+      "search_flights"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 rota için uçuş bilgileri",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Üç farklı uçuş rotası sorgusu"
+  },
+  {
+    "id": "parallel_product_comparison",
+    "prompt": "iPhone 15, Samsung S24 ve Google Pixel 8 ürünlerini ara ve karşılaştır.",
+    "expected_tools": [
+      "search_product",
+      "search_product",
+      "search_product"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 ürünün bilgileri ve karşılaştırma",
+    "max_turns": 4,
+    "difficulty": "medium",
+    "description": "Ürün araması - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_booking_flow",
+    "prompt": "Istanbul-London uçuşlarını ara, en uygununu seç ve rezervasyon yap.",
+    "expected_tools": [
+      "search_flights",
+      "book_flight"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Uçuş rezervasyonu tamamlandı",
+    "max_turns": 5,
+    "difficulty": "hard",
+    "description": "Bağımlı rezervasyon flow - paralel YAPILAMAZ"
+  },
+  {
+    "id": "parallel_calendar_check",
+    "prompt": "15 Nisan, 16 Nisan ve 17 Nisan tarihlerinde boş saatlerimi kontrol et.",
+    "expected_tools": [
+      "check_calendar",
+      "check_calendar",
+      "check_calendar"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 gün için takvim durumu",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Farklı günler için takvim sorgusu"
+  },
+  {
+    "id": "parallel_translation_batch",
+    "prompt": "Bu 3 kelimeyi İngilizce'ye çevir: elma, armut, kiraz.",
+    "expected_tools": [
+      "translate_text",
+      "translate_text",
+      "translate_text"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 kelimenin İngilizce karşılığı",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Çoklu çeviri - bağımsız işlemler"
+  },
+  {
+    "id": "mixed_parallel_sequential",
+    "prompt": "New York ve Tokyo'nun hava durumunu öğren, sonra hangi şehir daha sıcaksa oraya uçuş ara.",
+    "expected_tools": [
+      "get_weather",
+      "get_weather",
+      "search_flights"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "Hava durumu karşılaştırma ve uçuş seçenekleri",
+    "max_turns": 5,
+    "difficulty": "hard",
+    "description": "İlk 2 tool paralel, sonuncusu bağımlı - karışık senaryo"
+  },
+  {
+    "id": "parallel_data_aggregation",
+    "prompt": "AAPL, MSFT ve TSLA hisselerinin fiyatlarını al ve ortalamasını hesapla.",
+    "expected_tools": [
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price",
+      "calculate"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "3 hissenin ortalama fiyatı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "İlk 3 tool paralel, hesaplama bağımlı"
+  },
+  {
+    "id": "parallel_multi_currency_conversion",
+    "prompt": "100 USD'yi EUR, GBP ve JPY'ye çevir.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "calculate",
+      "get_exchange_rate",
+      "calculate",
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "100 USD'nin 3 farklı para birimindeki karşılığı",
+    "max_turns": 5,
+    "difficulty": "hard",
+    "description": "Paralel kur sorgusu + bağımlı hesaplamalar"
+  },
+  {
+    "id": "parallel_crypto_prices",
+    "prompt": "BTC, ETH, SOL ve AVAX fiyatlarını aynı anda getir.",
+    "expected_tools": [
+      "get_crypto_price",
+      "get_crypto_price",
+      "get_crypto_price",
+      "get_crypto_price"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "4 kripto varlığın güncel fiyatı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Bağımsız kripto fiyat sorguları - tam paralellik"
+  },
+  {
+    "id": "parallel_city_timezone",
+    "prompt": "İstanbul, Londra ve New York için mevcut saat dilimini kontrol et.",
+    "expected_tools": [
+      "get_timezone",
+      "get_timezone",
+      "get_timezone"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 şehir için saat dilimi bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Şehir bazlı bağımsız timezone çağrıları"
+  },
+  {
+    "id": "parallel_news_topics",
+    "prompt": "Ekonomi, teknoloji ve enerji başlıklarında son haberleri topla.",
+    "expected_tools": [
+      "get_news",
+      "get_news",
+      "get_news"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 konu başlığında güncel haber özeti",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Farklı topic parametreleri ile paralel haber sorgusu"
+  },
+  {
+    "id": "parallel_branch_lookup",
+    "prompt": "Ataşehir, Beşiktaş, Üsküdar ve Şişli'deki en yakın şubeleri bul.",
+    "expected_tools": [
+      "find_nearest_branch",
+      "find_nearest_branch",
+      "find_nearest_branch",
+      "find_nearest_branch"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "4 bölge için en yakın şube bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Lokasyon bağımsız şube aramaları"
+  },
+  {
+    "id": "parallel_atm_lookup",
+    "prompt": "Levent, Maslak ve Mecidiyeköy bölgelerindeki ATM'leri listele.",
+    "expected_tools": [
+      "find_atm",
+      "find_atm",
+      "find_atm"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 bölge için ATM listesi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "ATM bulma işlemleri bağımsız ve paralel"
+  },
+  {
+    "id": "parallel_card_limits_check",
+    "prompt": "Kredi kartımın online, temassız ve yurtdışı limitlerini kontrol et.",
+    "expected_tools": [
+      "get_card_limit",
+      "get_card_limit",
+      "get_card_limit"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı kart limiti bilgisi",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Aynı tool farklı limit tipleriyle paralel çağrılır"
+  },
+  {
+    "id": "parallel_bill_inquiry",
+    "prompt": "Elektrik, su, internet ve doğalgaz faturalarımı ayrı ayrı sorgula.",
+    "expected_tools": [
+      "get_bill",
+      "get_bill",
+      "get_bill",
+      "get_bill"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "4 kurum için fatura borç bilgisi",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Çoklu kurum fatura sorguları paralel yapılabilir"
+  },
+  {
+    "id": "parallel_then_aggregate_bills",
+    "prompt": "Elektrik, su ve internet borçlarını getir, sonra toplam borcu hesapla.",
+    "expected_tools": [
+      "get_bill",
+      "get_bill",
+      "get_bill",
+      "calculate"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "3 fatura toplam borç tutarı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "İlk 3 sorgu paralel, final hesap bağımlı"
+  },
+  {
+    "id": "parallel_portfolio_quotes",
+    "prompt": "Portföyümdeki ASELS, BIMAS, TUPRS ve FROTO hisselerinin anlık fiyatını çek.",
+    "expected_tools": [
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price",
+      "get_stock_price"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "4 hisse için anlık fiyat seti",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Portföy fiyat çekimi paralel hız avantajı sağlar"
+  },
+  {
+    "id": "parallel_weather_then_compare",
+    "prompt": "İstanbul, Berlin ve Amsterdam sıcaklıklarını alıp en sıcak şehri söyle.",
+    "expected_tools": [
+      "get_weather",
+      "get_weather",
+      "get_weather",
+      "compare_values"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "En sıcak şehir sonucu",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Sıcaklık verileri paralel, karşılaştırma bağımlı"
+  },
+  {
+    "id": "parallel_fx_then_risk_summary",
+    "prompt": "USD/TRY, EUR/TRY ve XAU/TRY değerlerini çek, sonra kur risk özetini üret.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "generate_risk_summary"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "Kur verilerine dayalı kısa risk özeti",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Paralel veri toplama + bağımlı özetleme"
+  },
+  {
+    "id": "parallel_hotel_search_multi_city",
+    "prompt": "İzmir, Antalya ve Bodrum için 2 gecelik otel seçenekleri ara.",
+    "expected_tools": [
+      "search_hotels",
+      "search_hotels",
+      "search_hotels"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 şehir için otel seçenek listesi",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Çoklu destinasyon otel araması paralel"
+  },
+  {
+    "id": "parallel_currency_basket",
+    "prompt": "USD, EUR, GBP, CHF ve JPY için TRY karşılıklarını getir.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "get_exchange_rate",
+      "get_exchange_rate"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "5 para birimi için TRY kuru",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Döviz sepeti sorgusu tam paralel çalışır"
+  },
+  {
+    "id": "parallel_credit_offer_compare",
+    "prompt": "12 ay, 24 ay ve 36 ay vadeli ihtiyaç kredisi tekliflerini getirip en düşük toplam maliyeti bul.",
+    "expected_tools": [
+      "get_loan_offer",
+      "get_loan_offer",
+      "get_loan_offer",
+      "compare_offers"
+    ],
+    "expected_order": false,
+    "is_parallel": false,
+    "expected_outcome": "En düşük toplam maliyetli teklif",
+    "max_turns": 5,
+    "difficulty": "hard",
+    "description": "Teklif sorguları paralel, karşılaştırma bağımlı"
+  },
+  {
+    "id": "parallel_invoice_download_batch",
+    "prompt": "Ocak, Şubat ve Mart ayı kredi kartı ekstre PDF'lerini indir.",
+    "expected_tools": [
+      "download_statement",
+      "download_statement",
+      "download_statement"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 aya ait ekstre dosyaları",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Ay bazlı bağımsız ekstre indirme çağrıları"
+  },
+  {
+    "id": "parallel_crypto_portfolio",
+    "prompt": "Bitcoin, Ethereum ve Solana'nın güncel fiyatlarını getir.",
+    "expected_tools": [
+      "get_crypto_price",
+      "get_crypto_price",
+      "get_crypto_price"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 kripto paranın fiyat bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı kripto para fiyatı - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_loan_application",
+    "prompt": "Kredi notumu öğren, ardından bu nota göre 100.000 TL ihtiyaç kredisi için faiz oranını hesapla.",
+    "expected_tools": [
+      "get_credit_score",
+      "calculate_loan_interest"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Kredi notu ve buna bağlı kredi faiz oranı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Kredi notuna bağlı faiz hesaplama - sequential olmalı"
+  },
+  {
+    "id": "parallel_hotel_search",
+    "prompt": "Roma, Paris ve Madrid'deki 5 yıldızlı otelleri ara.",
+    "expected_tools": [
+      "search_hotels",
+      "search_hotels",
+      "search_hotels"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı şehir için otel listesi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı şehirde otel araması - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_travel_booking",
+    "prompt": "Tokyo'ya en ucuz uçuşu bul, sonra o uçuşun tarihlerine göre Tokyo'da bir otel rezervasyonu yap.",
+    "expected_tools": [
+      "search_flights",
+      "book_hotel"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Uçuş bilgisi ve otel rezervasyon onayı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Uçuş tarihlerine bağlı otel rezervasyonu - sequential olmalı"
+  },
+  {
+    "id": "parallel_account_balances",
+    "prompt": "Vadesiz hesabımın, vadeli hesabımın ve kredi kartımın güncel bakiyelerini kontrol et.",
+    "expected_tools": [
+      "get_account_balance",
+      "get_account_balance",
+      "get_account_balance"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı hesabın bakiye bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı hesap bakiyesi sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_fund_transfer",
+    "prompt": "Vadesiz hesabımdaki bakiyeyi kontrol et, eğer 5000 TL'den fazlaysa anneme 2000 TL gönder.",
+    "expected_tools": [
+      "get_account_balance",
+      "transfer_money"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Bakiye kontrolü ve para transferi onayı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Bakiye durumuna bağlı para transferi - sequential olmalı"
+  },
+  {
+    "id": "parallel_weather_forecast",
+    "prompt": "Yarın için New York, Londra ve Tokyo'nun hava durumu tahminlerini al.",
+    "expected_tools": [
+      "get_weather_forecast",
+      "get_weather_forecast",
+      "get_weather_forecast"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 şehrin yarınki hava durumu tahmini",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı şehir için hava tahmini - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_investment_decision",
+    "prompt": "Apple hissesinin güncel fiyatını al, 100 adet hissenin toplam maliyetini hesapla ve ardından bu hisseleri satın al.",
+    "expected_tools": [
+      "get_stock_price",
+      "calculate",
+      "buy_stock"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Hisse fiyatı, toplam maliyet ve satın alma onayı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Fiyat sorgusu, hesaplama ve satın alma işlemi - sequential olmalı"
+  },
+  {
+    "id": "parallel_news_search",
+    "prompt": "Ekonomi, spor ve teknoloji alanlarındaki en son haber başlıklarını getir.",
+    "expected_tools": [
+      "search_news",
+      "search_news",
+      "search_news"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı kategoride haber başlıkları",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı kategoride haber araması - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_currency_conversion_payment",
+    "prompt": "Güncel EUR/TRY kurunu al, 500 Euro'nun TL karşılığını hesapla ve bu tutarla elektrik faturamı öde.",
+    "expected_tools": [
+      "get_exchange_rate",
+      "calculate",
+      "pay_bill"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Döviz kuru, hesaplanan tutar ve fatura ödeme onayı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Kur sorgusu, hesaplama ve fatura ödeme - sequential olmalı"
+  },
+  {
+    "id": "parallel_flight_status",
+    "prompt": "TK1991, TK1992 ve TK1993 sefer sayılı uçuşların güncel durumlarını kontrol et.",
+    "expected_tools": [
+      "get_flight_status",
+      "get_flight_status",
+      "get_flight_status"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı uçuşun durum bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı uçuş durumu sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_mortgage_calc",
+    "prompt": "Güncel konut kredisi faiz oranını öğren, ardından 2.000.000 TL için 120 ay vadeli aylık taksit tutarını hesapla.",
+    "expected_tools": [
+      "get_interest_rate",
+      "calculate_mortgage"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Faiz oranı ve aylık taksit tutarı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Faiz oranına bağlı mortgage hesaplaması - sequential olmalı"
+  },
+  {
+    "id": "parallel_credit_card_offers",
+    "prompt": "Garanti, İş Bankası ve Akbank'ın sunduğu güncel kredi kartı kampanyalarını karşılaştır.",
+    "expected_tools": [
+      "get_credit_card_offers",
+      "get_credit_card_offers",
+      "get_credit_card_offers"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı bankanın kredi kartı kampanyaları",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Üç farklı banka kampanyası sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_weather_activity",
+    "prompt": "Antalya'nın bugünkü hava durumunu kontrol et, eğer güneşliyse en iyi plajları listele.",
+    "expected_tools": [
+      "get_weather",
+      "search_places"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Hava durumu bilgisi ve duruma bağlı plaj listesi",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Hava durumuna bağlı mekan araması - sequential olmalı"
+  },
+  {
+    "id": "parallel_movie_showtimes",
+    "prompt": "Dune: Part Two, Oppenheimer ve Barbie filmlerinin bugünkü seans saatlerini bul.",
+    "expected_tools": [
+      "get_movie_showtimes",
+      "get_movie_showtimes",
+      "get_movie_showtimes"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı filmin seans saatleri",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı film seansı sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_restaurant_reservation",
+    "prompt": "Kadıköy'deki en yüksek puanlı İtalyan restoranlarını bul, ardından en iyisinde bu akşam 20:00 için 2 kişilik masa ayırt.",
+    "expected_tools": [
+      "search_restaurants",
+      "book_restaurant"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Restoran listesi ve rezervasyon onayı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Arama sonucuna bağlı rezervasyon işlemi - sequential olmalı"
+  },
+  {
+    "id": "parallel_commodity_prices",
+    "prompt": "Altın, gümüş ve petrolün güncel ons/varil fiyatlarını getir.",
+    "expected_tools": [
+      "get_commodity_price",
+      "get_commodity_price",
+      "get_commodity_price"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı emtianın fiyat bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı emtia fiyatı sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_tax_calculation",
+    "prompt": "2024 yılı gelir vergisi dilimlerini al, ardından 1.500.000 TL yıllık gelir için ödenecek vergiyi hesapla.",
+    "expected_tools": [
+      "get_tax_brackets",
+      "calculate_tax"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Vergi dilimleri ve hesaplanan vergi tutarı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Vergi dilimlerine bağlı vergi hesaplaması - sequential olmalı"
+  },
+  {
+    "id": "parallel_train_schedules",
+    "prompt": "Ankara'dan İstanbul, İzmir ve Konya'ya giden bugünkü tren seferlerini listele.",
+    "expected_tools": [
+      "get_train_schedule",
+      "get_train_schedule",
+      "get_train_schedule"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı rota için tren seferleri",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı tren rotası sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_event_planning",
+    "prompt": "Cumartesi günü için İstanbul hava durumunu kontrol et, yağış yoksa açık hava etkinlik mekanlarını ara.",
+    "expected_tools": [
+      "get_weather_forecast",
+      "search_venues"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Hava durumu tahmini ve duruma bağlı mekan listesi",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Hava durumuna bağlı etkinlik mekanı araması - sequential olmalı"
+  },
+  {
+    "id": "parallel_tech_specs",
+    "prompt": "MacBook Pro M3, Dell XPS 15 ve Lenovo ThinkPad X1 Carbon'un teknik özelliklerini getir.",
+    "expected_tools": [
+      "get_product_specs",
+      "get_product_specs",
+      "get_product_specs"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı bilgisayarın teknik özellikleri",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Üç farklı ürün özelliği sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_insurance_quote",
+    "prompt": "Aracımın güncel kasko değerini öğren, ardından bu değere göre kapsamlı bir kasko sigortası teklifi al.",
+    "expected_tools": [
+      "get_car_value",
+      "get_insurance_quote"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Araç kasko değeri ve sigorta teklifi",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Araç değerine bağlı sigorta teklifi - sequential olmalı"
+  },
+  {
+    "id": "parallel_visa_requirements",
+    "prompt": "Türk vatandaşları için ABD, İngiltere ve Schengen bölgesi vize gereksinimlerini kontrol et.",
+    "expected_tools": [
+      "get_visa_requirements",
+      "get_visa_requirements",
+      "get_visa_requirements"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı bölge için vize gereksinimleri",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı vize gereksinimi sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_portfolio_rebalance",
+    "prompt": "Yatırım portföyümün güncel değerini al, %60 hisse %40 tahvil hedefine göre yeni dağılımı hesapla ve gerekli alım-satım işlemlerini gerçekleştir.",
+    "expected_tools": [
+      "get_portfolio_value",
+      "calculate_allocation",
+      "execute_trade"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Portföy değeri, yeni dağılım ve işlem onayı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Değer sorgusu, hesaplama ve işlem yapma - sequential olmalı"
+  },
+  {
+    "id": "parallel_local_time",
+    "prompt": "Şu anda Sidney, New York ve Dubai'de saat kaç?",
+    "expected_tools": [
+      "get_local_time",
+      "get_local_time",
+      "get_local_time"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı şehrin yerel saat bilgisi",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı yerel saat sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_salary_negotiation",
+    "prompt": "Kıdemli Yazılım Mühendisi için ortalama brüt maaşı bul, ardından bu tutarın net maaş karşılığını hesapla.",
+    "expected_tools": [
+      "get_average_salary",
+      "calculate_net_salary"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Ortalama brüt maaş ve hesaplanan net maaş",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Maaş bilgisine bağlı net hesaplama - sequential olmalı"
+  },
+  {
+    "id": "parallel_car_rental",
+    "prompt": "İzmir, Antalya ve Bodrum havalimanlarındaki günlük araç kiralama fiyatlarını karşılaştır.",
+    "expected_tools": [
+      "search_car_rentals",
+      "search_car_rentals",
+      "search_car_rentals"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı lokasyon için araç kiralama fiyatları",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı lokasyonda araç kiralama araması - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_expense_report",
+    "prompt": "Son 3 fişimin toplam tutarını hesapla, bu tutarı USD'ye çevir ve masraf raporu olarak sisteme gönder.",
+    "expected_tools": [
+      "calculate",
+      "get_exchange_rate",
+      "submit_expense_report"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Toplam tutar, döviz çevirisi ve rapor gönderim onayı",
+    "max_turns": 4,
+    "difficulty": "hard",
+    "description": "Hesaplama, kur çevirisi ve rapor gönderimi - sequential olmalı"
+  },
+  {
+    "id": "parallel_sports_scores",
+    "prompt": "Galatasaray, Fenerbahçe ve Beşiktaş'ın dün oynadıkları maçların skorlarını getir.",
+    "expected_tools": [
+      "get_sports_score",
+      "get_sports_score",
+      "get_sports_score"
+    ],
+    "expected_order": false,
+    "is_parallel": true,
+    "expected_outcome": "3 farklı takımın maç skorları",
+    "max_turns": 3,
+    "difficulty": "easy",
+    "description": "Üç farklı maç skoru sorgusu - paralel çağrı yapılabilir"
+  },
+  {
+    "id": "sequential_smart_home",
+    "prompt": "Oturma odasının sıcaklığını kontrol et, eğer 25 derecenin üzerindeyse klimayı 22 dereceye ayarla.",
+    "expected_tools": [
+      "get_room_temperature",
+      "set_ac_state"
+    ],
+    "expected_order": true,
+    "is_parallel": false,
+    "expected_outcome": "Oda sıcaklığı ve klima ayar onayı",
+    "max_turns": 3,
+    "difficulty": "medium",
+    "description": "Sıcaklık durumuna bağlı klima kontrolü - sequential olmalı"
+  }
+]

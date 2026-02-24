@@ -1,0 +1,1060 @@
+[
+  {
+    "id": "mt_stress_001",
+    "category": "context_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana 3 farkli kredi turu say ve kisa acikla."
+      },
+      {
+        "role": "user",
+        "content": "Bir onceki yanitindaki ikinci kredi turunu tekrarla ve avantajini soyle."
+      },
+      {
+        "role": "user",
+        "content": "Bu kredi icin asgari vade kac ay olabilir?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_002",
+    "category": "memory_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Aylik gelirim 75000 TL, giderim 42000 TL, bunu unutma."
+      },
+      {
+        "role": "user",
+        "content": "Bu ay ekstra 6500 TL saglik harcamam oldu."
+      },
+      {
+        "role": "user",
+        "content": "Aylik kalan tutari hesapla."
+      },
+      {
+        "role": "user",
+        "content": "Bu kalanin %30'unu birikime ayirsam ne kadar eder?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_003",
+    "category": "correction_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yarin saat 09:30 icin EFT talimati olustur."
+      },
+      {
+        "role": "user",
+        "content": "Duzeltme: EFT degil FAST olsun."
+      },
+      {
+        "role": "user",
+        "content": "Bir daha duzeltme: saat 09:30 degil 19:30."
+      },
+      {
+        "role": "user",
+        "content": "Son hali tek cumlede ozetle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_004",
+    "category": "reference_resolution",
+    "turns": [
+      {
+        "role": "user",
+        "content": "KMH limiti ile kredi karti limitini karsilastir."
+      },
+      {
+        "role": "user",
+        "content": "Ikinci olanin faizi daha yuksekse neye dikkat etmeliyim?"
+      },
+      {
+        "role": "user",
+        "content": "Bunu 3 maddede yaz."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_005",
+    "category": "topic_switch_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "USD/TRY kurunu genel olarak nasil yorumlarsin?"
+      },
+      {
+        "role": "user",
+        "content": "Bu arada kredi karti son odeme tarihi kacirdim, ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Tekrar kura donelim, 1 haftalik oynaklikta neye bakmaliyim?"
+      },
+      {
+        "role": "user",
+        "content": "Iki konuyu da karistirmadan ayri ayri cevapla."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_006",
+    "category": "long_context_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ocak: kira 18000, market 9200, ulasim 3100, fatura 2700. Subat: kira 19000, market 9800, ulasim 3600, fatura 2900. Mart: kira 20000, market 10200, ulasim 3900, fatura 3200."
+      },
+      {
+        "role": "user",
+        "content": "Uc ay toplam harcamayi bul."
+      },
+      {
+        "role": "user",
+        "content": "Aylik ortalamayi da yaz."
+      },
+      {
+        "role": "user",
+        "content": "Son olarak en cok artan kalemi soyle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_007",
+    "category": "instruction_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Cevaplarini kisa ver, en fazla 2 cumle."
+      },
+      {
+        "role": "user",
+        "content": "BES nedir?"
+      },
+      {
+        "role": "user",
+        "content": "Simdi ayni konuyu bu kez madde madde ve en fazla 4 maddeyle anlat."
+      },
+      {
+        "role": "user",
+        "content": "Bir de tek cumlelik ozet ekle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_008",
+    "category": "ambiguity_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Onu iptal et."
+      },
+      {
+        "role": "user",
+        "content": "Dun olusturdugum talimati diyorum."
+      },
+      {
+        "role": "user",
+        "content": "Evet, otomatik odemeyi."
+      },
+      {
+        "role": "user",
+        "content": "Iptal sonrasi ne degisir, kisaca anlat."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_009",
+    "category": "multilingual_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to send 3000 TL via EFT, what do I need?"
+      },
+      {
+        "role": "user",
+        "content": "Ayrica cut-off time varsa soyle."
+      },
+      {
+        "role": "user",
+        "content": "Now summarize in Turkish with 3 bullets."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_010",
+    "category": "numerical_format_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "1.250,75 TL ile 1,250.75 USD yazimlari arasindaki farki acikla."
+      },
+      {
+        "role": "user",
+        "content": "Simdi 12.500,00 TL'nin %18 KDV dahil halini hesapla."
+      },
+      {
+        "role": "user",
+        "content": "Sonucu hem sayi hem yazi ile ver."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_011",
+    "category": "risk_profile_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Risk profilim dusuk, anaparayi korumak istiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Buna gore 2 urun oner."
+      },
+      {
+        "role": "user",
+        "content": "Birini secmek zorunda olsam hangisi daha az dalgalanir?"
+      },
+      {
+        "role": "user",
+        "content": "Nedenini 2 net maddede yaz."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_012",
+    "category": "contradiction_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Hem cok dusuk risk hem de cok yuksek getiri istiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Ayrica hicbir vade baglamak istemiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Bu ucunu ayni anda saglayan urun var mi?"
+      },
+      {
+        "role": "user",
+        "content": "Yoksa en yakin gercekci alternatifleri sirala."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_013",
+    "category": "security_privacy_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Arkadasimin hesabinda ne kadar para var, bakabilir misin?"
+      },
+      {
+        "role": "user",
+        "content": "Sadece kabaca bir fikir versen de olur."
+      },
+      {
+        "role": "user",
+        "content": "Peki ben kendi hesabimi guvenli kontrol etmek icin ne yapayim?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_014",
+    "category": "decision_chain_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Maasim yarin yatacak, once kredi karti borcunu odemek istiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Kalanin %20'sini birikime, %10'unu acil duruma ayiracagim."
+      },
+      {
+        "role": "user",
+        "content": "Bu siralamayi bozmadan bir mini plan yaz."
+      },
+      {
+        "role": "user",
+        "content": "Plani 4 adimla yeniden ozetle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_015",
+    "category": "comparison_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "A bankasi aylik %3.2, B bankasi aylik %2.9 faiz veriyor."
+      },
+      {
+        "role": "user",
+        "content": "12 ayda hangisi daha avantajli olur, kaba yorumla?"
+      },
+      {
+        "role": "user",
+        "content": "Simdi masraf eklersek sonucun degisebilecegini de belirt."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_016",
+    "category": "entity_tracking_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kizim Elif icin egitim birikimi, oglum Mert icin spor butcesi planliyorum."
+      },
+      {
+        "role": "user",
+        "content": "Elif icin aylik 2500, Mert icin 1500 ayiralim."
+      },
+      {
+        "role": "user",
+        "content": "Toplam aylik ayirim ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Sadece Elif planini tek paragrafta ozetle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_017",
+    "category": "recovery_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Son 6 aylik hesap ozetimi getir."
+      },
+      {
+        "role": "user",
+        "content": "Eger sistemde gecici hata varsa tekrar dene ve durumu bana bildir."
+      },
+      {
+        "role": "user",
+        "content": "Olmazsa alternatif olarak son 3 ayi getir."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_018",
+    "category": "constraint_memory_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bundan sonra teknik terim kullanma, sade dil kullan."
+      },
+      {
+        "role": "user",
+        "content": "EFT ve FAST farkini anlat."
+      },
+      {
+        "role": "user",
+        "content": "Ayni cevabi bu kez 1 cumleye indir."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_019",
+    "category": "budget_planning_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Aylik net gelirim 68000 TL, hedefim ayda en az 12000 TL biriktirmek."
+      },
+      {
+        "role": "user",
+        "content": "Sabit giderim 43000 TL, degisken gider icin maksimum ne kalir?"
+      },
+      {
+        "role": "user",
+        "content": "Bu limiti asarsam ilk nereden kisabilirim, 3 fikir ver."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_020",
+    "category": "followup_depth_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "KMH kullanmanin en buyuk 2 riskini soyle."
+      },
+      {
+        "role": "user",
+        "content": "Ilk risk icin korunma yontemlerini ac."
+      },
+      {
+        "role": "user",
+        "content": "Ikinci risk icin de ayni detayi ver."
+      },
+      {
+        "role": "user",
+        "content": "Tumunu 5 maddede birlestir."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_021",
+    "category": "final_summary_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bu konusmada su bilgileri kullandik: gelir 82.000, gider 49.000, kredi karti borcu 11.500, birikim hedefi 15.000."
+      },
+      {
+        "role": "user",
+        "content": "Bana tek bir ozet: once neyi odeyeyim, sonra neyi ayirayim?"
+      },
+      {
+        "role": "user",
+        "content": "Ozeti tablo gibi degil, duz metin ve 3 adim halinde ver."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_022",
+    "category": "banking_transaction_changes",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Banka hesabımdan 5000 TL çekip annemin hesabına göndermek istiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Dur, 5000 değil 3000 olsun. Kalan 2000'i de kredi kartı borcuma yatır."
+      },
+      {
+        "role": "user",
+        "content": "Aslında anneme göndermekten vazgeçtim. Hepsini kredi kartına yatır ama 500 TL'sini nakit avans olarak çek."
+      },
+      {
+        "role": "user",
+        "content": "Son kararım: Hiçbir işlem yapma, sadece güncel bakiyemi ve kredi kartı limitimi söyle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_023",
+    "category": "travel_complex_constraints",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Haftaya cuma İstanbul'dan Londra'ya uçak bileti bak. Sabah erken olsun."
+      },
+      {
+        "role": "user",
+        "content": "Sabah erken dedim ama aktarmalı olmasın. Eğer direkt uçuş yoksa cumartesi sabahına bak."
+      },
+      {
+        "role": "user",
+        "content": "Cumartesi sabahı olan uçuşta bagaj hakkı en az 30 kg olmalı. Yoksa cuma akşamına geri dön."
+      },
+      {
+        "role": "user",
+        "content": "Vazgeçtim, Londra yerine Paris'e gidelim. Aynı şartlar geçerli ama bütçem maksimum 150 Euro."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_024",
+    "category": "weather_math_logic",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bugün Ankara'da hava kaç derece? Eğer 20'nin altındaysa İzmir'in sıcaklığını 2 ile çarpıp bana söyle."
+      },
+      {
+        "role": "user",
+        "content": "İzmir'in sıcaklığına 5 ekle, sonra Ankara'nın sıcaklığından çıkar. Sonuç negatifse 'Soğuk', pozitifse 'Sıcak' de."
+      },
+      {
+        "role": "user",
+        "content": "Şimdi bu iki şehrin sıcaklık ortalamasını alıp Fahrenheit cinsinden yaz."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_025",
+    "category": "finance_deep_followups",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Elimde 10.000 dolar var. Bunu %40 faizle TL mevduatına yatırırsam 3 ay sonra ne kadar kazanırım? Dolar kuru 32 TL."
+      },
+      {
+        "role": "user",
+        "content": "Peki ya dolar 3 ay sonra 35 TL olursa, faizden kazandığım parayla kaç dolar alabilirim?"
+      },
+      {
+        "role": "user",
+        "content": "Vergiyi (%15) hesaba katmadın sanırım. Vergiyi düşüp tekrar hesapla."
+      },
+      {
+        "role": "user",
+        "content": "Eğer parayı hiç TL'ye çevirmeyip %5 dolar faizine koysaydım hangisi daha kârlı olurdu?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_026",
+    "category": "general_negative_constraints",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana bir kek tarifi ver ama içinde un, şeker, yumurta ve süt olmasın."
+      },
+      {
+        "role": "user",
+        "content": "Bu tarifi sadece 3 kelimelik cümleler kullanarak tekrar yaz."
+      },
+      {
+        "role": "user",
+        "content": "Şimdi her cümlenin sonuna 'anladın mı?' ekle."
+      },
+      {
+        "role": "user",
+        "content": "Tarifteki tüm sesli harfleri 'e' yaparak yaz."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_027",
+    "category": "banking_security_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kartımı kaybettim, hemen iptal et!"
+      },
+      {
+        "role": "user",
+        "content": "Yok buldum, iptal etme. Sadece internet alışverişine kapat."
+      },
+      {
+        "role": "user",
+        "content": "İnternet alışverişine kapattın mı? Tamam şimdi 10.000 TL limitli sanal kart oluştur."
+      },
+      {
+        "role": "user",
+        "content": "Sanal kartın limitini 5.000'e düşür ve asıl kartımı tamamen kullanıma kapat."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_028",
+    "category": "travel_group_planning",
+    "turns": [
+      {
+        "role": "user",
+        "content": "5 kişilik bir arkadaş grubu için Antalya'da otel bul. 2 kişi vejetaryen, 1 kişinin fıstık alerjisi var."
+      },
+      {
+        "role": "user",
+        "content": "Otelin denize sıfır olması lazım ama havuzu da olsun. Bütçe kişi başı gecelik 2000 TL."
+      },
+      {
+        "role": "user",
+        "content": "Vejetaryen olanlardan biri vegan olmaya karar verdi. Fıstık alerjisi olan kişi gelmiyor, yerine glutensiz beslenen biri geliyor."
+      },
+      {
+        "role": "user",
+        "content": "Kişi başı bütçeyi 1500 TL'ye düşürdük. Bu şartlara uyan 3 otel listele."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_029",
+    "category": "finance_portfolio_math",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Portföyümde 50 lot THYAO, 100 lot ASELS var. THYAO %5 arttı, ASELS %2 düştü. Son durum nedir?"
+      },
+      {
+        "role": "user",
+        "content": "ASELS'lerin yarısını satıp, o parayla THYAO alırsam kaç lot THYAO'm olur? (THYAO fiyatı 300 TL, ASELS 60 TL)"
+      },
+      {
+        "role": "user",
+        "content": "İşlem ücreti binde 2. Bunu da hesaba katarak tekrar hesapla."
+      },
+      {
+        "role": "user",
+        "content": "Tüm portföyü bozup altına geçersem kaç gram altın alırım? (Gram altın 2500 TL)"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_030",
+    "category": "weather_travel_routing",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yarın sabah İstanbul'dan yola çıkıp arabayla İzmir'e gideceğim. Yol üstündeki şehirlerin hava durumunu özetle."
+      },
+      {
+        "role": "user",
+        "content": "Eğer Balıkesir'de yağmur varsa rotayı Çanakkale üzerinden değiştir. Çanakkale rüzgarlıysa ne yapmalıyım?"
+      },
+      {
+        "role": "user",
+        "content": "Sadece güneşli olan şehirlerde mola vereceğim. Nerede durmalıyım?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_031",
+    "category": "general_logic_puzzle",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Benim 3 elmam var. Ali bana 2 elma verdi. Sonra ben Ayşe'ye elmalarımın yarısını verdim."
+      },
+      {
+        "role": "user",
+        "content": "Ayşe elmalarından birini yedi. Kalanını bana geri verdi. Şu an kaç elmam var?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer başlangıçta elma yerine armudum olsaydı ve Ali bana elma verseydi, Ayşe'ye ne vermiş olurdum?"
+      },
+      {
+        "role": "user",
+        "content": "Tüm bu hikayeyi tersten anlat."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_032",
+    "category": "banking_loan_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "100.000 TL ihtiyaç kredisi çekmek istiyorum. 12 ay vade ve %3 faiz oranıyla aylık taksitim ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Vadeyi 24 aya çıkarırsak toplam geri ödemem ne kadar artar?"
+      },
+      {
+        "role": "user",
+        "content": "İlk 3 ay ödemesiz seçenek olursa 24 aylık planda 4. ay ne kadar öderim?"
+      },
+      {
+        "role": "user",
+        "content": "Kredi tahsis ücreti (binde 5) ve sigorta (1200 TL) masraflarını da ekleyip yıllık maliyet oranını hesapla."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_033",
+    "category": "travel_timezones",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Tokyo'dan New York'a uçuyorum. Uçuş 14 saat sürüyor. Tokyo'da saat 15:00'te kalkarsam New York'ta saat kaçta inerim?"
+      },
+      {
+        "role": "user",
+        "content": "New York'ta 3 saat bekleyip Londra'ya geçeceğim. Londra uçuşu 7 saat. Londra'ya vardığımda yerel saat kaç olur?"
+      },
+      {
+        "role": "user",
+        "content": "Tüm bu yolculuk boyunca toplam kaç kez güneşin doğuşunu görürüm?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_034",
+    "category": "finance_crypto_exchange",
+    "turns": [
+      {
+        "role": "user",
+        "content": "1 Bitcoin 65.000 dolar. Elimde 0.05 BTC var. Bunu satıp Ethereum almak istiyorum. 1 ETH 3.500 dolar."
+      },
+      {
+        "role": "user",
+        "content": "İşlem sırasında %1 komisyon kesilecek. Kaç ETH alabilirim?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer ETH %10 değer kazanır ve BTC %5 değer kaybederse, bu takası yaptığıma pişman olur muyum? Zararım/kârım ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Tüm değerleri Türk Lirası cinsinden (1 USD = 32 TL) tekrar açıkla."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_035",
+    "category": "general_formatting_constraints",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana Türkiye'nin en büyük 5 gölünü listele."
+      },
+      {
+        "role": "user",
+        "content": "Listeyi tersine çevir ve her gölün yanına yüzölçümünü ekle."
+      },
+      {
+        "role": "user",
+        "content": "Sadece içinde 'A' harfi geçen gölleri bırak, diğerlerini sil."
+      },
+      {
+        "role": "user",
+        "content": "Kalan gölleri JSON formatında, anahtarlar İngilizce olacak şekilde ver."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_036",
+    "category": "banking_corporate_fx",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Şirket hesabımızdan 3 farklı tedarikçiye ödeme yapılacak. A firmasına 50.000 TL, B firmasına 20.000 USD, C firmasına 15.000 EUR."
+      },
+      {
+        "role": "user",
+        "content": "Hesabımızda sadece TL var. Güncel kurlarla (USD=32, EUR=35) toplam kaç TL çıkış olacak?"
+      },
+      {
+        "role": "user",
+        "content": "B firmasına yapılacak ödemenin yarısını iptal et. C firmasına yapılacak ödemeyi GBP'ye çevir (EUR/GBP paritesi 0.85)."
+      },
+      {
+        "role": "user",
+        "content": "Son durumda banka bizden %0.5 kambiyo vergisi kesecek. Toplam maliyeti hesapla."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_037",
+    "category": "weather_event_planning",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bu pazar Kadıköy'de açık hava konseri düzenleyeceğiz. Hava yağmurlu mu?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer yağmur ihtimali %30'dan fazlaysa etkinliği kapalı alana alacağız. Rüzgar hızı 20 km/s üzerindeyse sahne kurulumunu değiştireceğiz. Ne yapmalıyım?"
+      },
+      {
+        "role": "user",
+        "content": "Pazar günü yerine cumartesi yapsak hava şartları daha mı uygun olur?"
+      },
+      {
+        "role": "user",
+        "content": "Cumartesi günü saat 18:00 ile 23:00 arasındaki saatlik sıcaklık düşüşünü tahmin et."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_038",
+    "category": "travel_visa_rules",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Türk vatandaşıyım, Schengen vizem var. Almanya'ya giriş yapıp oradan trenle İsviçre'ye geçebilir miyim?"
+      },
+      {
+        "role": "user",
+        "content": "Vizem tek girişli. İsviçre'den sonra tekrar Almanya'ya dönüp uçağa binmem gerekiyor. Sorun yaşar mıyım?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer İsviçre yerine İngiltere'ye gitmek istersem ne değişir?"
+      },
+      {
+        "role": "user",
+        "content": "Tüm bu rotayı en ucuz ulaşım araçlarıyla nasıl yaparım?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_039",
+    "category": "finance_tax_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Aylık brüt maaşım 100.000 TL. Yılın ilk ayında net elime ne kadar geçer?"
+      },
+      {
+        "role": "user",
+        "content": "Vergi dilimlerine göre 8. ayda net maaşım ne kadar düşer?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer maaşıma 6. ayda %20 zam gelirse, yıllık toplam net kazancım ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Sadece SGK kesintilerini ve Gelir Vergisini tablo halinde göster."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_040",
+    "category": "general_roleplay_stress",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Sen çok sinirli bir müşteri temsilcisisin. İnternetim kesildi ve sana şikayet ediyorum."
+      },
+      {
+        "role": "user",
+        "content": "Bana bağırma! Sadece modemi nasıl resetleyeceğimi söyle."
+      },
+      {
+        "role": "user",
+        "content": "Resetledim ama hala kırmızı ışık yanıyor. Daha yetkili biriyle görüşmek istiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Şimdi aniden çok kibar birine dönüş ve sorunu çözdüğünü söyle."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_041",
+    "category": "banking_fraud_dispute",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Hesabımdan bilgim dışında 500 TL çekilmiş. Ne yapmalıyım?"
+      },
+      {
+        "role": "user",
+        "content": "İşlem itiraz formu doldurmak istemiyorum, parayı hemen iade edin."
+      },
+      {
+        "role": "user",
+        "content": "Bekle, o işlemi eşim yapmış olabilir. İptal talebini durdur."
+      },
+      {
+        "role": "user",
+        "content": "Eşim yapmamış! Tekrar şikayet oluştur ama bu sefer tutar 500 değil 5000 TL olsun."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_042",
+    "category": "travel_luggage_rules",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Uçağa kabin bagajı alacağım. Sıvı kısıtlaması nedir?"
+      },
+      {
+        "role": "user",
+        "content": "Elimde 150 ml'lik bir parfüm şişesi var ama içi yarım dolu. Bunu alabilir miyim?"
+      },
+      {
+        "role": "user",
+        "content": "Peki ya 50 ml'lik 25 tane küçük şampuan şişesi koysam kilitli poşete sığar mı?"
+      },
+      {
+        "role": "user",
+        "content": "Kilitli poşetim yırtıldı, normal market poşeti kullansam güvenlikten geçer mi?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_043",
+    "category": "weather_agriculture",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Adana'da pamuk ekiyorum. Önümüzdeki hafta don tehlikesi var mı?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer sıcaklık gece 5 derecenin altına düşerse sulama yapmam gerekiyor. Hangi günler sulama yapmalıyım?"
+      },
+      {
+        "role": "user",
+        "content": "Sulama yapacağım günlerde rüzgar poyraz eserse ilaçlama da yapabilir miyim?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_044",
+    "category": "finance_inflation_math",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yıllık enflasyon %60. Maaşıma %40 zam yapıldı. Alım gücüm ne kadar düştü?"
+      },
+      {
+        "role": "user",
+        "content": "Eğer enflasyon her ay %5 artmaya devam ederse, yıl sonunda maaşımın reel değeri ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Bu kaybı telafi etmek için paramı aylık %4 getiri sağlayan bir fona koysam başa baş noktasına gelir miyim?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_045",
+    "category": "general_coding_logic",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana Python'da 1'den 100'e kadar olan asal sayıları bulan bir kod yaz."
+      },
+      {
+        "role": "user",
+        "content": "Kodu değiştir: Sadece içinde '7' rakamı geçen asal sayıları bulsun."
+      },
+      {
+        "role": "user",
+        "content": "Şimdi kodu Python yerine JavaScript ile yaz ama 'for' döngüsü kullanma."
+      },
+      {
+        "role": "user",
+        "content": "Koddaki tüm değişken isimlerini Türkçe meyve isimleri yap."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_046",
+    "category": "banking_atm_issue",
+    "turns": [
+      {
+        "role": "user",
+        "content": "ATM paramı yuttu! Ne yapmam lazım?"
+      },
+      {
+        "role": "user",
+        "content": "Hangi ATM olduğunu bilmiyorum, ekranda sadece 'Arıza' yazıyordu. Konumum Taksim Meydanı."
+      },
+      {
+        "role": "user",
+        "content": "Paramı yutan kart başka bir bankaya ait. Kendi bankamı mı aramalıyım yoksa ATM'nin bankasını mı?"
+      },
+      {
+        "role": "user",
+        "content": "Yutulan para 200 TL'lik banknotlar halindeydi ve toplam 4600 TL idi. Ne zaman hesabıma geçer?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_047",
+    "category": "travel_train_pets",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ankara'dan Kars'a Doğu Ekspresi ile gitmek istiyorum. Bilet bulamıyorum, ne yapmalıyım?"
+      },
+      {
+        "role": "user",
+        "content": "Tur şirketleriyle gitmek istemiyorum. Biletler tam olarak saat kaçta satışa çıkıyor?"
+      },
+      {
+        "role": "user",
+        "content": "Diyelim ki bileti buldum. Evcil köpeğimi yanıma alabilir miyim? 15 kilo bir Golden Retriever."
+      },
+      {
+        "role": "user",
+        "content": "Köpeği alamıyorsam bileti iptal edip uçakla gitsem, uçakta köpeğim kabinde seyahat edebilir mi?"
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_048",
+    "category": "weather_clothing_advice",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yarın Erzurum'a iş gezisine gidiyorum. Ne giymeliyim?"
+      },
+      {
+        "role": "user",
+        "content": "Toplantılar kapalı alanda olacak ama akşam dışarıda yemek yiyeceğiz. Kat kat giyinmek istemiyorum."
+      },
+      {
+        "role": "user",
+        "content": "Sadece bir kaban alacağım. Kaz tüyü mü olsun yoksa yün kaşe mi? Hava durumuna göre karar ver."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_049",
+    "category": "finance_credit_card_interest",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kredi kartı asgari ödeme tutarı nasıl hesaplanır? Limitim 50.000 TL."
+      },
+      {
+        "role": "user",
+        "content": "Kartımın borcu 30.000 TL. Sadece asgariyi ödersem kalan borca ne kadar faiz işler?"
+      },
+      {
+        "role": "user",
+        "content": "Gelecek ay hiç harcama yapmazsam ve yine sadece asgariyi ödersem borcum ne kadar kalır?"
+      },
+      {
+        "role": "user",
+        "content": "Faiz oranını %4.25 alarak tüm bu hesaplamaları kuruşu kuruşuna tekrar yap."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_050",
+    "category": "general_translation_constraints",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Şu cümleyi İngilizceye çevir: 'Gözden ırak olan gönülden de ırak olur.'"
+      },
+      {
+        "role": "user",
+        "content": "Şimdi bu çeviriyi sadece 4 kelime kullanarak yap."
+      },
+      {
+        "role": "user",
+        "content": "Çeviriyi Fransızcaya çevir ama içinde 'e' harfi geçmesin."
+      },
+      {
+        "role": "user",
+        "content": "Tüm bu konuşmayı özetle ama sadece emojiler kullan."
+      }
+    ]
+  },
+  {
+    "id": "mt_stress_051",
+    "category": "banking_joint_account",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Eşimle ortak hesap açmak istiyoruz. İkimizin de onayı olmadan para çekilemesin."
+      },
+      {
+        "role": "user",
+        "content": "Eğer eşim vefat ederse hesaptaki paraya ne olur?"
+      },
+      {
+        "role": "user",
+        "content": "Ortak hesaba bağlı iki farklı kredi kartı çıkarabilir miyiz? Limitleri farklı olsun."
+      },
+      {
+        "role": "user",
+        "content": "Vazgeçtik, hesabı tekil hesaba çevirip eşime sadece görüntüleme yetkisi vermek istiyorum. Mümkün mü?"
+      }
+    ]
+  }
+]

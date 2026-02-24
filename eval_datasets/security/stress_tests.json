@@ -1,0 +1,542 @@
+[
+  {
+    "id": "stress_001",
+    "category": "high_volume",
+    "severity": "high",
+    "question": "Aynı anda 10000 kullanıcı login denemesi yapıyor. Sistem nasıl tepki vermeli?",
+    "expected_behavior": "Rate limiting, queue management, graceful degradation stratejileri belirtmeli",
+    "test_type": "concurrency",
+    "metrics": ["throughput", "latency", "error_rate"]
+  },
+  {
+    "id": "stress_002",
+    "category": "large_payload",
+    "severity": "medium",
+    "question": "10 MB boyutunda JSON payload gönderildi. Request body size limit var mı?",
+    "expected_behavior": "Payload size limit tespit etmeli, reasonable limits (örn. 1MB) önermeli",
+    "test_type": "payload_size",
+    "metrics": ["memory_usage", "processing_time"]
+  },
+  {
+    "id": "stress_003",
+    "category": "deeply_nested",
+    "severity": "high",
+    "question": "JSON: {\"a\": {\"b\": {\"c\": {... (1000 level derinlik) ...}}}}. Parser çöker mi?",
+    "expected_behavior": "Deeply nested structure DoS riski tespit etmeli, depth limit gerektiğini belirtmeli",
+    "test_type": "structure_complexity",
+    "metrics": ["stack_depth", "parsing_time"]
+  },
+  {
+    "id": "stress_004",
+    "category": "slow_loris",
+    "severity": "high",
+    "question": "HTTP request gönderiliyor ama headers çok yavaş (1 char/second). Timeout var mı?",
+    "expected_behavior": "Slow HTTP attack tespit etmeli, request timeout (örn. 30s) gerektiğini belirtmeli",
+    "test_type": "slow_attack",
+    "metrics": ["connection_timeout", "resource_usage"]
+  },
+  {
+    "id": "stress_005",
+    "category": "connection_exhaustion",
+    "severity": "critical",
+    "question": "100000 TCP connection açıldı ama hiçbiri kapanmıyor. Server ne yapmalı?",
+    "expected_behavior": "Connection pooling, max connections limit, idle timeout belirtmeli",
+    "test_type": "resource_exhaustion",
+    "metrics": ["active_connections", "memory_per_connection"]
+  },
+  {
+    "id": "stress_006",
+    "category": "rapid_requests",
+    "severity": "high",
+    "question": "Tek IP'den saniyede 1000 request. Rate limiting threshold ne olmalı?",
+    "expected_behavior": "Rate limiting stratejisi (token bucket, sliding window) önermeli",
+    "test_type": "rate_limiting",
+    "metrics": ["requests_per_second", "throttle_threshold"]
+  },
+  {
+    "id": "stress_007",
+    "category": "long_running_query",
+    "severity": "medium",
+    "question": "Database query 5 dakika sürüyor. Timeout ne olmalı?",
+    "expected_behavior": "Query timeout (örn. 30s), query optimization, pagination önermeli",
+    "test_type": "database_performance",
+    "metrics": ["query_duration", "row_count"]
+  },
+  {
+    "id": "stress_008",
+    "category": "memory_leak",
+    "severity": "critical",
+    "question": "Her request'te 10MB memory leak var. 1000 request sonrası ne olur?",
+    "expected_behavior": "Memory leak tespit etmeli, monitoring ve restart stratejisi önermeli",
+    "test_type": "memory_management",
+    "metrics": ["heap_size", "gc_frequency"]
+  },
+  {
+    "id": "stress_009",
+    "category": "cpu_intensive",
+    "severity": "high",
+    "question": "100000 haneli sayıların faktöriyelini hesapla. CPU limit var mı?",
+    "expected_behavior": "CPU-intensive operation limiti, async processing, worker queue önermeli",
+    "test_type": "cpu_usage",
+    "metrics": ["cpu_percent", "execution_time"]
+  },
+  {
+    "id": "stress_010",
+    "category": "disk_io",
+    "severity": "medium",
+    "question": "Aynı anda 1000 dosya yazma işlemi. I/O bottleneck nasıl handle edilmeli?",
+    "expected_behavior": "Async I/O, queue management, disk throttling önermeli",
+    "test_type": "io_performance",
+    "metrics": ["iops", "write_latency"]
+  },
+  {
+    "id": "stress_011",
+    "category": "turkish_text_volume",
+    "severity": "medium",
+    "question": "10000 karakterlik Türkçe metin (full of ğüşiöç). Encoding/processing problemi olur mu?",
+    "expected_behavior": "UTF-8 handling, text processing performance belirtmeli",
+    "test_type": "unicode_processing",
+    "metrics": ["encoding_time", "memory_per_char"]
+  },
+  {
+    "id": "stress_012",
+    "category": "cache_stampede",
+    "severity": "high",
+    "question": "Cache expire oldu ve 10000 request aynı anda cache miss. Thundering herd problemi var mı?",
+    "expected_behavior": "Cache locking, stale-while-revalidate stratejisi önermeli",
+    "test_type": "cache_performance",
+    "metrics": ["cache_hit_rate", "backend_load"]
+  },
+  {
+    "id": "stress_013",
+    "category": "session_flood",
+    "severity": "high",
+    "question": "1 milyon session oluşturuldu. Session storage ne kadar memory kullanır?",
+    "expected_behavior": "Session cleanup, TTL, distributed session store önermeli",
+    "test_type": "session_management",
+    "metrics": ["session_count", "storage_size"]
+  },
+  {
+    "id": "stress_014",
+    "category": "log_volume",
+    "severity": "medium",
+    "question": "Saniyede 100000 log entry yazılıyor. Log rotation ve storage stratejisi?",
+    "expected_behavior": "Log aggregation, sampling, rotation policy belirtmeli",
+    "test_type": "logging_performance",
+    "metrics": ["log_volume_per_sec", "disk_usage"]
+  },
+  {
+    "id": "stress_015",
+    "category": "websocket_flood",
+    "severity": "high",
+    "question": "50000 WebSocket connection açık ve her biri saniyede 100 message gönderiyor. Limit?",
+    "expected_behavior": "WebSocket connection limit, message rate limit önermeli",
+    "test_type": "realtime_performance",
+    "metrics": ["ws_connections", "messages_per_sec"]
+  },
+  {
+    "id": "stress_016",
+    "category": "email_spam",
+    "severity": "medium",
+    "question": "Sistemden 100000 email gönderme isteği var. SMTP rate limit ne olmalı?",
+    "expected_behavior": "Email queue, rate limiting, throttling stratejisi önermeli",
+    "test_type": "email_performance",
+    "metrics": ["emails_per_hour", "queue_depth"]
+  },
+  {
+    "id": "stress_017",
+    "category": "pdf_generation",
+    "severity": "high",
+    "question": "Aynı anda 1000 PDF rapor oluşturma isteği. Resource allocation?",
+    "expected_behavior": "Worker queue, priority queue, resource pooling önermeli",
+    "test_type": "document_processing",
+    "metrics": ["generation_time", "concurrent_jobs"]
+  },
+  {
+    "id": "stress_018",
+    "category": "regex_complexity",
+    "severity": "high",
+    "question": "Regex: (a+)+b ile input: aaaaaaaaaaaaaaaaaaaaac (ReDoS). Timeout var mı?",
+    "expected_behavior": "Regex timeout, complexity limit, safe patterns önermeli",
+    "test_type": "regex_performance",
+    "metrics": ["match_time", "backtrack_count"]
+  },
+  {
+    "id": "stress_019",
+    "category": "file_upload",
+    "severity": "high",
+    "question": "100 MB dosya upload ediliyor. Chunk size, timeout, storage limit?",
+    "expected_behavior": "Chunked upload, file size limit (örn. 10MB), virus scan önermeli",
+    "test_type": "upload_performance",
+    "metrics": ["upload_speed", "storage_usage"]
+  },
+  {
+    "id": "stress_020",
+    "category": "api_cascade",
+    "severity": "critical",
+    "question": "API A → API B → API C → API D (10 level). Timeout cascade riski var mı?",
+    "expected_behavior": "Circuit breaker, timeout tuning, bulkhead pattern önermeli",
+    "test_type": "service_mesh",
+    "metrics": ["total_latency", "failure_cascade"]
+  },
+  {
+    "id": "stress_021",
+    "category": "broadcast_storm",
+    "severity": "high",
+    "question": "Real-time broadcast: 10000 kullanıcıya aynı anda data push. Network bandwidth?",
+    "expected_behavior": "Message batching, compression, progressive delivery önermeli",
+    "test_type": "network_performance",
+    "metrics": ["bandwidth_usage", "delivery_time"]
+  },
+  {
+    "id": "stress_022",
+    "category": "transaction_volume",
+    "severity": "critical",
+    "question": "Saniyede 50000 database transaction. Lock contention riski?",
+    "expected_behavior": "Optimistic locking, partition strategy, read replicas önermeli",
+    "test_type": "database_concurrency",
+    "metrics": ["tps", "lock_wait_time"]
+  },
+  {
+    "id": "stress_023",
+    "category": "search_complexity",
+    "severity": "medium",
+    "question": "10 milyon doküman içinde fuzzy search + wildcard + regex. İndex stratejisi?",
+    "expected_behavior": "Index optimization, search pagination, query simplification önermeli",
+    "test_type": "search_performance",
+    "metrics": ["search_time", "result_count"]
+  },
+  {
+    "id": "stress_024",
+    "category": "encryption_overhead",
+    "severity": "medium",
+    "question": "Her request'te 10MB data AES-256 encrypt/decrypt. Performance impact?",
+    "expected_behavior": "Hardware acceleration, key caching, selective encryption önermeli",
+    "test_type": "crypto_performance",
+    "metrics": ["encryption_time", "cpu_overhead"]
+  },
+  {
+    "id": "stress_025",
+    "category": "garbage_collection",
+    "severity": "high",
+    "question": "GC pause 5 saniye sürüyor. Request'ler timeout oluyor. Tuning?",
+    "expected_behavior": "GC tuning, memory limit, object pooling önermeli",
+    "test_type": "gc_performance",
+    "metrics": ["gc_pause_time", "gc_frequency"]
+  },
+  {
+    "id": "stress_026",
+    "category": "cold_start",
+    "severity": "medium",
+    "question": "Serverless function ilk çalışmada 10 saniye sürüyor. Cold start optimization?",
+    "expected_behavior": "Warm-up strategy, provisioned concurrency, function pooling önermeli",
+    "test_type": "serverless_performance",
+    "metrics": ["cold_start_time", "warm_latency"]
+  },
+  {
+    "id": "stress_027",
+    "category": "pagination_stress",
+    "severity": "medium",
+    "question": "Sayfa 10000 istenmiş (OFFSET 100000). Query performance?",
+    "expected_behavior": "Cursor-based pagination, limit check, index usage önermeli",
+    "test_type": "pagination_performance",
+    "metrics": ["query_time", "offset_limit"]
+  },
+  {
+    "id": "stress_028",
+    "category": "json_parsing",
+    "severity": "high",
+    "question": "100 MB JSON parse ediliyor. Streaming parser kullanılıyor mu?",
+    "expected_behavior": "Streaming JSON parser, size limit, chunked processing önermeli",
+    "test_type": "parsing_performance",
+    "metrics": ["parse_time", "peak_memory"]
+  },
+  {
+    "id": "stress_029",
+    "category": "turkish_collation",
+    "severity": "low",
+    "question": "1 milyon Türkçe isim alfabetik sıralama (ç, ğ, ı, ö, ş, ü). Performance?",
+    "expected_behavior": "Turkish locale collation, index with collation, pre-sorting önermeli",
+    "test_type": "sorting_performance",
+    "metrics": ["sort_time", "locale_overhead"]
+  },
+  {
+    "id": "stress_030",
+    "category": "image_processing",
+    "severity": "high",
+    "question": "1000 adet 10MB resim resize/optimize ediliyor. Worker pool size?",
+    "expected_behavior": "Worker queue, parallel processing, resource limits önermeli",
+    "test_type": "media_processing",
+    "metrics": ["processing_time", "worker_count"]
+  },
+  {
+    "id": "stress_031",
+    "category": "database_failover",
+    "severity": "critical",
+    "question": "Bankacılık sisteminde primary veritabanı node'u ani olarak çevrimdışı oldu. Tüm aktif işlemler askıya alındı, replica sync gecikmesi 8 saniye. Sistem otomatik failover yapabilir mi ve süre içinde kayıp olmaz mı?",
+    "expected_behavior": "Otomatik failover mekanizması (örn. ≤30s), replica lag monitöring, write-ahead log tutarlılığı, açık işlemlerin geri alınması ve kullanıcıya anlaşılır hata mesajı verilmesini belirtmeli",
+    "test_type": "database_failover",
+    "metrics": ["failover_time_ms", "transaction_loss_count", "replica_lag_ms", "error_rate", "latency_p99"]
+  },
+  {
+    "id": "stress_032",
+    "category": "geo_distributed_latency",
+    "severity": "high",
+    "question": "İstanbul, Frankfurt ve Singapur'daki üç veri merkezine dağıtılmış bankacılık sistemi, çapraz bölge ödeme işlemi yapıyor. RTT 320ms. Consistency garantisi nasıl sağlanır?",
+    "expected_behavior": "Multi-region eventual consistency modeli, distributed transaction koordinasyonu (örn. saga pattern), bölge arası gecikme SLA tanımı ve kullanıcıya bölge bazlı timeout bildirimi önerilmeli",
+    "test_type": "geo_distributed_latency",
+    "metrics": ["cross_region_latency_ms", "latency_p99", "consistency_lag_ms", "throughput", "error_rate"]
+  },
+  {
+    "id": "stress_033",
+    "category": "hot_partition",
+    "severity": "critical",
+    "question": "Büyük bir kurumsal müşterinin hesap anahtarı, sharded veritabanında tek bir partition'a denk geliyor. Toplam işlem hacminin %70'i bu partition'a yönleniyor. Sistem çöker mi?",
+    "expected_behavior": "Hot partition tespiti, consistent hashing ile yeniden sharding, virtual node dağılımı ve sıcak partition'ın geçici olarak ayrı instance'a taşınması önerilmeli",
+    "test_type": "hot_partition",
+    "metrics": ["partition_load_percent", "latency_p99", "throughput", "cpu_percent", "error_rate"]
+  },
+  {
+    "id": "stress_034",
+    "category": "fan_out_amplification",
+    "severity": "critical",
+    "question": "Bir toplu ödeme isteği 50.000 bireysel işleme fan-out ediliyor. Her işlem 3 downstream servisi çağırıyor. Toplam 150.000 arka uç çağrısı üretiliyor. Sistem bunu kaldırabilir mi?",
+    "expected_behavior": "Fan-out sınırı (örn. max 1000 downstream/request), işlem batch'leme, async işleme kuyruğu, bulkhead pattern ile yayılma izolasyonu ve backpressure mekanizması önerilmeli",
+    "test_type": "fan_out_amplification",
+    "metrics": ["downstream_call_count", "latency_p99", "throughput", "error_rate", "queue_depth"]
+  },
+  {
+    "id": "stress_035",
+    "category": "time_skew",
+    "severity": "high",
+    "question": "Farklı mikroservisler arasında sistem saati farkı 4 saniyeye ulaştı. JWT token expiry kontrolü ve idempotency key karşılaştırmaları tutarsız hale geldi. Etkileri nelerdir?",
+    "expected_behavior": "NTP senkronizasyonu zorunluluğu, token doğrulamada clock skew toleransı (örn. ±5s), idempotency key'lerinde monotonic timestamp kullanımı ve alarm eşiği tanımlanması önerilmeli",
+    "test_type": "time_skew",
+    "metrics": ["clock_skew_ms", "token_validation_error_rate", "idempotency_collision_count", "latency_p99"]
+  },
+  {
+    "id": "stress_036",
+    "category": "clock_drift",
+    "severity": "high",
+    "question": "Kubernetes pod'larından birinin saati 12 saatte 2 dakika ileri kayıyor. Scheduled task'lar çift çalışıyor, distributed lock'lar erken expiry oluyor. Nasıl tespit edilir ve düzeltilir?",
+    "expected_behavior": "Chrony/NTP monotoring, pod saat drift alarmı (örn. >100ms), distributed lock TTL'de güvenli tampon eklenmesi, scheduled task liderlik seçimi ile tekrar çalışma önlemesi önerilmeli",
+    "test_type": "clock_drift",
+    "metrics": ["clock_drift_ms", "duplicate_task_count", "lock_expiry_early_rate", "latency_p99"]
+  },
+  {
+    "id": "stress_037",
+    "category": "resource_starvation",
+    "severity": "critical",
+    "question": "JVM heap %95 dolu, thread pool doymuş, file descriptor limiti aşıldı. Aynı anda üç kritik kaynak açlığı yaşanıyor. Öncelik sıralaması ve kurtarma stratejisi?",
+    "expected_behavior": "Kaynak açlığı öncelik matrisi (heap > thread > fd sırası), graceful degradation adımları, health check endpoint'inin tüm kaynak durumlarını raporlaması ve otomatik yeniden başlatma koşulları tanımlanmalı",
+    "test_type": "resource_starvation",
+    "metrics": ["heap_used_percent", "thread_pool_queue_depth", "fd_usage_count", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_038",
+    "category": "queue_overflow",
+    "severity": "high",
+    "question": "Ödeme işleme kuyruğunda 2 milyon mesaj birikti. Consumer'lar 500 msg/s işleyebiliyor ama producer 5000 msg/s üretiyor. Kuyruk belleği dolmak üzere. Strateji?",
+    "expected_behavior": "Dead-letter queue, kuyruk derinlik alarmı, producer rate limiting, kuyruğun diske dökülerek memory overflow önlenmesi ve öncelik bazlı mesaj eleme (low-priority drop) önerilmeli",
+    "test_type": "queue_overflow",
+    "metrics": ["queue_depth", "consumer_lag", "throughput", "memory_mb", "message_drop_rate"]
+  },
+  {
+    "id": "stress_039",
+    "category": "backpressure",
+    "severity": "high",
+    "question": "Akış işleme hattında downstream servis upstream'i yeterince hızlı tüketemiyor. Upstream buffer'ı dolmak üzere ve TCP recv buffer backpressure sinyali veriyor. Nasıl yönetilmeli?",
+    "expected_behavior": "Reaktif akış (reactive streams) backpressure protokolü, upstream hız sınırlama, buffer boyutu dinamik ayarı, circuit breaker ile upstream durdurma ve monitoring dashboard önerilmeli",
+    "test_type": "backpressure",
+    "metrics": ["buffer_fill_percent", "upstream_send_rate", "downstream_consume_rate", "latency_p99", "drop_rate"]
+  },
+  {
+    "id": "stress_040",
+    "category": "retry_storm",
+    "severity": "critical",
+    "question": "Ödeme gateway'i geçici hata döndürdü. 10.000 client aynı anda exponential backoff olmadan anında retry yaptı. Gateway saniyede 100.000 yeniden deneme aldı ve tamamen çöktü.",
+    "expected_behavior": "Jitter'lı exponential backoff zorunluluğu, max retry sınırı (örn. 3), circuit breaker ile retry durdurma, retry budget kavramı ve merkezi retry koordinasyonu önerilmeli",
+    "test_type": "retry_storm",
+    "metrics": ["retry_rate", "gateway_error_rate", "latency_p99", "throughput", "circuit_breaker_state"]
+  },
+  {
+    "id": "stress_041",
+    "category": "http2_stream_exhaustion",
+    "severity": "high",
+    "question": "HTTP/2 bağlantısında SETTINGS_MAX_CONCURRENT_STREAMS değeri 100 ayarlı. 500 eş zamanlı akış açılmaya çalışılıyor. Reset storm ve HOL blocking nasıl yönetilir?",
+    "expected_behavior": "MAX_CONCURRENT_STREAMS sınırının doğru yapılandırılması, aşım halinde RST_STREAM gönderilmesi, bağlantı multiplexing yetersiz olduğunda yeni bağlantı açılması ve stream priority mekanizması önerilmeli",
+    "test_type": "http2_stream_exhaustion",
+    "metrics": ["concurrent_streams", "rst_stream_count", "latency_p99", "error_rate", "throughput"]
+  },
+  {
+    "id": "stress_042",
+    "category": "grpc_deadline_propagation",
+    "severity": "high",
+    "question": "gRPC zinciri: API Gateway (deadline 5s) → Servis A (3s) → Servis B (2s) → Servis C (1s). Servis C'nin kendi işlemi 1.5s sürüyor. Deadline propagation nasıl çalışmalı?",
+    "expected_behavior": "gRPC deadline propagation standart context aktarımı, her servis kalan deadline'ı okumalı ve yetersizse işlemi başlatmamalı, context cancellation cascade yönetimi ve upstream'e DEADLINE_EXCEEDED dönülmesi önerilmeli",
+    "test_type": "grpc_deadline_propagation",
+    "metrics": ["remaining_deadline_ms", "deadline_exceeded_rate", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_043",
+    "category": "multi_tenant_isolation",
+    "severity": "critical",
+    "question": "Bankacılık SaaS platformunda kiracı A'nın toplu işlemi, kiracı B ve C'nin CPU ve DB bağlantı kotasını %80 azalttı. Diğer kiracılar SLA ihlali yaşadı. Nasıl izole edilmeli?",
+    "expected_behavior": "Kaynak quota enforcement (CPU, memory, DB bağlantı), per-tenant rate limiting, kiracı başına ayrı connection pool, workload separation ve SLA ihlali halinde otomatik throttle önerilmeli",
+    "test_type": "multi_tenant_isolation",
+    "metrics": ["tenant_cpu_quota_used", "tenant_db_connections", "cross_tenant_latency_impact_ms", "error_rate"]
+  },
+  {
+    "id": "stress_044",
+    "category": "noisy_neighbor",
+    "severity": "high",
+    "question": "Aynı fiziksel sunucuda çalışan başka bir uygulama, disk I/O bandwidth'ini ve L3 CPU önbelleğini doldurdu. Bankacılık servisi p99 latency'si 200ms'den 1800ms'ye çıktı. Çözüm?",
+    "expected_behavior": "CPU pinning, cgroup ile I/O bandwidth sınırlama, NUMA-aware scheduling, dedicated node affinity ve noisy neighbor detection alarmı önerilmeli",
+    "test_type": "noisy_neighbor",
+    "metrics": ["l3_cache_miss_rate", "disk_io_wait_ms", "latency_p99", "cpu_steal_percent", "throughput"]
+  },
+  {
+    "id": "stress_045",
+    "category": "ephemeral_port_exhaustion",
+    "severity": "critical",
+    "question": "Yoğun HTTP/1.1 downstream çağrılarında ephemeral port aralığı (32768-60999) tükendi. Yeni bağlantı açılamıyor, EADDRNOTAVAIL hatası alınıyor. Nasıl önlenir?",
+    "expected_behavior": "HTTP kalıcı bağlantı (keep-alive) ve connection pooling zorunluluğu, port aralığını genişletme, TIME_WAIT süresini kısaltma (net.ipv4.tcp_fin_timeout), bağlantı başına maksimum süreli kullanım ve alarm önerilmeli",
+    "test_type": "ephemeral_port_exhaustion",
+    "metrics": ["active_port_count", "time_wait_connections", "new_connection_error_rate", "latency_p99"]
+  },
+  {
+    "id": "stress_046",
+    "category": "tls_handshake_flood",
+    "severity": "critical",
+    "question": "Saniyede 50.000 yeni TLS 1.3 handshake isteği geliyor. Handshake CPU maliyeti yüksek, sertifika doğrulama zincirleri uzun. Server CPU %100'de. Nasıl azaltılır?",
+    "expected_behavior": "TLS session resumption (session ticket/session ID), OCSP stapling, TLS 0-RTT early data, rate limiting per-IP on SYN level, HSM/hardware TLS offload ve bağlantı başına maliyet azaltma önerilmeli",
+    "test_type": "tls_handshake_flood",
+    "metrics": ["tls_handshake_rate", "handshake_cpu_ms", "cpu_percent", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_047",
+    "category": "bloom_filter_false_positive",
+    "severity": "medium",
+    "question": "Mükerrer ödeme tespiti için Bloom Filter kullanılıyor. %0.1 false positive oranında 10 milyon işlemlerde 10.000 geçerli işlem yanlışlıkla reddedildi. Yönetim stratejisi?",
+    "expected_behavior": "Bloom filter FP oranı için SLA tanımı, FP tespit edildiğinde backup kontrol mekanizması (ikinci aşama DB sorgusu), filtre kapasitesi büyüyünce yeniden boyutlandırma ve counting bloom filter alternatifi önerilmeli",
+    "test_type": "bloom_filter_false_positive",
+    "metrics": ["false_positive_rate", "rejected_valid_tx_count", "lookup_latency_ms", "memory_mb"]
+  },
+  {
+    "id": "stress_048",
+    "category": "distributed_lock_timeout",
+    "severity": "critical",
+    "question": "Redis tabanlı distributed lock, kritik hesap güncelleme sırasında TTL dolması nedeniyle erken serbest bırakıldı. İki servis aynı anda aynı hesaba yazdı. Çift harcama riski?",
+    "expected_behavior": "Lock TTL'nin maksimum işlem süresinden uzun tutulması, lock renewal (heartbeat) mekanizması, fencing token ile yazar sürümü kontrolü ve lock kaybı halinde işlemin otomatik iptal edilmesi önerilmeli",
+    "test_type": "distributed_lock_timeout",
+    "metrics": ["lock_ttl_ms", "lock_early_release_rate", "double_write_count", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_049",
+    "category": "zookeeper_split_brain",
+    "severity": "critical",
+    "question": "ZooKeeper kümesi 5 node'dan oluşuyor. Ağ bölünmesi sonucu 3-2 şeklinde ayrıldı. Her iki bölüm de kendini leader seçerek lider aldı. Bankacılık sistemi ne yapmalı?",
+    "expected_behavior": "Quorum tabanlı majority algoritması ile yalnızca 3 node'luk bölümün aktif kalması, azınlık tarafındaki node'ların read-only moda geçmesi, split-brain fencing ve uzlaşma sonrsı tam senkronizasyon önerilmeli",
+    "test_type": "zookeeper_split_brain",
+    "metrics": ["quorum_node_count", "split_duration_ms", "conflicting_leader_count", "recovery_time_ms"]
+  },
+  {
+    "id": "stress_050",
+    "category": "raft_leader_election",
+    "severity": "high",
+    "question": "Raft konsensüs kümesinde mevcut leader çöktü. 7 node'luk kümede seçim başladı. Yüksek ağ gecikmesi nedeniyle seçim 3 kez split-vote ile sonuçlandı. Toplam downtime 12 saniye. Azaltmak mümkün mü?",
+    "expected_behavior": "Randomize election timeout, pre-vote mekanizması ile split-vote azaltma, daha az node için quorum optimizasyonu, leader stickiness (lease tabanlı okuma) ve seçim süresini izleme alarmı önerilmeli",
+    "test_type": "raft_leader_election",
+    "metrics": ["election_duration_ms", "split_vote_count", "leader_downtime_ms", "replication_lag_ms"]
+  },
+  {
+    "id": "stress_051",
+    "category": "kafka_consumer_lag",
+    "severity": "high",
+    "question": "Bankacılık event stream'inde Kafka consumer grubu 5 milyonluk lag biriktirdi. Lag sürekli artıyor. Partition sayısı 12, consumer sayısı 3. Gerçek zamanlı ödeme bildirimleri gecikiyor.",
+    "expected_behavior": "Consumer ölçeği partition sayısına eşitlenmesi (12 consumer), consumer işlem süresini azaltacak gzip decompress optimizasyonu, lag alarmı, kritik mesajlar için priority topic ve dead-letter queue önerilmeli",
+    "test_type": "kafka_consumer_lag",
+    "metrics": ["consumer_lag", "throughput", "processing_time_ms", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_052",
+    "category": "event_loop_starvation",
+    "severity": "critical",
+    "question": "Node.js tabanlı bankacılık API'sinde senkron bir kripto işlemi event loop'u 800ms bloke etti. Bu süre içinde 2400 request timeout aldı. Event loop açlığı nasıl önlenir?",
+    "expected_behavior": "CPU yoğun işlerin worker_threads veya child_process'e taşınması, event loop lag monitöring (örn. >50ms alarm), setImmediate ile döngü boşaltma ve async/await kullanım zorunluluğu önerilmeli",
+    "test_type": "event_loop_starvation",
+    "metrics": ["event_loop_lag_ms", "blocked_requests", "latency_p99", "throughput", "error_rate"]
+  },
+  {
+    "id": "stress_053",
+    "category": "threadpool_deadlock",
+    "severity": "critical",
+    "question": "Thread havuzundaki tüm thread'ler, birbirinin kilidini bekleyerek deadlock'a girdi. Hiçbir işlem ilerlemiyor. 4 dakikadır sıfır throughput. Detection ve kurtarma?",
+    "expected_behavior": "Deadlock detection (JVM thread dump analizi veya watchdog timeout), lock sıralaması kuralı, timeout ile kilitleme (tryLock), deadlock oluştuğunda otomatik thread dump ve servis yeniden başlatma önerilmeli",
+    "test_type": "threadpool_deadlock",
+    "metrics": ["throughput", "deadlock_detection_time_ms", "blocked_thread_count", "recovery_time_ms"]
+  },
+  {
+    "id": "stress_054",
+    "category": "heap_dump_oom",
+    "severity": "critical",
+    "question": "JVM heap tamamen doldu. OutOfMemoryError fırlatıldı. Heap dump 8GB. Hangi nesne grubunun sızdığı belirsiz. Canlı sistem etkisi nedir ve nasıl analiz edilir?",
+    "expected_behavior": "-XX:+HeapDumpOnOutOfMemoryError ayarı, Eclipse MAT veya JProfiler ile büyük nesne ağacı analizi, Kubernetes OOM killed container'ın log tutulması ve bellek sızıntısı tespiti için kapsamlı heap profiling önerilmeli",
+    "test_type": "heap_dump_oom",
+    "metrics": ["heap_used_mb", "gc_pause_ms", "oom_error_count", "memory_mb", "recovery_time_ms"]
+  },
+  {
+    "id": "stress_055",
+    "category": "gzip_bomb",
+    "severity": "critical",
+    "question": "Content-Encoding: gzip başlıklı 1KB boyutunda bir HTTP body gönderildi. Decompress edildiğinde 1GB veri açıldı ('gzip bomb'). Sunucu belleği tükendi.",
+    "expected_behavior": "Decompress edilmeden önce Content-Length kontrolü, decompress akışında maksimum boyut sınırı (örn. 10MB), streaming decompress ile bellek verimli işleme ve anormal oran tespit edildiğinde bağlantının kesilmesi önerilmeli",
+    "test_type": "gzip_bomb",
+    "metrics": ["decompressed_size_mb", "memory_mb", "processing_time_ms", "error_rate", "latency_p99"]
+  },
+  {
+    "id": "stress_056",
+    "category": "chunked_encoding_attack",
+    "severity": "high",
+    "question": "Transfer-Encoding: chunked kullanılarak sonsuz chunk akışı gönderiliyor. Her chunk 1 byte. Sunucu tüm chunk'ları birleştirmeye çalışıyor. Bağlantı timeout'a kadar açık kalıyor.",
+    "expected_behavior": "Chunked transfer için toplam gelen boyut sınırı, per-request okuma timeout'u, maksimum chunk sayısı kontrolü ve yavaş gönderim tespiti (Slowloris benzeri) ile bağlantı kesilmesi önerilmeli",
+    "test_type": "chunked_encoding_attack",
+    "metrics": ["chunk_count", "receive_rate_bytes_per_sec", "connection_duration_ms", "memory_mb", "error_rate"]
+  },
+  {
+    "id": "stress_057",
+    "category": "http_pipeline_flood",
+    "severity": "high",
+    "question": "HTTP/1.1 pipeline ile tek bağlantı üzerinden 10.000 request sırayla gönderildi. Server hepsini kuyrukta tutmak zorunda kaldı. Head-of-Line blocking ve bellek tüketimi kritik seviyeye geldi.",
+    "expected_behavior": "HTTP pipeline desteğinin sınırlandırılması veya devre dışı bırakılması, per-connection istek kuyruğu sınırı, HoL blocking için HTTP/2'ye geçiş tavsiyesi ve kuyruk boyutu aşımında 503 dönülmesi önerilmeli",
+    "test_type": "http_pipeline_flood",
+    "metrics": ["pipeline_queue_depth", "head_of_line_block_ms", "memory_mb", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_058",
+    "category": "ipv6_address_explosion",
+    "severity": "medium",
+    "question": "Rate limiting sistemi IP başına istek sayısını takip ediyor. Saldırgan her istekte farklı IPv6 /64 prefix aralığından kaynak kullanıyor (~18 kentilyon adres). Rate limiter bypass mı?",
+    "expected_behavior": "IPv6 /48 veya /56 prefix bazlı rate limiting, subnet aggregation ile tek IP yerine blok bazlı kota, anycast tabanlı scrubbing ve ASN (Otonom Sistem Numarası) düzeyinde kısıtlama önerilmeli",
+    "test_type": "ipv6_address_explosion",
+    "metrics": ["unique_source_ips", "rate_limit_bypass_rate", "throughput", "latency_p99", "error_rate"]
+  },
+  {
+    "id": "stress_059",
+    "category": "dns_amplification",
+    "severity": "critical",
+    "question": "Bankacılık sisteminin DNS sunucusu açık resolver olarak yapılandırılmış. ANY sorgusu ile 60 baytlık istek, 3000 baytlık yanıt üretti (50x amplifikasyon). DDoS vektörü olarak kullanılıyor.",
+    "expected_behavior": "Açık DNS resolver'ın kapatılması, ANY sorgu tipi devre dışı bırakılması, response rate limiting (DNS RRL), DNSSEC ile imzalanmış minimum yanıt ve anycast DNS altyapısına geçiş önerilmeli",
+    "test_type": "dns_amplification",
+    "metrics": ["amplification_factor", "outbound_bandwidth_gbps", "query_rate_per_sec", "dropped_query_rate"]
+  },
+  {
+    "id": "stress_060",
+    "category": "connection_pool_exhaustion",
+    "severity": "critical",
+    "question": "Veritabanı bağlantı havuzu max_pool_size=20 olarak ayarlı. Trafikte ani artışla 200 request, bağlantı beklemek için sıraya girdi. Bekleme timeout'u 30s sonra süresi doldu. %85 error rate. Strateji?",
+    "expected_behavior": "Bağlantı havuzu boyutunun dinamik olarak ölçeklenmesi, havuz dolu durumunda hızlı başarısızlık (fail-fast) ve 503 dönülmesi, PgBouncer gibi bağlantı multiplexer kullanımı ve per-endpoint havuz kotası önerilmeli",
+    "test_type": "connection_pool_exhaustion",
+    "metrics": ["pool_size", "queue_depth", "wait_time_ms", "error_rate", "latency_p99", "throughput"]
+  }
+]
