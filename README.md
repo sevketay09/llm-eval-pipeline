@@ -10,7 +10,7 @@
 
 *Systematically test and compare cloud, on-premise, and local LLMs with comprehensive evaluation metrics*
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Installation](#-installation) • [Usage](#-usage) • [Architecture](#-architecture)
+[Features](#-features) • [Quick Start](#-quick-start) • [Installation](#-installation) • [Usage](#-usage)
 
 </div>
 
