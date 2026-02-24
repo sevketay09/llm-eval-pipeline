@@ -1206,12 +1206,6 @@ mypy --ignore-missing-imports .
 
 ---
 
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
 Built with:
