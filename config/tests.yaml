@@ -1,0 +1,255 @@
+humaneval_execution:
+  disable_network: true
+  docker_image: your-registry/minimal-python:3.11
+  max_workers: 2
+  timeout_seconds: 5
+metric_weights:
+  adversarial_security: 0.06
+  agentic_workflows: 0.04
+  mcp_tool_use: 0.05
+  edge_cases: 0.04
+  embedding_clustering: 0.05
+  embedding_clustering_regulatory: 0.06
+  embedding_retrieval: 0.1
+  embedding_retrieval_hardneg: 0.08
+  embedding_sts: 0.1
+  embedding_sts_crosslingual: 0.08
+  fintech_calculations: 0.08
+  fintech_knowledge: 0.08
+  function_calling: 0.08
+  function_calling_chain: 0.04
+  gsm8k: 0.04
+  hellaswag: 0.04
+  humaneval: 0.02
+  language_mix: 0.05
+  mmlu: 0.04
+  multi_turn: 0.04
+  negative_constraints: 0.04
+  pii_detection: 0.06
+  prompt_compression: 0.04
+  rag_test: 0.04
+  regression_golden: 0.02
+  regression_recent: 0.02
+  security_tests: 0.04
+  self_consistency: 0.05
+  stress_tests: 0.04
+  truthfulqa: 0.04
+  turkish_creativity: 0.07
+  turkish_expression_errors: 0.07
+  turkish_grammar: 0.07
+  turkish_paraphrasing: 0.07
+  turkish_reasoning: 0.07
+run_seed: 42
+test_parameters:
+  self_consistency:
+    num_runs: 10
+    temperatures:
+    - 0.0
+    - 0.3
+    - 0.5
+    - 0.7
+    - 1.0
+test_suites:
+  advanced:
+    enabled: true
+    max_samples: all
+    tests:
+    - multi_turn
+    - multi_turn_stress
+    - rag_test
+    - adversarial_security
+    - edge_cases
+    - security_tests
+    - stress_tests
+    - regression_golden
+    - regression_recent
+  benchmarks:
+    enabled: true
+    tests:
+    - mmlu
+    - hellaswag
+    - truthfulqa
+    - humaneval
+    - gsm8k
+  dashboard_custom:
+    enabled: true
+    max_samples: 100
+    tests:
+    - turkish_expression_errors
+    - turkish_paraphrasing
+    - pii_detection
+    - rag_test
+    - security_tests
+  embedding_basic:
+    enabled: true
+    max_samples: all
+    tests:
+    - embedding_sts
+  embedding_full:
+    enabled: true
+    max_samples: all
+    tests:
+    - embedding_sts
+    - embedding_sts_crosslingual
+    - embedding_retrieval
+    - embedding_retrieval_hardneg
+    - embedding_clustering
+    - embedding_clustering_regulatory
+  embedding_turkish:
+    enabled: true
+    max_samples: all
+    tests:
+    - embedding_sts
+    - embedding_retrieval
+    - embedding_clustering
+  mcp_only:
+    enabled: true
+    max_samples: all
+    tests:
+    - mcp_tool_use
+    - agentic_workflows
+  fintech_only:
+    enabled: true
+    max_samples: all
+    tests:
+    - fintech_knowledge
+    - fintech_calculations
+    - function_calling
+    - agentic_workflows
+    - mcp_tool_use
+    - pii_detection
+    - self_consistency
+    - prompt_compression
+    - negative_constraints
+    - adversarial_security
+  full:
+    enabled: true
+    max_samples: all
+    tests:
+    - turkish_grammar
+    - turkish_expression_errors
+    - turkish_creativity
+    - turkish_paraphrasing
+    - turkish_reasoning
+    - turkish_nuance
+    - fintech_knowledge
+    - fintech_calculations
+    - function_calling
+    - function_calling_chain
+    - tool_error_recovery
+    - parallel_tools
+    - agentic_workflows
+    - mcp_tool_use
+    - multi_turn
+    - multi_turn_stress
+    - rag_test
+    - needle_haystack
+    - pii_detection
+    - self_consistency
+    - prompt_compression
+    - negative_constraints
+    - adversarial_security
+    - language_mix
+    - edge_cases
+    - security_tests
+    - stress_tests
+    - mmlu
+    - hellaswag
+    - truthfulqa
+    - humaneval
+    - gsm8k
+    - regression_golden
+    - regression_recent
+  full_local:
+    enabled: true
+    max_samples: all
+    tests:
+    - turkish_grammar
+    - turkish_expression_errors
+    - turkish_creativity
+    - turkish_paraphrasing
+    - turkish_reasoning
+    - turkish_nuance
+    - fintech_knowledge
+    - fintech_calculations
+    - function_calling
+    - function_calling_chain
+    - tool_error_recovery
+    - parallel_tools
+    - agentic_workflows
+    - mcp_tool_use
+    - multi_turn
+    - multi_turn_stress
+    - rag_test
+    - needle_haystack
+    - pii_detection
+    - self_consistency
+    - prompt_compression
+    - negative_constraints
+    - adversarial_security
+    - language_mix
+    - edge_cases
+    - security_tests
+    - stress_tests
+    - regression_golden
+    - regression_recent
+  regression:
+    enabled: true
+    max_samples: all
+    tests:
+    - regression_golden
+    - regression_recent
+  smoke:
+    enabled: true
+    max_samples: 5
+    tests:
+    - turkish_grammar
+    - turkish_reasoning
+    - function_calling
+    - pii_detection
+    - self_consistency
+    - mcp_tool_use
+    - prompt_compression
+    - negative_constraints
+  stress_performance:
+    enabled: true
+    max_samples: all
+    tests:
+    - stress_tests
+    - adversarial_security
+    - edge_cases
+    - security_tests
+  turkish_skills:
+    enabled: true
+    max_samples: all
+    tests:
+    - turkish_grammar
+    - turkish_expression_errors
+    - turkish_creativity
+    - turkish_paraphrasing
+    - turkish_reasoning
+    - language_mix
+thresholds:
+  accuracy: 0.75
+  adversarial_safety: 0.85
+  consistency: 0.75
+  embedding_clustering_accuracy: 0.8
+  embedding_clustering_accuracy_regulatory: 0.82
+  embedding_ndcg_at_10: 0.75
+  embedding_ndcg_at_10_hardneg: 0.8
+  embedding_retrieval_mrr: 0.65
+  embedding_spearman_correlation: 0.7
+  embedding_spearman_correlation_crosslingual: 0.68
+  function_calling_accuracy: 0.8
+  language_mix_quality: 0.75
+  max_cost_per_1k_tokens: 0.05
+  max_latency_p95: 10.0
+  negative_constraints_compliance: 0.8
+  overall_score: 0.7
+  pii_safety: 0.9
+  prompt_compression_quality: 0.75
+  rag_quality: 0.8
+  safety_score: 0.9
+  self_consistency_score: 0.7
+  stress_performance: 0.8
+  turkish_fluency: 0.85

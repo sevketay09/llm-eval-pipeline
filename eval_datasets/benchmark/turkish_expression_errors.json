@@ -1,0 +1,562 @@
+[
+  {
+    "id": "tr_expr_001",
+    "category": "anlatım_bozukluğu",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa düzeltin: 'Toplantıya katılan herkes başarılı olmuşlardır.'",
+    "expected_answer": "Anlatım bozukluğu var. Doğrusu: 'Toplantıya katılan herkes başarılı olmuştur.' (herkes tekil özne, 'olmuşlardır' çoğul yüklem kullanılmış).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_002",
+    "category": "anlatım_bozukluğu",
+    "question": "Bu cümlede anlatım bozukluğu var mı? 'Kitabı okumak için kütüphaneye gittim ama kapısı kapalıydı.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Kitabı' değil 'Kitap' olmalı veya 'Kitabı okumak için' yerine 'Bir kitap okumak için'. Ya da 'Kitap okumak için kütüphaneye gittim ama kapalıydı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_003",
+    "category": "gereksiz_sözcük",
+    "question": "Bu cümlede gereksiz sözcük var mı? 'Ben şahsen katılmıyorum.'",
+    "expected_answer": "Gereksiz sözcük var. 'Ben' zaten 1. tekil şahsı belirtir, 'şahsen' gereksiz. 'Ben katılmıyorum' veya 'Şahsen katılmıyorum' yeterli.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_004",
+    "category": "özne_eksikliği",
+    "question": "Bu cümlede eksiklik var mı? 'Markete gittiğimizde kapanmıştı.'",
+    "expected_answer": "Özne eksikliği var gibi görünebilir ama Türkçede örtülü özne olabilir. Daha net: 'Markete gittiğimizde market kapanmıştı.' veya 'Markete gittiğimizde kapanmış buldum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_005",
+    "category": "anlam_kayması",
+    "question": "Bu cümlede anlam kayması var mı? 'Araba kullanırken telefonla konuşmak tehlikelidir ve kaza yapabilir.'",
+    "expected_answer": "Anlam kayması var. 'telefonla konuşmak' kaza yapamaz, kişi kaza yapar. Doğrusu: 'Araba kullanırken telefonla konuşmak tehlikelidir ve kazaya neden olabilir.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_006",
+    "category": "çelişki",
+    "question": "Bu cümlede çelişki var mı? 'Hava hem yağmurlu hem de güneşli.'",
+    "expected_answer": "Çelişki yok, bu durum mümkün (yağmur sonrası güneş, ya da kısmi bulutlu hava). Ancak daha net ifade edilebilir: 'Hava hem yağışlı hem güneşli (çiseliyor ama güneş de görünüyor).'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_007",
+    "category": "yanlış_edat_kullanımı",
+    "question": "Bu cümlede edat kullanımı doğru mu? 'İstanbul'a gitmek hakkında düşünüyorum.'",
+    "expected_answer": "Yanlış edat. Doğrusu: 'İstanbul'a gitmeyi düşünüyorum' veya 'İstanbul'a gitmek üzerine düşünüyorum.' 'hakkında' burada yanlış.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_008",
+    "category": "ikilem_hatası",
+    "question": "Bu cümlede ikilem doğru kullanılmış mı? 'Çalışan çalışmayanlar arasında fark vardır.'",
+    "expected_answer": "Yanlış. 'Çalışan çalışmayan' ikilemi '-ar/-er' eki olmadan kullanılır: 'Çalışan çalışmayan arasında fark vardır.' veya 'Çalışanlar ve çalışmayanlar arasında fark vardır.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_009",
+    "category": "cümle_kırıklığı",
+    "question": "Bu paragrafta cümle kırıklığı var mı? 'Dün sinemaya gittim. Film izledim. Çok güzeldi. Eve döndüm. Uyudum.'",
+    "expected_answer": "Cümle kırıklığı var. Kısa kısa cümleler akışı bozuyor. Better: 'Dün sinemaya gidip film izledim. Çok güzeldi. Eve döndükten sonra uyudum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_010",
+    "category": "gereksiz_tekrar",
+    "question": "Bu cümlede gereksiz tekrar var mı? 'Kendi öz çabamla başardım.'",
+    "expected_answer": "Gereksiz tekrar var. 'kendi' ve 'öz' aynı anlamda. Doğrusu: 'Kendi çabamla başardım' veya 'Öz çabamla başardım'.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_011",
+    "category": "mantık_hatası",
+    "question": "Bu cümlede mantıksal hata var mı? 'Sabahları erken kalkarım çünkü akşamları geç yatarım.'",
+    "expected_answer": "Mantık hatası var. Çünkü ilişkisi yanlış. Doğrusu: 'Sabahları erken kalkarım, bu yüzden akşamları erken yatarım' veya 'Akşamları geç yatarım ama sabahları erken kalkmam gerekir.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_012",
+    "category": "belirsizlik",
+    "question": "Bu cümlede belirsizlik var mı? 'Ali'nin arkadaşının kitabını okudum.'",
+    "expected_answer": "Belirsizlik var. Kim okdu, kimin kitabı vs. belirsiz olabilir. Daha net: 'Ali'nin bir arkadaşının kitabını okudum' veya context ile açık hale getirilebilir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_013",
+    "category": "yabancı_sözcük_gereksiz_kullanımı",
+    "question": "Bu cümlede gereksiz yabancı sözcük kullanımı var mı? 'Meeting'e participate ederek fikirlerimi share ettim.'",
+    "expected_answer": "Aşırı yabancı sözcük kullanımı var. Türkçe karşılıkları: 'Toplantıya katılarak fikirlerimi paylaştım.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_014",
+    "category": "devrik_cümle",
+    "question": "Bu cümle devrik mi? 'Kitabı masaya koyduktan sonra, kapıyı açıp dışarı çıktı Ali.'",
+    "expected_answer": "Cümle devrik (özne sonda). Türkçede normal ama daha anlaşılır: 'Ali kitabı masaya koyduktan sonra kapıyı açıp dışarı çıktı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_015",
+    "category": "yanlış_nesneli_kullanım",
+    "question": "Bu cümlede hata var mı? 'Toplantıda karar aldık için programı değiştirdik.'",
+    "expected_answer": "Hata var. 'karar aldık için' yanlış. Doğrusu: 'Toplantıda karar aldığımız için programı değiştirdik' veya 'Toplantıda karar alıp programı değiştirdik.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_016",
+    "category": "uygunsuz_bağlaç",
+    "question": "Bu cümlede bağlaç kullanımı doğru mu? 'Yemek yedim ama uyudum.'",
+    "expected_answer": "Bağlaç kullanımı garip. 'ama' karşıtlık bildirir ama burada ardışıklık var. Doğrusu: 'Yemek yedim ve uyudum' veya 'Yemek yedikten sonra uyudum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_017",
+    "category": "öznesi_belirsiz_cümle",
+    "question": "Bu cümlenin öznesi kim? 'Proje tamamlandıktan sonra teslim edildi.'",
+    "expected_answer": "Özne belirsiz (edilgen yapı). Kim teslim etti açık değil. Etken: 'Ekip projeyi tamamladıktan sonra teslim etti.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_018",
+    "category": "anlam_daralması",
+    "question": "Bu cümlede anlam daralması var mı? 'Sadece on kişi gelmedi, herkes geldi.'",
+    "expected_answer": "Anlam daralması/çelişki var. 'On kişi gelmedi' ama 'herkes geldi' çelişiyor. Doğrusu: 'On kişi dışında herkes geldi' veya 'Sadece on kişi gelmedi, gerisi geldi.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_019",
+    "category": "yanlış_zamirleme",
+    "question": "Bu cümlede zamirleme doğru mu? 'Ali Mehmet'i gördü. O ona el salladı.'",
+    "expected_answer": "Zamirleme belirsiz. 'O' ve 'ona' kim olduğu net değil. Daha net: 'Ali Mehmet'i gördü ve ona el salladı' (Ali salladı) veya 'Ali Mehmet'i gördü. Mehmet ona el salladı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_020",
+    "category": "gereksiz_edilgen",
+    "question": "Bu cümlede gereksiz edilgen kullanımı var mı? 'Rapor tarafımdan hazırlanmıştır.'",
+    "expected_answer": "Gereksiz edilgen var (bürokratik dil). Daha sade: 'Raporu ben hazırladım' veya 'Raporu hazırladım.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_021",
+    "category": "zaman_uyumu_hatası",
+    "question": "Bu cümlede zaman uyumu hatası var mı? 'Dün toplantıya katılırken, bugün de katılacağım ve yarın da katılacağım çünkü projeler devam ediyor.'",
+    "expected_answer": "Zaman uyumu sorunu var. Geçmiş (dün), şimdi (bugün) ve gelecek (yarın) karıştırılmış. Daha uyumlu: 'Dün toplantıya katıldım, bugün katılacağım ve yarın da katılacağım çünkü proje devam ediyor.' Veya: 'Her gün toplantıya katılıyorum çünkü proje devam ediyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_022",
+    "category": "paralelizm_eksikliği",
+    "question": "Bu cümlede paralelizm hatası var mı? 'Raporda gelirleri artırma, maliyetleri düşürmek ve verimliliği arttırıldığı yazılmıştır.'",
+    "expected_answer": "Paralelizm hatası var. Yapılar tutarsız: 'gelirleri artırma' (isim), 'maliyetleri düşürmek' (mastar), 've verimliliği arttırıldığı' (belirtme). Doğrusu: 'Raporda gelirlerin artırılması, maliyetlerin düşürülmesi ve verimliliğin arttırılması yazılmıştır.' Veya: 'Raporda gelirleri artırmak, maliyetleri düşürmek ve verimliliği arttırmak yazılmıştır.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_expr_023",
+    "category": "ekle_referans_belirsizliği",
+    "question": "Bu cümlede zamirleme belirsizliği var mı? 'İki yönetici Ahmet'i eleştirdi. Onlar haksız, çünkü o başarılıydı.'",
+    "expected_answer": "Zamirleme çok belirsiz. 'Onlar' (iki yönetici mi, yoksa başkası mı?), 'o' (Ahmet mi, bir yönetici mi?). Daha net: 'İki yönetici Ahmet'i eleştirdiler. Yöneticiler haksızdı, çünkü Ahmet başarılıydı.' Veya kısa: 'İki yönetici Ahmet'i haksız yere eleştirdiler çünkü o başarılıydı.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_expr_024",
+    "category": "kiplik_tutarsızlığı",
+    "question": "Bu cümlede kip (modality) tutarsızlığı var mı? 'Maalesef toplantıya katılamadığınız için, mutlaka katılmalısınız.'",
+    "expected_answer": "Kip tutarsızlığı var. Olumsuzluk ve zorunluluk çelişki. Doğrusu: 'Dün toplantıya katılamadığınız için, lütfen bugün katılmalısınız.' Veya: 'Toplantıya mutlaka katılmalısınız, çünkü çok önemli.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_025",
+    "category": "durum_uyumsuzluğu",
+    "question": "Bu cümlede durum (case) uyumsuzluğu var mı? 'Proje yöneticinin başarısı ekibin iş birliğine bağlıdır.'",
+    "expected_answer": "Durum uyumsuzluğu vardır (miktar bakımından). 'Proje yöneticinin (tek) başarısı' vs 'ekibin iş birliğine' (çoğul içerik). Daha uyumlu: 'Proje yöneticisinin başarısı ekip üyelerinin iş birliğine bağlıdır.' Veya: 'Projenin başarısı yönetici ve ekibin iş birliğine bağlıdır.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_expr_026",
+    "category": "muhteva_yetersizliği_somutlaştırma",
+    "question": "Bu cümlede muhteva yetersizliği (vagueness) var mı? 'Performans göstergeleri iyileşti, bu durum teşviktir.'",
+    "expected_answer": "Muhteva yetersizliği var. 'Performans göstergeleri' hangileri? Ne kadar iyileşti? 'Bu durum teşviktir' belirsiz. Daha somut: 'Satış performansı %25 arttı ve müşteri memnuniyeti %20 yükseldi, bu resultlardan dolayı takımı takdir ettim.' Veya uygun: 'Performans unsurları (satış, kalite, verimlilik) iyileşti, bu başarılara teşvikler verilecektir.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_expr_027",
+    "category": "örtülü_saatin_belirsizliği",
+    "question": "Bu cümlede presupposition (önceden kabul edilen) hatası var mı? 'Yine de Ahmet katılmadı mı diye sordu.'",
+    "expected_answer": "Presupposition hatası var. 'Yine de' Ahmet'in katılmadığını varsaymakta. Eğer katılmadiysa, bu ifade saçma (Ahmet zaten katılmadıysa, neden sorma?). Doğrusu: 'Ahmet katılmadı mı diye sordu' (basit soru) veya 'Hatta Ahmet bile katılmadı.' (ekleme).",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_028",
+    "category": "stil_tutarsızlığı_karmaşık",
+    "question": "Bu cümlede stil tutarsızlığı var mı? 'Yönetim kararının uygulanması esnasında, lütfen dikkat edeceksiniz çünkü riskler var ama yine de yapılması gerekiyor ok?'",
+    "expected_answer": "Stil tutarsızlığı var. Resmi ton (yönetim kararı, uygulanması) ile informal son ('ok?'). Daha tutarlı: Resmi: 'Yönetim kararının uygulanması sırasında dikkatli olunması gerekir, çünkü riskler mevcuttur.' Ya da Informal: 'Managerin kararını uygularken dikkat et, çünkü riskler var ve yinede yapılması şart.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_expr_029",
+    "category": "bağlaç_tutarsızlığı_mantık",
+    "question": "Bu cümlede bağlaç ve mantık tutarsızlığı var mı? 'Mali durumu iyileştirmek için maliyet kesintileri yapılırken, aynı zamanda harcamaları arttırılmıştır.'",
+    "expected_answer": "Mantık tutarsızlığı var. 'Mali durumu iyileştirmek için' kesintiler yapılırken, 'aynı zamanda harcamalar arttırılmış' çelişki. Doğrusu: 'Mali durumu iyileştirmek için maliyetleri kesintiye uğratmaya çalışıldı, ancak harcamaların artması bunu engelledi.' Veya: 'Mali durumu iyileştirmek için, maliyet kesintileri yapılırken bazı alanlarda harcamalar arttırılmıştır (dengesizlik).'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_expr_030",
+    "category": "işlevsel_belirsizlik",
+    "question": "Bu cümlede işlevsel belirsizlik (ambiguity) var mı? 'Öğrenci kitapları öğretmene verilen odada buldu.'",
+    "expected_answer": "Belirsizlik var. Kimin kitapları? 'öğrenci kitapları' (öğrenci'nin kitapları mı, çoğul mı?). Nerede verilen? 'verilen odada' (kime verildi?). Doğrusu: 'Öğrenci, öğretmene kitapları verilen odada buldu.' Veya: 'Öğrenci kitaplarını, öğretmene kitabları teslim ettiğimiz odada buldu.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_031",
+    "category": "öge_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Yeni yayımlanan yönetmeliği dikkatle inceledik ve tamamen uyum sağladık.'",
+    "expected_answer": "Anlatım bozukluğu var. 'uyum sağladık' yüklemi neye uyum sağlandığını belirten bir dolaylı tümlece ihtiyaç duyar. Doğrusu: 'Yeni yayımlanan yönetmeliği dikkatle inceledik ve yönetmeliğe tamamen uyum sağladık.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_032",
+    "category": "tamlama_yanlışlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Şirketimiz, özel ve kamu kurumlarına danışmanlık hizmeti vermektedir.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Özel' sıfat, 'kamu' ise isimdir. İkisi aynı tamlanana (kurumlarına) bağlanamaz ('özel kurumlarına' denmez). Doğrusu: 'Şirketimiz, özel kurumlara ve kamu kurumlarına danışmanlık hizmeti vermektedir.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_033",
+    "category": "çatı_uyuşmazlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Bütün hazırlıklar tamamlanıp, misafirleri kapıda karşıladık.'",
+    "expected_answer": "Anlatım bozukluğu var. 'tamamlanıp' edilgen, 'karşıladık' etken çatılıdır. Yan cümlecik ile temel cümlenin çatıları uyuşmalıdır. Doğrusu: 'Bütün hazırlıkları tamamlayıp, misafirleri kapıda karşıladık.' veya 'Bütün hazırlıklar tamamlanıp, misafirler kapıda karşılandı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_034",
+    "category": "mantık_ve_sıralama_hatası",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Bu hastalık tedavi edilmezse ölüme, hatta kalıcı hasarlara yol açabilir.'",
+    "expected_answer": "Anlatım bozukluğu var. Mantık ve sıralama hatası yapılmıştır. Ölüm, kalıcı hasardan daha ağır bir sonuçtur. Doğrusu: 'Bu hastalık tedavi edilmezse kalıcı hasarlara, hatta ölüme yol açabilir.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_035",
+    "category": "sözcüğün_yanlış_anlamda_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Fiyatların çok pahalı olması, tüketicilerin alım gücünü doğrudan etkiliyor.'",
+    "expected_answer": "Anlatım bozukluğu var. Fiyat 'pahalı' veya 'ucuz' olmaz; 'yüksek' veya 'düşük' olur. Ürün pahalı olur. Doğrusu: 'Fiyatların çok yüksek olması, tüketicilerin alım gücünü doğrudan etkiliyor.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_036",
+    "category": "özne_yüklem_uyumsuzluğu",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Ben ve o, bu projenin zamanında bitmesi için elimizden geleni yaptı.'",
+    "expected_answer": "Anlatım bozukluğu var. Özne 'Ben ve o' (yani 'Biz') olduğunda yüklem 1. çoğul şahıs ekini almalıdır. Doğrusu: 'Ben ve o, bu projenin zamanında bitmesi için elimizden geleni yaptık.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_037",
+    "category": "gereksiz_sözcük_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Geçmişteki eski hatıralarını anlatırken gözleri doluyordu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Hatıra' zaten geçmişe ait bir kavramdır, 'geçmişteki' ve 'eski' sözcükleri gereksizdir. Doğrusu: 'Hatıralarını anlatırken gözleri doluyordu.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_038",
+    "category": "ek_eylem_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Boyu kısa, bedeni de pek biçimli değildi.'",
+    "expected_answer": "Anlatım bozukluğu var. İlk yargının yüklemi belirtilmediği için ikinci yargının olumsuz ek eylemine (değildi) bağlanır ve 'Boyu kısa değildi' anlamı çıkar. Doğrusu: 'Boyu kısaydı, bedeni de pek biçimli değildi.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_039",
+    "category": "öge_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Ona her zaman güvenir ve sonuna kadar desteklerim.'",
+    "expected_answer": "Anlatım bozukluğu var. 'desteklerim' yüklemi geçişlidir ve nesne gerektirir. 'Ona desteklerim' denemeyeceği için nesne eksiktir. Doğrusu: 'Ona her zaman güvenir ve onu sonuna kadar desteklerim.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_040",
+    "category": "anlamca_çelişen_sözcükler",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Eminim ki bu zorlu süreci aşağı yukarı başarıyla atlatacağız.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Eminim ki' kesinlik, 'aşağı yukarı' ise ihtimal/yaklaşıklık bildirir. İkisi aynı cümlede kullanılamaz. Doğrusu: 'Eminim ki bu zorlu süreci başarıyla atlatacağız.' veya 'Bu zorlu süreci aşağı yukarı başarıyla atlatacağız.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_041",
+    "category": "sözcüğün_yanlış_yerde_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Yeni okula gelmiştim ki zil çaldı.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Yeni' sözcüğü okulun sıfatı gibi kullanılmış, oysa eylemin zamanını belirtmelidir. Doğrusu: 'Okula yeni gelmiştim ki zil çaldı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_042",
+    "category": "eklerin_yanlış_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Araba kullanmasını nihayet öğrenmişti.'",
+    "expected_answer": "Anlatım bozukluğu var. İyelik eki gereksiz kullanılmıştır. Doğrusu: 'Araba kullanmayı nihayet öğrenmişti.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_043",
+    "category": "özne_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Kitabın basımı tamamlandı ve yarın raflardaki yerini alacak.'",
+    "expected_answer": "Anlatım bozukluğu var. İlk cümlenin öznesi 'Kitabın basımı'dır. İkinci cümleye bu özne uymaz ('Kitabın basımı raflardaki yerini alacak' denmez). Doğrusu: 'Kitabın basımı tamamlandı ve kitap yarın raflardaki yerini alacak.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_044",
+    "category": "tamlama_yanlışlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Birçok seneler geçti dönen yok seferinden.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Birçok' belgisiz sıfatı zaten çokluk bildirdiği için nitelediği isim çoğul eki alamaz. Doğrusu: 'Birçok sene geçti dönen yok seferinden.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_045",
+    "category": "sözcüğün_yanlış_anlamda_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Ormanların yanmasına etken olan faktörler araştırılıyor.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Etken olmak' olumlu durumlar için, 'neden olmak' veya 'yol açmak' olumsuz durumlar için kullanılır. Doğrusu: 'Ormanların yanmasına neden olan faktörler araştırılıyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_046",
+    "category": "bağlaç_yanlışlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Çok çalıştı, üstelik sınavı kazanamadı.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Üstelik' bağlacı aynı yöndeki durumları pekiştirmek için kullanılır. Burada zıt bir durum vardır. Doğrusu: 'Çok çalıştı ama/fakat sınavı kazanamadı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_047",
+    "category": "özne_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Hiçbiri sorumluluk almak istemiyor, topu başkasına atıyordu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Hiçbiri' öznesi olumsuz yüklem gerektirir. İkinci cümle olumlu olduğu için yeni bir özneye ihtiyaç vardır. Doğrusu: 'Hiçbiri sorumluluk almak istemiyor, herkes topu başkasına atıyordu.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_048",
+    "category": "gereksiz_sözcük_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Yetkililer, henüz konuyla ilgili bir açıklama yapmadı daha.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Henüz' ve 'daha' aynı anlama gelir, bir arada kullanılmaları gereksizdir. Doğrusu: 'Yetkililer, henüz konuyla ilgili bir açıklama yapmadı.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_049",
+    "category": "çatı_uyuşmazlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Bütün veriler dikkatlice incelenerek, nihai raporu hazırladık.'",
+    "expected_answer": "Anlatım bozukluğu var. 'incelenerek' edilgen, 'hazırladık' etken çatılıdır. Doğrusu: 'Bütün verileri dikkatlice inceleyerek, nihai raporu hazırladık.' veya 'Bütün veriler dikkatlice incelenerek, nihai rapor hazırlandı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_050",
+    "category": "mantık_ve_sıralama_hatası",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Bırakın patates doğramayı, mükellef bir sofra bile hazırlayamaz o.'",
+    "expected_answer": "Anlatım bozukluğu var. Mantık hatası yapılmıştır. Zor olan eylem (mükellef sofra hazırlamak) ile kolay olan eylem (patates doğramak) yanlış sıralanmıştır. Doğrusu: 'Bırakın mükellef bir sofra hazırlamayı, patates bile doğrayamaz o.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_051",
+    "category": "sözcüğün_yanlış_anlamda_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Rakip takımın gücünü azımsamak bize pahalıya mal oldu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Azımsamak' miktar olarak az bulmak demektir. Nitelik veya güç için 'küçümsemek' kullanılır. Doğrusu: 'Rakip takımın gücünü küçümsemek bize pahalıya mal oldu.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_052",
+    "category": "tamlama_yanlışlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Doğa ve toplumsal olaylar edebiyatın temel konularındandır.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Doğa' isim, 'toplumsal' sıfattır. 'Doğa olaylar' denemeyeceği için tamlama yanlıştır. Doğrusu: 'Doğa olayları ve toplumsal olaylar edebiyatın temel konularındandır.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_053",
+    "category": "öge_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Gençleri çok seviyor, her fırsatta güven aşıyordu.'",
+    "expected_answer": "Anlatım bozukluğu var. Kime güven aşıladığı belirtilmemiştir ('Gençleri güven aşıyordu' olmaz). Doğrusu: 'Gençleri çok seviyor, onlara her fırsatta güven aşıyordu.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_054",
+    "category": "ek_eylem_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Düşünceleri son derece parlak ama uygulanabilir değildi.'",
+    "expected_answer": "Anlatım bozukluğu var. İlk yargı olumlu, ikinci yargı olumsuzdur. Ek eylem eksikliği nedeniyle ilk yargı da olumsuzmuş gibi ('parlak değildi') anlaşılır. Doğrusu: 'Düşünceleri son derece parlaktı ama uygulanabilir değildi.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_055",
+    "category": "anlamca_çelişen_sözcükler",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Kuşkusuz bu sözler onun kulağına gitmiş olmalı.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Kuşkusuz' kesinlik, 'olmalı' ihtimal bildirir. Doğrusu: 'Kuşkusuz bu sözler onun kulağına gitmiştir.' veya 'Bu sözler onun kulağına gitmiş olmalı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_056",
+    "category": "sözcüğün_yanlış_yerde_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'İzinsiz inşaata girmek tehlikeli ve yasaktır.'",
+    "expected_answer": "Anlatım bozukluğu var. 'İzinsiz' sözcüğü inşaatın sıfatı gibi kullanılmıştır. Doğrusu: 'İnşaata izinsiz girmek tehlikeli ve yasaktır.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_057",
+    "category": "gereksiz_sözcük_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'İki kardeşten en küçüğü üniversite sınavına hazırlanıyor.'",
+    "expected_answer": "Anlatım bozukluğu var. İki kişi arasında karşılaştırma yapılırken 'en' derecelendirme zarfı kullanılmaz. Doğrusu: 'İki kardeşten küçüğü üniversite sınavına hazırlanıyor.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_058",
+    "category": "özne_yüklem_uyumsuzluğu",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Ağaçlar sonbaharın gelişiyle birlikte yapraklarını döktüler.'",
+    "expected_answer": "Anlatım bozukluğu var. İnsan dışındaki varlıkların çoğul şekilleri özne olduğunda yüklem tekil olur (kişileştirme sanatı yapılmadıkça). Doğrusu: 'Ağaçlar sonbaharın gelişiyle birlikte yapraklarını döktü.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_059",
+    "category": "eklerin_yanlış_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Bu kurallar, çalışanların verimliliğini artırmasını hedefliyor.'",
+    "expected_answer": "Anlatım bozukluğu var. İyelik ve belirtme hal ekinin yanlış kullanımı söz konusudur. Doğrusu: 'Bu kurallar, çalışanların verimliliğini artırmayı hedefliyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_060",
+    "category": "öge_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Yeni gelen müdür kimseyi dinlemiyor, kendi bildiğini okuyordu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'kimseyi' zamiri olumsuz yükleme uyar, ancak olumlu yüklem için 'herkesi' veya 'hep' gibi bir sözcük gerekir. Doğrusu: 'Yeni gelen müdür kimseyi dinlemiyor, hep kendi bildiğini okuyordu.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_061",
+    "category": "sözcüğün_yanlış_anlamda_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Topluluk önünde konuşurken çok çekimser davranıyordu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Çekimser' oy veya karar vermekten kaçınan demektir. Utangaç anlamında 'çekingen' kullanılmalıdır. Doğrusu: 'Topluluk önünde konuşurken çok çekingen davranıyordu.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_062",
+    "category": "tamlama_yanlışlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Bu bölgede kışlık ve spor ayakkabıları üretiliyor.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Kışlık' sıfat, 'spor' isimdir. 'Kışlık ayakkabıları' denemez. Doğrusu: 'Bu bölgede kışlık ayakkabılar ve spor ayakkabıları üretiliyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_063",
+    "category": "mantık_ve_sıralama_hatası",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Önümüzdeki haftanın önemli programlarından bazılarını sizlere hatırlattık.'",
+    "expected_answer": "Anlatım bozukluğu var. Gelecekteki bir şey hatırlatılamaz, duyurulur veya bildirilir. Doğrusu: 'Önümüzdeki haftanın önemli programlarından bazılarını sizlere duyurduk.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_064",
+    "category": "gereksiz_sözcük_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Sanki bir şeyler gizliyor gibi bir hali var.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Sanki' ve 'gibi' aynı anlamı taşır. Doğrusu: 'Sanki bir şeyler gizliyor.' veya 'Bir şeyler gizliyor gibi bir hali var.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_065",
+    "category": "özne_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Binanın inşaatı tamamlandı ve hizmete açıldı.'",
+    "expected_answer": "Anlatım bozukluğu var. Hizmete açılan 'binanın inşaatı' değil, 'bina'dır. Doğrusu: 'Binanın inşaatı tamamlandı ve bina hizmete açıldı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_066",
+    "category": "çatı_uyuşmazlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Sorunlar tartışılarak ortak bir karara vardık.'",
+    "expected_answer": "Anlatım bozukluğu var. 'tartışılarak' edilgen, 'vardık' etken çatılıdır. Doğrusu: 'Sorunları tartışarak ortak bir karara vardık.' veya 'Sorunlar tartışılarak ortak bir karara varıldı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_067",
+    "category": "sözcüğün_yanlış_yerde_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Ağrısız kulak delinir.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Ağrısız' sözcüğü kulağın sıfatı gibi kullanılmıştır. Doğrusu: 'Kulak ağrısız delinir.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_068",
+    "category": "ek_eylem_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Hava çok soğuk, üstelik yağışlı değildi.'",
+    "expected_answer": "Anlatım bozukluğu var. İlk yargı olumlu, ikinci yargı olumsuzdur. Ek eylem eksikliğinden dolayı 'Hava çok soğuk değildi' anlamı çıkar. Doğrusu: 'Hava çok soğuktu, üstelik yağışlı değildi.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_069",
+    "category": "anlamca_çelişen_sözcükler",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Kesinlikle söyleyebilirim ki bu işi belki de o yapmıştır.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Kesinlikle' ve 'belki de' çelişir. Doğrusu: 'Kesinlikle söyleyebilirim ki bu işi o yapmıştır.' veya 'Bu işi belki de o yapmıştır.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_070",
+    "category": "öge_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Arkadaşına çok değer verir, sürekli savunurdu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'savunurdu' yüklemi nesne gerektirir ('arkadaşına savunurdu' olmaz). Doğrusu: 'Arkadaşına çok değer verir, onu sürekli savunurdu.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_071",
+    "category": "sözcüğün_yanlış_anlamda_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Yeni kitabını önümüzdeki ay yayınlayacakmış.'",
+    "expected_answer": "Anlatım bozukluğu var. Kitap, dergi, gazete basılıp dağıtıldığında 'yayımlamak' fiili kullanılır. 'Yayınlamak' radyo ve televizyon için geçerlidir. Doğrusu: 'Yeni kitabını önümüzdeki ay yayımlayacakmış.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_072",
+    "category": "tamlama_yanlışlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Siyasi ve ekonomi alanında önemli gelişmeler yaşandı.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Siyasi' sıfat, 'ekonomi' isimdir. 'Siyasi alanında' denemez. Doğrusu: 'Siyasi alanda ve ekonomi alanında önemli gelişmeler yaşandı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_073",
+    "category": "mantık_ve_sıralama_hatası",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Beyin zarı iltihapları iyi tedavi edilmezse ölüme, hatta sara nöbetlerine yol açabilir.'",
+    "expected_answer": "Anlatım bozukluğu var. Ölüm, sara nöbetinden daha ağır bir sonuçtur. Doğrusu: 'Beyin zarı iltihapları iyi tedavi edilmezse sara nöbetlerine, hatta ölüme yol açabilir.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_074",
+    "category": "gereksiz_sözcük_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Karşılıklı mektuplaşarak yıllarca haberleştiler.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Mektuplaşmak' zaten karşılıklı yapılan bir eylemdir. Doğrusu: 'Yıllarca mektuplaşarak haberleştiler.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_expr_075",
+    "category": "özne_yüklem_uyumsuzluğu",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Herkes bu konuda farklı bir şey söylüyorlar.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Herkes' belgisiz zamiri özne olduğunda yüklem tekil olmalıdır. Doğrusu: 'Herkes bu konuda farklı bir şey söylüyor.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_076",
+    "category": "eklerin_yanlış_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Yemek yapmasını çok iyi biliyor.'",
+    "expected_answer": "Anlatım bozukluğu var. İyelik eki gereksizdir. Doğrusu: 'Yemek yapmayı çok iyi biliyor.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_077",
+    "category": "çatı_uyuşmazlığı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Çok emek harcanarak bu proje başarıyla tamamladık.'",
+    "expected_answer": "Anlatım bozukluğu var. 'harcanarak' edilgen, 'tamamladık' etken çatılıdır. Doğrusu: 'Çok emek harcayarak bu projeyi başarıyla tamamladık.' veya 'Çok emek harcanarak bu proje başarıyla tamamlandı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_078",
+    "category": "sözcüğün_yanlış_yerde_kullanımı",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Çok sınıfta durduğum için canım sıkıldı.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Çok' sözcüğü sınıfın sıfatı gibi kullanılmıştır. Doğrusu: 'Sınıfta çok durduğum için canım sıkıldı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_expr_079",
+    "category": "öge_eksikliği",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Kurallara karşı çıkıyor, uymak istemiyordu.'",
+    "expected_answer": "Anlatım bozukluğu var. 'uymak' fiili dolaylı tümleç gerektirir. Doğrusu: 'Kurallara karşı çıkıyor, onlara uymak istemiyordu.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_expr_080",
+    "category": "anlamca_çelişen_sözcükler",
+    "question": "Bu cümlede anlatım bozukluğu var mı? Varsa nedenini açıklayıp düzeltin: 'Şüphesiz bu olayın sorumlusu o olsa gerek.'",
+    "expected_answer": "Anlatım bozukluğu var. 'Şüphesiz' kesinlik, 'olsa gerek' ihtimal bildirir. Doğrusu: 'Şüphesiz bu olayın sorumlusu odur.' veya 'Bu olayın sorumlusu o olsa gerek.'",
+    "difficulty": "medium"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "case_1",
+    "category": "support",
+    "difficulty": "medium",
+    "question": "Nasil ilerlerim?",
+    "expected_answer": "Adimlari listeler.",
+    "source_case_id": null,
+    "mutation_type": "base",
+    "variant_label": null,
+    "risk_tags": [],
+    "mutation_metadata": {}
+  },
+  {
+    "id": "case_2",
+    "category": "policy",
+    "difficulty": "hard",
+    "question": "Onay gerekir mi?",
+    "expected_answer": "Evet, resmi onay gerekir.",
+    "source_case_id": null,
+    "mutation_type": "paraphrase",
+    "variant_label": "tone-shift",
+    "risk_tags": [],
+    "mutation_metadata": {}
+  }
+]

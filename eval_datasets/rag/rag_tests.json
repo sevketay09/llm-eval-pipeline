@@ -1,0 +1,644 @@
+[
+  {
+    "id": "rag_001",
+    "category": "factual_grounding",
+    "question": "Bankanın kredi kartı faiz oranları nedir?",
+    "context": "Banka 2026 Şubat ayı itibariyle kredi kartı aylık faiz oranlarını şöyle belirlemiştir: Platinum kartlar için %3.95, Gold kartlar için %4.25, Classic kartlar için %4.50. Ayrıca taksit işlemlerinde ek %0.5 oran uygulanmaktadır.",
+    "expected_info": [
+      "Platinum: %3.95",
+      "Gold: %4.25",
+      "Classic: %4.50"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_002",
+    "category": "context_adherence",
+    "question": "Hangi kampanyalar var?",
+    "context": "Şu anda geçerli kampanyalar: 1) Yeni müşterilere %0 faizli 3 ay ertelemeli kredi. 2) Dijital kanallardan hesap açanlara 500 TL bonus. 3) Yurtdışı harcamalarda %5 cashback (maksimum 1000 TL). Kampanyalar 28 Şubat 2026 tarihine kadar geçerlidir.",
+    "expected_info": [
+      "Yeni müşteri kredisi",
+      "Dijital hesap bonusu",
+      "Yurtdışı cashback"
+    ],
+    "should_not_mention": [
+      "Başka kampanya",
+      "Geçmiş kampanyalar"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_003",
+    "category": "no_hallucination",
+    "question": "SWIFT kodunuz nedir?",
+    "context": "Banka SWIFT kodu: BANKTR1. Banka merkezi: İstanbul, Türkiye. Telefon: 444 0 800.",
+    "expected_answer": "DENIZTR1",
+    "should_not_add": [
+      "Şube bilgileri",
+      "Diğer banka kodları",
+      "İşlem ücretleri"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_004",
+    "category": "partial_information",
+    "question": "Konut kredisi faiz oranları ne kadar?",
+    "context": "Kredi faiz oranları müşterinin kredi notu, gelir durumu ve kredinin vadesi gibi birçok faktöre bağlı olarak değişkenlik göstermektedir. Detaylı bilgi için şubeye başvurmanız önerilir.",
+    "expected_behavior": "should_say_contact_branch",
+    "should_not_do": "give_specific_rates",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_005",
+    "category": "multi_document",
+    "question": "Hem bireysel hem de ticari krediler için vade seçenekleri neler?",
+    "context": "Bireysel Krediler: 12, 24, 36, 48 ve 60 ay vade seçenekleri mevcuttur. Erken ödeme yapılabilir.\n\nTicari Krediler: 6, 12, 18, 24 ve 36 ay vade seçenekleri bulunmaktadır. KOBİ'ler için özel vade paketleri de sunulmaktadır.",
+    "expected_info": [
+      "Bireysel: 12-60 ay",
+      "Ticari: 6-36 ay",
+      "KOBİ özel paketler"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_006",
+    "category": "context_outside_scope",
+    "question": "Döviz kurları nasıl hesaplanır?",
+    "context": "Banka müşteri hizmetleri numarası: 444 0 800. Çalışma saatleri: Hafta içi 08:00-19:00, Cumartesi 09:00-17:00.",
+    "expected_behavior": "should_say_no_info_in_context",
+    "should_not_do": "invent_explanation",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_007",
+    "category": "factual_grounding_long_context",
+    "question": "2026 Mart itibarıyla KMH faiz oranı ve gecikme faiz oranı nedir?",
+    "context": "Banka bireysel ürünlerinde güncel fiyatlama politikası, müşteri segmentine ve ürün türüne göre ayrı ayrı yayımlanmaktadır. Mart 2026 duyurusunda; vadesiz hesaplara bağlı Kredili Mevduat Hesabı (KMH) için standart aylık akdi faiz oranının %5,10 olduğu, gecikmeye düşen KMH borçları için uygulanacak gecikme faizinin aylık %5,40 olarak işletileceği belirtilmiştir. Ayrıca bankanın risk komitesi, piyasa koşullarına göre bu oranların aylık periyotlarla güncellenebileceğini not etmiştir. Dokümanda, kredi kartı faizleri ve taksitli nakit avans oranları da ayrıca yer almakta olup, KMH oranlarının bunlardan bağımsız değerlendirileceği ifade edilmiştir. Bu nedenle ürün bazlı ayrım yapılmadan tek bir 'genel faiz' değeri verilmemelidir.",
+    "expected_info": [
+      "KMH akdi faiz: %5,10",
+      "KMH gecikme faizi: %5,40"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_008",
+    "category": "temporal_validity",
+    "question": "Nisan 2026'da dijital hesap açılış bonusu kaç TL?",
+    "context": "Banka kampanya arşivinde Ocak 2026 dönemi için dijital hesap açılış bonusunun 750 TL olduğu belirtilmiştir. Şubat-Mart 2026 kampanya döneminde bonus tutarı 500 TL olarak uygulanmıştır ve kampanya 31 Mart 2026 gecesi sona ermiştir. Nisan 2026 için yayınlanan yeni kampanya bülteninde bonus uygulamasının geçici olarak durdurulduğu, yerine ilk otomatik fatura talimatına 300 TL hediye verileceği yazmaktadır. Metnin dipnotunda, şube personelinin eski kampanya afişlerini referans almaması gerektiği özellikle belirtilmiştir.",
+    "expected_answer": "Nisan 2026'da dijital hesap açılış bonusu yoktur (durdurulmuştur).",
+    "should_not_add": [
+      "500 TL bonus devam ediyor",
+      "750 TL bonus"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_009",
+    "category": "multi_document_long",
+    "question": "Bireysel ihtiyaç kredisi ve ticari işletme kredisi için erken kapama koşulları nelerdir?",
+    "context": "Belge-1 (Bireysel Kredi Sözleşmesi Özeti): Bireysel ihtiyaç kredilerinde müşteri kısmi veya tam erken ödeme yapabilir. Kalan vadesi 36 ayı aşmayan kredilerde erken ödeme tazminatı %1, 36 ayı aşanlarda %2 olarak uygulanır. Müşteri talebiyle yeniden ödeme planı çıkarılabilir.\n\nBelge-2 (Ticari Kredi Ürün Notu): Ticari işletme kredilerinde erken kapama, sözleşmede ayrıca tanımlanan komisyon esaslarına tabidir. Sabit faizli ticari kredilerde banka, fonlama maliyetine bağlı erken kapama komisyonu uygulayabilir; oran ürün bazında değişebilir. KOBİ paketlerinde bazı dönemlerde komisyonsuz erken kapama promosyonu sunulabilir, ancak bu promosyon her müşteri için geçerli değildir.\n\nBelge-3 (Genel Uyarı): Sözleşme eki olmayan pazarlama metinleri bağlayıcı kabul edilmez.",
+    "expected_info": [
+      "Bireysel: 36 aya kadar %1, 36 ay üzeri %2 tazminat",
+      "Ticari: sözleşmeye ve ürüne bağlı değişken komisyon"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_010",
+    "category": "no_hallucination_long",
+    "question": "Bankanın Londra şubesinin telefon numarası nedir?",
+    "context": "Bu doküman yalnızca Türkiye içi şube ve dijital kanallara ilişkin iletişim bilgilerini içerir. İstanbul merkez iletişim hattı, Ankara bölge ofisi çağrı hattı ve İzmir kurumsal bankacılık iletişim numaraları verilmiştir. Yurtdışı temsilcilik bilgileri bu belge kapsamı dışındadır. Ayrıca bankanın bazı uluslararası partner kurumlarla çalıştığı belirtilse de doğrudan Londra şubesi iletişim numarası paylaşılmamıştır. Dokümanın sonunda, eksik bilgi durumunda resmi web sitesindeki 'Yurtdışı Temsilcilikler' sayfasına yönlendirme yapılması gerektiği ifade edilmektedir.",
+    "expected_behavior": "should_say_no_info_in_context",
+    "should_not_do": "invent_phone_number",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_011",
+    "category": "policy_exception",
+    "question": "FAST işlemlerinde günlük üst limit nedir, istisna var mı?",
+    "context": "Standart bireysel müşteriler için FAST günlük toplam gönderim üst limiti 100.000 TL olarak tanımlanmıştır. Özel bankacılık segmentindeki müşterilerde bu limit, risk profili ve ek doğrulama adımlarının tamamlanması şartıyla 250.000 TL'ye kadar yükseltilebilir. Kurumsal müşterilerde ise limit, şirket yetki matrisi ve ek güvenlik doğrulamasına göre farklı tanımlanır; tek bir sabit rakam yoktur. Sistem bakım günlerinde geçici limit düşüşü uygulanabileceği ve bunun dijital kanallar üzerinden duyurulacağı belirtilmiştir.",
+    "expected_info": [
+      "Standart bireysel: 100.000 TL",
+      "Özel bankacılıkta koşullu olarak 250.000 TL'ye kadar",
+      "Kurumsalda sabit tek rakam yok"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_012",
+    "category": "numerical_reasoning_in_context",
+    "question": "Metne göre toplam aylık zorunlu ödeme tutarı kaç TL?",
+    "context": "Müşteri ödeme planı notu: Konut kredisi aylık taksiti 18.750 TL, taşıt kredisi aylık taksiti 7.200 TL, kredi kartı asgari ödeme tutarı 4.050 TL olarak görünmektedir. Sigorta prim ödemesi aylık 1.000 TL'dir ancak notta bu kalemin zorunlu ödeme kapsamına dahil edilmeyeceği yazılmıştır. Ayrıca isteğe bağlı BES katkı payı 2.500 TL olup, bu kalem müşteri talebine göre değişebilir. Soru yalnızca zorunlu ödemelerin toplamını istemektedir.",
+    "expected_answer": "30.000 TL",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_013",
+    "category": "context_adherence_long",
+    "question": "Döviz transferi için hangi belgeler zorunlu?",
+    "context": "Döviz transfer işlemleri için müşteri sınıfına göre farklı belge setleri uygulanmaktadır. Bireysel müşterilerde: kimlik belgesi ve işlem beyan formu zorunludur. Tutar 50.000 USD eşik değerini aştığında fon kaynağına ilişkin ek belge talep edilebilir. Kurumsal müşterilerde: imza sirküleri, yetki belgesi ve işlem dayanağı (fatura/sözleşme) zorunludur. İşlem ülkesine göre uyum birimi ek doküman talep edebilir. Not: 'zorunlu' ve 'gerekirse' ifadeleri karıştırılmamalıdır.",
+    "expected_info": [
+      "Bireysel: kimlik + beyan formu",
+      "Kurumsal: imza sirküleri + yetki belgesi + işlem dayanağı",
+      "50.000 USD üzeri ek belge talebi olabilir"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_014",
+    "category": "contradiction_resolution",
+    "question": "Kampanya bitiş tarihi nedir?",
+    "context": "Pazarlama görselinde kampanya bitiş tarihi 30 Nisan 2026 olarak yazılmıştır. Ancak resmi kampanya koşulları metninde, kampanyanın 25 Nisan 2026 saat 23:59'da sona ereceği açıkça belirtilmektedir. Aynı metnin son bölümünde, görsel materyallerde olabilecek yazım farklılıklarında resmi koşullar metninin esas alınacağı ifade edilir. Bu nedenle tarih değerlendirmesi yapılırken görsel afiş değil resmi koşullar dokümanı kullanılmalıdır.",
+    "expected_answer": "25 Nisan 2026 23:59",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_015",
+    "category": "compliance_context",
+    "question": "KYC yenileme periyodu metne göre kaç ayda bir?",
+    "context": "Uyum politikası notuna göre düşük riskli müşteri segmentinde KYC bilgilerinin en geç 36 ayda bir güncellenmesi gerekir. Orta risk segmentinde bu süre 24 ay, yüksek risk segmentinde ise 12 ay olarak tanımlanmıştır. Dokümanda ayrıca, şüpheli işlem alarmı oluşması halinde segmentten bağımsız olarak anlık KYC güncellemesi yapılabileceği belirtilir. Soru genel periyodu değil segment bazlı süreleri sorgulamaktadır.",
+    "expected_info": [
+      "Düşük risk: 36 ay",
+      "Orta risk: 24 ay",
+      "Yüksek risk: 12 ay"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_016",
+    "category": "partial_information_long",
+    "question": "2027 yılı ihtiyaç kredisi faiz oranı nedir?",
+    "context": "Bu rapor yalnızca 2026 takvim yılı için yayınlanmış fiyatlama aralıklarını içerir. Ocak-Haziran dönemi için ihtiyaç kredisi faiz aralığı %3,10-%4,20; Temmuz-Aralık dönemi için %2,95-%4,05 olarak verilmiştir. 2027 yılına ilişkin resmi tarife henüz yayınlanmamıştır. Raporda, 'gelecek dönem oranları piyasa koşullarına göre ayrıca duyurulur' ifadesi yer almaktadır.",
+    "expected_behavior": "should_say_not_available_for_2027",
+    "should_not_do": "guess_future_rate",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_017",
+    "category": "multi_document_conflict",
+    "question": "Kurumsal internet bankacılığı OTP süresi kaç saniye?",
+    "context": "Teknik doküman v2.1: OTP geçerlilik süresi 90 saniye.\n\nEski kullanıcı kılavuzu (v1.7): OTP süresi 120 saniye olarak ifade edilmiştir.\n\nSürüm notu v2.2: Güvenlik iyileştirmesi kapsamında OTP süresi 90 saniyeye düşürülmüştür ve v2.1+ sürümleri esas alınmalıdır.\n\nDestek notu: Eski PDF çıktılarındaki 120 saniye bilgisi güncel değildir.",
+    "expected_answer": "90 saniye",
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_018",
+    "category": "table_like_context",
+    "question": "Metindeki tabloya göre en düşük EFT ücreti hangi segmentte?",
+    "context": "Ücret tablosu (Nisan 2026):\n- Standart Bireysel: EFT ücreti 9,50 TL\n- Maaş Müşterisi: EFT ücreti 6,00 TL\n- Özel Bankacılık: EFT ücreti 0,00 TL\n- Ticari KOBİ: EFT ücreti 12,00 TL\nTabloda aynı gün valörlü işlemler için ek ücret uygulanmadığı da belirtilmiştir. Soruda yalnızca en düşük EFT ücreti olan segment sorulmaktadır.",
+    "expected_answer": "Özel Bankacılık (0,00 TL)",
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_019",
+    "category": "long_policy_chain",
+    "question": "Şüpheli işlem bildirimi sonrası hangi ilk 2 adım uygulanır?",
+    "context": "İç kontrol akışında şüpheli işlem alarmı sonrası süreç 5 adımda tanımlıdır: (1) İşlemi geçici inceleme kuyruğuna al, (2) Müşteri profilini ve son 90 günlük hareketleri yeniden skorla, (3) Gerekirse işlem limitlerini geçici daralt, (4) Uyum birimine vaka dosyası aç, (5) Nihai karar sonrası müşteri bilgilendirmesi yap. Doküman, acil durumlarda adım 3'ün adım 2 ile paralel yürütülebileceğini, ancak ilk iki adımın sıralamasının değiştirilmemesi gerektiğini vurgular.",
+    "expected_info": [
+      "İşlemi geçici inceleme kuyruğuna almak",
+      "Müşteri profilini ve 90 günlük hareketleri yeniden skorlama"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_020",
+    "category": "factual_grounding",
+    "question": "Kurumsal destek hattı çalışma saatleri nedir?",
+    "context": "Kurumsal destek merkezi hafta içi 08:30-19:30 saatleri arasında canlı temsilci ile hizmet verir. Cumartesi günleri 10:00-14:00 arasında sınırlı destek sağlanır. Pazar günleri canlı destek kapalıdır ancak kayıt bırakma ve geri aranma talebi alınabilir. Tatil günlerinde yalnızca acil kesinti bildirim hattı aktiftir ve bu hat genel bilgi vermez.",
+    "expected_info": [
+      "Hafta içi 08:30-19:30",
+      "Cumartesi 10:00-14:00",
+      "Pazar canlı destek yok"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_021",
+    "category": "context_outside_scope",
+    "question": "Metne göre 2026 enflasyon tahmini kaç?",
+    "context": "Bu metin yalnızca bankanın iç operasyonel SLA hedeflerini içerir: çağrı yanıtlama süresi, dijital kanal kesinti eşiği, şube içi işlem tamamlama süreleri ve müşteri geri dönüş terminleri. Makroekonomik göstergeler, enflasyon projeksiyonları veya piyasa tahminleri bu dokümanın kapsamına dahil değildir. Bu nedenle metinden enflasyon oranı çıkarımı yapılamaz.",
+    "expected_behavior": "should_say_no_info_in_context",
+    "should_not_do": "invent_inflation_rate",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_022",
+    "category": "exception_handling",
+    "question": "Kart aidatı iadesi için temel koşul nedir?",
+    "context": "Aidat iadesi politikası genel olarak son 6 ayda en az 3 dönem düzenli harcama yapılmasını şart koşar. Bununla birlikte öğrenci kartlarında bu koşul aranmaz ve kart statüsü doğrulanmışsa aidat otomatik iade edilebilir. Emekli maaş müşterilerinde ise banka kampanya döneminde koşullu iade uygulaması yapabilir; otomatik garanti yoktur. Metin, 'öğrenci kartı istisnası' ifadesini özel olarak vurgulamaktadır.",
+    "expected_info": [
+      "Genel koşul: son 6 ayda en az 3 dönem düzenli harcama",
+      "Öğrenci kartlarında istisna var"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_023",
+    "category": "numeric_thresholds",
+    "question": "Şüpheli para transferi için otomatik inceleme eşiği kaç TL?",
+    "context": "İzleme motoru yapılandırmasında bireysel tekil transferlerde 150.000 TL ve üzeri işlemler otomatik inceleme kuyruğuna düşer. Aynı alıcıya 24 saat içinde yapılan toplam transfer tutarı 250.000 TL'yi aşarsa ikinci seviye alarm tetiklenir. Kurumsal hesaplarda eşikler farklıdır ve sektör bazlı risk puanı ile birlikte değerlendirilir. Dokümanda sorulan 'otomatik inceleme eşiği' birinci kuralı ifade eder.",
+    "expected_answer": "150.000 TL",
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_024",
+    "category": "multi_hop_reading",
+    "question": "Metne göre maaş müşterisi olup otomatik fatura talimatı veren biri için EFT ücreti ne olur?",
+    "context": "Temel ücret tablosunda maaş müşterisi EFT ücreti 6,00 TL'dir. Kampanya koşullarına göre en az 2 adet otomatik fatura talimatı aktif olan maaş müşterilerine EFT ücretinde %50 indirim uygulanır. İndirim yalnızca dijital kanaldan yapılan EFT işlemlerinde geçerlidir. Şubeden yapılan işlemler kampanyaya dahil değildir. Soru, kampanya koşulunu sağlayan müşterinin dijital EFT ücretini sorar.",
+    "expected_answer": "3,00 TL",
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_025",
+    "category": "factual_grounding_long_context",
+    "question": "Kurumsal API'de idempotency header adı nedir?",
+    "context": "Kurumsal ödeme API entegrasyon kılavuzunda güvenli tekrar çağrılar için idempotency mekanizması zorunlu tutulmuştur. Dokümanda, istemcinin her ödeme oluşturma isteğinde benzersiz bir anahtar üretmesi ve bunu HTTP header ile iletmesi gerektiği yazmaktadır. Örnek çağrı bölümünde header adı açıkça 'X-Idempotency-Key' olarak verilmiştir. Ayrıca aynı anahtarla tekrar edilen isteklerde sunucunun yeni işlem üretmeyip önceki sonucu döndürmesi gerektiği belirtilmiştir. Bu mekanizma özellikle ağ kesintilerinde çift tahsilatı önlemek için kullanılır.",
+    "expected_answer": "X-Idempotency-Key",
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_026",
+    "category": "long_complex_context",
+    "question": "KOBİ paketinde hem POS cirosu şartını hem de tahsilat adedini sağlayan müşterinin aylık hesap işletim ücreti kaç TL olur?",
+    "context": "KOBİ paket fiyatlamasında standart aylık hesap işletim ücreti 180 TL'dir. Paket sözleşmesine göre aynı ay içinde POS cirosu 250.000 TL ve üzeri olan müşterilere %40 indirim uygulanır. Buna ek olarak, dijital kanallardan yapılan tahsilat adedi 500 ve üzeri ise ilave %20 indirim hakkı tanınır. İki indirim ardışık uygulanır ve toplam indirim tek seferde toplanarak değil, kalan tutar üzerinden hesaplanır. Örnek hesapta 180 TL önce %40 düşürülerek 108 TL'ye iner, ardından %20 ilave indirimle 86,40 TL olur. Kampanya metni, iki koşulu aynı ayda sağlayan müşteriler için bu yöntemin kullanılacağını net biçimde belirtir.",
+    "expected_answer": "86,40 TL",
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_027",
+    "category": "contradiction_resolution",
+    "question": "Emekli maaşımı bankanıza taşırsam promosyon ödemesi ne zaman yatar?",
+    "context": "Banka genel kampanya kuralları sayfasında 'Emekli promosyon ödemeleri, ilk maaşın hesaba yatmasını takip eden 3 iş günü içinde yapılır' ibaresi yer almaktadır. Ancak 2026 yılı güncel Emekli Bankacılığı Sözleşmesi Madde 4.2'de 'Promosyon tutarı, maaş taşıma başvurusunun onaylanması ve SGK bildiriminin tamamlanmasını izleyen ilk ayın 15'inde, maaş ödemesiyle eşzamanlı olarak hesaba aktarılır. Eski kampanya metinlerindeki 3 iş günü kuralı 1 Ocak 2026 itibarıyla yürürlükten kaldırılmıştır' şeklinde kesin bir hüküm bulunmaktadır.",
+    "expected_answer": "Promosyon ödemesi, maaş taşıma onayından sonraki ilk ayın 15'inde maaşla eşzamanlı yatar.",
+    "should_not_mention": [
+      "3 iş günü içinde"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_028",
+    "category": "numerical_reasoning_in_context",
+    "question": "100.000 TL'lik 32 günlük vadeli mevduat hesabımın vade sonunda net getirisi ne kadar olur?",
+    "context": "Bankamızda 100.000 TL ile 500.000 TL arası tutarlar için 32 günlük vadeli mevduat brüt faiz oranı yıllık %45 olarak belirlenmiştir. Faiz hesaplama formülü: (Anapara x Faiz Oranı x Gün Sayısı) / 36500 şeklindedir. Elde edilen brüt faiz tutarı üzerinden %5 oranında stopaj (gelir vergisi) kesintisi yapılmaktadır. Kampanya dahilinde ilk kez hesap açanlara ek %2 brüt faiz verilir ancak bu müşteri 5 yıldır bankamızla çalışmaktadır.",
+    "expected_info": [
+      "Brüt faiz: (100000 * 45 * 32) / 36500 = 3945.20 TL",
+      "Stopaj kesintisi: 3945.20 * 0.05 = 197.26 TL",
+      "Net getiri: 3945.20 - 197.26 = 3747.94 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_029",
+    "category": "multi_document",
+    "question": "Kredi kartı ve banka kartı ile günlük temassız işlem limitleri nelerdir?",
+    "context": "Doküman A (Kredi Kartları Kullanım Kılavuzu): Kredi kartları için şifresiz temassız işlem limiti BDDK kararı gereği 1500 TL'dir. Günlük toplam temassız işlem adedi sınırı 10 olarak belirlenmiştir. 10 işlemden sonra şifre girilmesi zorunludur.\n\nDoküman B (Banka Kartları ve Debit İşlemler): Banka kartlarında (debit kartlar) güvenlik nedeniyle şifresiz temassız işlem limiti işlem başına 750 TL olarak uygulanmaktadır. Günlük toplam temassız harcama tutarı limiti ise 3000 TL'yi geçemez. Müşteri dilerse mobil uygulamadan bu limitleri sıfırlayabilir.",
+    "expected_info": [
+      "Kredi kartı şifresiz temassız limiti: 1500 TL",
+      "Kredi kartı günlük temassız işlem sınırı: 10 adet",
+      "Banka kartı şifresiz temassız limiti: 750 TL",
+      "Banka kartı günlük toplam temassız limiti: 3000 TL"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_030",
+    "category": "no_hallucination",
+    "question": "Yurtdışına yaptığım SWIFT transferinin durumunu nasıl takip edebilirim?",
+    "context": "Yurtdışı para transferleri (SWIFT) işlemleri, muhabir bankaların çalışma saatlerine ve tatil günlerine bağlı olarak 1 ila 3 iş günü sürebilmektedir. İşleminizin durumunu İnternet Şubesi'nde yer alan 'Transferlerim > SWIFT Takip' menüsünden referans numaranız ile sorgulayabilirsiniz. İşlem muhabir bankaya ulaştığında statüsü 'İletildi' olarak güncellenir.",
+    "expected_answer": "İnternet Şubesi'ndeki 'Transferlerim > SWIFT Takip' menüsünden referans numarası ile takip edilebilir.",
+    "should_not_add": [
+      "Mobil uygulama",
+      "Müşteri hizmetlerini arama",
+      "Şubeye gitme"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_031",
+    "category": "context_adherence",
+    "question": "Konut kredimi erken kapatırsam ne kadar ceza öderim?",
+    "context": "Tüketici Koruma Kanunu kapsamında, konut finansmanı sözleşmelerinde erken ödeme tazminatı talep edilebilir. Bankamızın güncel uygulamasına göre, kalan vadesi 36 ayı aşmayan konut kredilerinde erken ödenen anapara tutarının %1'i, kalan vadesi 36 ayı aşan kredilerde ise erken ödenen anapara tutarının %2'si oranında erken ödeme tazminatı tahsil edilir. İhtiyaç ve taşıt kredilerinde ise herhangi bir erken kapama cezası uygulanmamaktadır.",
+    "expected_info": [
+      "Vadesi 36 ayı aşmayanlar için %1",
+      "Vadesi 36 ayı aşanlar için %2"
+    ],
+    "should_not_mention": [
+      "İhtiyaç kredisi cezası",
+      "Taşıt kredisi cezası"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_032",
+    "category": "factual_grounding",
+    "question": "Hesap işletim ücreti ödememek için hangi şartları sağlamalıyım?",
+    "context": "Bireysel vadesiz TL hesaplarından altı ayda bir 150 TL hesap işletim ücreti tahsil edilmektedir. Ancak aşağıdaki şartlardan en az birini sağlayan müşteriler bu ücretten muaftır: 1) Hesabına en az 2 adet otomatik fatura ödeme talimatı tanımlı olanlar. 2) Maaş ödemesini bankamız aracılığıyla alanlar. 3) 25 yaş altı öğrenci hesabı sahipleri. 4) Vadesiz hesabında aylık ortalama 25.000 TL ve üzeri bakiye bulunduranlar. Kredi kartı sahipliği tek başına muafiyet sağlamaz.",
+    "expected_info": [
+      "En az 2 otomatik fatura talimatı",
+      "Maaş müşterisi olmak",
+      "25 yaş altı öğrenci olmak",
+      "Aylık ortalama 25.000 TL bakiye bulundurmak"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_033",
+    "category": "contradiction_resolution",
+    "question": "Kredi kartımla aldığım uçak biletinde seyahat sigortası ücretsiz mi?",
+    "context": "Web sitemizin 'Kart Ayrıcalıkları' sayfasında Platinum ve Black kart sahiplerinin uçak biletlerini kartla almaları durumunda ücretsiz seyahat sigortasından faydalanacağı yazmaktadır. Fakat 15 Şubat 2026 tarihinde güncellenen Sigorta Hizmetleri Şartnamesi'ne göre, ücretsiz seyahat sigortası hizmeti tüm kart tipleri için tamamen sonlandırılmış olup, sigorta poliçeleri uçak bileti alımından bağımsız olarak aylık 150 TL prim karşılığında sunulmaktadır. Eski web sayfası bilgisi geçersizdir ve dikkate alınmamalıdır.",
+    "expected_answer": "Hayır, ücretsiz seyahat sigortası hizmeti sonlandırılmıştır. Aylık 150 TL prim karşılığında alınabilir.",
+    "should_not_mention": [
+      "Platinum ve Black kartlar için ücretsizdir"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_034",
+    "category": "numerical_reasoning_in_context",
+    "question": "15.000 USD bozdurmak istiyorum. Kademeli kur uygulamasına göre elime ne kadar TL geçer?",
+    "context": "Bankamızda döviz bozma (alış) işlemleri için kademeli kur uygulanmaktadır. Güncel USD/TL taban alış kuru 35.00 TL'dir. İşlem tutarına göre kur avantajları şöyledir: 0 - 4.999 USD arası standart kur (35.00 TL). 5.000 - 9.999 USD arası işlemlerde standart kura +0.10 TL eklenir (35.10 TL). 10.000 USD ve üzeri işlemlerde ise standart kura +0.25 TL eklenir (35.25 TL). Kademeli kur, toplam tutarın tamamına uygulanır, parçalı hesaplanmaz. İşlem üzerinden binde 2 oranında kambiyo vergisi kesilir (sadece döviz alımında geçerlidir, döviz satımında/bozdurmada vergi yoktur).",
+    "expected_info": [
+      "15.000 USD, 10.000 USD ve üzeri dilime girer.",
+      "Uygulanacak kur: 35.25 TL",
+      "Toplam TL: 15.000 * 35.25 = 528.750 TL",
+      "Döviz bozdurmada vergi yoktur."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_035",
+    "category": "multi_document",
+    "question": "KOBİ kredisi ve Kurumsal kredi başvurularında istenen mali verilerdeki farklar nelerdir?",
+    "context": "KOBİ Bankacılığı Kredi Süreçleri: Yıllık cirosu 50 Milyon TL'nin altında olan firmalar KOBİ sayılır. KOBİ kredi başvurularında son 2 yıla ait vergi levhası, güncel mizan ve e-Devlet üzerinden alınmış SGK borcu yoktur yazısı yeterlidir. Bağımsız denetim raporu istenmez.\n\nKurumsal Bankacılık Kredi Süreçleri: Yıllık cirosu 50 Milyon TL ve üzeri olan firmalar Kurumsal segmenttedir. Bu firmaların kredi başvurularında son 3 yıla ait bağımsız denetimden geçmiş finansal tablolar, nakit akım projeksiyonları ve ortakların detaylı mal beyanları zorunludur. Güncel mizan tek başına kabul edilmez.",
+    "expected_info": [
+      "KOBİ: Son 2 yıl vergi levhası, güncel mizan, SGK borcu yoktur yazısı. Bağımsız denetim istenmez.",
+      "Kurumsal: Son 3 yıl bağımsız denetim raporu, nakit akım projeksiyonu, ortak mal beyanı zorunludur."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_036",
+    "category": "no_hallucination",
+    "question": "Yurtdışındaki ATM'lerden günlük para çekme limitim nedir?",
+    "context": "Yurtdışı ATM'lerinden banka kartınızla yapacağınız nakit çekim işlemleri için günlük limitiniz, yurtiçi limitinizle aynı olup 10.000 TL karşılığı döviz tutarıdır. İşlem başına %1.5 + 3 USD komisyon yansıtılmaktadır.",
+    "expected_answer": "Günlük limit 10.000 TL karşılığı döviz tutarıdır.",
+    "should_not_add": [
+      "Kredi kartı nakit avans limiti",
+      "Aylık limit",
+      "Farklı banka ATM limitleri"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_037",
+    "category": "context_adherence",
+    "question": "Kartım çalındı ve benden habersiz 5000 TL harcama yapılmış. Zararım karşılanacak mı?",
+    "context": "Kayıp/çalıntı durumlarında müşterinin sorumluluğu, durumu bankaya bildirdiği andan itibaren ortadan kalkar. Bildirimden önceki 24 saat içinde yapılan yetkisiz harcamalarda ise müşterinin yasal sorumluluğu 150 TL ile sınırlıdır. Ancak, şifre kullanılarak (temassız şifresiz işlemler hariç) yapılan işlemlerde veya kartın üzerinde şifrenin yazılı olması gibi ağır ihmal durumlarında banka zararı karşılamaz. Harcamanın şifreli yapılıp yapılmadığı incelendikten sonra karar verilir.",
+    "expected_info": [
+      "Bildirimden önceki 24 saat için sorumluluk 150 TL ile sınırlıdır.",
+      "Şifreli işlemlerde veya ağır ihmalde zarar karşılanmaz.",
+      "İnceleme sonucuna göre karar verilir."
+    ],
+    "should_not_mention": [
+      "Kesin karşılanır",
+      "Kesin karşılanmaz"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_038",
+    "category": "factual_grounding",
+    "question": "Kiralık kasa boyutları ve yıllık ücretleri nelerdir?",
+    "context": "Şubelerimizde üç farklı boyutta kiralık kasa hizmeti sunulmaktadır. 2026 yılı güncel tarifesine göre: Küçük boy kasa yıllık ücreti 2.500 TL, Orta boy kasa yıllık ücreti 3.500 TL, Büyük boy kasa yıllık ücreti ise 5.000 TL'dir. Kasa kiralama işlemi sırasında bir defaya mahsus olmak üzere, kiralık kasa yıllık ücreti kadar depozito bedeli tahsil edilir. Depozito, kasa iade edildiğinde müşteriye geri ödenir.",
+    "expected_info": [
+      "Küçük boy: 2.500 TL",
+      "Orta boy: 3.500 TL",
+      "Büyük boy: 5.000 TL",
+      "Yıllık ücret kadar depozito alınır"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_039",
+    "category": "contradiction_resolution",
+    "question": "Kredi taksitimi son ödeme tarihinde ödeyemezsem hemen yasal takip başlar mı?",
+    "context": "Müşteri bilgilendirme formunda 'Taksit ödemesinin gecikmesi durumunda yasal takip süreci başlatılabilir' gibi genel bir ifade yer alsa da, Bankacılık Düzenleme ve Denetleme Kurumu (BDDK) mevzuatına ve bankamızın Kredi Risk Politikası'na göre; bir kredinin yasal takibe (idari takip sonrası icra süreci) aktarılabilmesi için birbirini izleyen en az iki taksitin ödenmemesi ve müşteriye tanınan 30 günlük ek sürenin (ihtarname süresi) dolmuş olması zorunludur. Yani tek bir taksitin 3-5 gün gecikmesiyle yasal takip kesinlikle başlamaz, sadece gecikme faizi işler.",
+    "expected_answer": "Hayır, hemen başlamaz. Yasal takip için birbirini izleyen en az iki taksitin ödenmemesi ve 30 günlük ihtarname süresinin dolması gerekir.",
+    "should_not_mention": [
+      "Gecikme durumunda yasal takip başlatılabilir (genel ifade)"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_040",
+    "category": "numerical_reasoning_in_context",
+    "question": "KMH hesabımdan cuma günü 2000 TL çektim ve pazartesi günü geri yatırdım. Kaç günlük faiz öderim?",
+    "context": "Kredili Mevduat Hesabı (KMH) faiz hesaplamalarında valör (işlem tarihi) kuralları geçerlidir. KMH'tan para çekilen gün faiz işlemeye başlar. Para yatırıldığında ise, yatırılan tutar o günün sonunda hesaba geçmiş sayılır. Hafta sonları ve resmi tatiller faiz hesaplamasına dahildir. Cuma günü çekilen ve Pazartesi günü kapatılan bir bakiye için Cuma, Cumartesi ve Pazar günleri olmak üzere toplam 3 günlük faiz tahakkuk ettirilir. Pazartesi günü borç kapandığı için Pazartesi gününe faiz işletilmez.",
+    "expected_info": [
+      "Cuma, Cumartesi ve Pazar günleri için faiz işler.",
+      "Toplam 3 günlük faiz ödenir."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_041",
+    "category": "multi_document",
+    "question": "Müşterek (ortak) hesaptan para çekmek için tüm ortakların imzası şart mı?",
+    "context": "Bölüm 1 (Müşterek Hesap Tanımları): Müşterek hesaplar 'Birlikte İmza' veya 'Münferit (Tek Başına) İmza' yetkisiyle açılabilir. Hesap açılış sözleşmesinde bu durum açıkça belirtilir.\n\nBölüm 2 (İşlem Kuralları): Eğer hesap 'Birlikte İmza' yetkisiyle açılmışsa, hesaptan para çekme, EFT/Havale yapma veya hesabı kapatma işlemleri için tüm ortakların şubede bizzat bulunarak imza atması zorunludur. Eğer hesap 'Münferit İmza' yetkisiyle açılmışsa, ortaklardan herhangi biri diğerlerine sormadan hesaptaki tüm bakiyeyi çekebilir veya transfer edebilir. İnternet bankacılığı sadece münferit imzalı hesaplara tanımlanabilir.",
+    "expected_info": [
+      "Hesabın imza yetkisi türüne göre değişir.",
+      "Birlikte İmza yetkili ise tüm ortakların imzası şarttır.",
+      "Münferit İmza yetkili ise tek bir ortak işlemi yapabilir."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_042",
+    "category": "no_hallucination",
+    "question": "Kredi kartımla kripto para borsalarına para yatırabilir miyim?",
+    "context": "T.C. Merkez Bankası yönetmelikleri ve bankamızın uyum politikaları gereğince, kredi kartları ile yurtiçi veya yurtdışı kripto para borsalarına (Binance, Paribu, BtcTurk vb.) doğrudan ödeme yapılması veya fon aktarılması yasaklanmıştır. Kripto para platformlarına sadece vadesiz TL hesaplarınızdan havale veya EFT yoluyla para gönderebilirsiniz.",
+    "expected_answer": "Hayır, kredi kartı ile kripto para borsalarına para yatırılamaz. Sadece vadesiz hesaptan havale/EFT yapılabilir.",
+    "should_not_add": [
+      "Kripto para yasal değildir",
+      "Banka kartı ile yatırılabilir",
+      "Komisyon oranları"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_043",
+    "category": "context_adherence",
+    "question": "Vekaletname ile adıma kredi çekilebilir mi?",
+    "context": "Noter onaylı vekaletnameler ile bankacılık işlemleri yapılabilmektedir. Ancak bankamızın dolandırıcılığı önleme politikası kapsamında, vekaletname ile kredi kullanımı, kredi kartı teslimi ve internet bankacılığı şifresi alınması işlemleri kesinlikle yapılamaz. Vekil, sadece vadesiz hesaptan para çekme, para yatırma ve fatura ödeme işlemlerini, vekaletnamede açıkça belirtilmiş olması şartıyla gerçekleştirebilir.",
+    "expected_info": [
+      "Hayır, vekaletname ile kredi çekilemez.",
+      "Kredi kartı teslimi ve internet şifresi alımı da yapılamaz."
+    ],
+    "should_not_mention": [
+      "Vekaletname ile her işlem yapılır",
+      "Şube müdürü onayıyla yapılabilir"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_044",
+    "category": "factual_grounding",
+    "question": "Öğrenci hesabı açmak için yaş sınırı nedir?",
+    "context": "Öğrenci hesabı (Kampüs Hesap) avantajlarından yararlanabilmek için müşterinin 18-25 yaş aralığında olması ve aktif öğrenci belgesini (e-Devlet veya okuldan onaylı) ibraz etmesi gerekmektedir. 18 yaşından küçükler için sadece veli onayı ile 'İlk Hesabım' açılabilir, bu hesap öğrenci hesabı statüsünde değildir. 26 yaşından gün alan müşterilerin Kampüs Hesapları otomatik olarak standart vadesiz hesaba dönüştürülür.",
+    "expected_info": [
+      "18-25 yaş aralığında olmak",
+      "Aktif öğrenci belgesi ibraz etmek"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_045",
+    "category": "contradiction_resolution",
+    "question": "Hem 'Yeni Müşteri %0 Faizli Kredi' hem de 'Maaşını Taşıyana Özel İhtiyaç Kredisi' kampanyalarından aynı anda yararlanabilir miyim?",
+    "context": "Bankamızın reklam afişlerinde 'Tüm kampanyalarımızdan dilediğiniz gibi faydalanın' sloganı kullanılmaktadır. Ancak Bireysel Kredi Kampanyaları Genel Şartnamesi Madde 7'de çok net bir kısıtlama mevcuttur: 'Faiz indirimli veya sıfır faizli özel kredi kampanyaları birbiriyle birleştirilemez. Müşteri, aynı anda yalnızca bir adet avantajlı kredi kampanyasından yararlanabilir. İkinci bir kredi talebi, bankanın o günkü standart tabela faiz oranları üzerinden değerlendirilir.' Bu nedenle reklam sloganı kredi ürünleri için geçerli değildir.",
+    "expected_answer": "Hayır, aynı anda yararlanamazsınız. Özel kredi kampanyaları birleştirilemez, sadece birinden faydalanabilirsiniz.",
+    "should_not_mention": [
+      "Tüm kampanyalardan dilediğiniz gibi faydalanın"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_046",
+    "category": "numerical_reasoning_in_context",
+    "question": "Marketten 4000 TL, akaryakıttan 3000 TL harcama yaptım. Toplam ne kadar cashback alırım?",
+    "context": "Nisan ayı 'Bahar Fırsatları' kampanyası kapsamında kredi kartı ile yapılan harcamalara iade (cashback) verilmektedir. Market harcamalarının %5'i iade edilir (Market sektörü için aylık maksimum iade tutarı 150 TL'dir). Akaryakıt harcamalarının ise %3'ü iade edilir (Akaryakıt sektörü için aylık maksimum iade tutarı 100 TL'dir). Bir müşterinin tüm sektörlerden kazanabileceği toplam aylık iade tutarı 200 TL'yi geçemez.",
+    "expected_info": [
+      "Market iadesi: 4000 * %5 = 200 TL, ancak limit 150 TL olduğu için 150 TL kazanılır.",
+      "Akaryakıt iadesi: 3000 * %3 = 90 TL kazanılır.",
+      "Toplam hesaplanan: 150 + 90 = 240 TL.",
+      "Genel aylık limit 200 TL olduğu için toplam 200 TL cashback alınır."
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_047",
+    "category": "multi_document",
+    "question": "EFT işlem limitimi yükseltmek istiyorum, mobil uygulamadan yapabilir miyim?",
+    "context": "Kanal Limitleri Prosedürü: Bireysel müşteriler için standart günlük EFT limiti 500.000 TL'dir. \n\nİnternet Şubesi Kuralları: Müşteriler internet şubesine giriş yaparak 'Ayarlar > Limitlerim' menüsünden günlük EFT limitlerini 1.000.000 TL'ye kadar kendileri yükseltebilirler.\n\nMobil Uygulama Kuralları: Güvenlik kısıtlamaları sebebiyle, mobil uygulama üzerinden limit düşürme işlemi yapılabilir ancak limit yükseltme işlemi yapılamaz. 1.000.000 TL üzeri limit artış talepleri ise sadece şubelerden yazılı beyan ile gerçekleştirilebilir.",
+    "expected_info": [
+      "Hayır, mobil uygulamadan limit yükseltme yapılamaz.",
+      "İnternet şubesinden 1.000.000 TL'ye kadar yükseltilebilir.",
+      "Daha yüksek limitler için şubeye gidilmelidir."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_048",
+    "category": "no_hallucination",
+    "question": "Ramazan Bayramı'nda şubeleriniz açık mı?",
+    "context": "Bankamız şubeleri, resmi tatillerde ve dini bayramlarda (Ramazan Bayramı, Kurban Bayramı) hizmet vermemektedir. Bu günlerde tüm bankacılık işlemlerinizi 7/24 hizmet veren İnternet Şubemiz, Mobil Uygulamamız, ATM'lerimiz ve 444 0 800 numaralı Müşteri İletişim Merkezimiz üzerinden gerçekleştirebilirsiniz. Havalimanı ve gümrük kapılarındaki özel şubelerimiz bu kuralın dışındadır.",
+    "expected_answer": "Hayır, standart şubeler kapalıdır. Sadece havalimanı ve gümrük kapılarındaki özel şubeler açıktır.",
+    "should_not_add": [
+      "Arife günü çalışma saatleri",
+      "AVM şubeleri açıktır"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_049",
+    "category": "context_adherence",
+    "question": "Kredi kartımdan bilgim dışında çekilen tutar için ne kadar sürede itiraz etmeliyim?",
+    "context": "Uluslararası kart kuruluşları (Visa/Mastercard) kuralları gereği, kart sahipleri hesap özetlerinde yer alan ve kendilerine ait olmadığını düşündükleri işlemlere (chargeback/harcama itirazı) itiraz edebilirler. İtirazın, işlemin hesap özetine yansıdığı tarihten itibaren en geç 120 gün içinde bankaya yazılı olarak veya dijital kanallar üzerinden iletilmesi gerekmektedir. 120 günü aşan itiraz talepleri, karşı banka veya işyeri tarafından süre aşımı nedeniyle reddedilmektedir.",
+    "expected_info": [
+      "İşlemin hesap özetine yansıdığı tarihten itibaren en geç 120 gün içinde."
+    ],
+    "should_not_mention": [
+      "Polise başvurma süresi",
+      "Tüketici hakem heyeti"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_050",
+    "category": "factual_grounding",
+    "question": "Havalimanındaki VIP Lounge hizmetinden kimler ücretsiz yararlanabilir?",
+    "context": "İstanbul, Ankara ve İzmir havalimanlarında bulunan Bankamız VIP Lounge salonlarından ücretsiz yararlanma hakkı şu müşterilere sunulmaktadır: 1) Black Kredi Kartı sahipleri (yanlarında 1 misafir ile birlikte). 2) Özel Bankacılık müşterileri (Varlık toplamı 5 Milyon TL ve üzeri olanlar). 3) Ticari Platinum Kart sahipleri (sadece kart sahibi). Diğer kart sahipleri giriş için 1200 TL ücret ödemelidir.",
+    "expected_info": [
+      "Black Kredi Kartı sahipleri (+1 misafir)",
+      "Özel Bankacılık müşterileri (5 Milyon TL+ varlık)",
+      "Ticari Platinum Kart sahipleri"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_051",
+    "category": "contradiction_resolution",
+    "question": "Otomatik fatura ödeme talimatım var ama hesabımda para yoktu, faturam ödenmemiş. Gecikme faizini banka mı karşılar?",
+    "context": "Müşteri sözleşmesinin 'Otomatik Ödemeler' başlıklı bilgilendirme metninde 'Faturalarınız son ödeme tarihinde bankamız güvencesiyle otomatik ödenir, kafanız rahat eder' yazar. Ancak sözleşmenin 8. maddesindeki yasal şartlara göre: 'Otomatik fatura ödeme talimatının gerçekleşebilmesi için, son ödeme tarihinde müşterinin vadesiz hesabında yeterli bakiye veya hesabına tanımlı yeterli KMH (Kredili Mevduat Hesabı) limiti bulunması zorunludur. Bakiye veya limit yetersizliği nedeniyle ödenemeyen faturalardan doğacak gecikme zammı, faiz veya hizmet kesintilerinden banka sorumlu tutulamaz.'",
+    "expected_answer": "Hayır, banka karşılamaz. Hesapta yeterli bakiye veya KMH limiti olmaması durumunda doğacak gecikme faizinden banka sorumlu değildir.",
+    "should_not_mention": [
+      "Banka güvencesiyle ödenir"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_052",
+    "category": "numerical_reasoning_in_context",
+    "question": "Yıllık kart ücreti 1200 TL olan kartımı 4 ay kullandıktan sonra iptal ettim. Ne kadar iade alırım?",
+    "context": "Kredi kartı yıllık üyelik ücretleri, kartın ilk kullanımını takip eden ekstreye yansıtılır ve peşin tahsil edilir. Tüketici kanunları gereği, müşteri kartını iptal ettirmek isterse, kartın kullanıldığı aylara isabet eden ücret mahsup edilir ve kalan ayların ücreti müşteriye iade edilir. İade hesaplaması: (Yıllık Ücret / 12) * Kullanılmayan Ay Sayısı formülüyle yapılır. Kartın iptal edildiği ay, kullanılmış ay olarak kabul edilir.",
+    "expected_info": [
+      "Aylık ücret: 1200 / 12 = 100 TL",
+      "Kullanılan ay: 4 ay",
+      "Kullanılmayan ay: 12 - 4 = 8 ay",
+      "İade edilecek tutar: 100 * 8 = 800 TL"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rag_053",
+    "category": "multi_document",
+    "question": "Döviz hesabımdan ve Altın hesabımdan elde ettiğim faiz getirilerinden ne kadar vergi kesilir?",
+    "context": "Mevduat Vergilendirme Tablosu (Döviz): Yabancı para (Döviz) vadeli mevduat hesaplarından elde edilen faiz getirileri üzerinden, vade süresine bakılmaksızın %25 oranında stopaj (gelir vergisi) kesintisi yapılmaktadır.\n\nMevduat Vergilendirme Tablosu (Kıymetli Maden): Altın, gümüş gibi kıymetli maden depo hesaplarına uygulanan faiz veya kar payı getirileri üzerinden yapılan stopaj kesintisi oranı %15 olarak güncellenmiştir. Vergi kesintileri vade sonunda anaparaya eklenmeden önce otomatik olarak tahsil edilir.",
+    "expected_info": [
+      "Döviz hesabı faiz getirisinden %25 stopaj kesilir.",
+      "Altın hesabı faiz getirisinden %15 stopaj kesilir."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_054",
+    "category": "no_hallucination",
+    "question": "Mobil uygulamaya yüz tanıma (Face ID) ile giriş yapamıyorum, ne yapmalıyım?",
+    "context": "Mobil uygulamaya biyometrik veri (Yüz tanıma/Parmak izi) ile giriş yapılamaması durumunda, güvenlik nedeniyle sistem sizden TC Kimlik Numaranız ve 6 haneli mobil bankacılık şifreniz ile manuel giriş yapmanızı isteyecektir. Manuel giriş yaptıktan sonra 'Profil ve Ayarlar > Güvenlik Ayarları > Biyometrik Giriş' menüsünden yüz tanıma özelliğini kapatıp tekrar aktif hale getirerek sorunu çözebilirsiniz.",
+    "expected_answer": "TC Kimlik Numarası ve 6 haneli şifre ile manuel giriş yapıp, Ayarlar menüsünden biyometrik girişi kapatıp tekrar açmalısınız.",
+    "should_not_add": [
+      "Telefonu yeniden başlatın",
+      "Uygulamayı silip yükleyin",
+      "Müşteri hizmetlerini arayın"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rag_055",
+    "category": "context_adherence",
+    "question": "Vefat eden babamın bankanızdaki hesabından cenaze masrafları için para çekebilir miyim?",
+    "context": "Müşterilerimizin vefatı durumunda, bankamızdaki tüm hesapları, kiralık kasaları ve kredi kartları, vefat bilgisinin bankaya ulaşmasıyla birlikte bloke edilir. Vefat eden kişinin hesaplarından cenaze masrafları dahil hiçbir gerekçeyle para çekilemez. Hesaplardaki bakiyenin varislere ödenebilmesi için, varislerin noterden veya sulh hukuk mahkemesinden alınmış 'Veraset İlamı' (Mirasçılık Belgesi) ve Vergi Dairesinden alınmış 'İlişik Kesme Belgesi' ile birlikte şubeye başvurmaları zorunludur.",
+    "expected_info": [
+      "Hayır, cenaze masrafları için para çekilemez.",
+      "Hesaplar bloke edilir.",
+      "Para çekmek için Veraset İlamı ve İlişik Kesme Belgesi gereklidir."
+    ],
+    "should_not_mention": [
+      "Ölüm belgesi yeterlidir",
+      "Sadece eşi çekebilir"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rag_056",
+    "category": "factual_grounding",
+    "question": "Sürdürülebilirlik (ESG) bağlantılı kurumsal kredi kullanmanın avantajı nedir?",
+    "context": "Bankamızın yeşil finansman vizyonu doğrultusunda sunduğu Sürdürülebilirlik (ESG) Bağlantılı Kurumsal Kredilerde, firmanın çevresel ve sosyal performans hedeflerine (örneğin karbon ayak izini %10 azaltma, kadın çalışan oranını artırma) ulaşması durumunda kredi faiz oranında yıllık bazda 50 baz puan ( %0.50 ) indirim uygulanmaktadır. Ayrıca bu kredilerde tahsis ücreti (dosya masrafı) standart kredilere göre %50 indirimli tahsil edilir.",
+    "expected_info": [
+      "Hedeflere ulaşılırsa faiz oranında 50 baz puan (%0.50) indirim yapılır.",
+      "Tahsis ücreti (dosya masrafı) %50 indirimli alınır."
+    ],
+    "difficulty": "easy"
+  }
+]

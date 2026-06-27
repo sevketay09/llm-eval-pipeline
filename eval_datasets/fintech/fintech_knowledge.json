@@ -1,0 +1,492 @@
+[
+  {
+    "id": "fintech_001",
+    "category": "bankacılık_temel",
+    "question": "IBAN numarası Türkiye'de kaç karakterden oluşur?",
+    "expected_answer": "26 karakter (TR ile başlar)",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_002",
+    "category": "ödeme_sistemleri",
+    "question": "EFT ve Havale arasındaki temel fark nedir?",
+    "expected_answer": "EFT farklı bankalar arası para transferi, Havale aynı banka içi para transferidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_003",
+    "category": "kredi_kartı",
+    "question": "Kredi kartı ekstresindeki 'asgari ödeme tutarı' ne anlama gelir?",
+    "expected_answer": "Kartın bloke olmaması için ödenmesi gereken minimum tutar. Genelde toplam borcun %20-40'ı kadardır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_004",
+    "category": "yatırım",
+    "question": "Hisse senedi piyasasında 'lot' kavramı neyi ifade eder?",
+    "expected_answer": "Bir hisse senedinin alınıp satılabileceği minimum işlem birimi. Türkiye'de genelde 1 lot = 1 hisse senedi.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_005",
+    "category": "risk_yönetimi",
+    "question": "KYC (Know Your Customer) sürecinin amacı nedir?",
+    "expected_answer": "Müşteri kimliğini doğrulamak, kara para aklama ve terör finansmanını önlemek için yapılan müşteri tanıma sürecidir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_006",
+    "category": "düzenleme",
+    "question": "BDDK'nın açılımı nedir ve görevi nedir?",
+    "expected_answer": "Bankacılık Düzenleme ve Denetleme Kurumu. Bankacılık sektörünü düzenler ve denetler.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_007",
+    "category": "ödeme_sistemleri",
+    "question": "FAST (Fonların Anlık ve Sürekli Transferi) sisteminin avantajları nelerdir?",
+    "expected_answer": "7/24 çalışır, anlık para transferi sağlar, EFT'ye göre daha hızlıdır, tutar limiti vardır (genelde 2 milyon TL).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_008",
+    "category": "sigortacılık",
+    "question": "Kasko ve trafik sigortası arasındaki temel fark nedir?",
+    "expected_answer": "Trafik sigortası zorunludur ve karşı tarafın zararını karşılar. Kasko isteğe bağlıdır ve kendi aracınızın zararını karşılar.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_009",
+    "category": "kredi",
+    "question": "Kredi faiz oranı %2,50 olarak verilmiş. Bu aylık mı yıllık mı? Ve aylık ise yıllık efektif faiz oranı yaklaşık ne olur?",
+    "expected_answer": "Genelde aylık verilir. Yıllık efektif: (1.025)^12 - 1 ≈ %34,49",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_010",
+    "category": "blockchain",
+    "question": "Blockchain teknolojisinin finansal sistemlerdeki potansiyel kullanım alanları nelerdir?",
+    "expected_answer": "Cross-border ödemeler, akıllı sözleşmeler, dijital kimlik doğrulama, tokenization, merkeziyetsiz finans (DeFi), tedarik zinciri finansmanı.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_011",
+    "category": "düzenleme",
+    "question": "PSD2 direktifi nedir ve bankaları nasıl etkiler?",
+    "expected_answer": "Payment Services Directive 2 - Avrupa'da ödeme hizmetlerini düzenler, açık bankacılığı (Open Banking) zorunlu kılar, API'ler üzerinden müşteri verilerine üçüncü tarafların erişimini sağlar.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_012",
+    "category": "risk_analizi",
+    "question": "Kredi skorlamasında kullanılan temel faktörler nelerdir?",
+    "expected_answer": "Ödeme geçmişi, kredi kullanım oranı, kredi geçmişi uzunluğu, yeni kredi başvuruları, kredi karması (çeşitliliği).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_013",
+    "category": "forex",
+    "question": "Döviz kurlarında 'spread' ne anlama gelir?",
+    "expected_answer": "Alış ve satış fiyatı arasındaki farktır. Bankalar ve brokerların kazancı bu spread'den gelir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_014",
+    "category": "ödeme_güvenliği",
+    "question": "3D Secure sisteminin amacı nedir?",
+    "expected_answer": "Online kredi kartı ödemelerinde ek güvenlik katmanı sağlar. Kart sahibinin kimliğini SMS, uygulama veya şifre ile doğrular.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_015",
+    "category": "finans_matematiği",
+    "question": "100.000 TL'yi yıllık %20 bileşik faiz ile 3 yıl yatırırsak gelecekteki değeri ne olur?",
+    "expected_answer": "FV = 100.000 × (1.20)^3 = 172.800 TL",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_016",
+    "category": "bes",
+    "question": "BES'te devlet katkısı oranı nedir ve her yatırımcı bu katkıdan sınırsız yararlanabilir mi?",
+    "expected_answer": "Devlet katkısı genel olarak ödenen katkı payının %30'udur. Ancak yıllık üst sınır vardır; katkı tutarı brüt asgari ücretin yıllık toplamına bağlı limit ile sınırlıdır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_017",
+    "category": "bes",
+    "question": "BES'te 'hak ediş' (vesting) ne anlama gelir? 3, 6 ve 10 yıl ile emeklilik hakkı açısından nasıl farklılaşır?",
+    "expected_answer": "Hak ediş, devlet katkısının ne kadarına hak kazanıldığını ifade eder. Süre arttıkça hak edilen oran yükselir; sistemde 10 yıl kalıp 56 yaşını tamamlayanlar emeklilik hakkı kazanır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_018",
+    "category": "bes",
+    "question": "Otomatik katılım BES ile gönüllü BES arasındaki temel farklar nelerdir?",
+    "expected_answer": "Otomatik katılım işveren aracılığıyla maaştan kesintiyle başlar ve cayma hakkı vardır; gönüllü BES'te kişi kendi isteğiyle sözleşme başlatır ve katkı payını kendisi belirler.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_019",
+    "category": "ödeme_sistemleri",
+    "question": "EFT, Havale ve FAST arasındaki farkları işlem zamanı ve banka kapsamı açısından karşılaştırır mısın?",
+    "expected_answer": "Havale aynı banka içinde, EFT farklı bankalar arasında ve genellikle mesai/sistem saatlerine bağlı, FAST ise farklı bankalar arasında 7/24 anlık transfer sağlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_020",
+    "category": "ödeme_sistemleri",
+    "question": "EFT'de alıcı adı-IBAN uyuşmazlığı olması halinde hangi riskler ortaya çıkar ve bankalar genelde nasıl yaklaşır?",
+    "expected_answer": "Yanlış kişiye transfer veya iade gecikmesi riski doğar. Bankalar çoğunlukla IBAN'ı esas alır; bu nedenle işlem öncesi alıcı bilgileri dikkatle doğrulanmalıdır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_021",
+    "category": "kmh",
+    "question": "KMH (Kredili Mevduat Hesabı) nedir ve hangi durumda devreye girer?",
+    "expected_answer": "KMH, vadesiz hesaba bağlı bir ek hesap/overdraft limitidir. Hesap bakiyesi yetersiz kaldığında otomatik devreye girerek ödemeyi tamamlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_022",
+    "category": "kmh",
+    "question": "KMH'de faiz nasıl işler: günlük mü aylık mı, kullanılan tutarın tamamına mı yoksa limitin tamamına mı uygulanır?",
+    "expected_answer": "Faiz genel olarak kullanılan tutar üzerinden ve kullanım süresine bağlı olarak günlük işler; limitin kullanılmayan kısmına faiz uygulanmaz.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_023",
+    "category": "kmh",
+    "question": "KMH borcu sadece asgari tutarla kapatılırsa ne olur?",
+    "expected_answer": "Kalan anapara için faiz işlemeye devam eder; borç maliyeti artar. Tam ödeme yapılmadıkça maliyet birikmeye devam edebilir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_024",
+    "category": "kredi_kartı",
+    "question": "Kredi kartında dönem borcu, toplam borç ve kullanılabilir limit kavramları nasıl ayrılır?",
+    "expected_answer": "Dönem borcu ilgili ekstre döneminde ödenmesi beklenen borçtur; toplam borç kartın güncel tüm borcunu içerir; kullanılabilir limit ise kart limitinden güncel kullanım düşüldükten sonra kalan tutardır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_025",
+    "category": "ödeme_sistemleri",
+    "question": "FAST işlemlerinde 'Kolay Adres' ne işe yarar?",
+    "expected_answer": "IBAN yerine telefon, e-posta, TCKN/VKN gibi bilgilerle eşleşen adres kullanarak hızlı para transferi yapılmasını sağlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_026",
+    "category": "yatırım_fonları",
+    "question": "TEFAS nedir ve yatırımcı için ne avantaj sağlar?",
+    "expected_answer": "TEFAS, Türkiye Elektronik Fon Alım Satım Platformu'dur. Yatırımcının farklı portföy yönetim şirketlerinin fonlarını tek kanal üzerinden karşılaştırıp alıp satmasına imkân verir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_027",
+    "category": "mevduat",
+    "question": "Vadeli mevduatta brüt getiri ile net getiri farkı neden oluşur?",
+    "expected_answer": "Brüt getiri vergiden önceki faiz geliridir; net getiri stopaj ve kesintiler düşüldükten sonra yatırımcının eline geçen tutardır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_028",
+    "category": "dijital_bankacılık",
+    "question": "Açık bankacılıkta (Open Banking) 'hesap bilgisi paylaşımı onayı' ne anlama gelir?",
+    "expected_answer": "Müşterinin açık rızasıyla yetkili üçüncü tarafın banka hesabı bilgilerine API üzerinden belirli kapsam ve süreyle erişebilmesidir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_029",
+    "category": "güvenlik",
+    "question": "Bankacılıkta SIM swap dolandırıcılığı nedir ve neden 2FA güvenliğini zayıflatabilir?",
+    "expected_answer": "Dolandırıcının hattı kendi SIM kartına taşıtarak SMS doğrulama kodlarını ele geçirmesidir; bu nedenle sadece SMS tabanlı 2FA tek başına yeterli olmayabilir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_030",
+    "category": "ödeme_altyapısı",
+    "question": "Sanal POS ile fiziki POS arasındaki temel fark nedir?",
+    "expected_answer": "Fiziki POS mağazada kartla yüz yüze tahsilat için kullanılır; sanal POS ise e-ticaret ortamında internet üzerinden kartlı ödeme almak için kullanılır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_031",
+    "category": "bankacılık_kısaltmaları",
+    "question": "BES nedir?",
+    "expected_answer": "BES, Bireysel Emeklilik Sistemi'dir. Uzun vadeli birikim ve emeklilik döneminde ek gelir sağlamayı amaçlayan bir tasarruf sistemidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_032",
+    "category": "bankacılık_kısaltmaları",
+    "question": "KMH nedir?",
+    "expected_answer": "KMH, Kredili Mevduat Hesabı'dır. Vadesiz hesaba bağlı ek hesap limiti sağlayarak bakiye yetersizliğinde ödemeyi tamamlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_033",
+    "category": "bankacılık_kısaltmaları",
+    "question": "EFT nedir?",
+    "expected_answer": "EFT, Elektronik Fon Transferi'dir. Farklı bankalar arasında para transferi yapılmasını sağlayan ödeme yöntemidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_034",
+    "category": "bankacılık_kısaltmaları",
+    "question": "FAST nedir?",
+    "expected_answer": "FAST, Fonların Anlık ve Sürekli Transferi'dir. 7/24 anlık para transferi sağlayan ödeme sistemidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_035",
+    "category": "bankacılık_kısaltmaları",
+    "question": "IBAN nedir?",
+    "expected_answer": "IBAN, International Bank Account Number'dır. Uluslararası standart banka hesap numarası formatıdır ve Türkiye'de TR ile başlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_036",
+    "category": "bankacılık_kısaltmaları",
+    "question": "SWIFT nedir?",
+    "expected_answer": "SWIFT, Society for Worldwide Interbank Financial Telecommunication sistemidir. Uluslararası para transferlerinde bankalar arası mesajlaşma altyapısıdır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_037",
+    "category": "bankacılık_kısaltmaları",
+    "question": "POS nedir?",
+    "expected_answer": "POS, Point of Sale'dir. Kartla ödeme alınmasını sağlayan satış noktası cihazı/sistemidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_038",
+    "category": "bankacılık_kısaltmaları",
+    "question": "KYC nedir?",
+    "expected_answer": "KYC, Know Your Customer'dır. Müşteri kimlik doğrulama ve uyum süreçlerini ifade eder.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_039",
+    "category": "bankacılık_kısaltmaları",
+    "question": "BDDK nedir?",
+    "expected_answer": "BDDK, Bankacılık Düzenleme ve Denetleme Kurumu'dur. Türkiye'de bankacılık sektörünü düzenleyen ve denetleyen otoritedir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_040",
+    "category": "bankacılık_kısaltmaları",
+    "question": "TCMB nedir?",
+    "expected_answer": "TCMB, Türkiye Cumhuriyet Merkez Bankası'dır. Para politikası, fiyat istikrarı ve finansal sistemin temel işleyişinde ana kurumdur.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_041",
+    "category": "dijital_bankacılık",
+    "question": "Açık Bankacılık (Open Banking) nedir?",
+    "expected_answer": "Müşterilerin finansal verilerinin, kendi izinleri doğrultusunda API'ler aracılığıyla üçüncü taraf sağlayıcılarla (fintech şirketleri vb.) güvenli bir şekilde paylaşılmasına olanak tanıyan sistemdir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_042",
+    "category": "dijital_bankacılık",
+    "question": "Neobank (Dijital Banka) ile geleneksel banka arasındaki temel fark nedir?",
+    "expected_answer": "Neobank'ların fiziksel şubeleri yoktur; tüm hizmetlerini tamamen dijital kanallar (mobil uygulama veya web) üzerinden sunarlar ve genellikle daha düşük işletme maliyetlerine sahiptirler.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_043",
+    "category": "alternatif_finansman",
+    "question": "P2P Lending (Eşler Arası Kredi) sisteminin çalışma mantığı nasıldır?",
+    "expected_answer": "Geleneksel bir finansal aracı (banka) olmadan, borç almak isteyen bireyler veya işletmeler ile yatırım yapmak (borç vermek) isteyenleri dijital bir platformda doğrudan bir araya getiren sistemdir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_044",
+    "category": "alternatif_finansman",
+    "question": "Kitle Fonlaması (Crowdfunding) nedir ve hangi amaçla kullanılır?",
+    "expected_answer": "Girişimcilerin veya projelerin, ihtiyaç duydukları sermayeyi internet üzerinden çok sayıda küçük yatırımcıdan (halktan) toplamasına olanak tanıyan alternatif bir finansman yöntemidir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_045",
+    "category": "yatırım_teknolojileri",
+    "question": "Robo-danışman (Robo-advisor) finansal piyasalarda ne işe yarar?",
+    "expected_answer": "Yatırımcıların risk profili ve hedeflerine göre, algoritmalar ve yapay zeka kullanarak otomatik, düşük maliyetli portföy yönetimi ve yatırım danışmanlığı hizmeti sunar.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_046",
+    "category": "blockchain",
+    "question": "Akıllı Sözleşme (Smart Contract) nedir?",
+    "expected_answer": "Şartları doğrudan kod satırlarına yazılmış, belirli koşullar yerine getirildiğinde blockchain üzerinde otomatik olarak çalışan ve aracıya ihtiyaç duymayan dijital sözleşmelerdir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_047",
+    "category": "blockchain",
+    "question": "Finansal varlıkların tokenizasyonu (Tokenization) ne anlama gelir?",
+    "expected_answer": "Gerçek dünyadaki fiziksel veya finansal varlıkların (gayrimenkul, hisse senedi, sanat eseri vb.) blockchain üzerinde dijital token'lara dönüştürülerek temsil edilmesi ve alınıp satılabilmesidir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_048",
+    "category": "dijital_para",
+    "question": "CBDC (Merkez Bankası Dijital Para Birimi) ile kripto paralar arasındaki temel fark nedir?",
+    "expected_answer": "CBDC'ler bir ülkenin merkez bankası tarafından ihraç edilen, yasal para biriminin dijital halidir ve merkezi bir otoriteye bağlıdır. Kripto paralar ise genellikle merkeziyetsizdir ve yasal bir otorite tarafından desteklenmez.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_049",
+    "category": "fintech_alt_dallari",
+    "question": "RegTech (Düzenleyici Teknoloji) şirketlerinin temel amacı nedir?",
+    "expected_answer": "Finansal kuruluşların yasal düzenlemelere ve uyum (compliance) gereksinimlerine daha hızlı, verimli ve düşük maliyetle uymalarını sağlamak için teknolojik çözümler geliştirmektir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_050",
+    "category": "fintech_alt_dallari",
+    "question": "InsurTech kavramı hangi sektörü dönüştürmeyi hedefler?",
+    "expected_answer": "Sigortacılık sektörünü (Insurance Technology). Poliçe fiyatlaması, hasar yönetimi ve müşteri deneyimini teknoloji (yapay zeka, IoT vb.) kullanarak iyileştirmeyi amaçlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_051",
+    "category": "teknoloji_altyapisi",
+    "question": "Bankacılıkta API (Uygulama Geliştirme Arayüzü) kullanımının en büyük avantajı nedir?",
+    "expected_answer": "Farklı yazılım sistemlerinin birbiriyle güvenli ve standart bir şekilde iletişim kurmasını sağlayarak, bankaların fintech'ler ve diğer kurumlarla entegrasyonunu hızlandırır ve yeni hizmetlerin geliştirilmesini kolaylaştırır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_052",
+    "category": "güvenlik",
+    "question": "Biyometrik doğrulama finansal uygulamalarda neden tercih edilmektedir?",
+    "expected_answer": "Parmak izi, yüz tanıma veya ses gibi kişiye özgü fiziksel özellikler kullanıldığı için şifre çalınması veya unutulması riskini ortadan kaldırır, güvenliği ve kullanıcı deneyimini artırır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fintech_053",
+    "category": "güvenlik",
+    "question": "Finansal dolandırıcılıkta 'Phishing' (Oltalama) saldırısı nasıl gerçekleşir?",
+    "expected_answer": "Saldırganların, güvenilir bir kurum (örneğin banka) gibi davranarak sahte e-posta, SMS veya web siteleri aracılığıyla kullanıcıların şifre, kart bilgisi gibi hassas verilerini ele geçirmeye çalışmasıdır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_054",
+    "category": "kredi_kartı",
+    "question": "Kredi kartı işlemlerinde 'Chargeback' (Ters İbraz) süreci nedir?",
+    "expected_answer": "Kart sahibinin, bilgisi dışında yapılan veya hizmet/ürün alamadığı bir işleme itiraz ederek, işlem tutarının üye işyerinden alınıp kendisine iade edilmesini talep ettiği süreçtir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_055",
+    "category": "risk_yönetimi",
+    "question": "CDS (Kredi Temerrüt Takası) primi neyi ifade eder?",
+    "expected_answer": "Bir ülkenin veya şirketin borcunu ödeyememe (temerrüt) riskine karşı alınan sigortanın maliyetidir. CDS primi ne kadar yüksekse, o kurumun veya ülkenin risk seviyesi o kadar yüksek algılanır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_056",
+    "category": "kredi_riski",
+    "question": "Bankacılıkta NPL (Takipteki Krediler) oranının yüksek olması neyin göstergesidir?",
+    "expected_answer": "Bankanın kullandırdığı kredilerin önemli bir kısmının geri ödenmediğini (genellikle 90 günden fazla gecikmiş) gösterir ve bankanın aktif kalitesinin bozulduğuna, kredi riskinin arttığına işaret eder.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_057",
+    "category": "kredi_riski",
+    "question": "Konut kredilerinde LTV (Kredi/Değer) oranı neden önemlidir?",
+    "expected_answer": "Kullanılacak kredi tutarının, teminat alınan gayrimenkulün ekspertiz değerine oranını gösterir. Bankanın riskini sınırlar; oran ne kadar düşükse bankanın teminat güvencesi o kadar yüksektir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_058",
+    "category": "kredi_riski",
+    "question": "Bireysel kredilerde DTI (Borç/Gelir) oranı bankalar için ne ifade eder?",
+    "expected_answer": "Müşterinin aylık toplam borç ödemelerinin aylık net gelirine oranını gösterir. Müşterinin yeni bir kredi taksitini ödeme kapasitesini (ödeme gücünü) ölçmek için kullanılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_059",
+    "category": "düzenleme",
+    "question": "Basel III kriterlerinin bankacılık sistemindeki temel amacı nedir?",
+    "expected_answer": "2008 küresel finans krizinden sonra bankaların sermaye yeterliliğini, likidite oranlarını ve kaldıraç seviyelerini güçlendirerek finansal şoklara karşı dayanıklılıklarını artırmaktır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_060",
+    "category": "uyum",
+    "question": "AML (Kara Paranın Aklanmasının Önlenmesi) politikaları neleri kapsar?",
+    "expected_answer": "Yasadışı yollardan elde edilen gelirlerin finansal sisteme sokularak yasal hale getirilmesini engellemek amacıyla uygulanan yasal düzenlemeler, müşteri tanıma (KYC) ve şüpheli işlem bildirim süreçlerini kapsar.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_061",
+    "category": "düzenleme",
+    "question": "FATF (Mali Eylem Görev Gücü) uluslararası finans sisteminde ne iş yapar?",
+    "expected_answer": "Kara para aklama ve terörizmin finansmanı ile mücadele etmek için uluslararası standartlar belirleyen ve ülkelerin bu standartlara uyumunu değerlendiren hükümetler arası bir kuruluştur.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_062",
+    "category": "ödeme_sistemleri",
+    "question": "SEPA (Tek Euro Ödeme Alanı) sisteminin amacı nedir?",
+    "expected_answer": "Avrupa Birliği ve ilgili ülkeler arasında Euro cinsinden yapılan elektronik ödemelerin (havale, doğrudan borçlandırma, kart ödemeleri) yurtiçi ödemeler kadar kolay, hızlı ve güvenli yapılmasını sağlamaktır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_063",
+    "category": "fintech_trendleri",
+    "question": "Gömülü Finans (Embedded Finance) kavramı neyi ifade eder?",
+    "expected_answer": "Finansal olmayan şirketlerin (örneğin e-ticaret siteleri, araç çağırma uygulamaları) kendi platformları içine ödeme, kredi veya sigorta gibi finansal hizmetleri entegre ederek müşteriye kesintisiz bir deneyim sunmasıdır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_064",
+    "category": "ödeme_sistemleri",
+    "question": "BNPL (Şimdi Al Sonra Öde) modelinin geleneksel kredi kartından farkı nedir?",
+    "expected_answer": "BNPL, genellikle e-ticaret ödeme anında sunulan, kredi kartı gerektirmeyen, belirli bir vadeye kadar faizsiz taksit imkanı sağlayan ve onay süreci çok daha hızlı olan bir mikro kredi modelidir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_065",
+    "category": "güvenlik",
+    "question": "Finansal kuruluşlarda 'Sıfır Güven' (Zero Trust) mimarisi ne anlama gelir?",
+    "expected_answer": "Ağ içindeki veya dışındaki hiçbir kullanıcıya veya cihaza varsayılan olarak güvenilmemesi gerektiğini, her erişim talebinin sürekli olarak doğrulanması ve yetkilendirilmesi gerektiğini savunan güvenlik yaklaşımıdır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_066",
+    "category": "yatırım",
+    "question": "ESG (Çevresel, Sosyal ve Kurumsal Yönetişim) yatırımı nedir?",
+    "expected_answer": "Yatırım kararları alınırken sadece finansal getirilerin değil, şirketlerin çevreye duyarlılığı, toplumsal etkileri ve etik yönetim uygulamalarının da dikkate alındığı sürdürülebilir yatırım yaklaşımıdır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_067",
+    "category": "yatırım",
+    "question": "Yeşil Tahvil (Green Bond) ihracının temel amacı nedir?",
+    "expected_answer": "Elde edilen fonların yalnızca çevre dostu, iklim değişikliğiyle mücadele eden veya sürdürülebilir projelere (yenilenebilir enerji, temiz ulaşım vb.) finansman sağlamak amacıyla kullanıldığı borçlanma araçlarıdır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_068",
+    "category": "makroekonomi",
+    "question": "Getiri Eğrisinin Tersine Dönmesi (Yield Curve Inversion) ekonomide genellikle neyin habercisi olarak kabul edilir?",
+    "expected_answer": "Kısa vadeli tahvil faizlerinin uzun vadeli tahvil faizlerini geçmesi durumudur ve piyasalarda genellikle yaklaşan bir ekonomik durgunluğun (resesyon) güçlü bir öncü göstergesi olarak kabul edilir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fintech_069",
+    "category": "risk_yönetimi",
+    "question": "Finansal piyasalarda 'Likidite Riski' nedir?",
+    "expected_answer": "Bir varlığın, piyasa fiyatında önemli bir düşüşe neden olmadan hızlı bir şekilde nakde çevrilememesi veya bir kurumun kısa vadeli nakit yükümlülüklerini karşılayamaması riskidir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fintech_070",
+    "category": "kripto_varlıklar",
+    "question": "Kripto para borsalarında 'Soğuk Cüzdan' (Cold Wallet) kullanımının temel nedeni nedir?",
+    "expected_answer": "Kripto varlıkların özel anahtarlarını (private keys) internete bağlı olmayan çevrimdışı cihazlarda saklayarak, siber saldırılara ve hacklenmelere karşı maksimum güvenlik sağlamaktır.",
+    "difficulty": "easy"
+  }
+]

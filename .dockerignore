@@ -1,0 +1,16 @@
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.github
+.cache
+reports
+data
+logs
+.env
+*.ipynb
+web/node_modules
+web/dist
+web/.vite

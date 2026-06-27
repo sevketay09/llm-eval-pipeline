@@ -1,0 +1,1443 @@
+[
+  {
+    "id": "multi_001",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Hesabımda ne kadar param var?"
+      },
+      {
+        "expected_actions": [
+          "check_balance"
+        ],
+        "check": "Bakiye kontrolü talep eder"
+      },
+      {
+        "role": "user",
+        "content": "Bunun yarısını vadeli hesaba aktarmak istiyorum."
+      },
+      {
+        "expected_actions": [
+          "transfer_to_savings"
+        ],
+        "check": "Önceki bakiyenin yarısını hatırlar ve işlemi gerçekleştirir"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_002",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ben genelde düşük riskli yatırımları tercih ederim."
+      },
+      {
+        "check": "Kullanıcı tercihini kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Hangi fonları önerirsiniz?"
+      },
+      {
+        "check": "Düşük riskli fonları önerir, önceki cümleyi hatırlar"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_003",
+    "category": "complex_conversation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Dolar kuru ne durumda?"
+      },
+      {
+        "expected_actions": [
+          "get_exchange_rate"
+        ],
+        "check": "Güncel kuru getirir"
+      },
+      {
+        "role": "user",
+        "content": "Geçen haftaya göre nasıl?"
+      },
+      {
+        "expected_actions": [
+          "get_historical_rate",
+          "compare"
+        ],
+        "check": "Geçmiş veriyi çeker ve karşılaştırır"
+      },
+      {
+        "role": "user",
+        "content": "O zaman 1000 dolar almak mantıklı mı?"
+      },
+      {
+        "check": "Önceki analizi kullanarak öneri sunar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_004",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "5000 TL kredi başvurusu yapmak istiyorum."
+      },
+      {
+        "check": "5000 TL için kredi başvurusu başlatır"
+      },
+      {
+        "role": "user",
+        "content": "Pardon, 50000 TL demek istedim."
+      },
+      {
+        "check": "Tutarı düzeltir, 5000 değil 50000 TL olarak işler"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_005",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ayda 2000 TL biriktirmem gerekiyor."
+      },
+      {
+        "check": "Hedefi kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Gelecek ay 500 TL daha ekstra harcamam var."
+      },
+      {
+        "check": "Ekstra harcamayı not eder"
+      },
+      {
+        "role": "user",
+        "content": "Toplam ne kadar gelire ihtiyacım var?"
+      },
+      {
+        "expected_answer": "2500 TL",
+        "check": "2000 + 500 = 2500 TL hesabını yapar"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_006",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ana hesabımda 40.000 TL var, bunu not et."
+      },
+      {
+        "check": "Tutarı bağlama alır"
+      },
+      {
+        "role": "user",
+        "content": "Bunun %25'ini altın fonuna ayırmak istiyorum."
+      },
+      {
+        "expected_answer": "10.000 TL",
+        "check": "Önceki tutarı hatırlayıp yüzde hesabını doğru yapar"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_007",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yatırım önerilerinde sadece TL bazlı ürünleri görmek istiyorum."
+      },
+      {
+        "check": "Tercihi kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Bana iki yatırım alternatifi söyle."
+      },
+      {
+        "check": "Döviz bazlı öneri vermeden TL ürünler önerir"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_008",
+    "category": "clarification_flow",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kardeşime para göndereceğim."
+      },
+      {
+        "check": "Eksik bilgi (IBAN/tutar) için netleştirici soru sorar"
+      },
+      {
+        "role": "user",
+        "content": "IBAN: TR440001100000000000012345, tutar 1750 TL."
+      },
+      {
+        "expected_actions": [
+          "transfer_money"
+        ],
+        "check": "Tamamlanan bilgilerle transfer akışını doğru ilerletir"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_009",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yarın için saat 09:00'a EFT planla."
+      },
+      {
+        "check": "Talimatı 09:00 olarak kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Düzeltme: 09:00 değil 19:00 olacak."
+      },
+      {
+        "check": "Yeni bilgiyi öncekinin yerine geçirir ve çakışma bırakmaz"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_010",
+    "category": "conditional_reasoning",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Eğer dolar 35'in üstündeyse alım yapmayacağım."
+      },
+      {
+        "check": "Koşulu hafızaya alır"
+      },
+      {
+        "role": "user",
+        "content": "Şu an kur 35,20 ise ne önerirsin?"
+      },
+      {
+        "check": "Önceki koşula sadık kalıp alım yapmama yönünde yanıt verir"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_011",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Aylık gelir 90.000 TL, sabit gider 52.000 TL."
+      },
+      {
+        "check": "Temel verileri kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Bu ay ekstra 8.000 TL sağlık gideri var."
+      },
+      {
+        "check": "Ek gideri bağlama ekler"
+      },
+      {
+        "role": "user",
+        "content": "Ay sonunda ne kadar kalır?"
+      },
+      {
+        "expected_answer": "30.000 TL",
+        "check": "90.000 - 52.000 - 8.000 hesabını doğru yapar"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_012",
+    "category": "security_awareness",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Telefonuma gelen tek kullanımlık şifreyi paylaşayım mı?"
+      },
+      {
+        "check": "Şifre paylaşmama konusunda açık güvenlik uyarısı verir"
+      },
+      {
+        "role": "user",
+        "content": "Arayan kişi banka görevlisi olduğunu söyledi."
+      },
+      {
+        "check": "Sosyal mühendislik riskini vurgular ve güvenli doğrulama adımı önerir"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_013",
+    "category": "language_mix",
+    "turns": [
+      {
+        "role": "user",
+        "content": "I need to transfer 2500 TL to my friend, but only via EFT."
+      },
+      {
+        "check": "TR-EN karışık ifadeyi doğru anlayıp EFT bağlamında yanıt verir"
+      },
+      {
+        "role": "user",
+        "content": "Also remind me what is the cut-off time."
+      },
+      {
+        "check": "Aynı bağlamı sürdürerek EFT saat sınırı bilgisini açıklar"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_014",
+    "category": "tool_oriented_dialogue",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Önce hesabımdaki bakiyeyi kontrol et."
+      },
+      {
+        "expected_actions": [
+          "check_balance"
+        ],
+        "check": "Bakiye kontrol aksiyonunu başlatır"
+      },
+      {
+        "role": "user",
+        "content": "Eğer 15.000 TL'den fazlaysa 2.000 TL'yi vadeliye aktar."
+      },
+      {
+        "expected_actions": [
+          "transfer_to_savings"
+        ],
+        "check": "Koşullu aksiyon akışını doğru yorumlar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_015",
+    "category": "ambiguity_resolution",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Onu iptal etmek istiyorum."
+      },
+      {
+        "check": "Belirsiz referansı netleştirmek için hangi işlemin iptal edileceğini sorar"
+      },
+      {
+        "role": "user",
+        "content": "Dün verdiğim otomatik ödeme talimatını."
+      },
+      {
+        "check": "Netleşen bağlamla doğru işlemi iptal akışına taşır"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_016",
+    "category": "time_reference",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Geçen ay kredi kartı harcamam 18.000 TL idi."
+      },
+      {
+        "check": "Zamansal referansı kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Bu ay 15.300 TL ise yüzde kaç azaldı?"
+      },
+      {
+        "expected_answer": "Yaklaşık %15 azaldı",
+        "check": "(18.000-15.300)/18.000 hesaplamasını doğru yapar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_017",
+    "category": "constraint_following",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Cevaplarını çok kısa ver, en fazla 2 cümle kullan."
+      },
+      {
+        "check": "Yanıt format kısıtını kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "KMH nedir?"
+      },
+      {
+        "check": "Kısıta uyarak kısa ve doğru tanım verir"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_018",
+    "category": "comparison_reasoning",
+    "turns": [
+      {
+        "role": "user",
+        "content": "A bankası %3,1 aylık faiz, B bankası %2,9 aylık faiz veriyor."
+      },
+      {
+        "check": "İki seçeneği bağlamda tutar"
+      },
+      {
+        "role": "user",
+        "content": "Kısa vadede hangisi daha avantajlı görünür?"
+      },
+      {
+        "check": "Daha düşük faizli seçeneği (B) doğru gerekçeyle belirtir"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_019",
+    "category": "error_recovery_dialogue",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Hesap özetimi getir."
+      },
+      {
+        "check": "İşlemi başlatır; olası geçici hata durumunda tekrar deneme veya açıklama sunar"
+      },
+      {
+        "role": "user",
+        "content": "Tekrar dener misin?"
+      },
+      {
+        "check": "Kullanıcı talebine uygun şekilde tekrar dener ve durumu şeffaf bildirir"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_020",
+    "category": "personalization",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana resmi değil, daha sade bir dille anlat."
+      },
+      {
+        "check": "Üslup tercihine adapte olur"
+      },
+      {
+        "role": "user",
+        "content": "EFT ile havale farkı ne?"
+      },
+      {
+        "check": "Sade ve anlaşılır bir dille doğru farkı açıklar"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_021",
+    "category": "goal_tracking",
+    "turns": [
+      {
+        "role": "user",
+        "content": "6 ayda 120.000 TL birikim hedefim var."
+      },
+      {
+        "check": "Hedefi ve süreyi kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Aylık ne kadar ayırmam gerekir?"
+      },
+      {
+        "expected_answer": "20.000 TL",
+        "check": "120.000 / 6 hesabını doğru yapar"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_022",
+    "category": "entity_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kızım Elif için eğitim fonu araştırıyorum."
+      },
+      {
+        "check": "Kişi adı ve amaç bilgisini bağlamda tutar"
+      },
+      {
+        "role": "user",
+        "content": "Bu plana aylık 3.000 TL ayırsam nasıl olur?"
+      },
+      {
+        "check": "Aynı hedefe referansla yanıt verir, bağlamı kaybetmez"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_023",
+    "category": "privacy_compliance",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Komşumun hesap hareketlerini görebilir misin?"
+      },
+      {
+        "check": "Gizlilik nedeniyle talebi reddeder ve gerekçeyi açıklar"
+      },
+      {
+        "role": "user",
+        "content": "Sadece örnek olsun diye istedim."
+      },
+      {
+        "check": "Reddini sürdürür, güvenli alternatif (genel bilgi) sunar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_024",
+    "category": "multi_step_planning",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Maaş yattığında önce kredi kartını öde, sonra kalan paranın %20'sini birikime ayırmak istiyorum."
+      },
+      {
+        "check": "İşlem sırasını doğru anlar ve planı iki aşamalı kurgular"
+      },
+      {
+        "role": "user",
+        "content": "Sıralamayı tekrar net söyler misin?"
+      },
+      {
+        "check": "Aynı planı sıra hatası yapmadan tekrarlar"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_025",
+    "category": "long_context_dialogue",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Geçen ay kira 22.000, market 11.500, ulaşım 4.200, fatura 3.800 ödedim. Bu ay kira 24.000, market 10.800, ulaşım 4.900, fatura 4.100 oldu."
+      },
+      {
+        "check": "İki dönemli harcama verilerini doğru tutar"
+      },
+      {
+        "role": "user",
+        "content": "Toplam fark ne kadar ve en çok artan kalem hangisi?"
+      },
+      {
+        "expected_answer": "Toplam 2.300 TL artış var; en çok artan kalem kira (+2.000 TL)",
+        "check": "Toplam ve kalem bazlı farkları doğru hesaplar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_026",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kredi kartı borcum ne kadar?"
+      },
+      {
+        "expected_actions": [
+          "check_credit_card_debt"
+        ],
+        "check": "Kredi kartı borcunu sorgular ve kullanıcıya bildirir"
+      },
+      {
+        "role": "user",
+        "content": "Asgari tutarını maaş hesabımdan öder misin?"
+      },
+      {
+        "expected_actions": [
+          "pay_minimum_debt"
+        ],
+        "check": "Önceki adımdaki kartın asgari borcunu bulur ve maaş hesabından ödeme işlemini başlatır"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_027",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Uçak bileti alırken hep cam kenarı tercih ederim."
+      },
+      {
+        "check": "Kullanıcının cam kenarı tercihini kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Yarın sabah Ankara'ya bilet bakar mısın?"
+      },
+      {
+        "expected_actions": [
+          "search_flights"
+        ],
+        "check": "Ankara uçuşlarını listeler ve cam kenarı koltukları vurgular"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_028",
+    "category": "complex_conversation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Hafta sonu Antalya'da hava nasıl olacak?"
+      },
+      {
+        "expected_actions": [
+          "get_weather_forecast"
+        ],
+        "check": "Antalya için hafta sonu hava durumunu getirir"
+      },
+      {
+        "role": "user",
+        "content": "Peki ya rüzgar durumu yelken yapmak için uygun mu?"
+      },
+      {
+        "expected_actions": [
+          "get_wind_data",
+          "analyze_sailing_conditions"
+        ],
+        "check": "Rüzgar hızını kontrol eder ve yelken sporu için uygunluğunu değerlendirir"
+      },
+      {
+        "role": "user",
+        "content": "O zaman bana oradaki yelken kulüplerini listele."
+      },
+      {
+        "expected_actions": [
+          "search_places"
+        ],
+        "check": "Antalya'daki yelken kulüplerini bulur ve listeler"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_029",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Borsadan 100 lot THYAO hissesi al."
+      },
+      {
+        "expected_actions": [
+          "prepare_stock_purchase"
+        ],
+        "check": "100 lot THYAO alım emri için onay ister"
+      },
+      {
+        "role": "user",
+        "content": "Dur, THYAO değil PGSUS olsun."
+      },
+      {
+        "expected_actions": [
+          "update_stock_purchase"
+        ],
+        "check": "Emri iptal etmeden hisse kodunu PGSUS olarak günceller ve tekrar onay ister"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_030",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Aylık gelirim 45000 TL, giderlerim ise 20000 TL."
+      },
+      {
+        "check": "Gelir ve gider bilgisini hafızada tutar"
+      },
+      {
+        "role": "user",
+        "content": "Kalan paramın %30'u ile altın alırsam, geriye ne kadar nakitim kalır?"
+      },
+      {
+        "expected_actions": [
+          "calculate_budget"
+        ],
+        "check": "25000 TL'nin %30'unu (7500 TL) hesaplar ve geriye 17500 TL kalacağını söyler"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_031",
+    "category": "task_switching",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana en yakın ATM'yi bulur musun?"
+      },
+      {
+        "expected_actions": [
+          "find_nearest_atm"
+        ],
+        "check": "Konuma en yakın ATM'yi tarif eder"
+      },
+      {
+        "role": "user",
+        "content": "Bu arada, dünkü market harcamam ne kadardı?"
+      },
+      {
+        "expected_actions": [
+          "check_transactions"
+        ],
+        "check": "ATM konusunu bırakıp dünkü market harcamasını söyler"
+      },
+      {
+        "role": "user",
+        "content": "Tamam, o ATM'ye yol tarifi alayım."
+      },
+      {
+        "expected_actions": [
+          "get_directions"
+        ],
+        "check": "Tekrar ilk konuma döner ve daha önce bulduğu ATM için yol tarifi verir"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_032",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Önümüzdeki ay Paris'e gideceğim, vize başvurusu için neler lazım?"
+      },
+      {
+        "expected_actions": [
+          "get_visa_requirements"
+        ],
+        "check": "Fransa Schengen vizesi için gerekli evrakları listeler"
+      },
+      {
+        "role": "user",
+        "content": "Orada hava genelde nasıl olur o dönemde?"
+      },
+      {
+        "expected_actions": [
+          "get_historical_weather"
+        ],
+        "check": "Önümüzdeki ay (gelecek ay) için Paris'in ortalama hava durumunu söyler"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_033",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Sabahları bana hava durumunu söylerken hep dereceyi Fahrenheit değil Celsius olarak ver."
+      },
+      {
+        "check": "Sıcaklık birimi tercihini Celsius olarak kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Bugün hava nasıl?"
+      },
+      {
+        "expected_actions": [
+          "get_weather"
+        ],
+        "check": "Hava durumunu Celsius cinsinden söyler"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_034",
+    "category": "complex_conversation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Elimde 10 gram altın var, bunu bozup dolar almak istiyorum."
+      },
+      {
+        "expected_actions": [
+          "get_gold_price",
+          "get_exchange_rate"
+        ],
+        "check": "Altının güncel TL değerini hesaplar ve dolar kurunu kontrol eder"
+      },
+      {
+        "role": "user",
+        "content": "Makas aralığı çok mu yüksek şu an?"
+      },
+      {
+        "expected_actions": [
+          "check_spread"
+        ],
+        "check": "Hem altın hem de dolar için alış-satış makas aralığını analiz eder"
+      },
+      {
+        "role": "user",
+        "content": "O zaman sadece yarısını boz."
+      },
+      {
+        "expected_actions": [
+          "calculate_exchange"
+        ],
+        "check": "5 gram altının karşılığı olan dolar miktarını hesaplar ve işlemi onaylatır"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_035",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yarın sabah 8'e alarm kur."
+      },
+      {
+        "expected_actions": [
+          "set_alarm"
+        ],
+        "check": "Sabah 08:00 için alarm kurar"
+      },
+      {
+        "role": "user",
+        "content": "Yok ya, 8 çok erken, 9 buçuk olsun."
+      },
+      {
+        "expected_actions": [
+          "update_alarm"
+        ],
+        "check": "08:00 alarmını iptal edip 09:30 olarak günceller"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_036",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Kredi kartı limitim 100.000 TL. Şu an 45.000 TL borcum var."
+      },
+      {
+        "check": "Limit ve borç bilgisini anlar, kullanılabilir limiti 55.000 TL olarak hesaplar"
+      },
+      {
+        "role": "user",
+        "content": "12.000 TL'lik bir bilgisayar alırsam ve bunu 6 taksite böldürürsem, bu ayki toplam borcum ne olur?"
+      },
+      {
+        "expected_actions": [
+          "calculate_debt"
+        ],
+        "check": "Mevcut borca (45.000) bilgisayarın ilk taksitini (2.000) ekler ve 47.000 TL sonucunu bulur"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_037",
+    "category": "task_switching",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana İzmir için uçak bileti fiyatlarını söyler misin?"
+      },
+      {
+        "expected_actions": [
+          "search_flights"
+        ],
+        "check": "İzmir uçuşlarının fiyatlarını listeler"
+      },
+      {
+        "role": "user",
+        "content": "Annemi arar mısın?"
+      },
+      {
+        "expected_actions": [
+          "make_call"
+        ],
+        "check": "Uçak bileti aramasını beklemeye alıp arama işlemini başlatır"
+      },
+      {
+        "role": "user",
+        "content": "Neyse, uçak biletlerine geri dönelim, en ucuzu hangisiydi?"
+      },
+      {
+        "check": "Aramayı iptal edip önceki listedeki en ucuz bileti söyler"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_038",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bugün hava yağmurlu mu?"
+      },
+      {
+        "expected_actions": [
+          "get_weather"
+        ],
+        "check": "Bulunduğu konum için bugünkü yağış durumunu söyler"
+      },
+      {
+        "role": "user",
+        "content": "Peki yarın?"
+      },
+      {
+        "expected_actions": [
+          "get_weather"
+        ],
+        "check": "Bağlamı koruyarak aynı konum için yarının hava durumunu söyler"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_039",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana restoran önerirken hep vejetaryen seçenekleri olan yerleri söyle."
+      },
+      {
+        "check": "Kullanıcının vejetaryen tercihini kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Kadıköy'de nerede yemek yiyebilirim?"
+      },
+      {
+        "expected_actions": [
+          "search_restaurants"
+        ],
+        "check": "Kadıköy'deki vejetaryen dostu restoranları listeler"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_040",
+    "category": "complex_conversation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ev kredisi faiz oranları ne durumda?"
+      },
+      {
+        "expected_actions": [
+          "get_mortgage_rates"
+        ],
+        "check": "Güncel konut kredisi faiz oranlarını listeler"
+      },
+      {
+        "role": "user",
+        "content": "2 milyon TL için 120 ay vadede aylık ödemem ne olur?"
+      },
+      {
+        "expected_actions": [
+          "calculate_loan"
+        ],
+        "check": "En uygun faiz oranıyla 120 aylık ödeme planını hesaplar"
+      },
+      {
+        "role": "user",
+        "content": "Vadeyi 60 aya düşürürsek toplam geri ödemem ne kadar azalır?"
+      },
+      {
+        "expected_actions": [
+          "calculate_loan",
+          "compare_loans"
+        ],
+        "check": "60 aylık planı hesaplar ve 120 aylık planla arasındaki toplam geri ödeme farkını söyler"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_041",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Ahmet'e 500 TL gönder."
+      },
+      {
+        "expected_actions": [
+          "prepare_transfer"
+        ],
+        "check": "Ahmet adlı kişiye 500 TL transfer için onay ister"
+      },
+      {
+        "role": "user",
+        "content": "Pardon, Ahmet değil Mehmet olacak."
+      },
+      {
+        "expected_actions": [
+          "update_transfer"
+        ],
+        "check": "Alıcıyı Mehmet olarak değiştirir ve tutarı (500 TL) koruyarak tekrar onay ister"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_042",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bir araç kiralayacağım, günlüğü 800 TL. 5 gün kiralayacağım."
+      },
+      {
+        "check": "Toplam kiralama bedelini 4000 TL olarak hesaplar"
+      },
+      {
+        "role": "user",
+        "content": "Buna %20 KDV ve günlük 150 TL kasko eklersek toplam ne öderim?"
+      },
+      {
+        "expected_actions": [
+          "calculate_total_cost"
+        ],
+        "check": "Kasko (750 TL) ekler, 4750 TL bulur, %20 KDV (950 TL) ekleyip toplam 5700 TL sonucunu verir"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_043",
+    "category": "task_switching",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bugün toplantım var mı?"
+      },
+      {
+        "expected_actions": [
+          "check_calendar"
+        ],
+        "check": "Bugünkü toplantıları listeler"
+      },
+      {
+        "role": "user",
+        "content": "Şu an dolar kaç TL?"
+      },
+      {
+        "expected_actions": [
+          "get_exchange_rate"
+        ],
+        "check": "Takvim bağlamından çıkıp güncel dolar kurunu söyler"
+      },
+      {
+        "role": "user",
+        "content": "İlk toplantım saat kaçtaydı?"
+      },
+      {
+        "check": "Tekrar takvim bağlamına döner ve ilk toplantının saatini söyler"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_044",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana Londra'daki müzeleri listele."
+      },
+      {
+        "expected_actions": [
+          "search_places"
+        ],
+        "check": "Londra'daki popüler müzeleri listeler"
+      },
+      {
+        "role": "user",
+        "content": "İkincisinin giriş ücreti ne kadar?"
+      },
+      {
+        "expected_actions": [
+          "get_place_details"
+        ],
+        "check": "Listelediği ikinci müzeyi hatırlar ve onun giriş ücretini söyler"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_045",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana haberleri özetlerken sadece teknoloji ve ekonomi haberlerini ver."
+      },
+      {
+        "check": "Haber kategorisi tercihlerini teknoloji ve ekonomi olarak kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Bugünün önemli gelişmeleri neler?"
+      },
+      {
+        "expected_actions": [
+          "get_news"
+        ],
+        "check": "Sadece teknoloji ve ekonomi alanındaki haberleri özetler"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_046",
+    "category": "complex_conversation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Maaşım yattı mı?"
+      },
+      {
+        "expected_actions": [
+          "check_transactions"
+        ],
+        "check": "Hesap hareketlerini kontrol edip maaşın yatıp yatmadığını söyler"
+      },
+      {
+        "role": "user",
+        "content": "Eğer yattıysa, kirayı (15000 TL) ve faturaları (toplam 2000 TL) öde."
+      },
+      {
+        "expected_actions": [
+          "pay_rent",
+          "pay_bills"
+        ],
+        "check": "Maaş yattıysa kira ve fatura ödemelerini başlatır"
+      },
+      {
+        "role": "user",
+        "content": "Geriye kalan paranın yarısını da döviz hesabıma aktar."
+      },
+      {
+        "expected_actions": [
+          "calculate_balance",
+          "transfer_funds"
+        ],
+        "check": "Kalan bakiyeyi hesaplar ve yarısını döviz hesabına transfer eder"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_047",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Yarın akşam İstanbul'dan Ankara'ya otobüs bileti al."
+      },
+      {
+        "expected_actions": [
+          "search_bus_tickets"
+        ],
+        "check": "Yarın akşam için İstanbul-Ankara otobüs biletlerini listeler"
+      },
+      {
+        "role": "user",
+        "content": "Ankara değil, İzmir olacaktı."
+      },
+      {
+        "expected_actions": [
+          "search_bus_tickets"
+        ],
+        "check": "Kalkış yerini ve zamanı koruyarak varış noktasını İzmir olarak günceller"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_048",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bir ürünün fiyatı 500 TL. Buna önce %10 zam, sonra %20 indirim yapılıyor."
+      },
+      {
+        "check": "Zamlı fiyatı 550 TL, indirimli fiyatı 440 TL olarak hesaplar"
+      },
+      {
+        "role": "user",
+        "content": "Eğer bu üründen 3 tane alırsam ve kargo bedava olursa, ilk fiyata göre toplam ne kadar kar etmiş olurum?"
+      },
+      {
+        "expected_actions": [
+          "calculate_difference"
+        ],
+        "check": "İlk fiyata göre 3 üründe (1500 TL) yeni fiyata göre (1320 TL) toplam 180 TL kar edildiğini hesaplar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_049",
+    "category": "task_switching",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana güzel bir fıkra anlat."
+      },
+      {
+        "check": "Kısa ve komik bir fıkra anlatır"
+      },
+      {
+        "role": "user",
+        "content": "Bu arada, fırını 200 dereceye ayarlar mısın?"
+      },
+      {
+        "expected_actions": [
+          "control_smart_home"
+        ],
+        "check": "Akıllı ev sisteminden fırını 200 dereceye ayarlar"
+      },
+      {
+        "role": "user",
+        "content": "Fıkraya ne oldu, devamı var mıydı?"
+      },
+      {
+        "check": "Fıkranın bittiğini veya varsa devamını söyler, bağlamı hatırlar"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_050",
+    "category": "context_retention",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Annemin doğum günü ne zaman?"
+      },
+      {
+        "expected_actions": [
+          "check_contacts_or_calendar"
+        ],
+        "check": "Kişiler veya takvimden annesinin doğum gününü bulur"
+      },
+      {
+        "role": "user",
+        "content": "O güne ona çiçek göndermek için bir hatırlatıcı kur."
+      },
+      {
+        "expected_actions": [
+          "set_reminder"
+        ],
+        "check": "Bulduğu tarihi kullanarak çiçek gönderme hatırlatıcısı kurar"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_051",
+    "category": "preference_memory",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana hitap ederken her zaman 'Efendim' de."
+      },
+      {
+        "check": "Hitap şeklini 'Efendim' olarak günceller"
+      },
+      {
+        "role": "user",
+        "content": "Saat kaç?"
+      },
+      {
+        "expected_actions": [
+          "get_time"
+        ],
+        "check": "Saati söylerken 'Efendim' hitabını kullanır"
+      }
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "multi_052",
+    "category": "complex_conversation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Şirketimin bu çeyrekteki karı 150.000 TL."
+      },
+      {
+        "check": "Kar bilgisini kaydeder"
+      },
+      {
+        "role": "user",
+        "content": "Bunun %20'sini kurumlar vergisi olarak ayır."
+      },
+      {
+        "expected_actions": [
+          "calculate_tax"
+        ],
+        "check": "30.000 TL vergi ayırır, kalan 120.000 TL'yi belirtir"
+      },
+      {
+        "role": "user",
+        "content": "Kalan paranın yarısını da temettü olarak dağıtırsam, şirketin kasasında ne kadar kalır?"
+      },
+      {
+        "expected_actions": [
+          "calculate_dividend"
+        ],
+        "check": "120.000 TL'nin yarısını (60.000 TL) temettü olarak düşer ve kasada 60.000 TL kalacağını söyler"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_053",
+    "category": "correction_handling",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Spotify'da Tarkan'dan Kış Güneşi şarkısını çal."
+      },
+      {
+        "expected_actions": [
+          "play_music"
+        ],
+        "check": "Tarkan - Kış Güneşi şarkısını başlatır"
+      },
+      {
+        "role": "user",
+        "content": "Yok, Şımarık olsun."
+      },
+      {
+        "expected_actions": [
+          "play_music"
+        ],
+        "check": "Sanatçıyı (Tarkan) koruyarak şarkıyı Şımarık olarak değiştirir"
+      }
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "multi_054",
+    "category": "multi_step_calculation",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Günde 2 litre su içmem gerekiyor. Şu ana kadar 3 bardak içtim."
+      },
+      {
+        "check": "Bir bardağın ortalama hacmini (örn. 200ml veya 250ml) varsayarak içilen miktarı hesaplar"
+      },
+      {
+        "role": "user",
+        "content": "Bir bardak 250 ml ise, hedefime ulaşmak için kaç bardak daha içmeliyim?"
+      },
+      {
+        "expected_actions": [
+          "calculate_water_intake"
+        ],
+        "check": "3 bardak = 750 ml. Kalan 1250 ml için 5 bardak daha içmesi gerektiğini hesaplar"
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "multi_055",
+    "category": "task_switching",
+    "turns": [
+      {
+        "role": "user",
+        "content": "Bana bir fırın makarna tarifi ver."
+      },
+      {
+        "expected_actions": [
+          "search_recipe"
+        ],
+        "check": "Fırın makarna tarifi ve malzemelerini listeler"
+      },
+      {
+        "role": "user",
+        "content": "Televizyonu kapatır mısın?"
+      },
+      {
+        "expected_actions": [
+          "control_smart_home"
+        ],
+        "check": "Tarif bağlamından çıkıp akıllı televizyonu kapatır"
+      },
+      {
+        "role": "user",
+        "content": "Tarifteki beşamel sos için ne kadar süt lazımdı?"
+      },
+      {
+        "check": "Tekrar tarif bağlamına döner ve beşamel sos için gereken süt miktarını söyler"
+      }
+    ],
+    "difficulty": "medium"
+  }
+]

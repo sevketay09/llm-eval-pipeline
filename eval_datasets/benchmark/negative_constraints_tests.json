@@ -1,0 +1,918 @@
+[
+  {
+    "id": "nc_001",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "simple",
+    "prompt": "Türkiye'deki başlıca yatırım araçlarını listele. UYARI: JSON formatı KULLANMA, düz metin olarak yanıtla.",
+    "constraint_params": {
+      "forbidden_format": "json"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_002",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "simple",
+    "prompt": "Banka hesap türlerini açıkla. UYARI: Liste formatı (madde işaretleri veya numaralandırma) KULLANMA, paragraf olarak yaz.",
+    "constraint_params": {
+      "forbidden_format": "list"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_003",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "medium",
+    "prompt": "TCMB'nin görevlerini açıkla. UYARI: Yanıtın 30 kelimeyi GEÇMEMELI.",
+    "constraint_params": {
+      "max_words": 30
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_004",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "medium",
+    "prompt": "Türkiye'de konut kredisi başvurusunda istenen belgeler nelerdir? UYARI: Çok kısa yanıt verme, en az 50 kelime kullan.",
+    "constraint_params": {
+      "min_words": 50
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_005",
+    "category": "forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "high",
+    "prompt": "Türkiye'deki merkez bankasının faiz politikasını açıkla. UYARI: 'faiz' kelimesini KULLANMA, alternatif terimlerle anlat.",
+    "constraint_params": {
+      "forbidden_words": ["faiz"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_006",
+    "category": "forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "high",
+    "prompt": "Para transferi yöntemlerini açıkla. UYARI: 'banka', 'hesap', 'kart' kelimelerini KULLANMA.",
+    "constraint_params": {
+      "forbidden_words": ["banka", "hesap", "kart"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_007",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "medium",
+    "prompt": "KMH (Kredi Müşteri Hesabı) nedir? Sadece tanımını ver, örnek VERME.",
+    "constraint_params": {
+      "forbidden_content": "examples"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_008",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "medium",
+    "prompt": "Türkiye'de hangi kurum mevduat sigortası sağlar? Sadece kurumun ismini söyle, açıklama YAPMA.",
+    "constraint_params": {
+      "forbidden_content": "explanations"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_009",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "high",
+    "prompt": "Yatırım yaparken dikkat edilmesi gerekenler nelerdir? UYARI: Kişisel görüş BELIRTME, sadece objektif bilgi ver.",
+    "constraint_params": {
+      "forbidden_content": "personal_opinions"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_010",
+    "category": "language",
+    "constraint_type": "language",
+    "complexity": "high",
+    "prompt": "Türkiye'deki ödeme sistemlerini anlat. UYARI: İngilizce kelime KULLANMA, hepsini Türkçe karşılıklarıyla yaz.",
+    "constraint_params": {
+      "forbidden_language": "english"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_011",
+    "category": "numeric",
+    "constraint_type": "numeric",
+    "complexity": "high",
+    "prompt": "Türkiye'de bir vatandaşın kaç farklı banka hesabı olabilir? UYARI: Sayısal değer KULLANMA, yazıyla ifade et.",
+    "constraint_params": {
+      "forbidden_numeric": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_012",
+    "category": "structure",
+    "constraint_type": "structure",
+    "complexity": "medium",
+    "prompt": "Türkiye'de en yaygın kredi kartı türü nedir? UYARI: Tek cümle ile yanıtla, uzun açıklama YAPMA.",
+    "constraint_params": {
+      "forbidden_structure": "multiple_sentences"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_013",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "simple",
+    "prompt": "Python'da bir liste oluşturma yöntemlerini açıkla. UYARI: Kod bloğu KULLANMA, sadece açıklama yap.",
+    "constraint_params": {
+      "forbidden_format": "code"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_014",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "simple",
+    "prompt": "IBAN nedir? UYARI: 5 kelimeyi GEÇME.",
+    "constraint_params": {
+      "max_words": 5
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_015",
+    "category": "structure",
+    "constraint_type": "structure",
+    "complexity": "medium",
+    "prompt": "Bankanın sunduğu hizmetleri özetle. UYARI: Paragraf ayırma YAPMA, tek paragraf olarak yaz.",
+    "constraint_params": {
+      "forbidden_structure": "paragraphs"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_016",
+    "category": "conflicting_constraints",
+    "constraint_type": "conflicting",
+    "complexity": "high",
+    "prompt": "Türkiye'deki 5 büyük banka hakkında bilgi ver. UYARI: En az 100 kelime kullan, fakat liste formatı KULLANMA, paragraf olarak yaz.",
+    "constraint_params": {
+      "min_words": 100,
+      "forbidden_format": "list"
+    },
+    "expected_violation": false,
+    "challenge": "combining_word_limit_and_format_constraints"
+  },
+  {
+    "id": "nc_017",
+    "category": "semantic_forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "very_high",
+    "prompt": "Kredi yönetiminin temel ilkeleri nelerdir? UYARI: 'kredi', 'borç', 'geri ödeme' KULLANMA, sadece eş anlamı terimler kullan.",
+    "constraint_params": {
+      "forbidden_words": ["kredi", "borç", "geri ödeme"],
+      "synonym_required": true
+    },
+    "expected_violation": false,
+    "challenge": "semantic_synonym_substitution"
+  },
+  {
+    "id": "nc_018",
+    "category": "multi_constraint_combination",
+    "constraint_type": "combined",
+    "complexity": "very_high",
+    "prompt": "Merkez Bankası'nın enflasyon kontrol mekanizmasını açıkla. UYARI: (1) 150 kelimeyi GEÇME, (2) 'enflasyon' kelimesini KULLANMA, (3) Kod KULLANMA, (4) Listeleme YAPMA.",
+    "constraint_params": {
+      "max_words": 150,
+      "forbidden_words": ["enflasyon"],
+      "forbidden_format": "code",
+      "forbidden_structure": "list"
+    },
+    "expected_violation": false,
+    "challenge": "four_constraint_simultaneous_adherence"
+  },
+  {
+    "id": "nc_019",
+    "category": "contextual_constraint",
+    "constraint_type": "context_aware",
+    "complexity": "high",
+    "prompt": "Kripto para yatırımı hakkında bilgilen. UYARI: Tanımı ve avantajları verilebilir, fakat 'yatırım tavsiyesi' verme, 'garanti' söyleme. Sadece bilgi ver.",
+    "constraint_params": {
+      "forbidden_content": ["investment_advice", "guarantees"],
+      "allowed_content": ["definition", "advantages", "risks"]
+    },
+    "expected_violation": false,
+    "challenge": "content_type_discrimination"
+  },
+  {
+    "id": "nc_020",
+    "category": "dynamic_constraint",
+    "constraint_type": "conditional",
+    "complexity": "very_high",
+    "prompt": "Eğer negatif faiz oranından bahsedersen, mutlaka 'ECB' örneğini de ver. Fakat asıl konuyu 'faiz' kelimesi KULLANMADAN anlat.",
+    "constraint_params": {
+      "conditional": {
+        "if_mentioned": "negative interest rates",
+        "then_must_include": ["ECB", "example"]
+      },
+      "forbidden_words": ["faiz"]
+    },
+    "expected_violation": false,
+    "challenge": "conditional_logic_with_forbidden_words"
+  },
+  {
+    "id": "nc_021",
+    "category": "precision_constraint",
+    "constraint_type": "numeric_description",
+    "complexity": "high",
+    "prompt": "Türkiye'de aylık enflasyon oranı kaç? UYARI: Sayı KULLANMA, yazıyla ifade et. Örneğin '5%' yerine 'yüzde beş' veya 'beş sadalı' yaz.",
+    "constraint_params": {
+      "forbidden_numeric": true,
+      "require_text_representation": true
+    },
+    "expected_violation": false,
+    "challenge": "numeric_to_text_conversion_accuracy"
+  },
+  {
+    "id": "nc_022",
+    "category": "style_constraint",
+    "constraint_type": "tone_and_style",
+    "complexity": "high",
+    "prompt": "Finansal yapılandırma (financial structuring) nedir? UYARI: Akademik/resmi tonda yaz, konuşma dili KULLANMA.",
+    "constraint_params": {
+      "required_style": "academic_formal",
+      "forbidden_style": "conversational"
+    },
+    "expected_violation": false,
+    "challenge": "tone_and_register_consistency"
+  },
+  {
+    "id": "nc_023",
+    "category": "escaping_forbidden_content",
+    "constraint_type": "complex_forbidden_content",
+    "complexity": "very_high",
+    "prompt": "Kripto para hakkında düşüncelerini paylaş. UYARI: Hiçbir kişisel görüş, beklenti, tahmini VERME. Sadece tarihsel gerçekler ve teknik özellikler sun.",
+    "constraint_params": {
+      "forbidden_content": ["opinions", "expectations", "predictions", "recommendations"],
+      "allowed_content": ["historical_facts", "technical_specifications"]
+    },
+    "expected_violation": false,
+    "challenge": "fact_vs_opinion_discrimination"
+  },
+  {
+    "id": "nc_024",
+    "category": "length_and_structure_combined",
+    "constraint_type": "combined_structural",
+    "complexity": "high",
+    "prompt": "SWIFT kodu ne işe yarar? UYARI: Tam olarak 3 cümle ile yanıtla, biri tanım, biri örnek, biri kullanım alanı olsun. Daha fazla veya daha az YAPMA.",
+    "constraint_params": {
+      "exact_sentences": 3,
+      "sentence_order": ["definition", "example", "use_case"]
+    },
+    "expected_violation": false,
+    "challenge": "precise_sentence_count_and_order"
+  },
+  {
+    "id": "nc_025",
+    "category": "domain_specific",
+    "constraint_type": "domain_sensitive",
+    "complexity": "very_high",
+    "prompt": "Türkiye'de KYC (Know Your Customer) düzenlemesi hakkında açıklama yap. UYARI: Kişisel veriye gönderme yapma, hukuki sonuçlar ve uyum zorlukları vurgula. Ama 'gizlilik' veya 'ihlal' kelimelerini KULLANMA.",
+    "constraint_params": {
+      "forbidden_content": ["personal_data_examples"],
+      "required_focus": ["legal_consequences", "compliance_challenges"],
+      "forbidden_words": ["gizlilik", "ihlal"]
+    },
+    "expected_violation": false,
+    "challenge": "domain_specific_sensitivity_and_terminology"
+  },
+  {
+    "id": "nc_026",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "simple",
+    "prompt": "Borsa İstanbul'un işlevlerini açıkla. UYARI: Tablo formatında SUNMA, düz metin olarak yaz.",
+    "constraint_params": {
+      "forbidden_format": "table"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_027",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "medium",
+    "prompt": "Yatırım çeşitlendirmesinin avantajlarını anlat. UYARI: Başlık/alt başlık yapısı KULLANMA, akış içinde soluksuz anlat.",
+    "constraint_params": {
+      "forbidden_format": "hierarchical_headings"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_028",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "medium",
+    "prompt": "Menkul Kıymet Yatırım Ortaklığı (MKYO) nedir? UYARI: Yanıtı tam olarak 25 kelime olsun, ne az ne çok.",
+    "constraint_params": {
+      "exact_words": 25
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_029",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "high",
+    "prompt": "Türk Lirası'nın değer kaybının nedenleri nelerdir? UYARI: En av 75 kelime, en çok 200 kelime kullan.",
+    "constraint_params": {
+      "min_words": 75,
+      "max_words": 200
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_030",
+    "category": "forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "high",
+    "prompt": "Devlet borsa endeksleri hakkında bilgi ver. UYARI: 'endeks', 'borsa', 'hisse' kelimelerini KULLANMA.",
+    "constraint_params": {
+      "forbidden_words": ["endeks", "borsa", "hisse"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_031",
+    "category": "forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "very_high",
+    "prompt": "Portföy riski nasıl minimize edilir? UYARI: 'risk', 'kayıp', 'volatilite', 'düşüş' kelimelerine alternatif terimler bul.",
+    "constraint_params": {
+      "forbidden_words": ["risk", "kayıp", "volatilite", "düşüş"],
+      "synonym_required": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_032",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "medium",
+    "prompt": "Altın yatırımının özellikleri nelerdir? UYARI: Sadece tanım ve temel özellikler ver, tarihsel bilgi EKLEME.",
+    "constraint_params": {
+      "forbidden_content": "historical_data"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_033",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "high",
+    "prompt": "Aktifleri nasıl değerlendirilir? UYARI: Teori ve yöntemler anlat, matematiksel hesaplama YAPMA.",
+    "constraint_params": {
+      "forbidden_content": "calculations"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_034",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "medium",
+    "prompt": "Faizsiz bankacılık hizmetlerini açıkla. UYARI: Karşılaştırma YAPMA, geleneksel bankacılıktan fark söyleme.",
+    "constraint_params": {
+      "forbidden_content": "comparisons"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_035",
+    "category": "language",
+    "constraint_type": "language",
+    "complexity": "high",
+    "prompt": "Vadeli işlem piyasası (futures market) nedir? UYARI: Teknik terimler bile Türkçeleştir, orijinal İngilizce KULLANMA.",
+    "constraint_params": {
+      "forbidden_language": "english_terms"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_036",
+    "category": "numeric",
+    "constraint_type": "numeric",
+    "complexity": "medium",
+    "prompt": "Gümrük Müşteri Hasılatı Kurumu kaç yıldır faaliyettedir? UYARI: Tarih KULLANMA, yazıyla ifade et.",
+    "constraint_params": {
+      "forbidden_numeric": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_037",
+    "category": "structure",
+    "constraint_type": "structure",
+    "complexity": "high",
+    "prompt": "Türkiye'deki emeklilik sistemleri nelerdir? UYARI: Sistemleri ayrı ayrı başlık altında alma, ilişkili bir anlatı olarak sun.",
+    "constraint_params": {
+      "forbidden_structure": "separate_sections"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_038",
+    "category": "conflicting_constraints",
+    "constraint_type": "conflicting",
+    "complexity": "very_high",
+    "prompt": "Finansal istikrar ve ekonomik büyüme arasındaki ilişkiyi açıkla. UYARI: Sadece 2 paragraf, ama her paragraf en az 10 cümle olsun. Başlık YAPMA.",
+    "constraint_params": {
+      "exact_paragraphs": 2,
+      "min_sentences_per_paragraph": 10,
+      "forbidden_structure": "headings"
+    },
+    "expected_violation": false,
+    "challenge": "conflicting_paragraph_and_sentence_counts"
+  },
+  {
+    "id": "nc_039",
+    "category": "semantic_forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "very_high",
+    "prompt": "Likidite sorununun ardındaki sebepler nelerdir? UYARI: 'likidite', 'sıvı', 'erişim', 'nakit', 'durdurulmuş' kelimelerine semantik alternatifler bul.",
+    "constraint_params": {
+      "forbidden_words": ["likidite", "sıvı", "erişim", "nakit", "durdurulmuş"],
+      "synonym_required": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_040",
+    "category": "multi_constraint_combination",
+    "constraint_type": "combined",
+    "complexity": "very_high",
+    "prompt": "Türkiye'de banka kredileri nasıl verilir? UYARI: (1) 80-150 kelime, (2) 'krediler' veya 'borç' KULLANMA, (3) Sayı KULLANMA, (4) Resmi tonda yaz.",
+    "constraint_params": {
+      "min_words": 80,
+      "max_words": 150,
+      "forbidden_words": ["krediler", "borç"],
+      "forbidden_numeric": true,
+      "required_style": "formal"
+    },
+    "expected_violation": false,
+    "challenge": "four_constraint_combination_complex"
+  },
+  {
+    "id": "nc_041",
+    "category": "contextual_constraint",
+    "constraint_type": "context_aware",
+    "complexity": "high",
+    "prompt": "Siber güvenlik riski nasıl yönetilir? UYARI: Tehditleri açıkla, fakat spesifik saldırı yöntemlerini EKLEME.",
+    "constraint_params": {
+      "allowed_content": ["threats", "management_strategies"],
+      "forbidden_content": ["attack_methods", "vulnerability_details"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_042",
+    "category": "dynamic_constraint",
+    "constraint_type": "conditional",
+    "complexity": "very_high",
+    "prompt": "Crypto piyasasından bahsedersen, mutlaka uyarı ve riskleri vurgula. Ama 'dijital', 'blockchain', 'token' kelimelerine 'kesinlikle' alternatif terimler kullan.",
+    "constraint_params": {
+      "conditional": {
+        "if_mentioned": "cryptocurrency",
+        "then_must_include": ["warning", "risks"]
+      },
+      "forbidden_words": ["dijital", "blockchain", "token"],
+      "synonym_required": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_043",
+    "category": "precision_constraint",
+    "constraint_type": "numeric_description",
+    "complexity": "high",
+    "prompt": "Reel faiz oranı tahmininiz nedir? UYARI: Yüzde işareti KULLANMA. Yazıyla ifade et ve 'yaklaşık' sözcüğünü kullan.",
+    "constraint_params": {
+      "forbidden_numeric": true,
+      "require_text_representation": true,
+      "require_uncertainty_markers": ["yaklaşık", "civarında"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_044",
+    "category": "style_constraint",
+    "constraint_type": "tone_and_style",
+    "complexity": "high",
+    "prompt": "Fintech şirketlerinin etkileri hakkında konuş. UYARI: Mizah ve konuşma dili yan yana kullanabilirsin, fakat teknik terimler kullan ve akademik kalite koru.",
+    "constraint_params": {
+      "allowed_style": ["humorous", "conversational"],
+      "required_elements": ["technical_terms", "academic_quality"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_045",
+    "category": "escaping_forbidden_content",
+    "constraint_type": "complex_forbidden_content",
+    "complexity": "very_high",
+    "prompt": "Tasarruf yatırımı yapmalı mı diye soruyor. UYARI: Objektif veriler sun, fakat danışmanlık, tavsiye, veya tahmini YAPMA.",
+    "constraint_params": {
+      "forbidden_content": ["advice", "recommendations", "predictions", "personal_judgment"],
+      "allowed_content": ["objective_data", "pros_and_cons", "historical_patterns"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_046",
+    "category": "length_and_structure_combined",
+    "constraint_type": "combined_structural",
+    "complexity": "high",
+    "prompt": "Enflasyonun etkileri nelerdir? UYARI: Tam olarak 4 ayrı başlık alt yapı yap: Tanım, Nedenler, Etkileri, Çözümler. Her başlık altında 1-2 cümle olsun.",
+    "constraint_params": {
+      "exact_sections": 4,
+      "section_titles": ["Tanım", "Nedenler", "Etkileri", "Çözümler"],
+      "sentences_per_section": {"min": 1, "max": 2}
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_047",
+    "category": "domain_specific",
+    "constraint_type": "domain_sensitive",
+    "complexity": "very_high",
+    "prompt": "AML/KYC uyumluluğundan bahset. UYARI: İş süreci ve yasal çerçeve açıkla, ama müşteri bilgisi örnekleri YAPMA. Gizlilik ve ihlal senaryolarından uzak dur.",
+    "constraint_params": {
+      "forbidden_content": ["customer_data_examples", "privacy_breaches"],
+      "required_focus": ["business_process", "legal_framework"],
+      "forbidden_words": ["hassas", "ihlal", "ihmal"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_048",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "medium",
+    "prompt": "Sabit getirili menkul kıymetler hakkında bilgi ver. UYARI: Diyagram, şemalar, çizim KULLANMA. Sadece yazılı açıklama sun.",
+    "constraint_params": {
+      "forbidden_format": "diagrams_and_schemas"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_049",
+    "category": "forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "high",
+    "prompt": "Merkez Bankası Dijital Para (CBDC) nedir? UYARI: 'dijital', 'merkez', 'para', 'teknik' kelimelerini KULLANMA, tamamen başka terimler bul.",
+    "constraint_params": {
+      "forbidden_words": ["dijital", "merkez", "para", "teknik"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_050",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "very_high",
+    "prompt": "ETF yatırımının faydaları ve riskleri nelerdir? UYARI: Fayda ve riski tamamen ayrı bölümlerde anlatmalısın. Faydalar için en az 40 kelime, riskler için en az 30 kelime olmalı. Toplam 150 kelimeyi GEÇMEMELI.",
+    "constraint_params": {
+      "min_words_section1": 40,
+      "min_words_section2": 30,
+      "max_words_total": 150,
+      "section_requirement": ["benefits_risks_separated"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_051",
+    "category": "contextual_constraint",
+    "constraint_type": "context_aware",
+    "complexity": "high",
+    "prompt": "Vergi avoidance (vergi kaçakçılığı) ve vergi optimizasyonu arasındaki fark nedir? UYARI: Hukuki çerçeveyi açıkla, fakat vergi kaçırma yöntemleri EKLEME.",
+    "constraint_params": {
+      "allowed_content": ["legal_definitions", "regulatory_framework"],
+      "forbidden_content": ["methods", "loopholes", "evasion_techniques"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_052",
+    "category": "multi_constraint_combination",
+    "constraint_type": "combined",
+    "complexity": "very_high",
+    "prompt": "Piyasa liderliği ve iş etkinliğini açıkla. UYARI: (1) 120 kelimeyi GEÇMEMELI, (2) 'pazar', 'başarı', 'rakip' kelimelerini KULLANMA, (3) Listeleme YAPMA, akış olarak sun, (4) Biçimsel tonda kalın.",
+    "constraint_params": {
+      "max_words": 120,
+      "forbidden_words": ["pazar", "başarı", "rakip"],
+      "forbidden_format": "list",
+      "required_style": "formal"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_053",
+    "category": "precision_constraint",
+    "constraint_type": "numeric_description",
+    "complexity": "high",
+    "prompt": "Ortalama enflasyon artışı yazılı biçimde anlatılsın. UYARI: Ondalık sayı KULLANMA, 'yüzde' yazısı kullan ve '0.05' yerine 'yüzde sıfır virgül beş' biçiminde yaz.",
+    "constraint_params": {
+      "forbidden_numeric": true,
+      "require_written_representation": true,
+      "decimal_to_words": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_054",
+    "category": "escaping_forbidden_content",
+    "constraint_type": "complex_forbidden_content",
+    "complexity": "high",
+    "prompt": "İskonto oranı politikası hakkında detaylı bilgi ver. UYARI: Mekanizmaları ve tarihi background'ı sun, fakat ekonomik sonuçları tahmin ETME, spekülasyon YAPMA.",
+    "constraint_params": {
+      "allowed_content": ["mechanisms", "historical_background"],
+      "forbidden_content": ["predictions", "speculations", "future_implications"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_055",
+    "category": "language",
+    "constraint_type": "language",
+    "complexity": "very_high",
+    "prompt": "Corporate governance (Kurumsal yönetişim) kurallarından bahset. UYARI: Tüm İngilizce finansal terimleri Türkçeleştir, kısaltma YAPMA, orijinal haliyle yazma.",
+    "constraint_params": {
+      "forbidden_language": "english_financial_terms",
+      "forbidden_abbreviations": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_056",
+    "category": "structure",
+    "constraint_type": "structure",
+    "complexity": "high",
+    "prompt": "Mikrofinans ve makrofinans arasındaki fark nedir? UYARI: İçeriği iki eşit büyüklükte bölüme ayır: Mikro ve Makro. İçerik bakımından dengeli ol, birisi diğerinden uzun OLMAMALI.",
+    "constraint_params": {
+      "required_structure": "balanced_sections",
+      "section_count": 2,
+      "section_balance": "equal"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_057",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "high",
+    "prompt": "Banka başarısızlığı dönemleri nedir? UYARI: Dönemleri ve genel özellikleri anlat, fakat ayrıntılı hukuki takibi ve davetname prosedürünü EKLEME.",
+    "constraint_params": {
+      "allowed_content": ["periods", "general_characteristics"],
+      "forbidden_content": ["legal_procedures", "detailed_bankruptcy_process"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_058",
+    "category": "dynamic_constraint",
+    "constraint_type": "conditional",
+    "complexity": "very_high",
+    "prompt": "Eğer federal para politikasından bahsedersen, Şu an uygulamada olan Reşit Görevleriniz de ekle. Ama 'merkez', 'politika', 'oran' kelimelerini alternatif olarak kullan, doğrudan YAZMA.",
+    "constraint_params": {
+      "conditional": {
+        "if_mentioned": "federal_monetary_policy",
+        "then_must_include": "current_implementations"
+      },
+      "forbidden_words": ["merkez", "politika", "oran"],
+      "synonym_required": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_059",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "simple",
+    "prompt": "Gayrimenkul yatırımının adımlarını anlat. UYARI: Madde madde işaretler kullanarak SUNMA, metni sürekli olarak yaz.",
+    "constraint_params": {
+      "forbidden_format": "bullet_points"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_060",
+    "category": "word_limit",
+    "constraint_type": "word_limit",
+    "complexity": "high",
+    "prompt": "Türkiye'nin uluslararası ödeme dengesini açıkla. UYARI: Tam olarak 50-100 kelime kullan. Kesinlikle bu aralıkta kalmalı.",
+    "constraint_params": {
+      "min_words": 50,
+      "max_words": 100
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_061",
+    "category": "forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "very_high",
+    "prompt": "Dış ticaret dengesi ve cari hesap nasıl etkilenir? UYARI: 'denge', 'hesap', 'ticaret', 'etkileme' ve 'para' kelimelerine birebir alternatif terimler bul.",
+    "constraint_params": {
+      "forbidden_words": ["denge", "hesap", "ticaret", "etkileme", "para"],
+      "synonym_required": true,
+      "synonym_count_required": 5
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_062",
+    "category": "semantic_forbidden_words",
+    "constraint_type": "forbidden_words",
+    "complexity": "very_high",
+    "prompt": "Pazar çöküşünün nedenleri nelerdir? UYARI: 'çöküş', 'düşüş', 'kriz', 'şok', 'bozulma' kelimelerine alternatif anlatımlar bul.",
+    "constraint_params": {
+      "forbidden_words": ["çöküş", "düşüş", "kriz", "şok", "bozulma"],
+      "synonym_required": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_063",
+    "category": "multi_constraint_combination",
+    "constraint_type": "combined",
+    "complexity": "very_high",
+    "prompt": "Gümrük birliği ekonomik etkileri hakkında rapor hazırla. UYARI: (1) Tam olarak 3 paragraf, (2) 'gümrük' kelimesi KULLANMA, (3) Sayısal veri EKLEME (yazılı form), (4) Rapor tonu resmi olsun.",
+    "constraint_params": {
+      "exact_paragraphs": 3,
+      "forbidden_words": ["gümrük"],
+      "require_numeric_data_in_text": true,
+      "required_style": "report_formal"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_064",
+    "category": "contextual_constraint",
+    "constraint_type": "context_aware",
+    "complexity": "high",
+    "prompt": "Finansal istikrarsızlık belirtilerinden bahset. UYARI: Uyarı işaretlerini aç, fakat panikle veya çok finansal olmayan tavsiye VERME.",
+    "constraint_params": {
+      "allowed_content": ["warning_signs", "indicators"],
+      "forbidden_content": ["panic_inducing_language", "unqualified_advice"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_065",
+    "category": "length_and_structure_combined",
+    "constraint_type": "combined_structural",
+    "complexity": "very_high",
+    "prompt": "Yatırım stratejileri özetle. UYARI: Tam olarak 5 ayrı stratejiden bahset, her biri 2-3 cümle, sonrasında bir genel özet yapıdan oluşan yapı kullan.",
+    "constraint_params": {
+      "strategy_count": 5,
+      "sentences_per_strategy": {"min": 2, "max": 3},
+      "require_summary": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_066",
+    "category": "domain_specific",
+    "constraint_type": "domain_sensitive",
+    "complexity": "very_high",
+    "prompt": "Müşteri gizliliği ve veriye dayalı pazarlama arasındaki dengeden bahset. UYARI: Her iki tarafı aç, fakat müşteri verisi nasıl toplanır/ işlendiğine phatik örnek VERME.",
+    "constraint_params": {
+      "forbidden_content": ["data_collection_methods", "processing_details"],
+      "required_focus": ["privacy_regulations", "ethical_considerations"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_067",
+    "category": "format",
+    "constraint_type": "format",
+    "complexity": "medium",
+    "prompt": "Risk yönetimi süreçlerini anlatırken matematiksel formüllerden bahset. UYARI: Formül ve denklem GÖSTERME, sadece sözel tanımla.",
+    "constraint_params": {
+      "forbidden_format": "mathematical_formulas"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_068",
+    "category": "forbidden_content",
+    "constraint_type": "forbidden_content",
+    "complexity": "high",
+    "prompt": "Spekülasyonun piyasalara etkisini açıkla. UYARI: Mekanizmaları ve nedenlerini anlat, fakat spekülasyon stratejileri SUNMA.",
+    "constraint_params": {
+      "allowed_content": ["mechanisms", "reasons", "impact"],
+      "forbidden_content": ["strategies", "how_to_speculate"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_069",
+    "category": "style_constraint",
+    "constraint_type": "tone_and_style",
+    "complexity": "high",
+    "prompt": "Makroekonomik göstergeler nedir? UYARI: Teknik açıklamaları basit ve anlaşılır dile çevir, jargon minimal kullan.",
+    "constraint_params": {
+      "required_style": "simplified_accessible",
+      "forbidden_style": "overly_technical"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_070",
+    "category": "numeric",
+    "constraint_type": "numeric",
+    "complexity": "high",
+    "prompt": "Altı aylık ara dönem kâr hedefini belirt. UYARI: Hedef rakamını yazıyla ifade et, sembol KULLANMA.",
+    "constraint_params": {
+      "forbidden_numeric": true,
+      "require_spelled_out_numbers": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_071",
+    "category": "conflicting_constraints",
+    "constraint_type": "conflicting",
+    "complexity": "very_high",
+    "prompt": "Bağımsız denetim ve dahili kontrol mekanizmalar hakkında detaylı anlatımı sun. UYARI: Tam olarak 2 sayfayı dolduracak kadar, fakat bilginin 30%'ini köpü altında tutması gerekiyor.",
+    "constraint_params": {
+      "min_content": "extensive",
+      "content_restriction": {"top_level": 0.7, "footnote": 0.3}
+    },
+    "expected_violation": false,
+    "challenge": "conflicting_detail_and_presentation_levels"
+  },
+  {
+    "id": "nc_072",
+    "category": "precision_constraint",
+    "constraint_type": "numeric_description",
+    "complexity": "very_high",
+    "prompt": "2023 yılında enflasyon oranı nedir? UYARI: Kesin rakam VERME, tahmini yazıyla ifade et. Örneğin: 'yüzde otuz sekiz ile kırk arasında' gibi.",
+    "constraint_params": {
+      "forbidden_numeric": true,
+      "require_range_description": true,
+      "range_format": "text_range"
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_073",
+    "category": "escaping_forbidden_content",
+    "constraint_type": "complex_forbidden_content",
+    "complexity": "very_high",
+    "prompt": "Kriptopara düzenlemelerini açıkla. UYARI: Düzenlemenin içeriği, amacı ve çerçevesi sun, ama gelecek projeksiyonları, yatırım potansiyelini, değer tahminini YAPMA.",
+    "constraint_params": {
+      "allowed_content": ["regulations", "framework", "purpose"],
+      "forbidden_content": ["price_predictions", "investment_potential", "value_projections"]
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_074",
+    "category": "language",
+    "constraint_type": "language",
+    "complexity": "high",
+    "prompt": "Mana yönetimi (portfolio management) elemanlarından bahset. UYARI: Türkçe karşılıklarını kullan, başa çıkma terminolojisi EKLEME.",
+    "constraint_params": {
+      "forbidden_language": "english_loan_words",
+      "require_turkish_terms": true
+    },
+    "expected_violation": false
+  },
+  {
+    "id": "nc_075",
+    "category": "structure",
+    "constraint_type": "structure",
+    "complexity": "high",
+    "prompt": "Devlet ve özel sektor işbirliği (PPP) modellerini karşılaştır. UYARI: Hangisi daha iyi, önerileri SUNMA. Çift taraflı ve tarafsız kalın.",
+    "constraint_params": {
+      "forbidden_content": ["endorsements", "recommendations"],
+      "required_style": "neutral_comparative"
+    },
+    "expected_violation": false
+  }
+]

@@ -1,0 +1,562 @@
+[
+  {
+    "id": "tr_grammar_001",
+    "category": "özne_yüklem_uyumu",
+    "question": "Aşağıdaki cümlede dil bilgisi hatası var mı? Varsa düzeltin: 'Çocuklar parkta koşuyor ve oyun oynuyor.'",
+    "expected_answer": "Hata yok, cümle dilbilgisi açısından doğru.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_grammar_002",
+    "category": "özne_yüklem_uyumu",
+    "question": "Aşağıdaki cümlede dil bilgisi hatası var mı? Varsa düzeltin: 'Kitaplar masanın üstünde duruyor.'",
+    "expected_answer": "Hata var. Doğrusu: 'Kitaplar masanın üstünde duruyor' veya 'Kitap masanın üstünde duruyor.' Çoğul özne (kitaplar) ile tekil yüklem uyumsuz kullanılmamış ama 'duruyor' yerine 'duruyorlar' tercih edilebilir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_003",
+    "category": "de_da_kullanımı",
+    "question": "'Okulda' mı yoksa 'okulda' mı yazılır? Açıklayın.",
+    "expected_answer": "'okulda' doğru yazılır (birleşik). -de/-da eki bitişik yazılır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_grammar_004",
+    "category": "de_da_kullanımı",
+    "question": "Bu cümleyi doğru yazın: 'Sen de gel' veya 'Sende gel'?",
+    "expected_answer": "'Sen de gel' doğru. 'de' bağlacı ayrı yazılır. 'Sende' iyelik eki olur (senin üzerinde/yanında).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_005",
+    "category": "mi_soru_eki",
+    "question": "'Geldi mi?' doğru mu yoksa 'Geldimi?' doğru mu?",
+    "expected_answer": "'Geldi mi?' doğru. Soru eki 'mi/mı/mu/mü' ayrı yazılır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_grammar_006",
+    "category": "ki_bağlacı",
+    "question": "Bu cümlelerde 'ki' kullanımı doğru mu? 1) 'Öyle güzelki hayran kaldım.' 2) 'Evdeki kitabı aldım.'",
+    "expected_answer": "1) Yanlış. 'Öyle güzel ki hayran kaldım.' olmalı (bağlaç ayrı yazılır). 2) Doğru. 'evdeki' sıfat-fiil eki olarak bitişik yazılır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_007",
+    "category": "büyük_küçük_harf",
+    "question": "'türkiye cumhuriyeti' ifadesi nasıl yazılmalıdır?",
+    "expected_answer": "'Türkiye Cumhuriyeti' - Özel isimler büyük harfle başlar.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_grammar_008",
+    "category": "noktalama",
+    "question": "Bu cümleyi noktalama işaretleriyle düzeltin: 'Ali Mehmet ve Ayşe sinemaya gittiler film çok güzeldi'",
+    "expected_answer": "'Ali, Mehmet ve Ayşe sinemaya gittiler. Film çok güzeldi.' veya 'Ali, Mehmet ve Ayşe sinemaya gittiler; film çok güzeldi.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_009",
+    "category": "iyelik_eki",
+    "question": "'Annemin arabası' ifadesi dilbilgisi açısından doğru mu? Açıklayın.",
+    "expected_answer": "Doğru. 'annemin' (tamlayan) + 'arabası' (tamlanan) = İyelik belirtme eki (-in) + iyelik eki (-sı).",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_010",
+    "category": "çoğul_eki",
+    "question": "'Çocukların oyuncakları' ifadesinde kaç tane çoğul eki var?",
+    "expected_answer": "İki çoğul eki var: 'çocuk-lar' ve 'oyuncak-lar-ı' (ikinci -lar çoğul, -ı iyelik).",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_011",
+    "category": "fiil_çekimi",
+    "question": "'Gelmek' fiilinin geniş zamanda 3. tekil şahıs çekimi nedir?",
+    "expected_answer": "'gelir' veya 'gelmez' (olumlu/olumsuz)",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_grammar_012",
+    "category": "yazım_kuralı",
+    "question": "'Getirmedemi' mi yoksa 'getirmedi mi' mi yazılır?",
+    "expected_answer": "'getirmedi mi' - Fiil çekimi ve soru eki ayrı yazılır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_grammar_013",
+    "category": "ses_uyumları",
+    "question": "'Kapıya' mı yoksa 'kapıyı' mı? Hangisi doğru ve neden?",
+    "expected_answer": "İkisi de farklı anlamlarda doğru: 'kapıya' (yönelme hali: -a/-e), 'kapıyı' (belirtme hali: -ı/-i). Anlamına göre kullanılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_014",
+    "category": "virgül_kullanımı",
+    "question": "Bu cümlede virgül gerekli mi? 'Akşam olunca eve döndük'",
+    "expected_answer": "Virgül opsiyonel. 'Akşam olunca, eve döndük.' şeklinde yazılabilir ama zorunlu değil.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_015",
+    "category": "anlamca_benzer_ama_farklı",
+    "question": "'Senden' ve 'sen den' arasındaki fark nedir?",
+    "expected_answer": "'senden' (ayrılma hali eki, bitişik): senden ayrıldım. 'sen den' ayrı yazılmaz, dilbilgisi hatası olur.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_016",
+    "category": "fiilimsi",
+    "question": "'Koşarak gelen çocuk' cümlesindeki 'koşarak' hangi fiilimsi türüdür?",
+    "expected_answer": "Zarf-fiil (ulaç). -arak/-erek eki ile yapılır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_017",
+    "category": "edat_kullanımı",
+    "question": "'İle' edatının kullanımı: 'Arkadaşımla gittim' mi yoksa 'arkadaşım ile gittim' mi daha yaygın?",
+    "expected_answer": "'Arkadaşımla gittim' daha yaygın. 'ile' genelde bitişik kullanılır (-la/-le), ayrı yazılırsa vurgulu/resmi anlamda kullanılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_018",
+    "category": "sıfat_tamlaması",
+    "question": "'Kırmızı araba' bir tamlama mı? Hangi tür?",
+    "expected_answer": "Evet, sıfat tamlaması. Sıfat (kırmızı) + isim (araba). İsim tamlaması değil çünkü iyelik eki yok.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_019",
+    "category": "zamir_kullanımı",
+    "question": "'Herkes kendi işine baksın' cümlesindeki 'kendi' hangi zamir türüdür?",
+    "expected_answer": "Dönüşlülük zamiri.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_020",
+    "category": "anlam_bilgisi",
+    "question": "'Elma ağacı' ve 'ağaç elma' aynı anlama mı gelir?",
+    "expected_answer": "Hayır. 'Elma ağacı' = elma veren ağaç (sıfat tamlaması). 'Ağaç elma' anlamsız veya mecaz kullanım olabilir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_021",
+    "category": "ses_uyumı_kombinasyonları",
+    "question": "'Kız' kelimesine -lar eki eklenerek çoğul hali alınır. Ama 'kızlar' yazılırken neden -lar değil de -lar kalır? ses uyumu kuralını açıklayın.",
+    "expected_answer": "Kız (kalın ses). -lar/-ler ses uyumunda kalın sese -lar, ince sese -ler eklenir. Kız (ı) + -lar = kızlar (kalın ünlü uyumu). Eğer soruda kastedilen başka bir ses durumu varsa cevap açıklanır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_022",
+    "category": "sayı_çoğul_katişması",
+    "question": "'Üç çocuk' mi yoksa 'üç çocuklar' mı doğru yazılır? Neden?",
+    "expected_answer": "'Üç çocuk' doğru. Saymayan sayılar (3, 4, 5... ve belirsiz sayılar) sonrasında çoğul eki (-lar/-ler) kullanılmaz çünkü sayı zaten çokluk bildirir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_grammar_023",
+    "category": "belirlilik_belirsizlik",
+    "question": "'Bir kitap okudum' ve 'Kitabı okudum' arasındaki dilbilgisi farkı nedir?",
+    "expected_answer": "'Bir kitap okudum' = belirsiz (bir tane, bilinmeyen hangi kitab). 'Kitabı okudum' = belirli (belirlenmiş kitap, konuşanlar bilir). Belirtme hali eki (-ı/-i) belirlilik gösterir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_024",
+    "category": "tamlama_zincirleme",
+    "question": "'Annemin arkadaşının kız kardeşinin ev sahip' cümlesinde kaç tamlama vardır? Analiz edin.",
+    "expected_answer": "Üç tamlama var: 1) Annemin arkadaşı (iyelik), 2) arkadaşının kız kardeşi (iyelik, benzeri), 3) kız kardeşinin evi (iyelik). Her seviyede tamlayan + tamlanan oluşuyor.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_grammar_025",
+    "category": "fiil_zamanı_kombinasyonu",
+    "question": "'Gitmiş olacak' fiil çekiminde hangi zamanlar birleştirilmiş? Ne anlama geliyor?",
+    "expected_answer": "Geçmiş (git-miş) + belirtisiz geleceğin şimdiki (olacak) = 'Gitmişliklerini yapmış olacak' (spekulatif geçmiş/yakın geçmiş beklentisi). Çok kompleks zaman yapısı.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_grammar_026",
+    "category": "edilgen_etken_karışımı",
+    "question": "'Kapı kapalı tutulmuş' cümlesinde edilgen yapı var mı? Analiz edin.",
+    "expected_answer": "Evet, edilgen yapı var. 'Kapı' (özne, etkilenen) + 'kapalı tutulmuş' (edilgen yüklem: tut-ul-muş). Etken hali: 'Birisi kapıyı kapalı tutmuş' olurdu.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_027",
+    "category": "yönelik_bulunma_uyumsuzluğu",
+    "question": "'Okula gidiyorum' ile 'Okulda gidiyorum' arasındaki dilbilgisi farkı ve uygunluğu açıklayın.",
+    "expected_answer": "'Okula gidiyorum' doğru (yönelme hali: -a/-e, nereye sorusuna cevap). 'Okulda gidiyorum' yanlış/garip (bulunma hali: -da/-de, nerede sorusuna cevap ama 'gitmek' hareketi gerektirdiği için 'okulda kal-' olmalı.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_grammar_028",
+    "category": "soru_ekinin_konumu",
+    "question": "'Kitap mı getirmedi?' mi yoksa 'Kitap getirmedi mi' mi dilbilgisi açısından doğru? İkisinin farkı ne?",
+    "expected_answer": "'Kitap getirmedi mi?' doğru sıra (yüklem sonu). 'Kitap mı getirmedi?' seçenek vurgular (kitap mı, başka bir şey mi?). İlki tüm cümleyi, ikincisi nesnesi sorguya gönderir.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_grammar_029",
+    "category": "isim_ekinin_sırası",
+    "question": "'Kitaplarıma' kelimesinin parçalaması: hangi ekler hangi sırayla eklendi? Açıklayın.",
+    "expected_answer": "Kitap + -lar (çoğul) + -ı (iyelik) + -m (sahip) + -a (yönelme) = kitaplarıma. Ek sırası: türetme < sayı/çoğul < iyelik taşıyıcı < iyelik sahip < case/hal ekler.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_grammar_030",
+    "category": "kompleks_olumsuzluk",
+    "question": "'Almadığım kitabı satmayacağım' cümlesinde kaç olumsuzluk eki var ve nasıl sıralanıyor?",
+    "expected_answer": "İki olumsuzluk eki var: 'almadığım' (-ma olumsuzluk) + 'satmayacağım' (-ma olumsuzluk). Her biri kendi fiilinde, çoğul olumsuz deyim için cumlaştırılmış. Ekler: fiil + -ma (olumsuzluk) + çekimler.",
+    "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_031",
+  "category": "noktalama_kuralları",
+  "question": "Aşağıdaki cümlede noktalama hatası var mıdır? Nedenini açıklayın: 'Eğer sabah erken kalkarsan, otobüse rahatlıkla yetişirsin.'",
+  "expected_answer": "Evet, hata vardır. Türk dil bilgisi kurallarına göre şart ekinden (-sa/-se) sonra virgül konulmaz. Metinde ard arda sıralanmış birden fazla şart cümlesi olmadığı için buradaki virgül kullanımı yanlıştır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_032",
+  "category": "yazım_kuralları_kısaltmalar",
+  "question": "'TDK'nın yeni yayımladığı sözlük çok kapsamlı.' cümlesindeki yazım yanlışını bulun ve düzeltin.",
+  "expected_answer": "Yanlışlık 'TDK'nın' ifadesindedir. Türkçede ünsüz harfle biten kısaltmalara gelen ekler, kısaltmanın son harfinin okunuşuna göre belirlenir. 'K' harfi 'ka' değil 'ke' olarak okunduğu için doğru yazım 'TDK'nin' olmalıdır.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_033",
+  "category": "yazım_kuralları_kurum_kuruluş",
+  "question": "Türkiye Büyük Millet Meclisi'ne yapılan ziyarette öğrenciler çok heyecanlıydı.' cümlesinde kesme işaretinin kullanımı doğru mudur?",
+  "expected_answer": "Yanlıştır. Kurum, kuruluş, kurul, birleşim, oturum ve iş yeri adlarına gelen ekler kesme işaretiyle ayrılmaz. Doğrusu 'Türkiye Büyük Millet Meclisine' olmalıdır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_034",
+  "category": "fiil_çatısı_dönüşlü_edilgen",
+  "question": "'Ayşe toplantıdan önce güzelce hazırlandı.' ile 'Sınıf toplantıdan önce güzelce hazırlandı.' cümlelerindeki 'hazırlandı' fiillerinin çatı özelliklerini karşılaştırın.",
+  "expected_answer": "İlk cümlede 'Ayşe' hem işi yapan hem de etkilenendir, bu yüzden fiil 'dönüşlü' çatılıdır. İkinci cümlede sınıf başkaları tarafından hazırlanmıştır (işi yapan belli değildir), bu yüzden fiil 'edilgen' çatılıdır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_035",
+  "category": "fiil_çatısı_oldurgan_ettirgen",
+  "question": "'Ağlamak' fiilini önce oldurgan, sonra ettirgen yapacak ekleri getirerek açıklayın.",
+  "expected_answer": "'Ağlamak' geçişsiz bir fiildir. '-t' eki getirilerek 'ağlatmak' yapıldığında nesne alabilir hale gelir ve 'oldurgan' olur. Buna bir de '-tır' eki eklenip 'ağlattırmak' yapıldığında geçişlilik derecesi artırılmış olur ve 'ettirgen' çatı özelliği kazanır.",
+  "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_036",
+  "category": "anlatım_bozukluğu_mantık",
+  "question": "'Bırakın patates doğramayı, mükemmel bir fırın yemeği bile yapamaz o.' cümlesindeki anlatım bozukluğunun sebebini açıklayın.",
+  "expected_answer": "Mantık ve sıralama hatası vardır. 'Bırakın' ifadesinden sonra zor olan eylem, cümlenin devamında ise daha kolay olan eylem söylenmelidir. Doğrusu: 'Bırakın mükemmel bir fırın yemeği yapmayı, patates bile doğrayamaz o.' olmalıdır.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_037",
+  "category": "yazım_kuralları_birleşik_kelime",
+  "question": "'Aslanağzı' kelimesi neden bitişik yazılır? Kuralı nedir?",
+  "expected_answer": "Birleşik kelimeyi oluşturan sözcüklerden her ikisi veya ikincisi, birleşme sırasında anlam değişmesine uğrarsa bu tür birleşik kelimeler bitişik yazılır. 'Aslanağzı' bir bitki adıdır ve ne aslanla ne de ağızla gerçek anlamda ilgisi kalmamıştır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_038",
+  "category": "fiilimsi_kalıcı_isim",
+  "question": "'Binanın girişindeki danışmaya gidip evrakları teslim etti.' cümlesinde fiilimsi var mıdır? Açıklayın.",
+  "expected_answer": "Hayır, yoktur. 'Danışma' kelimesi '-ma' isim-fiil ekini almış olsa da eylem anlamını tamamen yitirerek bir yerin/birimin kalıcı adı olmuştur. Bu nedenle kalıcı isim kabul edilir, fiilimsi değildir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_039",
+  "category": "ki_bağlacı_istisnaları",
+  "question": "'Madem ki gelmeyecektin, neden haber vermedin?' cümlesindeki yazım yanlışını açıklayın.",
+  "expected_answer": "Yanlışlık 'Madem ki' yazımındadır. 'ki' bağlacı normalde ayrı yazılır ancak SOMBAHÇEMİ (Sanki, Oysaki, Mademki, Belki, Halbuki, Çünki/Çünkü, Meğerki, İllaki) şifresiyle bilinen kalıplaşmış sözcüklerde bitişik yazılmalıdır. Doğrusu 'Mademki' olmalıdır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_040",
+  "category": "ses_olayları_türeme",
+  "question": "'Onun bu konudaki hisine güveniyorum.' cümlesindeki ses bilgisinden kaynaklanan yazım yanlışını düzeltin ve kuralı belirtin.",
+  "expected_answer": "Doğrusu 'hissine' olmalıdır. Arapça kökenli bazı tek heceli kelimeler (his, hak, sır vb.) ünlüyle başlayan bir ek aldıklarında sondaki ünsüz harf ikizleşir. Buna ünsüz türemesi denir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_041",
+  "category": "anlatım_bozukluğu_özne_eksikliği",
+  "question": "'Kitabın kapağı yırtıldı ve çöpe atıldı.' cümlesi dil bilgisi kurallarına tamamen uygun mudur? Değilse neden?",
+  "expected_answer": "Uygun değildir, özne eksikliğinden kaynaklanan anlatım bozukluğu vardır. İkinci cümlenin ('çöpe atıldı') öznesi 'kitap' olmalıdır; aksi halde ilk cümlenin öznesi olan 'kitabın kapağı' çöpe atılmış gibi bir anlam çıkar. Düzeltilmiş hali: 'Kitabın kapağı yırtıldı ve kitap çöpe atıldı.'",
+  "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_042",
+  "category": "ses_olayları_daralma_yanılgısı",
+  "question": "'Beni anlıyan tek insan sensin.' cümlesinin yazımı doğru mudur? Açıklayın.",
+  "expected_answer": "Yanlıştır. Doğrusu 'anlayan' olmalıdır. Türkçede ünlü daralması sadece 'y' kaynaştırma ünsüzünden önce 'de-' ve 'ye-' fiillerinde (diyen, yiyen) veya şimdiki zaman eki '-yor'dan önce gerçekleşir. 'Anlamak' fiiline gelen '-an' sıfat-fiil eki daralma yapmaz.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_043",
+  "category": "sözcük_türü_sıfat_zamir",
+  "question": "'Kimi insanlar bu durumu kabullenemez, kimileri ise çabuk alışır.' cümlesindeki 'kimi' ve 'kimileri' sözcüklerinin türlerini (sıfat/zamir vs.) belirtin.",
+  "expected_answer": "'Kimi' kelimesi 'insanlar' ismini belirttiği için belgisiz sıfattır. 'Kimileri' kelimesi ise ismin yerini tutup çekim eki (-ler, -i) aldığı için belgisiz zamirdir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_044",
+  "category": "özel_isim_çoğul_eki",
+  "question": "'Mustafa Bey'ler henüz toplantıya gelmedi.' cümlesindeki yazım yanlışını ve kuralını yazın.",
+  "expected_answer": "Doğrusu 'Mustafa Beyler' olmalıdır. Özel isimlere ve unvanlara getirilen '-ler/-lar' eki saygı, aile veya sülale anlamı kattığında kesme işaretiyle ayrılmaz ve bu ekten sonra gelen diğer ekler de bitişik yazılır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_045",
+  "category": "isim_tamlaması_arasına_sıfat",
+  "question": "'Şehrin tarihi ve dar sokaklarında kaybolduk.' cümlesindeki tamlamanın türünü tam ve detaylı olarak analiz edin.",
+  "expected_answer": "Burada tamlayan ('şehrin') ve tamlanan ('sokakları') arasına sıfatlar ('tarihi' ve 'dar') girmiş bir belirtili isim tamlaması vardır. 've' bağlacı iki sıfatı birbirine bağlamıştır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_046",
+  "category": "düzeltme_işareti",
+  "question": "'Hala bu konuyu tartışıyoruz, oysa halam bile bize hak verdi.' cümlesinde düzeltme işareti (şapka) kullanımı gerektiren kelime var mıdır?",
+  "expected_answer": "Evet, vardır. Zaman bildiren 'Hala' (henüz) kelimesi, babanın kız kardeşi anlamına gelen 'hala' ile karışmaması için 'Hâlâ' şeklinde düzeltme işareti ile yazılmalıdır.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_047",
+  "category": "ikileme_noktalama",
+  "question": "'Aşağı, yukarı on yıldır bu mahallede yaşıyoruz.' cümlesindeki hatayı bulun.",
+  "expected_answer": "İkilemelerin ('aşağı yukarı') arasına virgül veya herhangi bir noktalama işareti konulmaz. Virgül kaldırılmalıdır.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_048",
+  "category": "ki_ekinin_türü",
+  "question": "'Seninki yine okula geç kalmış.' cümlesindeki '-ki' ekinin türü ve işlevi nedir?",
+  "expected_answer": "Buradaki '-ki' ilgi zamiridir. Bir ismin (örn: 'senin çocuğun', 'senin arkadaşın') yerini tutmuş ve tamlayan ekinin ('-in') üzerine gelmiştir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_049",
+  "category": "ses_olayları_hece_düşmesi",
+  "question": "'Soğuktan burnu kıpkırmızı olmuştu.' cümlesinde hangi ses olayı vardır? Sözcüğün kökünü belirterek açıklayın.",
+  "expected_answer": "Ünlü (hece) düşmesi vardır. Sözcüğün kökü 'burun'dur. Ünlüyle başlayan bir ek (-u iyelik eki) aldığında ikinci hecesindeki dar ünlü ('u') düşmüş ve 'burnu' olmuştur.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_050",
+  "category": "birleşik_fiil_yazımı",
+  "question": "'Olanları uzaktan seyir etti.' yazımı doğru mudur? Kuralıyla birlikte açıklayın.",
+  "expected_answer": "Yanlıştır. 'Seyir' kelimesi 'etmek' yardımcı fiiliyle birleştiğinde, ünlü düşmesi (seyir -> seyr) meydana geldiği için bitişik yazılmalıdır. Doğrusu 'seyretti' olmalıdır.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_051",
+  "category": "anlatım_bozukluğu_nesne_eksikliği",
+  "question": "'Çiçeklerin suyunu verdi ve güneşe koydu.' cümlesinde bir bozukluk var mıdır?",
+  "expected_answer": "Evet, nesne eksikliğinden kaynaklanan anlatım bozukluğu vardır. İkinci cümlede neyi güneşe koyduğu belirtilmemiştir. 'Çiçeklerin suyu'nu güneşe koymuş gibi bir anlam çıkar. Doğrusu '...ve onları (çiçekleri) güneşe koydu' olmalıdır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_052",
+  "category": "yazım_kuralları_tarihler",
+  "question": "'Sınav 15 haziran pazar günü yapılacakmış.' cümlesini yazım kurallarına uygun hale getirin.",
+  "expected_answer": "'Sınav 15 Haziran Pazar günü yapılacakmış.' Belli bir tarihi bildiren ay ve gün adları büyük harfle başlar. 'günü' kelimesi ise cins isim olduğu için küçük harfle kalır.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_053",
+  "category": "soru_sözcüklerinin_türü",
+  "question": "'Hangi arabayı alacağına karar verdin mi, hangisi sana daha uygun?' cümlesindeki 'hangi' ve 'hangisi' sözcüklerinin dil bilgisi türlerini karşılaştırın.",
+  "expected_answer": "'Hangi' sözcüğü 'araba' ismini soru yoluyla belirttiği için soru sıfatıdır. 'Hangisi' ise doğrudan ismin yerini tuttuğu ve iyelik eki (-si) aldığı için soru zamiridir.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_054",
+  "category": "zarf_fiil_kalıplaşma",
+  "question": "'Hava sıcaklığı giderek artıyor.' cümlesinde 'giderek' kelimesi eylemsi (fiilimsi) midir, yoksa başka bir tür müdür? Açıklayın.",
+  "expected_answer": "Burada 'giderek' kelimesi, 'gitmek' fiilinden -erek zarf-fiil ekini almış gibi görünse de zamanla eylem anlamını tamamen yitirip 'zamanla, yavaş yavaş' anlamını kazanmış ve kalıplaşmış bir durum zarfı olmuştur. Bu nedenle güncel dil bilgisinde zarf fiil kabul edilmez.",
+  "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_055",
+  "category": "kurallı_birleşik_fiil_yazımı",
+  "question": "'Giden geminin ardından baka kaldı.' cümlesindeki yazım hatasını ve fiilin türünü söyleyin.",
+  "expected_answer": "Yazım hatası 'baka kaldı' şeklindedir, kurallı birleşik fiiller daima bitişik yazılır ('bakakaldı'). Bu fiil, eylemin devam ettiğini bildiren 'sürerlik' (sürekllik) kurallı birleşik fiilidir (-a kalmak).",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_056",
+  "category": "çatı_geçişlilik",
+  "question": "'Sabaha kadar mışıl mışıl uyudu.' cümlesindeki fiilin geçişli mi yoksa geçişsiz mi olduğunu nasıl anlarız?",
+  "expected_answer": "Fiilin başına 'onu' kelimesini getirerek anlarız. 'Onu uyudu' anlamsız olduğu ve fiil bir nesne alamadığı için 'uyumak' eylemi nesnesine göre geçişsizdir.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_057",
+  "category": "ek_bilgisi_miş_işlevi",
+  "question": "'Okunmuş kitapları geri dönüşüme gönderdik.' ve 'Bütün kitaplar çoktan okunmuş.' cümlelerindeki '-muş' eklerinin görevlerini ayırt edin.",
+  "expected_answer": "İlk cümlede 'okunmuş' kelimesi 'kitap' ismini nitelediği için '-muş' sıfat-fiil ekidir (yapım eki). İkinci cümlede ise cümlenin yüklemidir ve geçmiş zaman (öğrenilen/duyulan) bildiren haber kipi ekidir (çekim eki).",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_058",
+  "category": "anlatım_bozukluğu_gereksiz_yardımcı_fiil",
+  "question": "'Senden şüphe etmedim değil.' cümlesindeki anlatım bozukluğunu, yardımcı eylem kuralı çerçevesinde düzeltin.",
+  "expected_answer": "Türkçede doğrudan tek bir fiil (türemiş) ile anlatılabilecek durumlar için yardımcı eylem (etmek, olmak) kullanmak anlatım bozukluğudur. 'Şüphe etmek' yerine 'şüphelenmek' kullanılmalıdır. Düzeltilmiş hali: 'Senden şüphelenmedim değil.'",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_059",
+  "category": "özel_isim_yapım_eki_kesme",
+  "question": "'Ankaralı'lar bu kış çok üşüyecek.' cümlesindeki yazım yanlışının kuralı nedir?",
+  "expected_answer": "Özel isimlere getirilen yapım ekleri (-lı, -lik, -cı vb.) kesme işaretiyle ayrılmaz. Daha da önemlisi, yapım ekinden sonra gelen çekim ekleri de (çoğul eki -lar vb.) ayrılmaz. Doğrusu 'Ankaralılar' olmalıdır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_060",
+  "category": "birleşik_kelime_alt_üst",
+  "question": "'Bilinçaltı' neden bitişik yazılırken, 'masa altı' ayrı yazılır?",
+  "expected_answer": "Somut olarak bir yer bildirmeyen 'alt, üst ve üzeri' sözcükleriyle kurulan birleşik kelimeler bitişik yazılır (Bilinçaltı, akşamüstü, ayaküzeri). Ancak somut olarak bir yer/mekan bildiriyorsa ayrı yazılır (Masa altı, yer altı -maden/jeoloji anlamında).",
+  "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_061",
+  "category": "anlatım_bozukluğu_tamlama",
+  "question": "'Özel ve devlet okulları tatil edildi.' cümlesi neden anlatım bozukluğu barındırır?",
+  "expected_answer": "'Özel' kelimesi sıfattır, 'devlet' kelimesi ise isimdir. İkisi de aynı tamlanana ('okulları') bağlanmıştır ancak 'özel okulları' ifadesi dilbilgisi açısından yanlıştır (sıfat tamlamasına iyelik eki gelmiş olur). Doğrusu: 'Özel okullar ve devlet okulları tatil edildi.' olmalıdır.",
+  "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_062",
+  "category": "edat_bağlaç_ile",
+  "question": "'Edebiyatla tarihi her zaman birbiriyle iç içe düşünmüşümdür.' cümlesinde 'ile' kelimeleri edat mıdır, bağlaç mıdır?",
+  "expected_answer": "'İle' yerine 've' getirilebiliyorsa bağlaç, getirilemiyorsa (araç, birliktelik, durum bildiriyorsa) edattır. Birinci kelimede 'Edebiyat ve tarihi' uyduğu için bağlaçtır. İkinci kelimede 'birbiri ve iç içe' anlamsız olduğu için edattır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_063",
+  "category": "noktalama_eksiltili_cümle",
+  "question": "'Karşımızda uçsuz bucaksız bir deniz' cümlesinin sonuna hangi noktalama işareti gelmelidir ve neden?",
+  "expected_answer": "Üç nokta (...) gelmelidir. Çünkü cümlenin yüklemi yoktur (yargı bildiren fiil veya ek eylem eksiktir), bu tür cümlelere 'eksiltili cümle' denir ve sonlarına üç nokta konur.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_064",
+  "category": "bağlaç_de_anlamı",
+  "question": "'Gözlerimle görsem de sana inanmam.' cümlesinde 'de' bağlacının cümleye kattığı anlam veya görev nedir?",
+  "expected_answer": "Bu cümlede 'de' bağlacı koşul (şart) cümlesinin ardından gelerek 'bile, dahi' anlamı katmış ve eylemin gerçekleşmeyeceği yönünde bir kesinlik, pekiştirme oluşturmuştur.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_065",
+  "category": "yazım_kuralları_üleştirme",
+  "question": "Metin içindeki sayılarda 'Öğrencilere 2'şer kalem dağıtıldı.' yazımı doğru mudur?",
+  "expected_answer": "Yanlıştır. Üleştirme (paylaştırma) sayıları her zaman yazıyla yazılır, rakamla yazılmaz. Doğrusu 'ikişer' olmalıdır.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_066",
+  "category": "sözcük_öbekleri_zarf_tümleci",
+  "question": "'Sabaha kadar durmaksızın çalıştı.' cümlesindeki 'sabaha kadar' öbeğinin türü ve cümlede üstlendiği öge nedir?",
+  "expected_answer": "Türü edat öbeğidir ('kadar' edatı ve yönelme halindeki ismin birleşimi). Cümlede eylemin zamanını/sürecini bildirdiği için 'zarf tümleci' görevindedir.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_067",
+  "category": "fiil_anlam_kayması",
+  "question": "'Yarın erkenden İstanbul'a gidiyorum.' cümlesinde fiilin kipi ile bildirdiği zaman aynı mıdır? Açıklayın.",
+  "expected_answer": "Aynı değildir. Fiil biçimsel olarak şimdiki zaman kipiyle ('-yor') çekimlenmiştir ancak cümlede 'yarın' kelimesi bulunduğu için anlamca gelecek zamanı kastetmektedir. Buna fiillerde zaman (anlam) kayması denir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_068",
+  "category": "ses_olayları_yumuşamaya_aykırılık",
+  "question": "'Altın saçını tarıyordu.' cümlesindeki 'saçını' kelimesinde neden 'ç' harfi 'c'ye dönüşmemiştir?",
+  "expected_answer": "Türkçede bazı tek heceli kelimeler ünlüyle başlayan ek aldıklarında sonlarındaki sert ünsüz yumuşamaz (örn: saç, suç, top, et). Bu duruma 'ünsüz yumuşamasına aykırılık' denir.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_069",
+  "category": "isim_fiil_kalıcı_isim",
+  "question": "'Günde üç öğün yemek yemelisin.' cümlesindeki 'yemek' kelimelerinin türlerini sırasıyla belirtin.",
+  "expected_answer": "Birinci 'yemek' kelimesi yiyecek anlamında kullanıldığı için artık bir kalıcı isimdir. İkinci kelime ise '-meli' gereklilik kipi almış çekimli bir fiildir (yemek eylemi).",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_070",
+  "category": "yazım_kuralları_sıra_sayı",
+  "question": "Yarışmada '2'nci' oldu ifadesinin yazımı doğru mudur? Açıklayın.",
+  "expected_answer": "Doğrudur. '2' rakamının okunuşu 'iki' şeklindedir ve ünlü harf olan 'i' ile biter. Bu nedenle gelen sıra sayı eki '-inci' değil, '-nci' olmalıdır ve kesmeyle ayrılarak yazıldığında '2'nci' doğru kabul edilir. '2'inci' yazılsaydı yanlış olurdu.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_071",
+  "category": "ses_olayları_ünlü_değişimi",
+  "question": "'Bana' kelimesinin kökü nedir ve burada hangi ses olayı görülmektedir?",
+  "expected_answer": "Kelimenin kökü 'ben' kişi zamiridir. Yönelme hali eki (-a/-e) aldığında 'ben-e' olmak yerine kökteki ünlü kalınlaşarak 'bana' halini alır. Bu olaya 'ünlü değişimi' (veya kökte ünlü değişimi) denir. Aynı durum 'sen' > 'sana' için de geçerlidir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_072",
+  "category": "ikileme_yazımı_pekiştirme",
+  "question": "'Sınavdan sonra kitap mitap görmek istemiyorum.' cümlesinde 'm' harfi ile yapılan kelimenin yazımı kurala uygun mudur?",
+  "expected_answer": "Evet, uygundur. Türkçede 'm' sesi eklenerek (ilk ünsüzün yerine veya ilk ünlüden önce) yapılan pekiştirmeli ikilemeler daima ayrı yazılır (kitap mitap, dolap molap, çocuk mocuk).",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_073",
+  "category": "anlatım_bozukluğu_çelişen_sözcükler",
+  "question": "'Eminim o bu saatlerde memlekete varmış olmalı.' cümlesi neden sorunludur?",
+  "expected_answer": "Cümlede 'eminim' kelimesi kesinlik bildirirken, '-mış olmalı' ifadesi (gereklilik kipiyle yapılan tahmin) olasılık bildirmektedir. Anlamca birbiriyle çelişen sözcüklerin aynı cümlede kullanılması anlatım bozukluğu yaratır.",
+  "difficulty": "easy"
+  },
+  {
+  "id": "tr_grammar_074",
+  "category": "adlaşmış_sıfat_fiil",
+  "question": "'Tanıdıklarına haber ver, yarın toplanıyoruz.' cümlesinde 'tanıdıklarına' kelimesi sıfat mıdır, adlaşmış sıfat fiil midir? İspatlayın.",
+  "expected_answer": "Adlaşmış sıfat fiildir. Normalde '-dık' sıfat-fiil eki almış olan kelimenin önünde bir isim bulunmalıydı (tanıdık insanlara, tanıdık kişilere). Nitelediği isim düştüğü ve isme ait çekim eklerini (-lar, -ı, -n, -a) kendi üzerine aldığı için adlaşmıştır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_075",
+  "category": "ne_ne_bağlacı_uyumu",
+  "question": "'Ne annesini ne de babasını dinlemedi.' cümlesinin dil bilgisi açısından kusuru nedir?",
+  "expected_answer": "'Ne... ne...' bağlacı, cümleye yapıca olumlu görünmesine rağmen anlamca olumsuzluk katar. Bu bağlacın bulunduğu cümlelerin yüklemi mutlaka biçimce olumlu olmalıdır. Doğrusu: 'Ne annesini ne de babasını dinledi.' olmalıdır.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_076",
+  "category": "noktalama_ünlem",
+  "question": "Aşağıdaki iki yazım da noktalama açısından doğru mudur? 1) Eyvah, süt taştı! 2) Eyvah! Süt taştı.",
+  "expected_answer": "Evet, ikisi de doğrudur. Ünlem işareti cümlenin sonuna konulup ünlem bildiren kelimeden sonra virgül kullanılabilir veya ünlem işareti doğrudan ünlem bildiren kelimenin hemen ardından konup cümlenin geri kalanı büyük harfle başlatılarak sonuna nokta konulabilir.",
+  "difficulty": "medium"
+  },
+  {
+  "id": "tr_grammar_077",
+  "category": "cümle_vurgusu",
+  "question": "'Ali kitabı yarın kütüphanede okuyacak.' cümlesinde vurgu hangi ögededir? Cümle yapısına göre kuralı açıklayın.",
+  "expected_answer": "Vurgu 'kütüphanede' (dolaylı tümleç/yer tamlayıcısı) ögesindedir. Kurallı fiil cümlelerinde vurgu, yüklemden hemen önceki ögenin üzerindedir.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_078",
+  "category": "sözcük_yapısı_gövde",
+  "question": "'Gözlükçü' kelimesi yapıca basit midir, türemiş midir? Kök ve gövde ilişkisini açıklayarak cevaplayın.",
+  "expected_answer": "Türemiştir, hatta 'gövdeden türemiş' bir kelimedir. 'Göz' isim köküdür, '-lük' yapım ekini alarak 'gözlük' gövdesini oluşturur. Ardından '-çü' yapım ekini alarak gövdeden bir kez daha türetilmiştir (en az iki yapım eki alan sözcüklere gövdeden türemiş denir).",
+  "difficulty": "very_hard"
+  },
+  {
+  "id": "tr_grammar_079",
+  "category": "belirtili_isim_tamlaması_zamir",
+  "question": "'Bunun nedeni henüz anlaşılamadı.' cümlesinde bir isim tamlaması var mıdır? Varsa türünü ve özelliğini belirtin.",
+  "expected_answer": "Evet, vardır. 'Bunun nedeni' bir belirtili isim tamlamasıdır. Özelliği ise, tamlayanın ('Bunun') bir işaret zamiri olmasıdır. İsim tamlamalarında zamirler tamlayan veya tamlanan görevinde kullanılabilir.",
+  "difficulty": "hard"
+  },
+  {
+  "id": "tr_grammar_080",
+  "category": "ses_olayları_koruyucu_ünsüz",
+  "question": "'Suyun rengi bulanık.' cümlesindeki 'suyun' kelimesinde 'y' harfi kaynaştırma ünsüzü müdür? Eklerle ayırarak açıklayın.",
+  "expected_answer": "Evet, 'y' koruyucu/kaynaştırma ünsüzüdür. Kelimenin kökü 'su'dur. Tamlayan (ilgi) eki olan '-un' (veya -ın) ile ünlüyle biten kök arasına, iki ünlünün yan yana gelememesi kuralı gereği 'y' kaynaştırma harfi girmiştir (su-y-un).",
+  "difficulty": "medium"
+  }
+]

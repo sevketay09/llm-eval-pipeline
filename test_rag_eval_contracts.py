@@ -1,0 +1,261 @@
+"""Contract tests for analysis.rag_eval — offline, no real LLM/embedding."""
+import math
+import unittest
+
+from analysis.rag_eval import (
+    compute_context_precision,
+    compute_context_recall,
+    compute_faithfulness,
+    compute_answer_relevance,
+    isolate_fault,
+    evaluate_rag_case,
+    evaluate_rag_report,
+)
+
+
+class ContextPrecisionContractTests(unittest.TestCase):
+    """Contract tests for compute_context_precision."""
+
+    def test_relevant_context_high_precision(self):
+        """Relevant context (high token overlap) should give precision > 0.5."""
+        question = "What is Python programming language?"
+        contexts = [
+            "Python programming is used for data science and web development.",
+            "Python language is high level and easy to learn.",
+        ]
+        result = compute_context_precision(question, contexts)
+
+        self.assertGreater(result["precision"], 0.5)
+        self.assertGreater(result["relevant_count"], 0)
+        self.assertEqual(result["total_chunks"], 2)
+        self.assertEqual(len(result["chunk_scores"]), 2)
+
+    def test_irrelevant_context_low_precision(self):
+        """Irrelevant context (low token overlap) should give precision < 0.5."""
+        question = "What is Python programming?"
+        contexts = [
+            "Cooking recipes for French cuisine.",
+            "How to bake a chocolate cake.",
+        ]
+        result = compute_context_precision(question, contexts)
+
+        self.assertLess(result["precision"], 0.5)
+        self.assertEqual(result["total_chunks"], 2)
+
+    def test_empty_contexts_zero_precision(self):
+        """Empty contexts should give precision 0.0."""
+        question = "What is Python?"
+        contexts = []
+        result = compute_context_precision(question, contexts)
+
+        self.assertEqual(result["precision"], 0.0)
+        self.assertEqual(result["relevant_count"], 0)
+        self.assertEqual(result["total_chunks"], 0)
+        self.assertEqual(result["chunk_scores"], [])
+
+
+class ContextRecallContractTests(unittest.TestCase):
+    """Contract tests for compute_context_recall."""
+
+    def test_answer_in_context_high_recall(self):
+        """When expected answer words are in context, recall should be high."""
+        question = "What is data science?"
+        contexts = [
+            "Data science is an interdisciplinary field.",
+            "It uses statistics and machine learning techniques.",
+        ]
+        expected_answer = "Data science uses statistics and programming."
+        result = compute_context_recall(question, contexts, expected_answer)
+
+        self.assertGreater(result["recall"], 0.5)
+        self.assertIsNotNone(result["recall"])
+
+    def test_answer_not_in_context_low_recall(self):
+        """When expected answer words are not in context, recall should be low."""
+        question = "What is cooking?"
+        contexts = [
+            "Programming is the art of writing code.",
+            "Software development requires problem solving.",
+        ]
+        expected_answer = "Cooking involves preparing food with heat and spices."
+        result = compute_context_recall(question, contexts, expected_answer)
+
+        self.assertLess(result["recall"], 0.5)
+
+    def test_no_expected_answer_returns_zero(self):
+        """When expected_answer is empty string, recall should be 0.0."""
+        question = "What is data?"
+        contexts = ["Data is processed information."]
+        expected_answer = ""
+        result = compute_context_recall(question, contexts, expected_answer)
+
+        self.assertEqual(result["recall"], 0.0)
+        self.assertEqual(result["covered_tokens"], 0)
+
+
+class FaithfulnessContractTests(unittest.TestCase):
+    """Contract tests for compute_faithfulness."""
+
+    def test_grounded_answer_high_faithfulness(self):
+        """When answer words are in context, faithfulness should be high."""
+        answer = "Python is a programming language used for data science."
+        contexts = [
+            "Python is a high-level programming language.",
+            "Data science uses Python and other tools.",
+        ]
+        result = compute_faithfulness(answer, contexts)
+
+        self.assertGreater(result["faithfulness"], 0.5)
+        self.assertGreater(result["grounded_tokens"], 0)
+
+    def test_hallucinated_answer_low_faithfulness(self):
+        """When answer contains words not in context, faithfulness should be low."""
+        answer = "Cooking involves sautéing vegetables at high temperature with special spices."
+        contexts = [
+            "Programming is writing code.",
+            "Software development requires problem solving.",
+        ]
+        result = compute_faithfulness(answer, contexts)
+
+        self.assertLess(result["faithfulness"], 0.5)
+
+    def test_empty_answer_returns_zero(self):
+        """When answer is empty, faithfulness should be 0.0."""
+        answer = ""
+        contexts = ["Some context text."]
+        result = compute_faithfulness(answer, contexts)
+
+        self.assertEqual(result["faithfulness"], 0.0)
+        self.assertEqual(result["total_answer_tokens"], 0)
+
+
+class IsolateFaultContractTests(unittest.TestCase):
+    """Contract tests for isolate_fault."""
+
+    def _case_result(self, cp, cr, faith, ar):
+        """Helper: build a case_result dict from metrics."""
+        return {
+            "context_precision": {"precision": cp},
+            "context_recall": {"recall": cr},
+            "faithfulness": {"faithfulness": faith},
+            "answer_relevance": {"answer_relevance": ar},
+        }
+
+    def test_bad_retrieval_fault(self):
+        """Low precision and recall indicate retriever fault."""
+        case_result = self._case_result(cp=0.2, cr=0.2, faith=0.8, ar=0.8)
+        result = isolate_fault(case_result)
+
+        self.assertEqual(result["fault"], "retriever")
+        self.assertIn("fault", result)
+
+    def test_hallucination_fault(self):
+        """Low faithfulness indicates generator fault (hallucination)."""
+        case_result = self._case_result(cp=0.8, cr=0.8, faith=0.2, ar=0.7)
+        result = isolate_fault(case_result)
+
+        self.assertEqual(result["fault"], "generator")
+
+    def test_no_fault_all_good(self):
+        """High scores across all metrics indicate no fault."""
+        case_result = self._case_result(cp=0.9, cr=0.9, faith=0.9, ar=0.9)
+        result = isolate_fault(case_result)
+
+        self.assertEqual(result["fault"], "none")
+        self.assertIn("low", result["severity"])
+
+
+class EvaluateRagCaseContractTests(unittest.TestCase):
+    """Contract tests for evaluate_rag_case."""
+
+    def _rag_case(self, q="Python nedir?", contexts=None, answer="Python bir dil.", expected=None):
+        """Helper: build a RAG case."""
+        c = {
+            "question": q,
+            "contexts": contexts or ["Python yüksek seviyeli bir dil."],
+            "answer": answer,
+        }
+        if expected:
+            c["expected_answer"] = expected
+        return c
+
+    def test_required_keys_present(self):
+        """Result should contain all required metric keys."""
+        case = self._rag_case()
+        result = evaluate_rag_case(case)
+
+        self.assertIn("context_precision", result)
+        self.assertIn("faithfulness", result)
+        self.assertIn("answer_relevance", result)
+        self.assertIn("fault_isolation", result)
+        self.assertIn("overall_rag_score", result)
+
+    def test_overall_score_in_range(self):
+        """overall_rag_score should be between 0.0 and 1.0."""
+        case = self._rag_case()
+        result = evaluate_rag_case(case)
+
+        self.assertGreaterEqual(result["overall_rag_score"], 0.0)
+        self.assertLessEqual(result["overall_rag_score"], 1.0)
+
+    def test_with_expected_answer_includes_recall(self):
+        """When expected_answer is provided, context_recall should not be None."""
+        case = self._rag_case(expected="Python bir programlama dilidir.")
+        result = evaluate_rag_case(case)
+
+        self.assertIsNotNone(result["context_recall"]["recall"])
+
+
+class EvaluateRagReportContractTests(unittest.TestCase):
+    """Contract tests for evaluate_rag_report."""
+
+    def _rag_report(self):
+        """Helper: build a minimal RAG report."""
+        return {
+            "models": {
+                "gpt-4o": {
+                    "tests": {
+                        "rag_test": {
+                            "results": [
+                                {
+                                    "case_id": "c1",
+                                    "scores": {},
+                                    "latency": 1.0,
+                                    "question": "Veri nedir?",
+                                    "answer": "Veri bilgi birimidir.",
+                                    "contexts": ["Veri, işlenmiş bilgidir."],
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+
+    def test_top_level_keys(self):
+        """Result should have top-level keys: total_rag_cases, models, overall_fault_distribution."""
+        report = self._rag_report()
+        result = evaluate_rag_report(report)
+
+        self.assertIn("total_rag_cases", result)
+        self.assertIn("models", result)
+        self.assertIn("overall_fault_distribution", result)
+
+    def test_rag_cases_counted(self):
+        """total_rag_cases should reflect the number of RAG cases found."""
+        report = self._rag_report()
+        result = evaluate_rag_report(report)
+
+        self.assertGreaterEqual(result["total_rag_cases"], 1)
+
+    def test_model_present_in_result(self):
+        """Model keys from input should appear in result."""
+        report = self._rag_report()
+        result = evaluate_rag_report(report)
+
+        self.assertIn("gpt-4o", result["models"])
+        self.assertGreater(result["models"]["gpt-4o"]["rag_case_count"], 0)
+
+
+if __name__ == "__main__":
+    unittest.main()

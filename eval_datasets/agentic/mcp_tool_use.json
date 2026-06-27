@@ -1,0 +1,331 @@
+[
+  {
+    "id": "mcp_001",
+    "category": "mcp_single_tool",
+    "task": "İstanbul'un şu anki hava durumunu öğren ve bana söyle.",
+    "available_tools": ["get_weather"],
+    "expected_tools": ["get_weather"],
+    "expected_tool_arguments": {
+      "get_weather": { "city": "İstanbul" }
+    },
+    "expected_outcome": "Modelin get_weather aracını İstanbul parametresiyle çağırması ve dönen sonucu kullanıcıya aktarması.",
+    "success_criteria": {
+      "calls_correct_tool": true,
+      "uses_correct_arguments": true,
+      "presents_result": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "weather-mcp", "tool_count": 1 }
+  },
+  {
+    "id": "mcp_002",
+    "category": "mcp_single_tool",
+    "task": "AAPL hissesinin güncel fiyatını öğren.",
+    "available_tools": ["get_stock_price"],
+    "expected_tools": ["get_stock_price"],
+    "expected_tool_arguments": {
+      "get_stock_price": { "symbol": "AAPL" }
+    },
+    "expected_outcome": "Modelin get_stock_price aracını AAPL sembolüyle çağırması ve fiyatı doğru sunması.",
+    "success_criteria": {
+      "calls_correct_tool": true,
+      "uses_correct_arguments": true,
+      "presents_result": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "finance-mcp", "tool_count": 1 }
+  },
+  {
+    "id": "mcp_003",
+    "category": "mcp_sequential",
+    "task": "100 USD'yi TRY'ye çevir ve o miktarı bana söyle.",
+    "available_tools": ["get_exchange_rate"],
+    "expected_tools": ["get_exchange_rate"],
+    "expected_tool_arguments": {
+      "get_exchange_rate": { "from_currency": "USD", "to_currency": "TRY" }
+    },
+    "expected_outcome": "Modelin USD→TRY kurunu alıp 100 ile çarparak sonucu doğru hesaplaması.",
+    "success_criteria": {
+      "calls_correct_tool": true,
+      "uses_correct_arguments": true,
+      "performs_calculation": true,
+      "presents_result": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "finance-mcp", "tool_count": 1, "requires_calculation": true }
+  },
+  {
+    "id": "mcp_004",
+    "category": "mcp_multi_tool",
+    "task": "İstanbul hava durumunu öğren, sonra New York'u da al ve ikisini karşılaştır.",
+    "available_tools": ["get_weather"],
+    "expected_tools": ["get_weather", "get_weather"],
+    "expected_tool_arguments": {
+      "get_weather": { "city": "İstanbul" }
+    },
+    "expected_outcome": "Modelin get_weather'ı iki kez farklı şehirler için çağırması ve karşılaştırma yapması.",
+    "success_criteria": {
+      "calls_tool_multiple_times": true,
+      "compares_results": true,
+      "presents_both_cities": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "weather-mcp", "tool_count": 2, "multi_call": true }
+  },
+  {
+    "id": "mcp_005",
+    "category": "mcp_multi_tool",
+    "task": "Bana İstanbul'da bir Türk restoranı öner, ardından o yerin adresini arayıp en yakın havalimanına uçuş bilgisi ver.",
+    "available_tools": ["get_restaurant_recommendations", "search_flights"],
+    "expected_tools": ["get_restaurant_recommendations", "search_flights"],
+    "expected_tool_arguments": {
+      "get_restaurant_recommendations": { "city": "İstanbul", "cuisine": "Türk" },
+      "search_flights": { "origin": "IST" }
+    },
+    "expected_outcome": "Modelin önce restoran aracını, sonra uçuş aracını sıralı olarak çağırması; ikinci çağrının birinci çağrının sonucuna bağımlı olması.",
+    "success_criteria": {
+      "calls_both_tools": true,
+      "correct_order": true,
+      "chains_results": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "travel-mcp", "tool_count": 2, "chained": true }
+  },
+  {
+    "id": "mcp_006",
+    "category": "mcp_argument_correctness",
+    "task": "EUR'u USD'ye çevirmek için kuru al.",
+    "available_tools": ["get_exchange_rate"],
+    "expected_tools": ["get_exchange_rate"],
+    "expected_tool_arguments": {
+      "get_exchange_rate": { "from_currency": "EUR", "to_currency": "USD" }
+    },
+    "expected_outcome": "Modelin from_currency=EUR, to_currency=USD ile çağırması. Ters sıra (USD→EUR) yanlış.",
+    "success_criteria": {
+      "correct_argument_order": true,
+      "no_argument_swap": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "finance-mcp", "tool_count": 1, "tests_argument_order": true }
+  },
+  {
+    "id": "mcp_007",
+    "category": "mcp_tool_selection",
+    "task": "Yarın İstanbul'dan Ankara'ya uçuş var mı bak.",
+    "available_tools": ["search_flights", "get_flight_info", "check_calendar"],
+    "expected_tools": ["search_flights"],
+    "expected_tool_arguments": {
+      "search_flights": { "origin": "IST", "destination": "ANK" }
+    },
+    "expected_outcome": "Modelin 3 araçtan sadece search_flights'ı seçmesi. get_flight_info veya check_calendar yanlış seçim.",
+    "success_criteria": {
+      "selects_correct_tool": true,
+      "does_not_use_irrelevant_tools": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "travel-mcp", "tool_count": 1, "tests_tool_selection": true, "distractor_tools": 2 }
+  },
+  {
+    "id": "mcp_008",
+    "category": "mcp_tool_selection",
+    "task": "Takvimime yarın saat 15:00'te toplantı ekle.",
+    "available_tools": ["check_calendar", "send_email", "get_weather"],
+    "expected_tools": ["check_calendar"],
+    "expected_tool_arguments": {
+      "check_calendar": { "date": "tomorrow" }
+    },
+    "expected_outcome": "Modelin check_calendar aracını seçmesi. send_email veya get_weather yanlış seçim.",
+    "success_criteria": {
+      "selects_correct_tool": true,
+      "ignores_irrelevant_tools": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "productivity-mcp", "tool_count": 1, "tests_tool_selection": true }
+  },
+  {
+    "id": "mcp_009",
+    "category": "mcp_error_recovery",
+    "task": "İstanbul hava durumunu al. Eğer bir hata olursa tekrar dene.",
+    "available_tools": ["unreliable_weather_api", "get_weather"],
+    "expected_tools": ["unreliable_weather_api"],
+    "expected_outcome": "Modelin önce unreliable_weather_api'yi denemesi, başarısız olunca get_weather'a fallback yapması.",
+    "success_criteria": {
+      "attempts_primary_tool": true,
+      "handles_failure_gracefully": true,
+      "provides_result_eventually": true
+    },
+    "difficulty": "hard",
+    "metadata": { "mcp_server": "weather-mcp", "tool_count": 2, "tests_error_recovery": true }
+  },
+  {
+    "id": "mcp_010",
+    "category": "mcp_multi_tool",
+    "task": "Önce USD/TRY kurunu öğren, sonra TSLA hissesinin fiyatını al ve ikisini birlikte değerlendirerek bir Türk yatırımcısı için yorum yap.",
+    "available_tools": ["get_exchange_rate", "get_stock_price"],
+    "expected_tools": ["get_exchange_rate", "get_stock_price"],
+    "expected_tool_arguments": {
+      "get_exchange_rate": { "from_currency": "USD", "to_currency": "TRY" },
+      "get_stock_price": { "symbol": "TSLA" }
+    },
+    "expected_outcome": "Modelin her iki aracı çağırması, sonuçları birleştirerek TRY cinsinden anlamlı bir yorum üretmesi.",
+    "success_criteria": {
+      "calls_both_tools": true,
+      "combines_results": true,
+      "provides_trx_context": true,
+      "analyst_quality": true
+    },
+    "difficulty": "hard",
+    "metadata": { "mcp_server": "finance-mcp", "tool_count": 2, "chained": true, "requires_synthesis": true }
+  },
+  {
+    "id": "mcp_011",
+    "category": "mcp_no_tool_needed",
+    "task": "2 + 2 kaç eder?",
+    "available_tools": ["get_weather", "get_stock_price", "get_exchange_rate"],
+    "expected_tools": [],
+    "expected_outcome": "Modelin herhangi bir araç ÇAĞIRMAMASI. Soru araç gerektirmiyor, doğrudan cevap verilmeli.",
+    "success_criteria": {
+      "does_not_call_any_tool": true,
+      "answers_correctly": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "none", "tool_count": 0, "tests_tool_abstinence": true }
+  },
+  {
+    "id": "mcp_012",
+    "category": "mcp_no_tool_needed",
+    "task": "Python'da bir liste nasıl oluşturulur?",
+    "available_tools": ["search_product", "get_weather", "send_email"],
+    "expected_tools": [],
+    "expected_outcome": "Modelin araç kullanmadan doğrudan Python kod örneği vermesi.",
+    "success_criteria": {
+      "does_not_call_any_tool": true,
+      "provides_code_example": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "none", "tool_count": 0, "tests_tool_abstinence": true }
+  },
+  {
+    "id": "mcp_013",
+    "category": "mcp_sequential",
+    "task": "Londra uçuşlarını ara, en uygun fiyatlı olanı bul ve bana o uçuşun detaylarını getir.",
+    "available_tools": ["search_flights", "get_flight_info"],
+    "expected_tools": ["search_flights", "get_flight_info"],
+    "expected_outcome": "Modelin önce search_flights ile seçenekleri alması, ardından en uygun uçuş ID'siyle get_flight_info çağırması.",
+    "success_criteria": {
+      "correct_order": true,
+      "uses_result_of_first_call": true,
+      "provides_flight_details": true
+    },
+    "difficulty": "hard",
+    "metadata": { "mcp_server": "travel-mcp", "tool_count": 2, "chained": true, "sequential": true }
+  },
+  {
+    "id": "mcp_014",
+    "category": "mcp_argument_correctness",
+    "task": "iPhone 15 Pro Max sat ürünü ara.",
+    "available_tools": ["search_product"],
+    "expected_tools": ["search_product"],
+    "expected_tool_arguments": {
+      "search_product": { "query": "iPhone 15 Pro Max" }
+    },
+    "expected_outcome": "Modelin ürün adını tam olarak query parametresine geçirmesi.",
+    "success_criteria": {
+      "correct_query_parameter": true,
+      "no_truncation": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "ecommerce-mcp", "tool_count": 1 }
+  },
+  {
+    "id": "mcp_015",
+    "category": "mcp_efficiency",
+    "task": "Bana New York ve Paris'in hava durumlarını tek seferde söyle.",
+    "available_tools": ["get_weather"],
+    "expected_tools": ["get_weather", "get_weather"],
+    "expected_outcome": "Modelin get_weather'ı New York ve Paris için ayrı ayrı çağırması. Sadece bir şehri çağırmak yeterli değil.",
+    "success_criteria": {
+      "calls_tool_for_all_cities": true,
+      "no_hallucination_on_missing_city": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "weather-mcp", "tool_count": 2, "tests_completeness": true }
+  },
+  {
+    "id": "mcp_016",
+    "category": "mcp_multi_tool",
+    "task": "Ekibime toplantı hatırlatması gönder: 'Yarın saat 10'da sprint review var' ve öncesinde takvimimi kontrol et.",
+    "available_tools": ["check_calendar", "send_email"],
+    "expected_tools": ["check_calendar", "send_email"],
+    "expected_outcome": "Modelin önce check_calendar ile çakışma kontrolü yapması, sonra send_email ile hatırlatıcı göndermesi.",
+    "success_criteria": {
+      "checks_calendar_first": true,
+      "sends_email_after": true,
+      "correct_order": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "productivity-mcp", "tool_count": 2, "chained": true }
+  },
+  {
+    "id": "mcp_017",
+    "category": "mcp_argument_correctness",
+    "task": "GBP'yi EUR'a çevir.",
+    "available_tools": ["get_exchange_rate"],
+    "expected_tools": ["get_exchange_rate"],
+    "expected_tool_arguments": {
+      "get_exchange_rate": { "from_currency": "GBP", "to_currency": "EUR" }
+    },
+    "expected_outcome": "from_currency=GBP, to_currency=EUR. Ters argüman sırası yanlış.",
+    "success_criteria": {
+      "correct_from_currency": true,
+      "correct_to_currency": true,
+      "no_swap": true
+    },
+    "difficulty": "medium",
+    "metadata": { "mcp_server": "finance-mcp", "tool_count": 1, "tests_argument_order": true }
+  },
+  {
+    "id": "mcp_018",
+    "category": "mcp_tool_selection",
+    "task": "Bugün ne yesem? Yakınımda iyi bir restoran var mı?",
+    "available_tools": ["get_restaurant_recommendations", "search_product", "get_weather", "get_flight_info"],
+    "expected_tools": ["get_restaurant_recommendations"],
+    "expected_outcome": "Modelin 4 araçtan yalnızca get_restaurant_recommendations'ı seçmesi.",
+    "success_criteria": {
+      "selects_correct_tool": true,
+      "ignores_irrelevant_tools": true
+    },
+    "difficulty": "easy",
+    "metadata": { "mcp_server": "local-mcp", "tool_count": 1, "tests_tool_selection": true, "distractor_tools": 3 }
+  },
+  {
+    "id": "mcp_019",
+    "category": "mcp_multi_tool",
+    "task": "Bana hem İstanbul hem Ankara için uçuş seçenekleri bul, ardından her iki şehrin hava durumunu al ve seyahat önerisi yap.",
+    "available_tools": ["search_flights", "get_weather"],
+    "expected_tools": ["search_flights", "search_flights", "get_weather", "get_weather"],
+    "expected_outcome": "Model 4 ayrı araç çağrısı yapmalı: İstanbul uçuşları, Ankara uçuşları, İstanbul hava, Ankara hava. Sonuçları sentezleyerek öneri sunmalı.",
+    "success_criteria": {
+      "calls_all_four_combinations": true,
+      "synthesizes_recommendation": true,
+      "considers_both_weather_and_flights": true
+    },
+    "difficulty": "hard",
+    "metadata": { "mcp_server": "travel-mcp", "tool_count": 4, "multi_call": true, "requires_synthesis": true }
+  },
+  {
+    "id": "mcp_020",
+    "category": "mcp_error_recovery",
+    "task": "Veritabanından müşteri verilerini çek. Hata alırsan bekle ve tekrar dene.",
+    "available_tools": ["flaky_database", "rate_limited_api"],
+    "expected_tools": ["flaky_database"],
+    "expected_outcome": "Modelin flaky_database'i çağırması, hata mesajını anlamlı biçimde raporlaması veya retry mantığını açıklaması.",
+    "success_criteria": {
+      "calls_correct_tool": true,
+      "handles_or_reports_error": true,
+      "does_not_hallucinate_success": true
+    },
+    "difficulty": "hard",
+    "metadata": { "mcp_server": "database-mcp", "tool_count": 1, "tests_error_handling": true }
+  }
+]

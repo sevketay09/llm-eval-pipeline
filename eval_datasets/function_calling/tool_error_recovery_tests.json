@@ -1,0 +1,1029 @@
+[
+  {
+    "id": "retry_transient_weather",
+    "test_type": "retry",
+    "prompt": "İstanbul'un şu anki hava durumunu öğrenmek istiyorum.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "fail_until_attempt": 3
+    },
+    "expected_behavior": "Model 3. denemede başarılı olacak şekilde retry yapmalı",
+    "difficulty": "easy"
+  },
+  {
+    "id": "retry_database_query",
+    "test_type": "retry",
+    "prompt": "Veritabanından müşteri ID 12345'in bilgilerini getir.",
+    "tool_name": "flaky_database",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Transient database error sonrası tekrar denemeli",
+    "difficulty": "easy"
+  },
+  {
+    "id": "retry_rate_limited_api",
+    "test_type": "retry",
+    "prompt": "AAPL hisse senedinin güncel fiyatını kontrol et.",
+    "tool_name": "rate_limited_api",
+    "error_config": {
+      "fail_until_attempt": 4
+    },
+    "expected_behavior": "Rate limit hatası alsa bile makul sayıda retry yapmalı",
+    "difficulty": "medium"
+  },
+  {
+    "id": "retry_exponential_backoff",
+    "test_type": "retry",
+    "prompt": "API'den son 24 saatin verilerini çek.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "fail_until_attempt": 5
+    },
+    "expected_behavior": "Birden fazla hata sonrası pes etmeden denemeye devam etmeli",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fallback_weather_sources",
+    "test_type": "fallback",
+    "prompt": "Ankara'nın bugünkü hava durumunu öğren.",
+    "primary_tool": "unreliable_weather_api",
+    "fallback_tools": [
+      "get_weather"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Primary API fail olunca stable weather API'ye geçmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_calculation_methods",
+    "test_type": "fallback",
+    "prompt": "USD/TRY döviz kuruyla 1000 doların TL karşılığını hesapla.",
+    "primary_tool": "rate_limited_api",
+    "fallback_tools": [
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Rate limited API yerine alternatif exchange rate tool kullanmalı",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_multiple_options",
+    "test_type": "fallback",
+    "prompt": "Bugün İzmir'de hava güzel mi, dışarı çıksam mı?",
+    "primary_tool": "unreliable_weather_api",
+    "fallback_tools": [
+      "get_weather",
+      "calculate"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Primary fail olunca fallback'lerden birini akıllıca seçmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_graceful_degradation",
+    "test_type": "fallback",
+    "prompt": "Veritabanından tüm müşteri listesini çek ve analiz et.",
+    "primary_tool": "flaky_database",
+    "fallback_tools": [],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Fallback yoksa kullanıcıya nazikçe durumu açıklamalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "comprehension_rate_limit",
+    "test_type": "comprehension",
+    "prompt": "API'den hava durumu bilgisi al.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "error_type": "rate_limit",
+      "error_message": "Rate limit exceeded. Try again in 60 seconds.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "rate limit",
+      "limit",
+      "60 saniye",
+      "bekle"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "hava durumu verisi"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_timeout",
+    "test_type": "comprehension",
+    "prompt": "Veritabanından büyük veri sorgula.",
+    "tool_name": "flaky_database",
+    "error_config": {
+      "error_type": "timeout",
+      "error_message": "Request timeout after 30 seconds",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "timeout",
+      "zaman aşımı",
+      "30 saniye"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "veri alındı"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_service_unavailable",
+    "test_type": "comprehension",
+    "prompt": "External API'den veri çek.",
+    "tool_name": "rate_limited_api",
+    "error_config": {
+      "error_type": "service_unavailable",
+      "error_message": "Service temporarily unavailable",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "servis",
+      "kullanılamıyor",
+      "geçici",
+      "unavailable"
+    ],
+    "should_not_contain": [
+      "başarılı oldu",
+      "veri geldi"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_authentication_error",
+    "test_type": "comprehension",
+    "prompt": "API key ile auth yap ve veri al.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "error_type": "authentication_error",
+      "error_message": "Invalid API key or credentials",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "authentication",
+      "kimlik",
+      "api key",
+      "geçersiz"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "veri alındı"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_permission_denied",
+    "test_type": "comprehension",
+    "prompt": "Admin yetkisi gerektiren işlemi yap.",
+    "tool_name": "flaky_database",
+    "error_config": {
+      "error_type": "permission_denied",
+      "error_message": "Permission denied: requires admin privileges",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "permission",
+      "yetki",
+      "izin",
+      "admin"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "işlem tamamlandı"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_invalid_parameter",
+    "test_type": "comprehension",
+    "prompt": "Geçersiz parametre ile API çağrısı yap.",
+    "tool_name": "rate_limited_api",
+    "error_config": {
+      "error_type": "invalid_parameter",
+      "error_message": "Invalid parameter: 'city' must be a string",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "parametre",
+      "geçersiz",
+      "invalid",
+      "city"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "sonuç"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "complex_retry_with_fallback",
+    "test_type": "fallback",
+    "prompt": "Borsa verilerini al, önce hızlı API dene, olmazsa yavaş ama güvenilir olanı kullan.",
+    "primary_tool": "rate_limited_api",
+    "fallback_tools": [
+      "get_stock_price",
+      "calculate"
+    ],
+    "primary_tool_error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_outcome": "İlk denemede fail, retry yap, hala fail ise fallback kullan",
+    "difficulty": "hard"
+  },
+  {
+    "id": "comprehension_multiple_errors",
+    "test_type": "comprehension",
+    "prompt": "Birden fazla tool çağrısı yap, bazıları fail olacak.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "error_type": "transient_error",
+      "error_message": "Temporary network error",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "hata",
+      "network",
+      "ağ",
+      "geçici"
+    ],
+    "should_not_contain": [
+      "her şey başarılı",
+      "sorunsuz"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "retry_payment_gateway",
+    "test_type": "retry",
+    "prompt": "Kredi kartı ile 2.450 TL ödeme yapmayı dene.",
+    "tool_name": "payment_gateway",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Geçici ödeme hatasında en az 2 deneme sonrası başarılı olmalı",
+    "difficulty": "medium"
+  },
+  {
+    "id": "retry_notification_service",
+    "test_type": "retry",
+    "prompt": "İşlem sonrası müşteriye SMS bildirimi gönder.",
+    "tool_name": "sms_service",
+    "error_config": {
+      "fail_until_attempt": 3
+    },
+    "expected_behavior": "SMS servisi geçici hatasında tekrar denemeli ve teslim etmeli",
+    "difficulty": "easy"
+  },
+  {
+    "id": "retry_exchange_snapshot",
+    "test_type": "retry",
+    "prompt": "Anlık USD/TRY ve EUR/TRY snapshot verisini çek.",
+    "tool_name": "market_data_api",
+    "error_config": {
+      "fail_until_attempt": 4
+    },
+    "expected_behavior": "Kısa süreli API kesintisinde retry ile toparlamalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "retry_kmh_limit_check",
+    "test_type": "retry",
+    "prompt": "KMH limitimi kontrol et ve kullanılabilir tutarı göster.",
+    "tool_name": "flaky_database",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Veritabanı geçici hatasında yeniden deneyip limit bilgisini döndürmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_alt_weather_chain",
+    "test_type": "fallback",
+    "prompt": "Bursa için yağış tahminini getir, ana kaynak çalışmazsa alternatifi dene.",
+    "primary_tool": "unreliable_weather_api",
+    "fallback_tools": [
+      "get_weather",
+      "cached_weather_lookup"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Ana kaynak fail olduğunda alternatif weather kaynağıyla sonuç üretmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_stock_primary_down",
+    "test_type": "fallback",
+    "prompt": "THYAO, ASELS ve BIMAS için fiyatları getir.",
+    "primary_tool": "rate_limited_api",
+    "fallback_tools": [
+      "get_stock_price"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Primary borsa API down ise stable hisse fiyat tool'una geçmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_exchange_then_manual_calc",
+    "test_type": "fallback",
+    "prompt": "2500 USD'nin TRY karşılığını hesapla; kur servisi çalışmazsa alternatif kur + hesaplama ile devam et.",
+    "primary_tool": "rate_limited_api",
+    "fallback_tools": [
+      "get_exchange_rate",
+      "calculate"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Kur API'si çökse de fallback zinciri ile hesaplamayı tamamlamalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fallback_no_tools_user_guidance",
+    "test_type": "fallback",
+    "prompt": "Müşteri segmentasyon raporunu hazırla, tüm veri servisleri kapalı olabilir.",
+    "primary_tool": "analytics_engine",
+    "fallback_tools": [],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Fallback yoksa net aksiyon önerisi ve kibar açıklama ile kullanıcıyı yönlendirmeli",
+    "difficulty": "hard"
+  },
+  {
+    "id": "comprehension_http_429",
+    "test_type": "comprehension",
+    "prompt": "Kur API'sine istek at.",
+    "tool_name": "rate_limited_api",
+    "error_config": {
+      "error_type": "http_429",
+      "error_message": "429 Too Many Requests",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "429",
+      "too many requests",
+      "rate limit",
+      "bekle"
+    ],
+    "should_not_contain": [
+      "işlem başarıyla tamamlandı"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_http_500",
+    "test_type": "comprehension",
+    "prompt": "Borsa servisinden anlık veri çek.",
+    "tool_name": "market_data_api",
+    "error_config": {
+      "error_type": "http_500",
+      "error_message": "500 Internal Server Error",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "500",
+      "internal server error",
+      "sunucu",
+      "geçici"
+    ],
+    "should_not_contain": [
+      "veri başarıyla alındı"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_dns_failure",
+    "test_type": "comprehension",
+    "prompt": "Hava API endpoint'ine bağlan ve sonucu getir.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "error_type": "dns_error",
+      "error_message": "DNS lookup failed for weather.api.local",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "dns",
+      "bağlantı",
+      "adres",
+      "erişilemiyor"
+    ],
+    "should_not_contain": [
+      "hava durumu başarıyla alındı"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_ssl_error",
+    "test_type": "comprehension",
+    "prompt": "Güvenli kanaldan ödeme doğrulaması yap.",
+    "tool_name": "payment_gateway",
+    "error_config": {
+      "error_type": "ssl_error",
+      "error_message": "SSL certificate verify failed",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "ssl",
+      "sertifika",
+      "güvenli",
+      "doğrulama"
+    ],
+    "should_not_contain": [
+      "ödeme onaylandı"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_payload_too_large",
+    "test_type": "comprehension",
+    "prompt": "Son 5 yılın tüm işlem geçmişini tek çağrıda çek.",
+    "tool_name": "flaky_database",
+    "error_config": {
+      "error_type": "payload_too_large",
+      "error_message": "413 Payload Too Large",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "413",
+      "çok büyük",
+      "parçalı",
+      "sayfalama"
+    ],
+    "should_not_contain": [
+      "tüm veri tek seferde geldi"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "complex_retry_then_fallback",
+    "test_type": "fallback",
+    "prompt": "Müşteri risk skorunu getir; önce ana skorlama servisini 2 kez dene, olmazsa yedek skorlama servisine geç.",
+    "primary_tool": "risk_scoring_primary",
+    "fallback_tools": [
+      "risk_scoring_backup"
+    ],
+    "primary_tool_error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_outcome": "İki başarısız denemeden sonra yedek servise geçip sonucu üretmeli",
+    "difficulty": "hard"
+  },
+  {
+    "id": "complex_multi_service_recovery",
+    "test_type": "fallback",
+    "prompt": "BES fon performansını getir, ana fon servisi başarısızsa cache'den al, o da yoksa kullanıcıya son güncelleme tarihini bildir.",
+    "primary_tool": "fund_performance_api",
+    "fallback_tools": [
+      "fund_cache_lookup"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1.0
+    },
+    "expected_outcome": "Aşamalı fallback ile ya veri döndürmeli ya da kontrollü degrade mesajı vermeli",
+    "difficulty": "hard"
+  },
+  {
+    "id": "retry_loan_calculation",
+    "test_type": "retry",
+    "prompt": "500.000 TL tutarında 12 ay vadeli ihtiyaç kredisi için aylık taksit tutarını hesapla.",
+    "tool_name": "flaky_loan_calculator",
+    "error_config": {
+      "fail_until_attempt": 3
+    },
+    "expected_behavior": "Kredi hesaplama servisi hata verdiğinde 3. denemeye kadar tekrar denemeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "retry_flight_status",
+    "test_type": "retry",
+    "prompt": "TK1993 sefer sayılı uçuşun güncel durumunu kontrol et.",
+    "tool_name": "unreliable_flight_api",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Uçuş durumu sorgusunda geçici hata sonrası tekrar denemeli",
+    "difficulty": "easy"
+  },
+  {
+    "id": "retry_account_balance",
+    "test_type": "retry",
+    "prompt": "Vadesiz TL hesabımdaki güncel bakiyeyi göster.",
+    "tool_name": "flaky_banking_system",
+    "error_config": {
+      "fail_until_attempt": 4
+    },
+    "expected_behavior": "Banka sistemi yanıt vermediğinde pes etmeden 4. denemeye kadar retry yapmalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "retry_weather_forecast",
+    "test_type": "retry",
+    "prompt": "Antalya için önümüzdeki 5 günlük hava durumu tahminini getir.",
+    "tool_name": "unreliable_weather_api",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Hava durumu servisi zaman aşımına uğradığında tekrar denemeli",
+    "difficulty": "easy"
+  },
+  {
+    "id": "retry_calendar_sync",
+    "test_type": "retry",
+    "prompt": "Yarınki tüm toplantılarımı takvimimden çek.",
+    "tool_name": "flaky_calendar_service",
+    "error_config": {
+      "fail_until_attempt": 3
+    },
+    "expected_behavior": "Takvim senkronizasyon hatası durumunda işlemi tekrar etmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "retry_credit_card_payment",
+    "test_type": "retry",
+    "prompt": "Kredi kartı ekstremden 5000 TL ödeme yap.",
+    "tool_name": "flaky_payment_gateway",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Ödeme ağ geçidi geçici olarak meşgul olduğunda işlemi yeniden denemeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "retry_hotel_booking",
+    "test_type": "retry",
+    "prompt": "Paris'te 15-20 Mayıs tarihleri arası için otel rezervasyonu yap.",
+    "tool_name": "unreliable_booking_system",
+    "error_config": {
+      "fail_until_attempt": 3
+    },
+    "expected_behavior": "Rezervasyon sistemi yanıt vermediğinde işlemi tekrar denemeli",
+    "difficulty": "hard"
+  },
+  {
+    "id": "retry_transfer_funds",
+    "test_type": "retry",
+    "prompt": "Ahmet'in hesabına 1000 TL havale gönder.",
+    "tool_name": "flaky_banking_system",
+    "error_config": {
+      "fail_until_attempt": 2
+    },
+    "expected_behavior": "Havale işlemi sırasında ağ hatası oluşursa tekrar denemeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "retry_email_send",
+    "test_type": "retry",
+    "prompt": "Ekibe haftalık raporu e-posta olarak gönder.",
+    "tool_name": "flaky_email_server",
+    "error_config": {
+      "fail_until_attempt": 4
+    },
+    "expected_behavior": "E-posta sunucusu bağlantı hatası verdiğinde makul sayıda retry yapmalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "retry_stock_quote",
+    "test_type": "retry",
+    "prompt": "THYAO hissesinin anlık alış satış fiyatlarını getir.",
+    "tool_name": "rate_limited_api",
+    "error_config": {
+      "fail_until_attempt": 3
+    },
+    "expected_behavior": "Borsa API'si rate limit hatası verdiğinde bekleyip tekrar denemeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_flight_search",
+    "test_type": "fallback",
+    "prompt": "Yarın sabah İstanbul'dan Londra'ya uçuşları listele.",
+    "primary_tool": "primary_flight_api",
+    "fallback_tools": [
+      "secondary_flight_api",
+      "general_travel_search"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Ana uçuş arama API'si çöktüğünde alternatif uçuş arama servislerine geçmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_currency_conversion",
+    "test_type": "fallback",
+    "prompt": "500 Euro kaç Türk Lirası yapar?",
+    "primary_tool": "live_forex_api",
+    "fallback_tools": [
+      "cached_exchange_rates",
+      "calculate"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Canlı döviz API'si çalışmadığında önbelleğe alınmış kurları kullanmalı",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fallback_weather_radar",
+    "test_type": "fallback",
+    "prompt": "Bursa'da şu an yağmur yağıyor mu, radar görüntüsü nasıl?",
+    "primary_tool": "advanced_weather_radar",
+    "fallback_tools": [
+      "basic_weather_api"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Radar servisi yanıt vermediğinde temel hava durumu API'sine düşmeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_restaurant_reservation",
+    "test_type": "fallback",
+    "prompt": "Bu akşam 8 için Nusr-Et'te iki kişilik masa ayırt.",
+    "primary_tool": "direct_restaurant_booking",
+    "fallback_tools": [
+      "third_party_reservation_app"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Restoranın kendi sistemi çalışmadığında üçüncü parti rezervasyon uygulamasını denemeli",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_mortgage_rates",
+    "test_type": "fallback",
+    "prompt": "Güncel konut kredisi faiz oranlarını karşılaştır.",
+    "primary_tool": "live_bank_rates_api",
+    "fallback_tools": [
+      "daily_financial_summary"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Canlı faiz oranları API'si hata verdiğinde günlük finansal özet verisini kullanmalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fallback_train_schedule",
+    "test_type": "fallback",
+    "prompt": "Ankara-Eskişehir hızlı tren saatlerini göster.",
+    "primary_tool": "tcdd_live_api",
+    "fallback_tools": [
+      "cached_train_schedules"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Canlı tren saatleri servisi çöktüğünde çevrimdışı tarife bilgilerini sunmalı",
+    "difficulty": "easy"
+  },
+  {
+    "id": "fallback_investment_portfolio",
+    "test_type": "fallback",
+    "prompt": "Yatırım portföyümün bugünkü performansını analiz et.",
+    "primary_tool": "advanced_portfolio_analyzer",
+    "fallback_tools": [
+      "basic_balance_check"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Gelişmiş analiz aracı çalışmadığında en azından temel bakiye kontrolü yapmalı",
+    "difficulty": "hard"
+  },
+  {
+    "id": "fallback_news_summary",
+    "test_type": "fallback",
+    "prompt": "Bugünün önemli ekonomi haberlerini özetle.",
+    "primary_tool": "premium_news_aggregator",
+    "fallback_tools": [
+      "free_rss_feeds"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Premium haber servisi hata verdiğinde ücretsiz RSS kaynaklarına başvurmalı",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_atm_locator",
+    "test_type": "fallback",
+    "prompt": "Bana en yakın para yatırmalı ATM'yi bul.",
+    "primary_tool": "bank_location_service",
+    "fallback_tools": [
+      "general_maps_api"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Bankanın kendi lokasyon servisi çalışmadığında genel harita API'sini kullanmalı",
+    "difficulty": "medium"
+  },
+  {
+    "id": "fallback_translation_service",
+    "test_type": "fallback",
+    "prompt": "Bu Japonca metni Türkçe'ye çevir.",
+    "primary_tool": "neural_translation_pro",
+    "fallback_tools": [
+      "basic_dictionary_lookup"
+    ],
+    "primary_tool_error_config": {
+      "failure_rate": 1
+    },
+    "expected_outcome": "Gelişmiş çeviri servisi hata verdiğinde temel sözlük çevirisine geçmeli",
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_insufficient_funds",
+    "test_type": "comprehension",
+    "prompt": "Kredi kartı borcumun tamamını vadesiz hesabımdan öde.",
+    "tool_name": "banking_api",
+    "error_config": {
+      "error_type": "insufficient_funds",
+      "error_message": "Transaction failed: Insufficient funds in the source account.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "yetersiz",
+      "bakiye",
+      "para yok",
+      "gerçekleştirilemedi"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "ödendi",
+      "tamamlandı"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_flight_cancelled",
+    "test_type": "comprehension",
+    "prompt": "Yarınki PC283 sefer sayılı uçuşum için check-in yap.",
+    "tool_name": "airline_api",
+    "error_config": {
+      "error_type": "flight_cancelled",
+      "error_message": "Check-in failed: Flight PC283 has been cancelled.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "iptal",
+      "uçuş",
+      "yapılamıyor",
+      "check-in"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "tamamlandı",
+      "iyi uçuşlar"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_market_closed",
+    "test_type": "comprehension",
+    "prompt": "Hemen 100 lot GARAN hissesi al.",
+    "tool_name": "trading_api",
+    "error_config": {
+      "error_type": "market_closed",
+      "error_message": "Order rejected: The stock market is currently closed.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "piyasa",
+      "kapalı",
+      "borsa",
+      "işlem yapılamıyor"
+    ],
+    "should_not_contain": [
+      "alındı",
+      "başarılı",
+      "emir iletildi"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_invalid_date",
+    "test_type": "comprehension",
+    "prompt": "30 Şubat için Ankara'ya otobüs bileti bul.",
+    "tool_name": "ticket_api",
+    "error_config": {
+      "error_type": "invalid_date",
+      "error_message": "Validation error: February 30 is not a valid date.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "geçersiz",
+      "tarih",
+      "şubat",
+      "30"
+    ],
+    "should_not_contain": [
+      "biletler",
+      "bulundu",
+      "listeleniyor"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_card_blocked",
+    "test_type": "comprehension",
+    "prompt": "Amazon'dan sepetteki ürünleri kredi kartımla satın al.",
+    "tool_name": "payment_api",
+    "error_config": {
+      "error_type": "card_blocked",
+      "error_message": "Payment declined: The credit card is blocked due to suspicious activity.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "bloke",
+      "kart",
+      "şüpheli",
+      "reddedildi"
+    ],
+    "should_not_contain": [
+      "başarılı",
+      "satın alındı",
+      "sipariş verildi"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "comprehension_no_rooms_available",
+    "test_type": "comprehension",
+    "prompt": "Bodrum'daki Rixos otelde bu hafta sonu için deniz manzaralı oda ayırt.",
+    "tool_name": "hotel_api",
+    "error_config": {
+      "error_type": "no_availability",
+      "error_message": "Booking failed: No rooms available for the selected dates and room type.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "boş oda",
+      "müsait",
+      "yok",
+      "doluluk"
+    ],
+    "should_not_contain": [
+      "rezervasyon yapıldı",
+      "başarılı",
+      "onaylandı"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_api_quota_exceeded",
+    "test_type": "comprehension",
+    "prompt": "Son 10 yılın tüm hava durumu verilerini indir ve analiz et.",
+    "tool_name": "weather_data_api",
+    "error_config": {
+      "error_type": "quota_exceeded",
+      "error_message": "API quota exceeded: Monthly request limit reached.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "kota",
+      "limit",
+      "aşıldı",
+      "aylık"
+    ],
+    "should_not_contain": [
+      "veriler indirildi",
+      "analiz edildi",
+      "başarılı"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_unsupported_currency",
+    "test_type": "comprehension",
+    "prompt": "Hesabımdaki parayı Venezuela Bolivarı'na çevir.",
+    "tool_name": "forex_api",
+    "error_config": {
+      "error_type": "unsupported_currency",
+      "error_message": "Exchange failed: VEF is not a supported currency for this operation.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "desteklenmiyor",
+      "para birimi",
+      "geçersiz",
+      "işlem yapılamıyor"
+    ],
+    "should_not_contain": [
+      "çevrildi",
+      "başarılı",
+      "işlem tamamlandı"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "comprehension_system_maintenance",
+    "test_type": "comprehension",
+    "prompt": "Yeni bir vadeli mevduat hesabı aç.",
+    "tool_name": "banking_api",
+    "error_config": {
+      "error_type": "system_maintenance",
+      "error_message": "Service unavailable: System is currently under scheduled maintenance until 04:00 AM.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "bakım",
+      "sistem",
+      "çalışma",
+      "04:00"
+    ],
+    "should_not_contain": [
+      "hesap açıldı",
+      "başarılı",
+      "tamamlandı"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "comprehension_invalid_destination",
+    "test_type": "comprehension",
+    "prompt": "Atlantis'e en ucuz uçak biletini bul.",
+    "tool_name": "flight_api",
+    "error_config": {
+      "error_type": "invalid_destination",
+      "error_message": "Search failed: 'Atlantis' is not a recognized airport or city code.",
+      "fail_on_attempts": [
+        1
+      ]
+    },
+    "expected_response_contains": [
+      "geçersiz",
+      "hedef",
+      "bulunamadı",
+      "şehir"
+    ],
+    "should_not_contain": [
+      "biletler",
+      "bulundu",
+      "fiyat"
+    ],
+    "difficulty": "medium"
+  }
+]

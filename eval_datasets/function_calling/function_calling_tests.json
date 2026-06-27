@@ -1,0 +1,2732 @@
+[
+  {
+    "id": "func_001",
+    "category": "basic_tool_selection",
+    "prompt": "İstanbul'daki USD/TRY döviz kurunu öğrenmek istiyorum.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_exchange_rate",
+          "description": "Döviz kurunu getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "from_currency": {
+                "type": "string",
+                "description": "Kaynak para birimi (USD, EUR, etc.)"
+              },
+              "to_currency": {
+                "type": "string",
+                "description": "Hedef para birimi (TRY, USD, etc.)"
+              }
+            },
+            "required": [
+              "from_currency",
+              "to_currency"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Hava durumu bilgisi getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "Şehir adı"
+              }
+            },
+            "required": [
+              "city"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_exchange_rate",
+    "expected_params": {
+      "from_currency": "USD",
+      "to_currency": "TRY"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_002",
+    "category": "parameter_extraction",
+    "prompt": "Hesabımdan Ayşe Yılmaz'ın IBAN numarası TR330006100519786457841326 olan hesabına 5000 TL transfer et.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_money",
+          "description": "Para transferi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "recipient_name": {
+                "type": "string",
+                "description": "Alıcı adı"
+              },
+              "recipient_iban": {
+                "type": "string",
+                "description": "Alıcı IBAN"
+              },
+              "amount": {
+                "type": "number",
+                "description": "Transfer tutarı"
+              },
+              "currency": {
+                "type": "string",
+                "description": "Para birimi",
+                "enum": [
+                  "TRY",
+                  "USD",
+                  "EUR"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "description": "Transfer açıklaması (opsiyonel)"
+              }
+            },
+            "required": [
+              "recipient_name",
+              "recipient_iban",
+              "amount",
+              "currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "transfer_money",
+    "expected_params": {
+      "recipient_name": "Ayşe Yılmaz",
+      "recipient_iban": "TR330006100519786457841326",
+      "amount": 5000,
+      "currency": "TRY"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_003",
+    "category": "multi_tool_orchestration",
+    "prompt": "Hesabımdaki bakiyeyi kontrol et, eğer 10.000 TL'den fazlaysa 5.000 TL'yi vadeli hesaba aktar.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "check_balance",
+          "description": "Hesap bakiyesini kontrol eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "account_type": {
+                "type": "string",
+                "enum": [
+                  "checking",
+                  "savings"
+                ]
+              }
+            },
+            "required": [
+              "account_type"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_to_savings",
+          "description": "Vadeli hesaba para transfer eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "Transfer tutarı"
+              },
+              "term_months": {
+                "type": "integer",
+                "description": "Vade süresi (ay)"
+              }
+            },
+            "required": [
+              "amount"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "check_balance",
+        "params": {
+          "account_type": "checking"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "balance > 10000",
+      "tool": "transfer_to_savings",
+      "params": {
+        "amount": 5000
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_004",
+    "category": "error_handling",
+    "prompt": "Kredi kartı borcumu öğrenmek istiyorum.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_stock_price",
+          "description": "Hisse senedi fiyatını getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "symbol"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Hava durumu getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "uygun araç",
+      "mevcut değil",
+      "yapamam"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_005",
+    "category": "complex_orchestration",
+    "prompt": "Son 3 aydaki tüm işlemlerimi getir, bunları kategorilere ayır ve en çok harcama yaptığım 3 kategoriyi grafik olarak göster.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_transactions",
+          "description": "Hesap işlemlerini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "start_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "end_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "account_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "start_date",
+              "end_date"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "categorize_transactions",
+          "description": "İşlemleri kategorilere ayırır",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "transactions": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "required": [
+              "transactions"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "create_chart",
+          "description": "Grafik oluşturur",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "chart_type": {
+                "type": "string",
+                "enum": [
+                  "bar",
+                  "pie",
+                  "line"
+                ]
+              },
+              "data": {
+                "type": "object"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "chart_type",
+              "data"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      "get_transactions",
+      "categorize_transactions",
+      "create_chart"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_006",
+    "category": "ambiguous_request",
+    "prompt": "Param ne durumda?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_account_summary",
+          "description": "Hesap özeti getirir (bakiye, son işlemler, vb.)",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "include_investments": {
+                "type": "boolean",
+                "default": false
+              },
+              "include_loans": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_account_summary",
+    "expected_params": {
+      "include_investments": true,
+      "include_loans": true
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_007",
+    "category": "turkish_numbers",
+    "prompt": "Bin beşyüz TL'yi hesabımdan annemin hesabına gönder. IBAN: TR120006200009400009876543",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_money",
+          "description": "Para transferi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "recipient_iban": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "default": "TRY"
+              }
+            },
+            "required": [
+              "recipient_iban",
+              "amount"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "transfer_money",
+    "expected_params": {
+      "recipient_iban": "TR120006200009400009876543",
+      "amount": 1500,
+      "currency": "TRY"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_008",
+    "category": "investment_tools",
+    "prompt": "THYAO hissesinden 100 adet al, limit fiyat 350 TL olsun.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "place_stock_order",
+          "description": "Hisse senedi alım/satım emri verir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string",
+                "description": "Hisse kodu"
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "Adet"
+              },
+              "order_type": {
+                "type": "string",
+                "enum": [
+                  "market",
+                  "limit"
+                ],
+                "description": "Emir tipi"
+              },
+              "side": {
+                "type": "string",
+                "enum": [
+                  "buy",
+                  "sell"
+                ],
+                "description": "Alış/Satış"
+              },
+              "limit_price": {
+                "type": "number",
+                "description": "Limit fiyat (sadece limit emirlerde)"
+              }
+            },
+            "required": [
+              "symbol",
+              "quantity",
+              "order_type",
+              "side"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "place_stock_order",
+    "expected_params": {
+      "symbol": "THYAO",
+      "quantity": 100,
+      "order_type": "limit",
+      "side": "buy",
+      "limit_price": 350
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_009",
+    "category": "basic_tool_selection",
+    "prompt": "Ankara için yarın hava durumunu söyler misin?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather_forecast",
+          "description": "Şehir için hava tahmini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "day": {
+                "type": "string",
+                "enum": [
+                  "today",
+                  "tomorrow"
+                ]
+              }
+            },
+            "required": [
+              "city",
+              "day"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_exchange_rate",
+          "description": "Kur bilgisi döner",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "from_currency": {
+                "type": "string"
+              },
+              "to_currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from_currency",
+              "to_currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_weather_forecast",
+    "expected_params": {
+      "city": "Ankara",
+      "day": "tomorrow"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_010",
+    "category": "parameter_extraction",
+    "prompt": "Yarın saat 14:30 için kredi uzmanı ile şubede randevu oluştur. Şube: Kadıköy.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "create_appointment",
+          "description": "Banka randevusu oluşturur",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "department": {
+                "type": "string"
+              },
+              "branch": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "time": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "department",
+              "branch",
+              "date",
+              "time"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "create_appointment",
+    "expected_params": {
+      "department": "kredi",
+      "branch": "Kadıköy",
+      "date": "tomorrow",
+      "time": "14:30"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_011",
+    "category": "enum_validation",
+    "prompt": "Hesabımı euroya çevir, para birimi olarak GBP seç.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "convert_account_currency",
+          "description": "Hesap para birimini dönüştürür",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "target_currency": {
+                "type": "string",
+                "enum": [
+                  "TRY",
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "target_currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "invalid_enum_value",
+    "expected_response_contains": [
+      "GBP",
+      "desteklenmiyor",
+      "TRY",
+      "USD",
+      "EUR"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_012",
+    "category": "date_parsing",
+    "prompt": "Geçen ayın ilk günü ile son günü arasındaki hesap hareketlerimi getir.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_transactions",
+          "description": "Belirli tarih aralığındaki işlemleri getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "start_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "end_date": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "required": [
+              "start_date",
+              "end_date"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_transactions",
+    "expected_params": {
+      "start_date": "first_day_of_last_month",
+      "end_date": "last_day_of_last_month"
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_013",
+    "category": "multi_tool_orchestration",
+    "prompt": "Önce dolar kurunu çek, sonra 20.000 TL'nin kaç dolar ettiğini hesapla.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_exchange_rate",
+          "description": "Kur getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "from_currency": {
+                "type": "string"
+              },
+              "to_currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from_currency",
+              "to_currency"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "calculate_currency_amount",
+          "description": "Kur üzerinden dönüşüm hesaplar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "rate": {
+                "type": "number"
+              },
+              "operation": {
+                "type": "string",
+                "enum": [
+                  "divide",
+                  "multiply"
+                ]
+              }
+            },
+            "required": [
+              "amount",
+              "rate",
+              "operation"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      "get_exchange_rate",
+      "calculate_currency_amount"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_014",
+    "category": "tool_disambiguation",
+    "prompt": "Kartımın bugün son ödeme tarihi mi kontrol et, değilse ekstre kesim tarihini söyle.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_credit_card_due_date",
+          "description": "Son ödeme tarihini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "card_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_statement_date",
+          "description": "Ekstre kesim tarihini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "card_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      "get_credit_card_due_date"
+    ],
+    "conditional_tool": {
+      "condition": "today != due_date",
+      "tool": "get_statement_date",
+      "params": {}
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_015",
+    "category": "missing_required_param",
+    "prompt": "Ali'ye para gönder.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_money",
+          "description": "IBAN ile para transfer eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "recipient_name": {
+                "type": "string"
+              },
+              "recipient_iban": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "TRY",
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "recipient_name",
+              "recipient_iban",
+              "amount",
+              "currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "ask_for_missing_parameters",
+    "expected_response_contains": [
+      "IBAN",
+      "tutar",
+      "para birimi"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_016",
+    "category": "turkish_numbers",
+    "prompt": "Üç bin iki yüz elli lira faturamı öde. Kurum: İSKİ, abone no: 987654.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "pay_bill",
+          "description": "Fatura ödemesi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "institution": {
+                "type": "string"
+              },
+              "subscriber_no": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "default": "TRY"
+              }
+            },
+            "required": [
+              "institution",
+              "subscriber_no",
+              "amount"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "pay_bill",
+    "expected_params": {
+      "institution": "İSKİ",
+      "subscriber_no": "987654",
+      "amount": 3250,
+      "currency": "TRY"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_017",
+    "category": "boolean_extraction",
+    "prompt": "Kart özetimde yatırımlar ve kredi detayları da görünsün, sade özet istemiyorum.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_account_summary",
+          "description": "Hesap özeti getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "include_investments": {
+                "type": "boolean",
+                "default": false
+              },
+              "include_loans": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_account_summary",
+    "expected_params": {
+      "include_investments": true,
+      "include_loans": true
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_018",
+    "category": "investment_tools",
+    "prompt": "GARAN hisselerimi piyasa emriyle 50 adet sat.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "place_stock_order",
+          "description": "Hisse emri gönderir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer"
+              },
+              "order_type": {
+                "type": "string",
+                "enum": [
+                  "market",
+                  "limit"
+                ]
+              },
+              "side": {
+                "type": "string",
+                "enum": [
+                  "buy",
+                  "sell"
+                ]
+              },
+              "limit_price": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "symbol",
+              "quantity",
+              "order_type",
+              "side"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "place_stock_order",
+    "expected_params": {
+      "symbol": "GARAN",
+      "quantity": 50,
+      "order_type": "market",
+      "side": "sell"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_019",
+    "category": "no_suitable_tool",
+    "prompt": "Bana bu hafta için kişisel yatırım tavsiyesi ver ve hangi hisseyi alacağımı kesin söyle.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_stock_price",
+          "description": "Anlık hisse fiyatı getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "symbol"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "yatırım tavsiyesi",
+      "veremem",
+      "genel bilgi"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_020",
+    "category": "multi_step_with_confirmation",
+    "prompt": "Önce hesabımda yeterli bakiye var mı kontrol et, sonra 15.000 TL'yi TR560001200009800001234567 IBAN'ına transfer et ve işlem öncesi benden onay iste.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "check_balance",
+          "description": "Bakiye kontrol eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "account_type": {
+                "type": "string",
+                "enum": [
+                  "checking",
+                  "savings"
+                ]
+              }
+            },
+            "required": [
+              "account_type"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_money",
+          "description": "Para transfer eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "recipient_iban": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "TRY",
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "recipient_iban",
+              "amount",
+              "currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      "check_balance"
+    ],
+    "conditional_tool": {
+      "condition": "balance >= 15000 and user_confirmed",
+      "tool": "transfer_money",
+      "params": {
+        "recipient_iban": "TR560001200009800001234567",
+        "amount": 15000,
+        "currency": "TRY"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_021",
+    "category": "tool_choice_competition",
+    "prompt": "Bugünkü USD kuruna göre 100 dolar kaç TL eder?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_exchange_rate",
+          "description": "Kur getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "from_currency": {
+                "type": "string"
+              },
+              "to_currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from_currency",
+              "to_currency"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_stock_price",
+          "description": "Hisse fiyatı getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "symbol"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_exchange_rate",
+    "expected_params": {
+      "from_currency": "USD",
+      "to_currency": "TRY"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_022",
+    "category": "format_normalization",
+    "prompt": "TR 33 0006 1005 1978 6457 8413 26 ibanına 1.250,75 tl gönder.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_money",
+          "description": "Para transferi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "recipient_iban": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "TRY",
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "recipient_iban",
+              "amount",
+              "currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "transfer_money",
+    "expected_params": {
+      "recipient_iban": "TR330006100519786457841326",
+      "amount": 1250.75,
+      "currency": "TRY"
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_023",
+    "category": "fallback_clarification",
+    "prompt": "Birikim hesabı aç ve uygun olanı seç.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "open_savings_account",
+          "description": "Birikim hesabı açar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "account_variant": {
+                "type": "string",
+                "enum": [
+                  "standard",
+                  "high_yield",
+                  "goal_based"
+                ]
+              },
+              "initial_deposit": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "account_variant"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "ask_for_preference_before_tool_call",
+    "expected_response_contains": [
+      "hedef",
+      "vade",
+      "risk",
+      "tercih"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_024",
+    "category": "basic_tool_selection",
+    "prompt": "Vadesiz TL hesabımın detaylarını ve güncel bakiyesini gösterir misin?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_account_details",
+          "description": "Belirtilen hesabın detaylarını ve bakiyesini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "account_type": {
+                "type": "string",
+                "enum": [
+                  "vadesiz",
+                  "vadeli",
+                  "kredi_karti"
+                ]
+              },
+              "currency": {
+                "type": "string",
+                "enum": [
+                  "TL",
+                  "USD",
+                  "EUR"
+                ]
+              }
+            },
+            "required": [
+              "account_type",
+              "currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_account_details",
+    "expected_params": {
+      "account_type": "vadesiz",
+      "currency": "TL"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_025",
+    "category": "parameter_extraction",
+    "prompt": "Portföyüme 150 lot THYAO hissesi eklemek için alım emri gir.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "buy_stock",
+          "description": "Hisse senedi alım emri oluşturur",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string",
+                "description": "Hisse senedi sembolü"
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "Alınacak lot sayısı"
+              },
+              "order_type": {
+                "type": "string",
+                "enum": [
+                  "market",
+                  "limit"
+                ],
+                "default": "market"
+              }
+            },
+            "required": [
+              "symbol",
+              "quantity"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "buy_stock",
+    "expected_params": {
+      "symbol": "THYAO",
+      "quantity": 150,
+      "order_type": "market"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_026",
+    "category": "multi_tool_orchestration",
+    "prompt": "Yarın Ankara'da hava nasıl olacak? Ona göre ne giymem gerektiği konusunda tavsiye ver.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather_forecast",
+          "description": "Belirli bir şehir ve tarih için hava durumu tahminini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "description": "YYYY-MM-DD formatında tarih veya 'yarın', 'bugün' gibi ifadeler"
+              }
+            },
+            "required": [
+              "city",
+              "date"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_clothing_advice",
+          "description": "Hava durumuna göre giyim tavsiyesi verir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "temperature": {
+                "type": "number"
+              },
+              "condition": {
+                "type": "string",
+                "description": "Yağmurlu, güneşli, karlı vb."
+              }
+            },
+            "required": [
+              "temperature",
+              "condition"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "get_weather_forecast",
+        "params": {
+          "city": "Ankara",
+          "date": "yarın"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "weather_data_received",
+      "tool": "get_clothing_advice",
+      "params": {
+        "temperature": "${get_weather_forecast.temperature}",
+        "condition": "${get_weather_forecast.condition}"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_027",
+    "category": "error_handling",
+    "prompt": "Sabah 7'ye alarm kurar mısın?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_time",
+          "description": "Mevcut saati getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "timezone": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "alarm",
+      "kuramam",
+      "yeteneğim yok",
+      "araç bulunmuyor"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_028",
+    "category": "complex_orchestration",
+    "prompt": "Kredi notumu kontrol et, eğer 1500'ün üzerindeyse 50.000 TL ihtiyaç kredisi başvurusu yap.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "check_credit_score",
+          "description": "Müşterinin kredi notunu sorgular",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "customer_id": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "apply_for_loan",
+          "description": "Kredi başvurusu yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "loan_type": {
+                "type": "string",
+                "enum": [
+                  "ihtiyaç",
+                  "taşıt",
+                  "konut"
+                ]
+              }
+            },
+            "required": [
+              "amount",
+              "loan_type"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "check_credit_score",
+        "params": {}
+      }
+    ],
+    "conditional_tool": {
+      "condition": "credit_score > 1500",
+      "tool": "apply_for_loan",
+      "params": {
+        "amount": 50000,
+        "loan_type": "ihtiyaç"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_029",
+    "category": "basic_tool_selection",
+    "prompt": "Şu anki Bitcoin fiyatı dolar cinsinden nedir?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_crypto_price",
+          "description": "Kripto para fiyatını getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "crypto_symbol": {
+                "type": "string"
+              },
+              "fiat_currency": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "crypto_symbol",
+              "fiat_currency"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_crypto_price",
+    "expected_params": {
+      "crypto_symbol": "BTC",
+      "fiat_currency": "USD"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_030",
+    "category": "parameter_extraction",
+    "prompt": "Önümüzdeki 5 gün için İzmir'in hava durumu tahminini detaylı olarak ver.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_extended_forecast",
+          "description": "Belirtilen gün sayısı için hava durumu tahminini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "days": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 14
+              },
+              "detailed": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "city",
+              "days"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_extended_forecast",
+    "expected_params": {
+      "city": "İzmir",
+      "days": 5,
+      "detailed": true
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_031",
+    "category": "multi_tool_orchestration",
+    "prompt": "Bana güzel bir fırında somon tarifi bul ve gerekli malzemeleri alışveriş listeme ekle.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "search_recipe",
+          "description": "Yemek tarifi arar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "add_to_shopping_list",
+          "description": "Alışveriş listesine ürün ekler",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "items"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "search_recipe",
+        "params": {
+          "query": "fırında somon"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "recipe_found",
+      "tool": "add_to_shopping_list",
+      "params": {
+        "items": "${search_recipe.ingredients}"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_032",
+    "category": "error_handling",
+    "prompt": "Kredi kartımı kaybettim, hemen iptal edin!",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_account_balance",
+          "description": "Hesap bakiyesini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "account_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "account_id"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "iptal",
+      "yetkim yok",
+      "müşteri hizmetleri",
+      "çağrı merkezi"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_033",
+    "category": "complex_orchestration",
+    "prompt": "Yatırım portföyümün güncel değerini hesapla, eğer %10'dan fazla zarar eden hisse varsa onları sat.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_portfolio_performance",
+          "description": "Portföydeki hisselerin performansını getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "sell_stock",
+          "description": "Hisse senedi satışı yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "string",
+                "description": "'all' veya miktar"
+              }
+            },
+            "required": [
+              "symbol",
+              "quantity"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "get_portfolio_performance",
+        "params": {}
+      }
+    ],
+    "conditional_tool": {
+      "condition": "stock.loss > 10",
+      "tool": "sell_stock",
+      "params": {
+        "symbol": "${underperforming_stock.symbol}",
+        "quantity": "all"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_034",
+    "category": "basic_tool_selection",
+    "prompt": "Bugün İstanbul Kadıköy'de hava kalitesi indeksi nasıl?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_air_quality",
+          "description": "Belirtilen konum için hava kalitesi indeksini (AQI) getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "district": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_air_quality",
+    "expected_params": {
+      "city": "İstanbul",
+      "district": "Kadıköy"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_035",
+    "category": "parameter_extraction",
+    "prompt": "15 Ekim'de İstanbul'dan Londra'ya tek yön, ekonomi sınıfı, 2 yetişkin için uçuş ara.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "search_flights",
+          "description": "Uçuş araması yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "origin": {
+                "type": "string"
+              },
+              "destination": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "trip_type": {
+                "type": "string",
+                "enum": [
+                  "one_way",
+                  "round_trip"
+                ]
+              },
+              "cabin_class": {
+                "type": "string",
+                "enum": [
+                  "economy",
+                  "business",
+                  "first"
+                ]
+              },
+              "passengers": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "origin",
+              "destination",
+              "date"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "search_flights",
+    "expected_params": {
+      "origin": "İstanbul",
+      "destination": "Londra",
+      "date": "2026-10-15",
+      "trip_type": "one_way",
+      "cabin_class": "economy",
+      "passengers": 2
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_036",
+    "category": "multi_tool_orchestration",
+    "prompt": "Euro kuruna bak, eğer 35 TL'nin altındaysa vadesiz hesabımdan 1000 Euro al.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_exchange_rate",
+          "description": "Döviz kurunu getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "currency_pair": {
+                "type": "string",
+                "description": "Örn: EUR/TRY"
+              }
+            },
+            "required": [
+              "currency_pair"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "buy_foreign_currency",
+          "description": "Döviz alımı yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "currency": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "source_account": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "currency",
+              "amount",
+              "source_account"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "get_exchange_rate",
+        "params": {
+          "currency_pair": "EUR/TRY"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "rate < 35",
+      "tool": "buy_foreign_currency",
+      "params": {
+        "currency": "EUR",
+        "amount": 1000,
+        "source_account": "vadesiz"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_037",
+    "category": "error_handling",
+    "prompt": "Geçen yılki gelir vergimi hesaplayıp vergi dairesine beyanname gönderir misin?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_account_statement",
+          "description": "Hesap özetini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "month"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "vergi",
+      "beyanname",
+      "gönderemem",
+      "işlem yapamam"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_038",
+    "category": "complex_orchestration",
+    "prompt": "Antalya'daki hava durumunu kontrol et, eğer fırtına varsa TK2450 numaralı uçuşumun rötar yapıp yapmadığını sorgula.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Hava durumunu getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "check_flight_status",
+          "description": "Uçuş durumunu sorgular",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "flight_number": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "flight_number"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "get_weather",
+        "params": {
+          "city": "Antalya"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "weather.condition == 'fırtına'",
+      "tool": "check_flight_status",
+      "params": {
+        "flight_number": "TK2450"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_039",
+    "category": "basic_tool_selection",
+    "prompt": "'Merhaba, nasılsın?' cümlesini İspanyolcaya çevir.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "translate_text",
+          "description": "Metni istenilen dile çevirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "target_language": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text",
+              "target_language"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "translate_text",
+    "expected_params": {
+      "text": "Merhaba, nasılsın?",
+      "target_language": "es"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_040",
+    "category": "parameter_extraction",
+    "prompt": "İSKİ su faturamı 5432198765 numaralı abone no ile kredi kartımdan öde.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "pay_utility_bill",
+          "description": "Fatura ödemesi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "institution": {
+                "type": "string",
+                "description": "Kurum adı"
+              },
+              "subscriber_no": {
+                "type": "string",
+                "description": "Abone numarası"
+              },
+              "payment_method": {
+                "type": "string",
+                "enum": [
+                  "kredi_karti",
+                  "vadesiz_hesap"
+                ]
+              }
+            },
+            "required": [
+              "institution",
+              "subscriber_no",
+              "payment_method"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "pay_utility_bill",
+    "expected_params": {
+      "institution": "İSKİ",
+      "subscriber_no": "5432198765",
+      "payment_method": "kredi_karti"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_041",
+    "category": "multi_tool_orchestration",
+    "prompt": "Mevcut mevduat faiz oranlarını getir, en yüksek oran %40'ın üzerindeyse 100.000 TL ile 32 günlük vadeli hesap aç.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_deposit_rates",
+          "description": "Güncel mevduat faiz oranlarını getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "open_deposit_account",
+          "description": "Vadeli mevduat hesabı açar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "term_days": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "amount",
+              "term_days"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "get_deposit_rates",
+        "params": {}
+      }
+    ],
+    "conditional_tool": {
+      "condition": "max_rate > 40",
+      "tool": "open_deposit_account",
+      "params": {
+        "amount": 100000,
+        "term_days": 32
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_042",
+    "category": "error_handling",
+    "prompt": "Yağmuru durdur, dışarı çıkacağım.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "description": "Hava durumunu getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "yağmuru durduramam",
+      "hava durumunu değiştiremem",
+      "doğa olayları"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_043",
+    "category": "complex_orchestration",
+    "prompt": "Beşiktaş'ta deniz manzaralı bir balık restoranı bul, bu akşam 20:00 için 2 kişilik rezervasyon yap ve eşime davetiye gönder.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "search_restaurant",
+          "description": "Restoran arar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              },
+              "cuisine": {
+                "type": "string"
+              },
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "location"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "book_table",
+          "description": "Restoran rezervasyonu yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "restaurant_id": {
+                "type": "string"
+              },
+              "time": {
+                "type": "string"
+              },
+              "guests": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "restaurant_id",
+              "time",
+              "guests"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "send_calendar_invite",
+          "description": "Takvim davetiyesi gönderir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "recipient": {
+                "type": "string"
+              },
+              "event_details": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "recipient",
+              "event_details"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "search_restaurant",
+        "params": {
+          "location": "Beşiktaş",
+          "cuisine": "balık",
+          "features": [
+            "deniz manzaralı"
+          ]
+        }
+      },
+      {
+        "tool": "book_table",
+        "params": {
+          "restaurant_id": "${search_restaurant.id}",
+          "time": "20:00",
+          "guests": 2
+        }
+      },
+      {
+        "tool": "send_calendar_invite",
+        "params": {
+          "recipient": "eşim",
+          "event_details": "${book_table.details}"
+        }
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_044",
+    "category": "basic_tool_selection",
+    "prompt": "Yeni bir kredi kartı talep etmek istiyorum.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "request_credit_card",
+          "description": "Yeni kredi kartı başvurusu alır",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "card_type": {
+                "type": "string",
+                "description": "Örn: platinum, gold, standart"
+              }
+            },
+            "required": []
+          }
+        }
+      }
+    ],
+    "expected_tool": "request_credit_card",
+    "expected_params": {},
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_045",
+    "category": "parameter_extraction",
+    "prompt": "Bu ayki market alışverişi bütçemi 3000 TL olarak belirle.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "set_budget_limit",
+          "description": "Belirli bir kategori için bütçe limiti belirler",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": [
+                  "market",
+                  "giyim",
+                  "eglence",
+                  "fatura"
+                ]
+              },
+              "amount": {
+                "type": "number"
+              },
+              "period": {
+                "type": "string",
+                "enum": [
+                  "aylik",
+                  "haftalik"
+                ],
+                "default": "aylik"
+              }
+            },
+            "required": [
+              "category",
+              "amount"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "set_budget_limit",
+    "expected_params": {
+      "category": "market",
+      "amount": 3000,
+      "period": "aylik"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_046",
+    "category": "multi_tool_orchestration",
+    "prompt": "Bugün Bodrum'da UV indeksi kaç? Eğer yüksekse bana uygun bir güneş kremi öner.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_uv_index",
+          "description": "Belirtilen konum için UV indeksini getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "location"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "recommend_sunscreen",
+          "description": "UV indeksine göre güneş kremi önerir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "uv_level": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "uv_level"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "get_uv_index",
+        "params": {
+          "location": "Bodrum"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "uv_index > 5",
+      "tool": "recommend_sunscreen",
+      "params": {
+        "uv_level": "${get_uv_index.value}"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_047",
+    "category": "error_handling",
+    "prompt": "Şu an aklımdan hangi sayıyı tuttuğumu tahmin et.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "generate_random_number",
+          "description": "Rastgele sayı üretir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "integer"
+              },
+              "max": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "min",
+              "max"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "akıl okuma",
+      "tahmin edemem",
+      "böyle bir yeteneğim yok"
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_048",
+    "category": "complex_orchestration",
+    "prompt": "Son 6 aylık kredi kartı harcamalarımı analiz et, bir PDF raporu oluştur ve bunu muhasebecime e-posta ile gönder.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "analyze_spending",
+          "description": "Harcama analizi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "months": {
+                "type": "integer"
+              },
+              "account_type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "months"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "generate_pdf_report",
+          "description": "Verilen veriden PDF raporu oluşturur",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "data"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "send_email",
+          "description": "E-posta gönderir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "to": {
+                "type": "string"
+              },
+              "subject": {
+                "type": "string"
+              },
+              "attachment_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "subject"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "analyze_spending",
+        "params": {
+          "months": 6,
+          "account_type": "kredi_karti"
+        }
+      },
+      {
+        "tool": "generate_pdf_report",
+        "params": {
+          "data": "${analyze_spending.result}",
+          "title": "6 Aylık Harcama Raporu"
+        }
+      },
+      {
+        "tool": "send_email",
+        "params": {
+          "to": "muhasebeci",
+          "subject": "Harcama Raporu",
+          "attachment_id": "${generate_pdf_report.file_id}"
+        }
+      }
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_049",
+    "category": "basic_tool_selection",
+    "prompt": "Türkiye'nin güncel enflasyon oranı nedir?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_economic_indicator",
+          "description": "Ekonomik göstergeleri getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "country": {
+                "type": "string"
+              },
+              "indicator": {
+                "type": "string",
+                "enum": [
+                  "enflasyon",
+                  "issizlik",
+                  "gdp"
+                ]
+              }
+            },
+            "required": [
+              "country",
+              "indicator"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_economic_indicator",
+    "expected_params": {
+      "country": "Türkiye",
+      "indicator": "enflasyon"
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "func_050",
+    "category": "parameter_extraction",
+    "prompt": "Geçen yıl 29 Ekim'de Ankara'da hava kaç dereceydi?",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_historical_weather",
+          "description": "Geçmiş tarihteki hava durumunu getirir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "required": [
+              "city",
+              "date"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_tool": "get_historical_weather",
+    "expected_params": {
+      "city": "Ankara",
+      "date": "2025-10-29"
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_051",
+    "category": "multi_tool_orchestration",
+    "prompt": "Yarınki takvimime bak, eğer öğleden sonra boşluğum varsa saat 14:00'e 'Proje Toplantısı' ekle.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "check_calendar_availability",
+          "description": "Takvimdeki uygunluğu kontrol eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "time_slot": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "create_calendar_event",
+          "description": "Takvime yeni etkinlik ekler",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "time": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "date",
+              "time"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "check_calendar_availability",
+        "params": {
+          "date": "yarın",
+          "time_slot": "öğleden sonra"
+        }
+      }
+    ],
+    "conditional_tool": {
+      "condition": "is_available == true",
+      "tool": "create_calendar_event",
+      "params": {
+        "title": "Proje Toplantısı",
+        "date": "yarın",
+        "time": "14:00"
+      }
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "func_052",
+    "category": "error_handling",
+    "prompt": "Banka sistemini hackleyip hesabıma 1 milyon dolar aktar.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "transfer_money",
+          "description": "Para transferi yapar",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "to_account": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "to_account"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_behavior": "no_suitable_tool",
+    "expected_response_contains": [
+      "yasadışı",
+      "hack",
+      "yapamam",
+      "güvenlik"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "func_053",
+    "category": "complex_orchestration",
+    "prompt": "Teknoloji sektöründeki son piyasa trendlerini analiz et ve bana düşük riskli 3 hisse senedi önerisi sun.",
+    "available_tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "analyze_market_trends",
+          "description": "Belirli bir sektördeki piyasa trendlerini analiz eder",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "sector": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sector"
+            ]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_stock_recommendations",
+          "description": "Risk profiline göre hisse senedi önerir",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "market_data": {
+                "type": "object"
+              },
+              "risk_level": {
+                "type": "string",
+                "enum": [
+                  "düşük",
+                  "orta",
+                  "yüksek"
+                ]
+              },
+              "count": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "market_data",
+              "risk_level",
+              "count"
+            ]
+          }
+        }
+      }
+    ],
+    "expected_sequence": [
+      {
+        "tool": "analyze_market_trends",
+        "params": {
+          "sector": "teknoloji"
+        }
+      },
+      {
+        "tool": "get_stock_recommendations",
+        "params": {
+          "market_data": "${analyze_market_trends.data}",
+          "risk_level": "düşük",
+          "count": 3
+        }
+      }
+    ],
+    "difficulty": "hard"
+  }
+]

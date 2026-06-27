@@ -1,0 +1,464 @@
+[
+  {
+    "id": "tr_nuance_001",
+    "category": "sarcasm",
+    "question": "Aşağıdaki cümlede konuşan kişinin gerçek niyetini açıkla: 'Harika, tam da ihtiyacım olan şey, trafiğin en yoğun saatinde lastiğimin patlamasıydı!'",
+    "expected_answer": "Konuşan kişi aslında memnun değildir. 'Harika' kelimesini kinayeli (sarcastic) bir şekilde kullanarak, yaşadığı durumun (lastik patlaması) çok kötü bir zamanda gerçekleştiğinden şikayet etmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_002",
+    "category": "idioms",
+    "question": "Birisi sana 'Bana maval okuma!' derse ne demek istiyordur?",
+    "expected_answer": "Kişi, kendisine yalan söylenmemesini, boş laflarla oyalanmamasını veya inandırıcı olmayan bahaneler uydurulmamasını sert bir dille ifade etmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_003",
+    "category": "proverbs",
+    "question": "'Damlaya damlaya göl olur' atasözü ile çelişen (zıt anlamlı sayılabilecek) bir atasözü söyle.",
+    "expected_answer": "'Taşıma suyla değirmen dönmez' (küçük katkıların yetersizliği vurgusu) veya 'Hazıra dağ dayanmaz' (biriktirmek yerine tüketme vurgusu) bağlama göre zıt düşünülebilir. Ancak tam zıttı yoktur, farklı bakış açıları vardır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_004",
+    "category": "cultural_context",
+    "question": "Türkiye'de bir misafirliğe gittiğinde ev sahibi 'Çay daha yeni demlendi' derse, bu ne anlama gelir?",
+    "expected_answer": "Ev sahibi, misafirin gitmesini istemediğini, oturmaya devam etmesini arzuladığını ve ikramın (sohbetin) süreceğini nazikçe belirtmektedir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_005",
+    "category": "slang_argot",
+    "question": "Gençlerin kullandığı 'Ato' veya 'Atmak' argosu (örn: 'Ziya atma!') ne anlama gelir?",
+    "expected_answer": "Yalan söylemek, uydurmak, abartmak anlamına gelir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_006",
+    "category": "banking_jargon",
+    "question": "Bankacılıkta 'krediyi takla attırmak' ne demektir? (Argo/Sektör ağzı)",
+    "expected_answer": "Mevcut bir kredinin vadesini uzatmak, borcu başka bir borçla kapatmak veya ödeme planını değiştirmek (yapılandırmak) anlamına gelen gayriresmi bir ifadedir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_007",
+    "category": "sarcasm",
+    "question": "Arkadaşınız sınava çalışmadığınızı görüp 'Hadi canım sen de, sınav birinciliği senin' diyor. Bu ne ifade ediyor?",
+    "expected_answer": "Bu bir iğneleme/alaydır (sarcasm). Arkadaş gerçekten sizin birinci olacağınıza inanmıyor, aksine çalışmadığınız için başarısız olacağınızı ima ediyor. Düz anlam ile kastedilen anlam zıttır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_008",
+    "category": "sarcasm",
+    "question": "Ofis çok sıcak, herkes terliyor. Biri 'Bu sıcakta sanki Kuzey Kutbu'nda gibiyiz' diyor. Ne demek istiyor?",
+    "expected_answer": "Bu iğnelemedir. Kuzey Kutbu çok soğuk bir yerdir, ama ortam çok sıcak olduğu için alay amaçlı zıt bir benzetme yapılmıştır. İronidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_009",
+    "category": "proverbs",
+    "question": "'Dam üstünde saksağan' sözü ne anlama gelir? Hangi durumda kullanılır?",
+    "expected_answer": "Bir yere ait olamayan, tutunamayan, yerleşemeyen kişi için kullanılır. İstikrarsız olan, bir yerde duramayan insanları ifade eder. Örnek: Sürekli iş değiştiren birine 'dam üstünde saksağan gibi' denir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_010",
+    "category": "proverbs",
+    "question": "'Ağaç yaşken eğilir' atasözünün anlamı nedir? Örnek bir durum verin.",
+    "expected_answer": "Bir kişiye erken yaşlarda, çocukken verilecek eğitim ve kazandırılacak alışkanlıkların önemi üzerine bir sözdür. İnsanlar genç, çocuk yaşta daha kolay şekillenir anlamına gelir. Örnek: Çocuklara küçük yaşta kitap okuma alışkanlığı kazandırmak.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_011",
+    "category": "idioms",
+    "question": "Birisine 'İşine gelince arı, işine gelmeyince bal tutan parmağını yer' denir. Bu ne demektir?",
+    "expected_answer": "Çıkarı olduğunda çok çalışkan ve verimli görünen, ama kendi menfaati olmayınca hiç çalışmayan, hatta zarar veren kişileri anlatır. İkiyüzlü, çıkarcı davranışları ifade eder.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_012",
+    "category": "banking_jargon",
+    "question": "Bir banka çalışanı 'Hesap eksiye düştü' diyor. Bu ne demektir?",
+    "expected_answer": "Hesaptaki bakiye eksi (negatif) oldu, yani hesap sahibi bankaya borçlu durumda. Overdraft veya yetersiz bakiye durumu anlamına gelir. Hesapta para kalmadı ve ek olarak borç oluştu.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_013",
+    "category": "banking_jargon",
+    "question": "Müşteri hizmetlerinde 'Limitiniz yetmedi' denildiğinde ne yapılması gerekir?",
+    "expected_answer": "Bu ifade kredi kartı veya hesap limitinin işlem için yetersiz olduğu anlamına gelir. Müşterinin ya daha az miktarda işlem yapması, ya başka ödeme yöntemi kullanması, ya da limit artışı talep etmesi gerekir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_014",
+    "category": "cultural_context",
+    "question": "Toplantıda patron 'Bu konuyu masada bırakalım' diyor. Ne yapılmalı?",
+    "expected_answer": "Bu ifade 'şimdilik bu konuyu konuşmayı erteliyoruz, başka zaman ele alacağız' anlamına gelir. Daha sonra tekrar değerlendirilmek üzere konunun askıya alındığını belirtir. Konu kapatılmamış, sadece ertelenmiştir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_015",
+    "category": "cultural_context",
+    "question": "'Ayağına taş değmesin' sözü ne anlama gelir ve ne zaman söylenir?",
+    "expected_answer": "Bu, birine sevgi ve iyi niyet göstermek için söylenen bir ifadedir. 'Başına kötü bir şey gelmesin, zarar görme' anlamındadır. Genellikle sevilen birine karşı koruyucu duygularla söylenir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_016",
+    "category": "cultural_context",
+    "question": "'Maşallah' ne zaman ve neden söylenir?",
+    "expected_answer": "Güzel bir şeyi, başarıyı, sağlığı veya mutluluğu görünce hayranlık ve takdirle söylenir. Ayrıca nazar değmesin diye koruyucu bir ifade olarak kullanılır. Örneğin: Güzel bir bebeği görüp 'Maşallah ne güzel' demek.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_017",
+    "category": "idioms",
+    "question": "'Eli kulağında olmak' ne demektir? Örnek verin.",
+    "expected_answer": "Bir şey olmak üzere, çok yakın olmak anlamındadır. Genellikle yaklaşan bir olay veya durum için kullanılır. Örnek: 'Tatil eli kulağımda, sadece iki gün kaldı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_018",
+    "category": "proverbs",
+    "question": "'Acele işe ...' atasözünü tamamlayın ve anlamını açıklayın.",
+    "expected_answer": "'Acele işe şeytan karışır' - Aceleyle yapılan işlerde hata yapılır, istenmeyen sonuçlar ortaya çıkar anlamına gelir. Sabırlı ve dikkatli olmak gerektiğini vurgular.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_019",
+    "category": "cultural_context",
+    "question": "Toplantıda 'Bu konu zaten kapandı' denildi. Ne anlama gelir?",
+    "expected_answer": "Bu konu artık tartışılmıyor, karar verilmiş veya sonuçlanmış demektir. Konunun tekrar açılmaması, tartışmanın bitmesi anlamına gelir. Nihai karar alınmıştır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_020",
+    "category": "sarcasm",
+    "question": "Bir iş toplantısında proje 3 ay gecikmiş. Müdür 'Evet, gerçekten çok vaktinde bitirdik' diyor. Bu ne anlama gelir?",
+    "expected_answer": "Bu ironik/alaycı bir ifadedir. Projenin geç bittiğini vurgulayan bir eleştiridir. Söylenen ile gerçek durum zıttır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_021",
+    "category": "idioms_financial",
+    "question": "Bir iş adamı 'Para kopartmak' dediğinde ne demek istiyor?",
+    "expected_answer": "Kâr elde etmek, çok para kazanmak anlamında kullanılan gayriresmî bir ifade. Yüksek kazanç sağlayan bir iş veya girişim için kullanılır. Örnek: 'Bu proje para kopartmış' = çok kârlı olmuş.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_022",
+    "category": "proverbs_financial",
+    "question": "'Bugünün hanesi yarının hazinesidir' atasözü finansal açıdan ne vurguladığını açıklayın.",
+    "expected_answer": "Bugün yapılan tasarrufun, gelecekte büyük değer kazanacağını ve muhtemel zorluklar için yardımcı olacağını anlatır. Tasarruf yapmak ve birikimi önemsemek gerektiğini vurgular.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_023",
+    "category": "banking_jargon",
+    "question": "Müşteri, bankanın çağrı merkezine 'Kartım bloke oldu' diye şikayet ediyor. Bu ne anlama gelir ve neden olabilir?",
+    "expected_answer": "Kredi kartına işlem yapılamıyor, kart kullanılamaz duruma gelmiş. Nedenleri: hatalı PIN girişi, hileli işlem şüphesi, kredi limitinin aşılması, vadesi dolmış, banka tarafından kısıtlanmış vb. Blokaj ancak müşteri veya banka tarafından kaldırılabilir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_024",
+    "category": "cultural_nuance_business",
+    "question": "İş görüşmesinde alternatif taraf 'Bunu aile ve danışmanlarımla konuşmak istiyorum' dediğinde ne anlama gelir?",
+    "expected_answer": "Kişi hemen karar vermek istemediğini, konuyu daha düşünceli değerlendirmek istediğini belirtir. Bu genellikle trafı/müzakereye açık olduğu anlamına gelir, fakat hemen onay da vermez. Kültürel olarak danışmanlarla konsultasyon Türkiye'de önemli bir karar aşamasıdır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_025",
+    "category": "slang_youth",
+    "question": "Gençler 'Sesi çıkmaz' dediğinde ne anlama gelir?",
+    "expected_answer": "Birisi çok haklı olduğunda veya serbest konuşamadığında, karşılaştırılamayacak düşük bir konumda olduğunda kullanılır. 'Onun karşısında sesi çıkmaz' = çaresizdir, hiçbir şey söyleyemez.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_026",
+    "category": "diplomacy_nuance",
+    "question": "Resmi bir açıklamada 'Bu konu hakkında detaylı bir değerlendirme yapılacaktır' denildi. Bu ifade ne zaman ve neden kullanılır?",
+    "expected_answer": "Hemen cevap vermek istemeyen, konuyu ertelemek istenen veya hassas bulunun kuramda öfke çağıracak bir konu söz konusu olduğunda dilplomatic bir şekilde zaman kazanmak için kullanılır. Net bir cevap vermeme niyetini gösterir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_027",
+    "category": "proverbs_relationships",
+    "question": "'Memeni emmez bir çocuğun yüzüne bakmak' atasözü ne anlama gelir?",
+    "expected_answer": "Bir kişinin veya grubun yardımını görmediğinde,o kadar yardımcı olamadığında veya ilgisiz olduğunda hayal kırıklığını ifade eder. İlgi ve yardım beklenen birinin umursamaz davranışını vurgular.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_nuance_028",
+    "category": "banking_client_psychology",
+    "question": "Müşteri servisi danışmanı sizi arayıp 'Özel bir fırsat sizin için hazırlamışız' dediğinde dikkat edilmesi gereken ortak taktik nedir?",
+    "expected_answer": "Bu, cross-selling (çapraz satış) veya ürün pazarlama taktiklerincen biridir. Müşteriye değer sunulacaksa gerçek bir avantaj yoktur. Teşviklerin görülmesi, anlaşılan ürünün müşteriye gerçekten faydası olup olmadığı kontrol edilmeli.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_029",
+    "category": "idioms_work_environment",
+    "question": "'Kol kanat çevirmek' ne demektir? Hangi ortamda kullanılır?",
+    "expected_answer": "Birinin başına belâ gelmesi veya zorluğun çıkması durumunda onun yardımına koşmak, himaye etmek anlamında kullanılır. Genellikle iş ortamında yetkisi olan biri, başını sıkışan bir kişiyi koruması için kullanılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_030",
+    "category": "sarcasm_corporate",
+    "question": "Bütçe kesintisinden sonra yönetici 'Evet, şimdi daha verimli olacağız' diyor. Ne anlama gelir?",
+    "expected_answer": "Bu, maskelenmiş bir şikayet ve iğnelemedir. Az kaynak ile daha fazla işin yerine getirileceğinin imkansız olduğunu, bunun gerçekçi olmayan bir beklenti olduğunu ima eder. Yöneticinin tarafından tatminsizlik olduğunu gösterir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_031",
+    "category": "cultural_respect_hierarchy",
+    "question": "'Elinizi öperim' veya 'Ayaklarınıza kapanırım' Türkiye'de ne zaman söylenir?",
+    "expected_answer": "Çok büyük minnettarlık, saygı veya itaati gösterirken söylenir. Fiziksel olarak yapılmaz genellikle, vasiçemeysel bir saygı ve müteşekkirlik göstergesidir. Hiyerarşi ve yaş farkı önemsenen durumlarda kullanılır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_032",
+    "category": "proverbs_financial_wisdom",
+    "question": "'Bir paraya versin içinde gümüş mümüş' atasözü finansal açıdan ne demek?",
+    "expected_answer": "Ucuz bir şeyi aldığında kalitesiz olabileceği, fakat bazen kaliteli de çııkabileceği belirsizliğini vurgular. Paranızı kısıtlı olduğunda kaliteyi kontrol etmek gerektiğini, rastgele satın almak riskliantır yılını anlatır.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_nuance_033",
+    "category": "idioms_negotiation",
+    "question": "'Geçit vermemek' ne anlama gelir? İş müzakerelemesinde ne simge eder?",
+    "expected_answer": "Bir tarafın ısrar etmesine rağmen, diğer tarafın taviz vermemesi, ilk duruşunda kalması anlamına gelir. Müzakerelerde müelif karar almadığında veya koşulları değiştirmek istemediğinde 'ben geçit vermem' denebilir = hayır derim.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_034",
+    "category": "sarcasm_time",
+    "question": "Birisi 'Zamanının değerini bil, saat başında toplantı var' diyor ama saat on beş dakika geç başlıyor. Burda ne anlatılmak isteniyor?",
+    "expected_answer": "Bu durumda kişi işte zamanın değerini vurgularken, kendisi zamanı saygısızca davranıyor. Söylemleri ile davranışları uyuşmamaktadır. Bu tür çelişkiler Türk kültüründe sık yaşanan ve sezilen bir nuanstır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_035",
+    "category": "banking_trust_language",
+    "question": "Banka müdürü 'Sizin güvenmiş müşterilerimizden birisiniz' dediğinde bu ne gibi beklentiler yaratır?",
+    "expected_answer": "Bu ifade yüksek ürün/hizmet alımı veya yatırım için hazırlık sürecidir. Müşteriye ayrıcalık ve güven varmış gibi hissettirilerek, daha yüksek tutarlı veya karlı ürün satma amaçlanır. Müşteri memnuniyeti yanında satış taktikleridir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_036",
+    "category": "proverbs_dignity",
+    "question": "'Yazı yazılacaksa yüzüne' atasözü ne demektir?",
+    "expected_answer": "Birinin başında kötü bir şey olacaksa, bunu gizli tutmak yerine açıktan yüzüne söylemek gerektiğini anlatır. Şeffaflık ve dürüstlük vurgularken, aynı zamanda birisinin kaderinin kaçınılmaz olsa da onur ile karşılaşması gerektiğini belirtir. Dürüstlük ve saygıyı destekler.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_nuance_037",
+    "category": "idioms",
+    "question": "Birine 'Gözün aydın' demek ne anlama gelir ve hangi durumlarda kullanılır?",
+    "expected_answer": "Birinin beklediği, sevindiği güzel bir haber veya olay gerçekleştiğinde (örneğin bir yakını geldiğinde, bebek sahibi olduğunda) tebrik ve mutluluğu paylaşmak amacıyla söylenir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_038",
+    "category": "cultural_context",
+    "question": "Misafirlikte ev sahibinin 'Biz bizeyiz, yabancı yok' demesi neyi ifade eder?",
+    "expected_answer": "Ev sahibinin misafire resmiyete gerek olmadığını, rahat davranabileceğini ve ailenin bir parçası gibi görüldüğünü hissettirmek için kullandığı samimiyet ifadesidir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_039",
+    "category": "sarcasm",
+    "question": "Birisi çok yavaş hareket eden arkadaşına 'Maşallah, rüzgar gibisin, gözlerim kamaştı hızından' derse ne kastediyordur?",
+    "expected_answer": "Kişi aslında arkadaşının çok yavaş olduğunu vurgulamak için kinaye (sarcasm) yapmaktadır. Söylediğinin tam tersini kastederek durumu eleştirir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_040",
+    "category": "proverbs",
+    "question": "'Görünen köy kılavuz istemez' atasözü hangi durumlarda kullanılır?",
+    "expected_answer": "Sonucu veya ne olduğu açıkça belli olan, gizlisi saklısı kalmamış durumlar için ekstra bir açıklamaya veya yol göstericiye ihtiyaç olmadığını belirtmek için kullanılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_041",
+    "category": "idioms",
+    "question": "'Etekleri zil çalmak' deyimi hangi duyguyu ifade eder?",
+    "expected_answer": "Çok sevinmek, aşırı mutlu olmak ve heyecanlanmak anlamlarına gelir. Beklenen güzel bir şeyin gerçekleşmesi anındaki coşkuyu anlatır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_042",
+    "category": "cultural_context",
+    "question": "Birisi yeni bir kıyafet giydiğinde veya yeni bir eşya aldığında söylenen 'Güle güle kullan' veya 'Üstünde paralansın' ifadelerinin amacı nedir?",
+    "expected_answer": "Yeni alınan eşyanın kişiye mutluluk getirmesi, iyi günlerde kullanılması temennisidir. 'Üstünde paralansın' ise eşyanın eskiyene kadar uzun ömürlü ve keyifle kullanılması dileğini barındıran samimi bir duadır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_043",
+    "category": "slang_argot",
+    "question": "Günlük konuşmada birinin 'Beni ekme' demesi ne anlama gelir?",
+    "expected_answer": "Verilen sözü tutmamak, buluşmaya gelmemek veya birini yarı yolda bırakmak anlamındaki 'ekmek' argosundan gelir. 'Beni yüzüstü bırakma, buluşmaya kesin gel' demektir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_044",
+    "category": "idioms",
+    "question": "'Burnundan solumak' deyimi kişinin hangi ruh halinde olduğunu gösterir?",
+    "expected_answer": "Kişinin çok öfkeli, sinirli ve patlamaya hazır bir ruh halinde olduğunu ifade eder. Fiziksel olarak sinirden hızlı nefes alıp vermeye yapılan bir benzetmedir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_045",
+    "category": "proverbs",
+    "question": "'Tatlı dil yılanı deliğinden çıkarır' sözüyle anlatılmak istenen temel düşünce nedir?",
+    "expected_answer": "Güzel, yumuşak ve ikna edici konuşmanın en inatçı, sert veya tehlikeli kişileri bile yola getirebileceğini, ikna edebileceğini vurgular.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_046",
+    "category": "cultural_context",
+    "question": "Yemekten sonra yemeği yapan kişiye 'Eline sağlık' denildiğinde, yemeği yapan kişi genellikle ne cevap verir ve bu ne anlama gelir?",
+    "expected_answer": "Genellikle 'Afiyet olsun' veya 'Yarasın' şeklinde cevap verilir. Bu, yemeğin yenmesinden duyulan memnuniyeti ve yiyen kişiye şifa/sağlık getirmesi dileğini ifade eden kültürel bir nezaket döngüsüdür.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_047",
+    "category": "sarcasm",
+    "question": "Sürekli hata yapan birine 'Yine harikalar yaratıyorsun' demek ne anlama gelir?",
+    "expected_answer": "Kişinin aslında yine işleri batırdığını veya hata yaptığını alaycı bir dille (ironi) ifade etmektir. Başarı kelimesi başarısızlığı vurgulamak için kullanılmıştır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_048",
+    "category": "idioms",
+    "question": "'İpe un sermek' deyimi hangi davranış biçimini tanımlar?",
+    "expected_answer": "İstenilen bir işi yapmamak için geçersiz, mantıksız bahaneler uydurmak ve işi yokuşa sürmek anlamına gelir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_049",
+    "category": "cultural_context",
+    "question": "Bir cenaze evinde veya taziye sırasında söylenen 'Başınız sağ olsun' ifadesinin derin anlamı nedir?",
+    "expected_answer": "Ölen kişinin geri gelmeyeceği gerçeği karşısında, geride kalanların sağlığının ve ömrünün uzun olması temennisidir. 'Sen sağ kal, ömrün uzun olsun' anlamında bir teselli sözüdür.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_050",
+    "category": "slang_youth",
+    "question": "Gençler arasında yaygın olan 'Boş yapmak' ifadesi ne anlama gelir?",
+    "expected_answer": "Gereksiz, anlamsız, faydasız veya konudan bağımsız konuşmak anlamına gelir. Karşı tarafın söylediklerinin ciddiye alınmadığını belirtmek için de kullanılır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_051",
+    "category": "proverbs",
+    "question": "'Minareyi çalan kılıfını hazırlar' atasözü hangi tür eylemler için kullanılır?",
+    "expected_answer": "Kötü, yasa dışı veya ahlaksız bir iş yapmaya niyetlenen kişinin, bu durumu gizlemek veya kendini haklı çıkarmak için önceden bahaneler ve önlemler hazırladığını belirtmek için kullanılır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_052",
+    "category": "idioms",
+    "question": "'Çam devirmek' deyimi ne tür bir hatayı ifade eder?",
+    "expected_answer": "Farkında olmadan, karşısındakini kıracak, üzecek veya pot kıracak şekilde yersiz ve kaba bir söz söylemek anlamına gelir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_053",
+    "category": "cultural_context",
+    "question": "Yola çıkan birinin arkasından su dökmek Türk kültüründe neyi simgeler?",
+    "expected_answer": "Giden kişinin 'su gibi hızlı, engelsiz ve kazasız belasız gidip gelmesi' dileğini simgeleyen eski bir şamanik/kültürel gelenektir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_054",
+    "category": "sarcasm",
+    "question": "Odayı darmadağın bırakan çocuğuna annesinin 'Odan müze gibi olmuş, dokunmaya kıyamıyorum' demesi neyi ifade eder?",
+    "expected_answer": "Annenin odanın aşırı dağınık ve pis olmasından duyduğu rahatsızlığı kinayeli bir şekilde dile getirmesidir. Düzenli bir yer olan 'müze' benzetmesiyle zıtlık yaratılarak eleştiri yapılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_055",
+    "category": "idioms",
+    "question": "'Pabucu dama atılmak' deyimi hangi psikolojik veya sosyal durumu anlatır?",
+    "expected_answer": "Kendinden daha üstün, yeni veya ilgi çekici birinin gelmesiyle eski değerini, önemini veya gördüğü ilgiyi kaybetmek durumunu anlatır. Genellikle yeni kardeş doğduğunda büyük çocuk için kullanılır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_056",
+    "category": "proverbs",
+    "question": "'Körle yatan şaşı kalkar' atasözü insan ilişkileri hakkında ne söyler?",
+    "expected_answer": "İnsanın sürekli birlikte olduğu, arkadaşlık ettiği kişilerin huylarından, alışkanlıklarından (özellikle kötü olanlardan) zamanla etkileneceğini ve onlara benzeyeceğini vurgular.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_057",
+    "category": "slang_argot",
+    "question": "Bir tartışma sırasında 'R yapmak' veya 'Vitesi R'ye takmak' ne anlama gelir?",
+    "expected_answer": "Geri vites (Reverse) kelimesinden türemiştir. Bir kişinin savunduğu fikirden veya iddialı tavrından korkarak veya haksız olduğunu anlayarak aniden vazgeçmesi, geri adım atması anlamına gelir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_058",
+    "category": "cultural_context",
+    "question": "Birine 'Kolay gelsin' demek neden Türk çalışma kültürünün önemli bir parçasıdır?",
+    "expected_answer": "Çalışan, emek veren kişiye duyulan saygıyı gösterir. İşinin hafiflemesi, zorluk çekmemesi temennisini içerir ve sosyal bağları güçlendiren, selamlaşma yerine de geçen bir nezaket kuralıdır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_059",
+    "category": "idioms",
+    "question": "'Saman altından su yürütmek' deyimi nasıl bir karakteri veya eylemi tarif eder?",
+    "expected_answer": "Kimseye belli etmeden, gizlice ve genellikle sinsi bir şekilde iş çeviren, planlar yapan kişileri veya eylemleri tarif eder.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_060",
+    "category": "sarcasm",
+    "question": "Çok gürültülü bir ortamda 'Burası da kütüphane maşallah, sessizlikten kulaklarım çınlıyor' demek ne anlama gelir?",
+    "expected_answer": "Ortamın aşırı gürültülü olmasından duyulan rahatsızlığın, tam zıttı olan 'kütüphane' ve 'sessizlik' kelimeleri kullanılarak ironik bir şekilde ifade edilmesidir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_061",
+    "category": "proverbs",
+    "question": "'Dereyi görmeden paçaları sıvamak' atasözü hangi hatalı davranışı eleştirir?",
+    "expected_answer": "Henüz ortada kesinleşmiş bir durum veya sonuç yokken, olmuş gibi aceleyle hazırlıklara girişmeyi ve erken sevinmeyi eleştirir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_062",
+    "category": "cultural_context",
+    "question": "Kahve ikram edildiğinde 'Bir fincan kahvenin kırk yıl hatırı vardır' sözü neyi ifade eder?",
+    "expected_answer": "Yapılan küçük bir iyiliğin, ikramın veya paylaşılan dostluğun çok uzun yıllar unutulmayacağını, vefa duygusunun önemini vurgular.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_nuance_063",
+    "category": "idioms",
+    "question": "'Aba altından sopa göstermek' deyimi iletişimde hangi stratejiyi belirtir?",
+    "expected_answer": "Görünüşte sakin, yumuşak veya dostça davranırken, aslında üstü kapalı bir şekilde tehdit etme veya gözdağı verme stratejisini belirtir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_064",
+    "category": "slang_youth",
+    "question": "Bir olay karşısında 'Cringe oldum' demek ne anlama gelir?",
+    "expected_answer": "Başkası adına utanmak, bir durumun veya davranışın aşırı yapmacık, utanç verici veya rahatsız edici olmasından dolayı duyulan tuhaf hissi ifade eder.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_nuance_065",
+    "category": "idioms",
+    "question": "'Dimyata pirince giderken evdeki bulgurdan olmak' deyimi hangi durumu özetler?",
+    "expected_answer": "Daha iyisini, daha fazlasını elde etme hırsıyla hareket ederken, elindeki mevcut imkanları veya varlıkları da kaybetme durumunu özetler.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_nuance_066",
+    "category": "cultural_context",
+    "question": "Büyüklerin yanında bacak bacak üstüne atmamanın Türk kültüründeki karşılığı nedir?",
+    "expected_answer": "Büyüklere karşı saygı göstermenin fiziksel bir kuralıdır. Bacak bacak üstüne atmak rahatlık ve bazen ciddiyetsizlik/saygısızlık olarak algılanabileceği için, hiyerarşik saygının bir gereği olarak bundan kaçınılır.",
+    "difficulty": "medium"
+  }
+]

@@ -1,0 +1,482 @@
+[
+  {
+    "id": "sts_001",
+    "category": "identical",
+    "sentence1": "Bugün hava çok güzel.",
+    "sentence2": "Bugün hava çok güzel.",
+    "similarity_score": 1.0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_002",
+    "category": "paraphrase",
+    "sentence1": "Kredi kartı başvurusu nasıl yapılır?",
+    "sentence2": "Kredi kartı için nasıl müracaat edebilirim?",
+    "similarity_score": 0.95,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_003",
+    "category": "paraphrase",
+    "sentence1": "Hesabımdan para çekmek istiyorum.",
+    "sentence2": "ATM'den nakit almak istiyorum.",
+    "similarity_score": 0.85,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_004",
+    "category": "related",
+    "sentence1": "Konut kredisi faiz oranları nedir?",
+    "sentence2": "Mortgage kredisi şartları nelerdir?",
+    "similarity_score": 0.75,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_005",
+    "category": "related",
+    "sentence1": "Hesap ekstresini nasıl alabilirim?",
+    "sentence2": "Banka dekontunu görmek istiyorum.",
+    "similarity_score": 0.70,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_006",
+    "category": "somewhat_related",
+    "sentence1": "Kredi kartı limiti nasıl artırılır?",
+    "sentence2": "Banka kartı şifremi unuttum.",
+    "similarity_score": 0.40,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_007",
+    "category": "unrelated",
+    "sentence1": "Döviz kuru nedir?",
+    "sentence2": "Hava durumu nasıl?",
+    "similarity_score": 0.05,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_008",
+    "category": "paraphrase_formal",
+    "sentence1": "Hesabımı kapatmak istiyorum.",
+    "sentence2": "Banka hesabımın iptali için müracaat etmek istiyorum.",
+    "similarity_score": 0.90,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_009",
+    "category": "paraphrase_informal",
+    "sentence1": "EFT ne kadar sürer?",
+    "sentence2": "EFT işlemi ne kadar zamanda gerçekleşir?",
+    "similarity_score": 0.92,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_010",
+    "category": "domain_specific",
+    "sentence1": "IBAN numarası nedir?",
+    "sentence2": "Uluslararası banka hesap numarası nedir?",
+    "similarity_score": 0.88,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_011",
+    "category": "domain_specific",
+    "sentence1": "SWIFT kodu nedir?",
+    "sentence2": "BIC kodu nedir?",
+    "similarity_score": 0.85,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_012",
+    "category": "negation",
+    "sentence1": "Kredim onaylandı.",
+    "sentence2": "Kredim reddedildi.",
+    "similarity_score": 0.25,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_013",
+    "category": "numeric_difference",
+    "sentence1": "10000 TL kredi çekmek istiyorum.",
+    "sentence2": "100000 TL kredi çekmek istiyorum.",
+    "similarity_score": 0.80,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_014",
+    "category": "temporal_difference",
+    "sentence1": "Bugün hesap açmak istiyorum.",
+    "sentence2": "Yarın hesap açmak istiyorum.",
+    "similarity_score": 0.85,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_015",
+    "category": "complex_paraphrase",
+    "sentence1": "BDDK tarafından belirlenen mevduat munzam karşılığı oranları nasıl hesaplanır?",
+    "sentence2": "Zorunlu karşılık tutarları Bankacılık Düzenleme ve Denetleme Kurumu tarafından nasıl tespit edilir?",
+    "similarity_score": 0.88,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_016",
+    "category": "turkish_specific",
+    "sentence1": "Çocuğum için birikim hesabı açabilir miyim?",
+    "sentence2": "Küçüğüm adına tasarruf hesabı oluşturabilir miyim?",
+    "similarity_score": 0.90,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_017",
+    "category": "turkish_specific",
+    "sentence1": "Emekli maaşı hesabı nedir?",
+    "sentence2": "Maaş hesabı ile emekli hesabı arasındaki fark nedir?",
+    "similarity_score": 0.65,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_018",
+    "category": "compound_sentence",
+    "sentence1": "Kredi başvurusu yaptım ancak henüz sonuçlanmadı.",
+    "sentence2": "Kredi için müracaat ettim fakat hala bekliyorum.",
+    "similarity_score": 0.92,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_019",
+    "category": "question_statement",
+    "sentence1": "Hangi belgeler gereklidir?",
+    "sentence2": "Gerekli belgeleri bildirin lütfen.",
+    "similarity_score": 0.78,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_020",
+    "category": "abbreviation",
+    "sentence1": "Türkiye Cumhuriyet Merkez Bankası kur bilgileri",
+    "sentence2": "TCMB döviz kurları",
+    "similarity_score": 0.87,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_021",
+    "category": "fintech_terms",
+    "sentence1": "Vadeli mevduat hesabı açmak istiyorum.",
+    "sentence2": "Vadesiz hesap yerine vadeli hesap tercih ediyorum.",
+    "similarity_score": 0.72,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_022",
+    "category": "fintech_terms",
+    "sentence1": "Kredi kartı borç yapılandırması nasıl yapılır?",
+    "sentence2": "Kart borcumu taksitlendirmek istiyorum.",
+    "similarity_score": 0.80,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_023",
+    "category": "long_sentence",
+    "sentence1": "Bankanın internet şubesi üzerinden gerçekleştirdiğim havale işleminin iptal edilip edilemeyeceğini ve bu sürecin ne kadar süreceğini öğrenmek istiyorum.",
+    "sentence2": "Online bankacılık ile yaptığım havaleyi geri alabilir miyim ve ne kadar zaman alır?",
+    "similarity_score": 0.89,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_024",
+    "category": "legal_terminology",
+    "sentence1": "KVKK kapsamında kişisel verilerimin silinmesini talep ediyorum.",
+    "sentence2": "Kişisel Verilerin Korunması Kanunu gereği verilerimin kaldırılmasını istiyorum.",
+    "similarity_score": 0.93,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_025",
+    "category": "customer_complaint",
+    "sentence1": "Hesabımdan hatalı tahsilat yapılmış.",
+    "sentence2": "Kartımdan yanlış ödeme çekildi.",
+    "similarity_score": 0.83,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_026",
+    "category": "product_inquiry",
+    "sentence1": "Altın hesabı nedir ve nasıl açılır?",
+    "sentence2": "Altın yatırımı için hesap açabilir miyim?",
+    "similarity_score": 0.82,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_027",
+    "category": "security",
+    "sentence1": "Mobil banking şifremi değiştirmek istiyorum.",
+    "sentence2": "Dijital bankacılık parolamı sıfırlamak istiyorum.",
+    "similarity_score": 0.91,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_028",
+    "category": "transaction",
+    "sentence1": "Yurtdışı para transferi ücreti ne kadar?",
+    "sentence2": "Başka ülkeye havale maliyeti nedir?",
+    "similarity_score": 0.88,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_029",
+    "category": "multi_intent",
+    "sentence1": "Hem kredi çekmek hem de kredi kartı başvurusu yapmak istiyorum.",
+    "sentence2": "Kredi ve kart için aynı anda müracaat edebilir miyim?",
+    "similarity_score": 0.86,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_030",
+    "category": "subtle_difference",
+    "sentence1": "Hesabıma ne zaman para yatıracaksınız?",
+    "sentence2": "Hesabımdan ne zaman para çekebilirim?",
+    "similarity_score": 0.45,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_031",
+    "category": "paraphrase",
+    "sentence1": "Kredi kartımın asgari ödeme tutarını yatırdım.",
+    "sentence2": "Kartımın minimum ödemesini gerçekleştirdim.",
+    "similarity_score": 0.95,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_032",
+    "category": "subtle_difference",
+    "sentence1": "Vadeli hesabımı vadesinden önce kapatmak istiyorum.",
+    "sentence2": "Vadesiz hesabımı tamamen kapatmak istiyorum.",
+    "similarity_score": 0.35,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_033",
+    "category": "domain_specific",
+    "sentence1": "KMH limitimi artırmak için ne yapmalıyım?",
+    "sentence2": "Ek hesap bakiyemi yükseltmek için nereye başvurmalıyım?",
+    "similarity_score": 0.92,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_034",
+    "category": "negation",
+    "sentence1": "EFT işlemim başarıyla gerçekleşti.",
+    "sentence2": "EFT işlemim iptal edildi.",
+    "similarity_score": 0.15,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_035",
+    "category": "fintech_terms",
+    "sentence1": "Temassız ödeme özelliğini nasıl aktif edebilirim?",
+    "sentence2": "NFC ile mobil ödemeyi nasıl açabilirim?",
+    "similarity_score": 0.85,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_036",
+    "category": "complex_paraphrase",
+    "sentence1": "Konut kredisi erken kapama durumunda uygulanacak tazminat oranı yasal olarak en fazla yüzde ikidir.",
+    "sentence2": "Mortgage borcunun vadesinden önce ödenmesi halinde bankanın talep edebileceği yasal ceza tutarı maksimum %2 ile sınırlıdır.",
+    "similarity_score": 0.94,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_037",
+    "category": "numeric_difference",
+    "sentence1": "Kredi kartı faiz oranı aylık %4.25 olarak güncellendi.",
+    "sentence2": "Kredi kartı faiz oranı aylık %3.25 olarak güncellendi.",
+    "similarity_score": 0.75,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_038",
+    "category": "related",
+    "sentence1": "Bireysel emeklilik sisteminden nasıl çıkabilirim?",
+    "sentence2": "BES devlet katkısı hak ediş oranları nelerdir?",
+    "similarity_score": 0.45,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_039",
+    "category": "abbreviation",
+    "sentence1": "BDDK'nın yeni kredi kartı taksit düzenlemesi",
+    "sentence2": "Bankacılık Düzenleme ve Denetleme Kurumu'nun güncel kart taksitlendirme kuralları",
+    "similarity_score": 0.96,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_040",
+    "category": "turkish_specific",
+    "sentence1": "Maaşımı bankanıza taşırsam ne kadar promosyon alırım?",
+    "sentence2": "Emekli aylığımı size getirirsem vereceğiniz nakit ödül tutarı nedir?",
+    "similarity_score": 0.88,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_041",
+    "category": "legal_terminology",
+    "sentence1": "Müşterini Tanı (KYC) prensipleri gereği kimlik tespiti zorunludur.",
+    "sentence2": "Suç gelirlerinin aklanmasının önlenmesi mevzuatı kapsamında kimlik doğrulama şarttır.",
+    "similarity_score": 0.82,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_042",
+    "category": "customer_complaint",
+    "sentence1": "ATM paranızı alıkoydu, hesabıma geçmedi.",
+    "sentence2": "Bankamatik paramı yuttu, bakiyemde görünmüyor.",
+    "similarity_score": 0.95,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_043",
+    "category": "temporal_difference",
+    "sentence1": "Kredi taksitimi dün ödedim.",
+    "sentence2": "Kredi taksitimi bugün ödeyeceğim.",
+    "similarity_score": 0.60,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_044",
+    "category": "multi_intent",
+    "sentence1": "Şifremi unuttum ve kartım bloke oldu, yeni şifre alıp blokeyi kaldırmak istiyorum.",
+    "sentence2": "Parolamı hatırlamıyorum, kartımın kilidini açıp yeni bir parola belirlemem gerekiyor.",
+    "similarity_score": 0.93,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_045",
+    "category": "subtle_difference",
+    "sentence1": "Döviz hesabıma Euro yatırmak istiyorum.",
+    "sentence2": "Döviz hesabımdan Euro çekmek istiyorum.",
+    "similarity_score": 0.40,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_046",
+    "category": "paraphrase_formal",
+    "sentence1": "Kredi başvurumun sonucunu öğrenmek istiyorum.",
+    "sentence2": "Kredi tahsis talebimin güncel durumuna ilişkin bilgi talep ediyorum.",
+    "similarity_score": 0.90,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_047",
+    "category": "domain_specific",
+    "sentence1": "Halka arz talebimi iptal edebilir miyim?",
+    "sentence2": "Borsadaki yeni hisse senedi alım emrimi geri çekebilir miyim?",
+    "similarity_score": 0.87,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_048",
+    "category": "related",
+    "sentence1": "Kiralık kasa ücretleri yıllık ne kadar?",
+    "sentence2": "Kiralık kasa boyutları ve ölçüleri nelerdir?",
+    "similarity_score": 0.50,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_049",
+    "category": "negation",
+    "sentence1": "Hesap işletim ücreti alınmaktadır.",
+    "sentence2": "Hesap işletim ücreti muafiyeti bulunmaktadır.",
+    "similarity_score": 0.20,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_050",
+    "category": "complex_paraphrase",
+    "sentence1": "FAST sistemi ile yapılan para transferleri 7/24 saniyeler içinde karşı hesaba geçer.",
+    "sentence2": "Fonların Anlık ve Sürekli Transferi altyapısı sayesinde mesai saatleri dışında da anında para gönderimi mümkündür.",
+    "similarity_score": 0.91,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_051",
+    "category": "numeric_difference",
+    "sentence1": "Günlük EFT limitim 50.000 TL.",
+    "sentence2": "Aylık EFT limitim 500.000 TL.",
+    "similarity_score": 0.55,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_052",
+    "category": "fintech_terms",
+    "sentence1": "Sanal kart oluşturarak internetten güvenli alışveriş yapabilirsiniz.",
+    "sentence2": "E-ticaret işlemleriniz için dijital kart üreterek ana kart limitinizi koruyabilirsiniz.",
+    "similarity_score": 0.89,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_053",
+    "category": "turkish_specific",
+    "sentence1": "Çeyiz hesabı devlet katkısı şartları nelerdir?",
+    "sentence2": "Evlilik hazırlığı yapanlar için devlet destekli birikim hesabının koşulları nedir?",
+    "similarity_score": 0.92,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_054",
+    "category": "subtle_difference",
+    "sentence1": "Kredi kartı borcumu yapılandırmak istiyorum.",
+    "sentence2": "İhtiyaç kredisi borcumu yapılandırmak istiyorum.",
+    "similarity_score": 0.65,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_055",
+    "category": "abbreviation",
+    "sentence1": "MASAK şüpheli işlem bildirimi",
+    "sentence2": "Mali Suçları Araştırma Kurulu olağandışı işlem raporlaması",
+    "similarity_score": 0.94,
+    "difficulty": "medium"
+  },
+  {
+    "id": "sts_056",
+    "category": "customer_complaint",
+    "sentence1": "Müşteri hizmetlerine bağlanmak için dakikalarca telefonda bekliyorum.",
+    "sentence2": "Çağrı merkezinde müşteri temsilcisine ulaşmak çok uzun sürüyor.",
+    "similarity_score": 0.93,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_057",
+    "category": "legal_terminology",
+    "sentence1": "Tüketicinin Korunması Hakkında Kanun uyarınca 14 gün içinde cayma hakkım var.",
+    "sentence2": "6502 sayılı yasa kapsamında iki hafta içerisinde sözleşmeden dönme hakkına sahibim.",
+    "similarity_score": 0.96,
+    "difficulty": "hard"
+  },
+  {
+    "id": "sts_058",
+    "category": "related",
+    "sentence1": "Altın fiyatları bugün ne kadar?",
+    "sentence2": "Dolar kuru şu an kaç TL?",
+    "similarity_score": 0.30,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_059",
+    "category": "paraphrase_informal",
+    "sentence1": "Kredi kartımın şifresini unuttum, nasıl yenilerim?",
+    "sentence2": "Kartın parolasını hatırlamıyorum, baştan nasıl alırım?",
+    "similarity_score": 0.91,
+    "difficulty": "easy"
+  },
+  {
+    "id": "sts_060",
+    "category": "multi_intent",
+    "sentence1": "Hem adresimi güncellemek hem de yeni bir banka kartı talep etmek istiyorum.",
+    "sentence2": "İkametgah bilgilerimi değiştirmek ve kaybolan debit kartımın yenisini istemek amacındayım.",
+    "similarity_score": 0.88,
+    "difficulty": "hard"
+  }
+]

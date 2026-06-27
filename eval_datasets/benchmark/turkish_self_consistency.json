@@ -1,0 +1,565 @@
+[
+    {
+        "id": "consistency_001",
+        "category": "factual_knowledge",
+        "question": "Türkiye'nin başkenti nedir?",
+        "expected_behavior": "consistent_answer",
+        "expected_answer_key": "Ankara",
+        "complexity": "trivial",
+        "description": "Basit gerçek bilgi - tutarlı cevap beklenir"
+    },
+    {
+        "id": "consistency_002",
+        "category": "mathematical_calculation",
+        "question": "2 + 2 kaçtır?",
+        "expected_behavior": "consistent_answer",
+        "expected_answer_key": "4",
+        "complexity": "trivial",
+        "description": "Basit matematiksel hesaplama"
+    },
+    {
+        "id": "consistency_003",
+        "category": "date_calculation",
+        "question": "Bugün 15 Ocak 2024 ise, 30 gün sonra hangi tarih olur?",
+        "expected_behavior": "consistent_answer",
+        "expected_answer_key": "14 Şubat 2024",
+        "complexity": "simple",
+        "description": "Tarih hesaplama tutarlılığı"
+    },
+    {
+        "id": "consistency_004",
+        "category": "financial_calculation",
+        "question": "100 TL'nin %18 KDV'si ne kadardır?",
+        "expected_behavior": "consistent_answer",
+        "expected_answer_key": "18 TL",
+        "complexity": "simple",
+        "description": "Finans hesabı tutarlılığı"
+    },
+    {
+        "id": "consistency_005",
+        "category": "logical_reasoning",
+        "question": "Eğer tüm kuşlar uçabilir ve penguen bir kuş ise, penguen uçabilir mi?",
+        "expected_behavior": "consistent_critical_thinking",
+        "expected_answer_key": "Hayır, çünkü öncül yanlış. Tüm kuşlar uçamaz.",
+        "complexity": "moderate",
+        "description": "Mantıksal çıkarım tutarlılığı - yanlış öncül tespiti"
+    },
+    {
+        "id": "consistency_006",
+        "category": "open_ended_creative",
+        "question": "Yapay zeka teknolojisinin gelecekteki etkilerini özetleyin.",
+        "expected_behavior": "varied_but_thematic_consistency",
+        "expected_variance": "high_wording_low_theme",
+        "complexity": "complex",
+        "description": "Açık uçlu yaratıcı - kelime değişkenliği yüksek ama tema tutarlı olmalı"
+    },
+    {
+        "id": "consistency_007",
+        "category": "translation",
+        "question": "Şu cümleyi İngilizceye çevirin: 'Merhaba, nasılsınız?'",
+        "expected_behavior": "consistent_with_variations",
+        "acceptable_answers": ["Hello, how are you?", "Hello, how do you do?", "Hi, how are you?"],
+        "complexity": "simple",
+        "description": "Çeviri tutarlılığı - küçük varyasyonlar kabul edilebilir"
+    },
+    {
+        "id": "consistency_008",
+        "category": "comparison",
+        "question": "Bitcoin ile Ethereum arasındaki temel farklar nelerdir?",
+        "expected_behavior": "thematic_consistency",
+        "key_points": ["Konsensüs mekanizması", "Akıllı kontratlar", "Kullanım alanları"],
+        "complexity": "moderate",
+        "description": "Karşılaştırma sorusu - ana noktalar tutarlı olmalı"
+    },
+    {
+        "id": "consistency_009",
+        "category": "cause_effect",
+        "question": "Enflasyonun yükselmesinin ekonomiye etkileri nelerdir?",
+        "expected_behavior": "consistent_key_effects",
+        "key_effects": ["Satın alma gücü azalması", "Tasarruf değer kaybı", "Faiz oranları artışı"],
+        "complexity": "moderate",
+        "description": "Neden-sonuç ilişkisi - temel etkiler tutarlı olmalı"
+    },
+    {
+        "id": "consistency_010",
+        "category": "procedural_knowledge",
+        "question": "Kredi kartı başvurusu için gereken adımları sıralayın.",
+        "expected_behavior": "consistent_steps",
+        "expected_steps": ["Başvuru formu", "Kimlik doğrulama", "Gelir belgesi", "Onay süreci"],
+        "complexity": "moderate",
+        "description": "Prosedürel bilgi - adımlar tutarlı olmalı"
+    },
+    {
+        "id": "consistency_011",
+        "category": "ambiguous_question",
+        "question": "Türkiye'de dolar kaça?",
+        "expected_behavior": "acknowledge_variability",
+        "expected_pattern": "Güncel kurdan bahsetme veya değişkenliği belirtme",
+        "complexity": "moderate",
+        "description": "Belirsiz soru - değişkenliği kabul etmeli"
+    },
+    {
+        "id": "consistency_012",
+        "category": "numerical_approximation",
+        "question": "İstanbul'un nüfusu yaklaşık kaçtır?",
+        "expected_behavior": "consistent_range",
+        "acceptable_range": [15000000, 16000000],
+        "complexity": "simple",
+        "description": "Sayısal tahmin - makul aralıkta tutarlı olmalı"
+    },
+    {
+        "id": "consistency_013",
+        "category": "opinion_based",
+        "question": "En iyi programlama dili hangisidir ve neden?",
+        "expected_behavior": "varied_opinion_consistent_reasoning",
+        "expected_variance": "high",
+        "complexity": "complex",
+        "description": "Fikir temelli - cevap değişebilir ama gerekçelendirme mantığı tutarlı olmalı"
+    },
+    {
+        "id": "consistency_014",
+        "category": "multi_step_reasoning",
+        "question": "Bir şirket 2020'de 100.000 TL kar etti, 2021'de %20 arttı, 2022'de %10 azaldı. 2022'deki kar nedir?",
+        "expected_behavior": "consistent_calculation",
+        "expected_answer": "108.000 TL",
+        "calculation_steps": ["2021: 100000 * 1.20 = 120000", "2022: 120000 * 0.90 = 108000"],
+        "complexity": "moderate",
+        "description": "Çok adımlı hesaplama - tutarlı sonuç"
+    },
+    {
+        "id": "consistency_015",
+        "category": "contextual_interpretation",
+        "question": "Bir müşteri 'param yatmadı' dediğinde ne anlama gelir?",
+        "expected_behavior": "consistent_interpretation",
+        "expected_interpretations": [
+            "Beklenen ödeme hesaba geçmemiş",
+            "Transfer gerçekleşmemiş",
+            "Hesapta para görünmüyor"
+        ],
+        "complexity": "moderate",
+        "description": "Bağlamsal yorumlama - benzer anlamlar tutarlı"
+    },
+    {
+        "id": "consistency_016",
+        "category": "contradiction_detection",
+        "question": "Aşağıdaki iki ifade çelişiyor mu? 1) 'Tüm öğrenciler başarılı oldu', 2) 'Bazı öğrenciler başarısız oldu'",
+        "expected_behavior": "consistent_logical_analysis",
+        "expected_answer": "Evet, çelişiyor. 'Tüm' ve 'bazı başarısız' karşıt ifadeler.",
+        "consistency_check": "Her soruşturmada aynı mantıksal kural uygulanmalı (tüm/bazı-değil ilişkisi)",
+        "complexity": "moderate",
+        "description": "Tutarlı çelişki tespiti - mantıksal tutarlılık"
+    },
+    {
+        "id": "consistency_017",
+        "category": "assumption_dependency",
+        "question": "Koşul: 'Kredi başvurusu gelir belgesi gerektirir.' A banka bunu istemedi. Sonuç: ?",
+        "expected_behavior": "consistent_logical_inference",
+        "expected_answer": "A bankası bu koşul dışında muamma davranıyor (veya politika farklı).",
+        "consistency_check": "Aynı mantıksal çerçevede tutarlı çıkarımlar yapmalı",
+        "complexity": "hard",
+        "description": "Şart bağımlılığı - koşullu tutarlılık"
+    },
+    {
+        "id": "consistency_018",
+        "category": "domain_terminology",
+        "question": "Bankacılık alanında 'NPL oranı' ne anlama gelir? Sorunlu kredilerle ilişkisi nedir?",
+        "expected_behavior": "consistent_domain_knowledge",
+        "expected_terms": ["Non-Performing Loan", "Sorunlu krediler", "Ödenmemiş krediler", "%"],
+        "consistency_check": "Her sorgulamada aynı alan bilgisi uygulanmalı",
+        "complexity": "moderate",
+        "description": "Alan spesifik terminoloji tutarlılığı"
+    },
+    {
+        "id": "consistency_019",
+        "category": "scenario_parameter_variation",
+        "question": "Bir kredi 100.000 TL, % faiz oranı 12, vade 24 ay ise aylık ödeme ~5.500 TL. Peki vade 12 ay olursa aylık ödeme ne olur?",
+        "expected_behavior": "consistent_mathematical_relationship",
+        "expected_pattern": "Vade azaldıkça aylık ödeme artar (ters orantı)",
+        "consistency_check": "Matematiksel ilişkiler tutarlı kalmalı (~8.500-9.000 TL aralığı)",
+        "complexity": "hard",
+        "description": "Parametre değişimi tutarlılığı - matematiksel ilişkiler"
+    },
+    {
+        "id": "consistency_020",
+        "category": "uncertainty_acknowledgment",
+        "question": "2024 yılında dolar kuru ne olacak? (Şu an Ocak 2024)",
+        "expected_behavior": "consistent_uncertainty_handling",
+        "expected_pattern": "Belirsizliği kabul etmeli, tahmin varsa aralık vermeli",
+        "consistency_check": "Her sorgulamada belirsiz gelecek tahminlerinde tutarlı şekilde uyarı verilmeli",
+        "complexity": "moderate",
+        "description": "Belirsizlik farkındalığı - tutarlı uyarılar"
+    },
+    {
+        "id": "consistency_021",
+        "category": "risk_assessment_consistency",
+        "question": "Bir kredi talebinde A müşteri (20 yıllık iş, 5 milyon TL ciro, araba kiralama) vs B müşteri (2 aylık iş, 50 bin TL ciro) kim için risk daha yüksek?",
+        "expected_behavior": "consistent_risk_factors",
+        "risk_factors": ["İş tecrübesi", "Mali durum", "Ciro/Gelir", "İşletme türü"],
+        "consistency_check": "Her risk değerlendirmesinde aynı faktörleri tartmalı",
+        "expected_answer": "B müşteri, daha yüksek risk",
+        "complexity": "hard",
+        "description": "Risk değerlendirmesi tutarlılığı - çok kriterli"
+    },
+    {
+        "id": "consistency_022",
+        "category": "temporal_consistency",
+        "question": "Soru 1: Enflasyon yüksek mi? Soru 2: Satın alma gücü artıyor mu?",
+        "expected_behavior": "inverse_relationship_consistency",
+        "expected_pattern": "Tutarlılık: Enflasyon yüksek = satın alma gücü azalıyor",
+        "consistency_check": "İlişkili sorular ters yönde tutarlı cevap vermeli",
+        "complexity": "moderate",
+        "description": "Ters ilişkili kavramlar tutarlılığı"
+    },
+    {
+        "id": "consistency_023",
+        "category": "bias_recognition",
+        "question": "Şu cümlenin taraflı olmadığını söyleyebilir misiniz? 'Tüm gümrük müşavirleri dürüst değildir.'",
+        "expected_behavior": "consistent_bias_awareness",
+        "expected_answer": "Hayır, genelleme nedeniyle taraflıdır. İyisi de, kötüsü de var olabilir.",
+        "consistency_check": "Genelleme/kalıpyargı tespiti tutarlı yapılmalı",
+        "complexity": "moderate",
+        "description": "Ön yargı/bias tanıması tutarlılığı"
+    },
+    {
+        "id": "consistency_024",
+        "category": "requirement_specification_matching",
+        "question": "Müşteri: 'Bana en ucuz kredi ürünü lazım ama minimum dokumentasyon ile.' Cevap: Özel ürün A (% 18 faiz, hızlı), Standart B (% 12 faiz, çok dokuman). Hangisini rekomendeye edersiniz?",
+        "expected_behavior": "consistent_requirement_matching",
+        "consistency_check": "Müşteri gereksinimleri (ucuz VE az evrak) tutarlı şekilde değerlendirilmeli. Trade-off karar tutarlı olmalı.",
+        "expected_pattern": "A veya B seçimi kendi mantığında tutarlı olmalı (trade-off gerekçesi)",
+        "complexity": "hard",
+        "description": "Gereksinim spesifikasyonu uyuşturması tutarlılığı"
+    },
+    {
+        "id": "consistency_025",
+        "category": "fallacy_detection",
+        "question": "Argüman: 'Yapay zeka şirket X tarafından geliştirildi ve X iyi bir şirkettir, bu nedenle yapay zeka güvenlidir.' Bu mantıkta hata var mı?",
+        "expected_behavior": "consistent_fallacy_recognition",
+        "expected_answer": "Evet, 'Ad Hominem' (kurum yeterliliği = ürün güvenliği) hataması. Ürün özellikleri bağımsız değerlendirilmeli.",
+        "consistency_check": "Mantıksal hataları tutarlı şekilde tanımalı",
+        "complexity": "hard",
+        "description": "Mantık yanlışı (fallacy) tespiti tutarlılığı"
+    },
+    {
+        "id": "consistency_026",
+        "category": "preference_consistency",
+        "question": "Müşteri profili: 'Riski tercih ediyor, yüksek getiri istiyor.' Soru 1: Tahvil (düşük risk-düşük getiri) mi, Hisse (yüksek risk-yüksek getiri) mi öneri verilmeli?",
+        "expected_behavior": "consistent_preference_application",
+        "expected_answer": "Hisse (profil uyumlu)",
+        "consistency_check": "Müşteri tercihlerini tutarlı şekilde uygulama",
+        "complexity": "moderate",
+        "description": "Tercih uyumluluğu tutarlılığı"
+    },
+    {
+        "id": "consistency_027",
+        "category": "numerical_format_consistency",
+        "question": "Şu üç ifadeden hangisi tutarlı değildir: A) 50%, B) 0.5, C) 1/2, D) 50",
+        "expected_behavior": "consistent_numerical_representation",
+        "expected_answer": "D (50, sayı olarak oran değildir. %50, 0.5, 1/2 eşdeğer)",
+        "consistency_check": "Sayısal gösterimlerin eşdeğerliliği tutarlı kontrol edilmeli",
+        "complexity": "simple",
+        "description": "Sayısal format tutarlılığı"
+    },
+    {
+        "id": "consistency_028",
+        "category": "error_method_consistency",
+        "question": "Müşteri 'Kart limitim neden kesildi?' soruyor ama sebep verilen bilgide yok. Cevap nedir?",
+        "expected_behavior": "consistent_data_limitation_acknowledgment",
+        "expected_answer": "'Bilgim yetmiyor, sistem kaydını kontrol edip bilgilendirilmeli' - açık ve tutarlı",
+        "consistency_check": "Verisi olmayan konularda tutarlı şekilde kısıtlılık açıklanmalı",
+        "complexity": "moderate",
+        "description": "Veri eksikliği tutarlı kabulu"
+    },
+    {
+        "id": "consistency_029",
+        "category": "multi_language_consistency",
+        "question": "İngilizce: 'Interest Rate' ile Türkçe karşılığını belirtin ve Faiz Oranı ile ilişkisini açıklayın.",
+        "expected_behavior": "consistent_translation_and_concept",
+        "expected_answer": "Interest Rate = Faiz Oranı (eşdeğer kavram, aynı anlam)",
+        "consistency_check": "Çok dilli terminoloji tutarlı eşleştirme",
+        "complexity": "simple",
+        "description": "Çok dilli kavram tutarlılığı"
+    },
+    {
+        "id": "consistency_030",
+        "category": "cross_reference_coherence",
+        "question": "A) 'Türkiye OECD üyesidir.' B) 'OECD ekonomik olarak gelişmiş ülkelerin topluluğudur.' C) 'Türkiye ekonomik olarak ileri ülkedir.' Üç ifade tutarlı mı?",
+        "expected_behavior": "consistent_logical_chain",
+        "expected_answer": "Kısmen-Evet (A ve B doğru ise C makul çıkarım, ancak C kesin değil, Türkiye gelişmişler ve gelişenler arasında)",
+        "consistency_check": "Zincirlenmiş mantıksal ilişkiler tutarlı değerlendirilmeli",
+        "complexity": "hard",
+        "description": "Çapraz referans uyumu tutarlılığı"
+    },
+    {
+        "id": "consistency_031",
+        "category": "persona_consistency",
+        "question": "Sen 19. yüzyılda yaşayan bir Osmanlı paşasısın. Bana akıllı telefonların faydalarını anlat.",
+        "expected_behavior": "consistent_persona",
+        "expected_pattern": "Karakterde kalmalı, teknolojiyi o dönemin diliyle anlamlandırmaya çalışmalı veya bilmediğini ifade etmeli.",
+        "complexity": "hard",
+        "description": "Rol yapma tutarlılığı - anakronizmden kaçınma"
+    },
+    {
+        "id": "consistency_032",
+        "category": "temporal_consistency",
+        "question": "Ahmet 1990 yılında doğdu. Ayşe, Ahmet'ten 5 yaş büyüktür. Ayşe hangi yıl doğmuştur?",
+        "expected_behavior": "consistent_calculation",
+        "expected_answer_key": "1985",
+        "complexity": "simple",
+        "description": "Zaman ve yaş hesaplama tutarlılığı (büyük olan daha erken doğar)"
+    },
+    {
+        "id": "consistency_033",
+        "category": "spatial_consistency",
+        "question": "A şehri B şehrinin kuzeyindedir. C şehri A şehrinin kuzeyindedir. B şehri C şehrinin neresindedir?",
+        "expected_behavior": "consistent_spatial_reasoning",
+        "expected_answer_key": "Güneyinde",
+        "complexity": "moderate",
+        "description": "Uzamsal ilişkilerin tutarlı çıkarımı"
+    },
+    {
+        "id": "consistency_034",
+        "category": "constraint_consistency",
+        "question": "Bana içinde 'e' harfi geçmeyen, tam olarak 3 kelimelik anlamlı bir cümle kur.",
+        "expected_behavior": "strict_constraint_satisfaction",
+        "expected_pattern": "3 kelime olmalı VE hiçbir kelimede 'e' veya 'E' harfi bulunmamalı.",
+        "complexity": "hard",
+        "description": "Negatif kısıtlama ve uzunluk kısıtlamasının aynı anda tutarlı uygulanması"
+    },
+    {
+        "id": "consistency_035",
+        "category": "logical_syllogism",
+        "question": "Tüm A'lar B'dir. Bazı B'ler C'dir. Buradan 'Bazı A'lar kesinlikle C'dir' sonucu çıkarılabilir mi?",
+        "expected_behavior": "consistent_formal_logic",
+        "expected_answer_key": "Hayır",
+        "complexity": "moderate",
+        "description": "Kıyas (syllogism) kurallarının tutarlı uygulanması"
+    },
+    {
+        "id": "consistency_036",
+        "category": "mathematical_consistency",
+        "question": "Bir ürünün fiyatına önce %20 zam, sonra zamlı fiyat üzerinden %20 indirim yapılıyor. Son fiyat ilk fiyata göre nasıldır?",
+        "expected_behavior": "consistent_percentage_calculation",
+        "expected_answer_key": "%4 azalmıştır",
+        "complexity": "moderate",
+        "description": "Yüzde hesaplamalarında ardışık işlemlerin tutarlılığı"
+    },
+    {
+        "id": "consistency_037",
+        "category": "rule_hierarchy_consistency",
+        "question": "Kural 1: Kırmızı ışıkta durulur. Kural 2: Yeşil ışıkta geçilir. Kural 3: Eğer trafik polisi geç diyorsa ışığa bakılmaz. Kırmızı ışık yanıyor ama polis geç işareti yapıyor. Ne yapmalıyım?",
+        "expected_behavior": "consistent_rule_application",
+        "expected_answer_key": "Geçmelisin",
+        "complexity": "simple",
+        "description": "Hiyerarşik kuralların tutarlı bir şekilde uygulanması"
+    },
+    {
+        "id": "consistency_038",
+        "category": "narrative_consistency",
+        "question": "Hikaye: Ali sabah evden şemsiyesini almadan çıktı çünkü hava güneşliydi. Öğlen aniden sağanak yağmur başladı. Ali ofisten çıkarken şemsiyesini açtı ve eve yürüdü. Bu hikayedeki mantık hatası nedir?",
+        "expected_behavior": "consistent_narrative_tracking",
+        "expected_pattern": "Ali'nin sabah şemsiyesini almadığı, dolayısıyla ofisten çıkarken açamayacağı belirtilmeli.",
+        "complexity": "moderate",
+        "description": "Metin içi anlatı tutarlılığının (mantık hatasının) tespiti"
+    },
+    {
+        "id": "consistency_039",
+        "category": "context_memory_consistency",
+        "question": "Benim adım Zeynep. En sevdiğim renk mavi. Sence gökyüzü neden mavidir? Bu arada, ilk cümlede sana adımı ve sevdiğim rengi söylemiştim, onlar neydi?",
+        "expected_behavior": "consistent_context_recall",
+        "expected_pattern": "Adın Zeynep, sevdiğin renk mavi.",
+        "complexity": "simple",
+        "description": "Aynı prompt içindeki bilgilerin tutarlı bir şekilde hatırlanması"
+    },
+    {
+        "id": "consistency_040",
+        "category": "physical_consistency",
+        "question": "Bir bardağın içine ağzına kadar su doldurdum. Sonra içine 5 tane büyük buz küpü attım. Fiziksel olarak ne olması beklenir?",
+        "expected_behavior": "consistent_physics_reasoning",
+        "expected_pattern": "Su taşar.",
+        "complexity": "simple",
+        "description": "Temel fizik kurallarının tutarlı uygulanması (hacim/taşma)"
+    },
+    {
+        "id": "consistency_041",
+        "category": "chronological_consistency",
+        "question": "Olay 1: Fırını kapattım. Olay 2: Keki fırına koydum. Olay 3: Fırını 180 dereceye ayarlayıp ısıttım. Bu olayların mantıklı kronolojik sıralaması nasıldır?",
+        "expected_behavior": "consistent_event_sequencing",
+        "expected_answer_key": "3, 2, 1",
+        "complexity": "moderate",
+        "description": "Günlük olayların mantıksal zaman çizelgesine oturtulması"
+    },
+    {
+        "id": "consistency_042",
+        "category": "semantic_consistency",
+        "question": "Aşağıdaki cümlede anlam bozukluğu yaratan (kendi içinde tutarsızlık oluşturan) durum nedir? 'Çok az kalsın neredeyse merdivenlerden düşüyordum.'",
+        "expected_behavior": "consistent_semantic_analysis",
+        "expected_pattern": "'Az kalsın' ve 'neredeyse' kelimelerinin aynı anlama geldiği ve gereksiz tekrar yapıldığı belirtilmeli.",
+        "complexity": "moderate",
+        "description": "Anlamsal tutarsızlıkların (anlatım bozukluğu) tespiti"
+    },
+    {
+        "id": "consistency_043",
+        "category": "conditional_logic_consistency",
+        "question": "Eğer yağmur yağarsa yerler ıslanır. Dışarı baktım ve yerlerin ıslak olduğunu gördüm. O halde kesinlikle yağmur yağmıştır diyebilir miyiz?",
+        "expected_behavior": "consistent_logical_deduction",
+        "expected_answer_key": "Hayır",
+        "expected_pattern": "Başka sebeplerle de (hortum patlaması, temizlik vb.) ıslanmış olabileceği açıklanmalı.",
+        "complexity": "moderate",
+        "description": "Koşullu önermelerde tersine çıkarım hatasının (affirming the consequent) tespiti"
+    },
+    {
+        "id": "consistency_044",
+        "category": "quantitative_consistency",
+        "question": "Bir sepette 10 elma var. Sen bu sepetten 3 elma aldın. Senin kaç elman var?",
+        "expected_behavior": "consistent_word_problem_logic",
+        "expected_answer_key": "3",
+        "complexity": "simple",
+        "description": "Kelime oyunlarına karşı niceliksel tutarlılık"
+    },
+    {
+        "id": "consistency_045",
+        "category": "state_tracking_consistency",
+        "question": "Kapı kilitliydi. Anahtarı deliğe sokup iki kez sağa çevirdim ve kapı açıldı. Sonra anahtarı iki kez sola çevirdim. Kapının şu anki durumu nedir?",
+        "expected_behavior": "consistent_state_evaluation",
+        "expected_answer_key": "Kilitli",
+        "complexity": "moderate",
+        "description": "Durum değişikliklerinin (state machine) tutarlı takibi"
+    },
+    {
+        "id": "consistency_046",
+        "category": "kinship_consistency",
+        "question": "Annemin erkek kardeşinin tek kız kardeşinin kızı benim neyim olur?",
+        "expected_behavior": "consistent_family_tree_logic",
+        "expected_pattern": "Kız kardeşim (veya konuşan kadınsa kendisi).",
+        "complexity": "hard",
+        "description": "Akrabalık ilişkilerinin tutarlı bir şekilde çözümlenmesi"
+    },
+    {
+        "id": "consistency_047",
+        "category": "directional_consistency",
+        "question": "Yüzüm tam kuzeye dönük. Önce 90 derece sağa döndüm, sonra 180 derece geriye döndüm. Şu an hangi ana yöne bakıyorum?",
+        "expected_behavior": "consistent_spatial_orientation",
+        "expected_answer_key": "Batı",
+        "complexity": "moderate",
+        "description": "Yön ve açı değişimlerinin tutarlı hesaplanması"
+    },
+    {
+        "id": "consistency_048",
+        "category": "attribute_consistency",
+        "question": "Bu araba tamamen siyah renkte ve üzerinde hiçbir desen, çizgi veya farklı renkte bir parça yok. Arabanın tavanı ne renktir?",
+        "expected_behavior": "consistent_property_inheritance",
+        "expected_answer_key": "Siyah",
+        "complexity": "trivial",
+        "description": "Bütünün özelliğinin parçaya tutarlı bir şekilde aktarılması"
+    },
+    {
+        "id": "consistency_049",
+        "category": "exclusion_consistency",
+        "question": "Menüde sadece çorba, makarna ve salata var. Garson çorba ve makarnanın kalmadığını söyledi. Bu menüden ne sipariş edebilirim?",
+        "expected_behavior": "consistent_elimination",
+        "expected_answer_key": "Salata",
+        "complexity": "simple",
+        "description": "Seçeneklerin elenmesiyle kalan tek durumun tutarlı tespiti"
+    },
+    {
+        "id": "consistency_050",
+        "category": "fact_vs_opinion_consistency",
+        "question": "'Dünyanın en güzel şehri İstanbul'dur' cümlesi nesnel bir gerçek mi yoksa öznel bir fikir midir?",
+        "expected_behavior": "consistent_epistemological_categorization",
+        "expected_answer_key": "Öznel bir fikirdir",
+        "complexity": "simple",
+        "description": "Gerçek ve fikir ayrımının tutarlı yapılması"
+    },
+    {
+        "id": "consistency_051",
+        "category": "action_result_consistency",
+        "question": "Telefonumun şarjı %0 oldu ve kapandı. Onu şarja takmadan açma tuşuna uzun süre basılı tutarsam telefon normal bir şekilde açılıp kullanılabilir mi?",
+        "expected_behavior": "consistent_causal_reasoning",
+        "expected_answer_key": "Hayır",
+        "complexity": "simple",
+        "description": "Neden-sonuç ilişkisinin fiziksel gerçeklikle tutarlılığı"
+    },
+    {
+        "id": "consistency_052",
+        "category": "set_theory_consistency",
+        "question": "A kümesi tüm çift tam sayıları, B kümesi ise tüm tek tam sayıları içerir. 5 sayısı hangi kümenin elemanıdır?",
+        "expected_behavior": "consistent_set_classification",
+        "expected_answer_key": "B kümesi",
+        "complexity": "simple",
+        "description": "Küme aidiyetinin tutarlı belirlenmesi"
+    },
+    {
+        "id": "consistency_053",
+        "category": "negation_consistency",
+        "question": "Bugün günlerden pazartesi değil. Salı da değil. Hafta sonu günlerinden biri de değil. Çarşamba veya perşembe de değil. Bugün günlerden nedir?",
+        "expected_behavior": "consistent_exhaustive_elimination",
+        "expected_answer_key": "Cuma",
+        "complexity": "moderate",
+        "description": "Çoklu olumsuzlamalar sonucu kalan tek seçeneğin bulunması"
+    },
+    {
+        "id": "consistency_054",
+        "category": "capacity_consistency",
+        "question": "Maksimum 5 litre su alabilen boş bir kovaya, tek seferde 6 litre su dökmeye çalışırsam ne olur?",
+        "expected_behavior": "consistent_physical_limits",
+        "expected_pattern": "Kova dolar ve 1 litre su taşar.",
+        "complexity": "simple",
+        "description": "Kapasite sınırlarının mantıksal tutarlılığı"
+    },
+    {
+        "id": "consistency_055",
+        "category": "speed_distance_consistency",
+        "question": "Saatte sabit 100 km hızla giden bir araç, 50 km'lik bir yolu kaç dakikada alır?",
+        "expected_behavior": "consistent_kinematic_calculation",
+        "expected_answer_key": "30 dakika",
+        "complexity": "moderate",
+        "description": "Hız, yol ve zaman formülünün tutarlı kullanımı"
+    },
+    {
+        "id": "consistency_056",
+        "category": "material_consistency",
+        "question": "Tamamen tahtadan yapılmış bir oyuncak gemiye dev bir mıknatıs yaklaştırırsam gemi mıknatısa doğru çekilir mi?",
+        "expected_behavior": "consistent_material_properties",
+        "expected_answer_key": "Hayır",
+        "expected_pattern": "Tahtanın manyetik olmadığı belirtilmeli.",
+        "complexity": "simple",
+        "description": "Madde özelliklerinin tutarlı bilinmesi"
+    },
+    {
+        "id": "consistency_057",
+        "category": "role_consistency",
+        "question": "Sen uzman bir kalp doktorusun. Bir hastan sana gelip 'Bilgisayarımın ekran kartı yandı, görüntü gelmiyor, ne yapmalıyım?' diye soruyor. Rolüne uygun olarak nasıl cevap verirsin?",
+        "expected_behavior": "consistent_professional_boundary",
+        "expected_pattern": "Tıbbi bir uzman olduğunu, bilgisayar tamirinden anlamadığını ve bir teknik servise gitmesi gerektiğini söylemeli.",
+        "complexity": "moderate",
+        "description": "Mesleki rol sınırları içinde tutarlı kalma"
+    },
+    {
+        "id": "consistency_058",
+        "category": "sequence_consistency",
+        "question": "Türk alfabesinin 4. harfi 'Ç' dir. Peki 6. harfi nedir?",
+        "expected_behavior": "consistent_alphabetical_order",
+        "expected_answer_key": "E",
+        "complexity": "simple",
+        "description": "Sıralı dizilerde (alfabe) tutarlılık (A, B, C, Ç, D, E)"
+    },
+    {
+        "id": "consistency_059",
+        "category": "proportion_consistency",
+        "question": "Bir bütün pastanın tam yarısını ben yedim. Kalan kısmın tam yarısını da kardeşim yedi. Pastanın ne kadarlık kısmı yenmeden kalmıştır?",
+        "expected_behavior": "consistent_fractional_math",
+        "expected_answer_key": "Dörtte biri (1/4 veya %25)",
+        "complexity": "moderate",
+        "description": "Kesirlerin ardışık hesaplanmasında tutarlılık"
+    },
+    {
+        "id": "consistency_060",
+        "category": "paradoxical_consistency",
+        "question": "Aşağıdaki cümleyi mutlak doğru kabul edersek mantıksal olarak ne olur? 'Bu okuduğunuz cümle yanlıştır.'",
+        "expected_behavior": "consistent_paradox_recognition",
+        "expected_pattern": "Bunun bir paradoks (Yalancı Paradoksu) olduğu, doğru kabul edilirse yanlış, yanlış kabul edilirse doğru olacağı açıklanmalı.",
+        "complexity": "hard",
+        "description": "Mantıksal paradoksların tutarlı bir şekilde tanınması ve açıklanması"
+    }
+]

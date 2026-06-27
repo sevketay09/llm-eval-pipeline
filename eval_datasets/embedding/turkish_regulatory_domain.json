@@ -1,0 +1,306 @@
+[
+  {
+    "id": "reg_001",
+    "category": "regulation",
+    "term": "KVKK",
+    "similar_terms": ["Kişisel Verilerin Korunması Kanunu", "Data protection law", "Veri gizliliği mevzuatı"],
+    "dissimilar_terms": ["Kredi kartı limiti", "POS komisyonu", "Vadeli mevduat"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_002",
+    "category": "regulation",
+    "term": "BDDK",
+    "similar_terms": ["Bankacılık Düzenleme ve Denetleme Kurumu", "Banking regulator", "Düzenleyici otorite"],
+    "dissimilar_terms": ["TCMB politika faizi", "Müşteri temsilcisi", "Mobil bankacılık"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_003",
+    "category": "compliance",
+    "term": "MASAK bildirimi",
+    "similar_terms": ["Şüpheli işlem bildirimi", "AML reporting", "Uyum raporlaması"],
+    "dissimilar_terms": ["Kampanya katılımı", "ATM günlük limit", "Kart puan kazanımı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_004",
+    "category": "law_reference",
+    "term": "5411 sayılı Bankacılık Kanunu",
+    "similar_terms": ["Bankacılık mevzuatı", "Banking Law No. 5411", "Banka düzenleme yasası"],
+    "dissimilar_terms": ["İş Kanunu", "Trafik Kanunu", "Tüketici kredisi kampanyası"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_005",
+    "category": "sanctions",
+    "term": "Uyum ihlali",
+    "similar_terms": ["Compliance breach", "Mevzuata aykırılık", "Denetim bulgusu"],
+    "dissimilar_terms": ["Müşteri memnuniyeti", "Kredi tahsisi", "Faiz getirisi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_006",
+    "category": "data_governance",
+    "term": "Veri minimizasyonu",
+    "similar_terms": ["Data minimization", "Amaçla sınırlı veri işleme", "Gerekli kadar veri"],
+    "dissimilar_terms": ["Kredi geri ödeme planı", "Fon getirisi", "Swap işlemi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_007",
+    "category": "audit",
+    "term": "İç kontrol",
+    "similar_terms": ["Internal control", "Denetim kontrol noktaları", "Risk kontrol mekanizması"],
+    "dissimilar_terms": ["Kart aidatı", "Havale ücreti", "ATM para çekme"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_008",
+    "category": "customer_rights",
+    "term": "Aydınlatma metni",
+    "similar_terms": ["Privacy notice", "Bilgilendirme metni", "Veri işleme açıklaması"],
+    "dissimilar_terms": ["Döviz kuru", "Gecelik faiz", "Kredi taksit tutarı"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "reg_009",
+    "category": "compliance",
+    "term": "Müşterini Tanı (KYC)",
+    "similar_terms": ["Know Your Customer", "Kimlik tespiti", "Müşteri tanıma kuralı"],
+    "dissimilar_terms": ["Kredi kartı başvurusu", "EFT limiti", "Mevduat faizi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_010",
+    "category": "compliance",
+    "term": "Kara Paranın Aklanmasının Önlenmesi (AML)",
+    "similar_terms": ["Anti-Money Laundering", "Suç gelirlerinin aklanmasıyla mücadele", "MASAK uyumu"],
+    "dissimilar_terms": ["Bireysel emeklilik", "Konut kredisi", "Kredi notu"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_011",
+    "category": "customer_rights",
+    "term": "Açık Rıza",
+    "similar_terms": ["Explicit consent", "Açık onay", "Veri işleme izni"],
+    "dissimilar_terms": ["Hesap özeti", "Kredi tahsis ücreti", "Temassız ödeme"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_012",
+    "category": "data_governance",
+    "term": "Veri Sorumlusu",
+    "similar_terms": ["Data controller", "Veri işleyen", "Kişisel veri sorumlusu"],
+    "dissimilar_terms": ["Şube müdürü", "Gişe yetkilisi", "Müşteri temsilcisi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_013",
+    "category": "regulation",
+    "term": "Sermaye Yeterlilik Rasyosu",
+    "similar_terms": ["Capital adequacy ratio", "SYR", "Sermaye yeterliliği"],
+    "dissimilar_terms": ["Kredi kartı asgari ödeme", "Nakit avans", "KMH limiti"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_014",
+    "category": "regulation",
+    "term": "Zorunlu Karşılıklar",
+    "similar_terms": ["Reserve requirements", "Munzam karşılıklar", "TCMB zorunlu karşılık oranı"],
+    "dissimilar_terms": ["Kredi faiz oranı", "Hesap işletim ücreti", "EFT masrafı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_015",
+    "category": "law_reference",
+    "term": "Tüketicinin Korunması Hakkında Kanun",
+    "similar_terms": ["Consumer Protection Law", "6502 sayılı Kanun", "Tüketici hakları mevzuatı"],
+    "dissimilar_terms": ["Ticari kredi", "Kurumsal bankacılık", "Akreditif"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_016",
+    "category": "customer_rights",
+    "term": "Cayma Hakkı",
+    "similar_terms": ["Right of withdrawal", "Sözleşmeden dönme hakkı", "İptal hakkı"],
+    "dissimilar_terms": ["Kredi yapılandırma", "Borç transferi", "Erken kapama"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_017",
+    "category": "audit",
+    "term": "Bilgi Sistemleri Bağımsız Denetimi",
+    "similar_terms": ["IT independent audit", "BS denetimi", "Bilgi teknolojileri denetimi"],
+    "dissimilar_terms": ["Mobil şube güncellemesi", "Şifre yenileme", "ATM arızası"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_018",
+    "category": "audit",
+    "term": "Sızma Testi (Penetrasyon)",
+    "similar_terms": ["Penetration testing", "Pentest", "Güvenlik zafiyet testi"],
+    "dissimilar_terms": ["Kredi skoru", "Müşteri memnuniyet anketi", "Performans değerlendirmesi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_019",
+    "category": "sanctions",
+    "term": "İdari Para Cezası",
+    "similar_terms": ["Administrative fine", "BDDK cezası", "Kurul yaptırımı"],
+    "dissimilar_terms": ["Gecikme faizi", "Temerrüt faizi", "Kredi kartı aidatı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_020",
+    "category": "sanctions",
+    "term": "Faaliyet İzni İptali",
+    "similar_terms": ["Revocation of operating license", "Lisans iptali", "Bankacılık izninin kaldırılması"],
+    "dissimilar_terms": ["Kredi kartı iptali", "Hesap kapatma", "Otomatik ödeme iptali"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_021",
+    "category": "data_governance",
+    "term": "Sır Saklama Yükümlülüğü",
+    "similar_terms": ["Obligation of secrecy", "Banka sırrı", "Müşteri sırrının korunması"],
+    "dissimilar_terms": ["Açık bankacılık", "API entegrasyonu", "Kredi kartı ekstresi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_022",
+    "category": "regulation",
+    "term": "Destek Hizmeti Kuruluşu",
+    "similar_terms": ["Outsourcing service provider", "Dış hizmet alımı", "Taşeron firma"],
+    "dissimilar_terms": ["Bireysel müşteri", "Ticari müşteri", "KOBİ"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_023",
+    "category": "compliance",
+    "term": "Şüpheli İşlem (STR)",
+    "similar_terms": ["Suspicious transaction report", "Olağandışı işlem", "ŞİB"],
+    "dissimilar_terms": ["Düzenli ödeme", "Maaş ödemesi", "Fatura tahsilatı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_024",
+    "category": "compliance",
+    "term": "Ambargo ve Yaptırım Listeleri",
+    "similar_terms": ["Sanctions lists", "OFAC listesi", "Yasaklı kişi/kurumlar"],
+    "dissimilar_terms": ["VIP müşteri listesi", "Kredi onaylananlar", "Kampanya kazananlar"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_025",
+    "category": "data_governance",
+    "term": "Kişisel Veri İhlali Bildirimi",
+    "similar_terms": ["Data breach notification", "Veri sızıntısı bildirimi", "Kurula bildirim"],
+    "dissimilar_terms": ["Adres değişikliği bildirimi", "Şifre hatalı girildi uyarısı", "Limit aşım mesajı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_026",
+    "category": "customer_rights",
+    "term": "Unutulma Hakkı",
+    "similar_terms": ["Right to be forgotten", "Verilerin silinmesi talebi", "Kişisel verilerin imhası"],
+    "dissimilar_terms": ["Kredi kartı yenileme", "Hesap dökümü isteme", "Limit artırım talebi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_027",
+    "category": "audit",
+    "term": "Risk Yönetimi",
+    "similar_terms": ["Risk management", "Risk değerlendirmesi", "Risk iştahı"],
+    "dissimilar_terms": ["Pazarlama stratejisi", "Satış hedefi", "Müşteri kazanımı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_028",
+    "category": "audit",
+    "term": "Stres Testi",
+    "similar_terms": ["Stress testing", "Senaryo analizi", "Dayanıklılık testi"],
+    "dissimilar_terms": ["Kredi başvuru süreci", "Mobil uygulama testi", "Müşteri deneyimi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_029",
+    "category": "compliance",
+    "term": "Suç Geliri",
+    "similar_terms": ["Proceeds of crime", "Kara para", "Yasadışı fon"],
+    "dissimilar_terms": ["Mevduat getirisi", "Temettü geliri", "Kira geliri"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_030",
+    "category": "compliance",
+    "term": "Nihai Gerçek Faydalanıcı",
+    "similar_terms": ["Ultimate beneficial owner", "UBO", "Gerçek hak sahibi"],
+    "dissimilar_terms": ["Vekaletname sahibi", "Şube müdürü", "Gişe görevlisi"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_031",
+    "category": "law_reference",
+    "term": "Tüzel Kişi",
+    "similar_terms": ["Legal entity", "Kurumsal şirket", "Şirket tüzel kişiliği"],
+    "dissimilar_terms": ["Gerçek kişi", "Bireysel müşteri", "Tüketici"],
+    "difficulty": "easy"
+  },
+  {
+    "id": "reg_032",
+    "category": "regulation",
+    "term": "Mevduat Sigortası",
+    "similar_terms": ["Deposit insurance", "TMSF güvencesi", "Tasarruf mevduatı sigortası"],
+    "dissimilar_terms": ["Hayat sigortası", "Kasko", "DASK"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_033",
+    "category": "law_reference",
+    "term": "Ödeme Hizmetleri ve Elektronik Para Kuruluşları Kanunu",
+    "similar_terms": ["6493 sayılı Kanun", "Payment services law", "E-para mevzuatı"],
+    "dissimilar_terms": ["Medeni Kanun", "Borçlar Kanunu", "Ceza Kanunu"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_034",
+    "category": "regulation",
+    "term": "Açık Bankacılık",
+    "similar_terms": ["Open banking", "PSD2", "Hesap bilgisi hizmeti"],
+    "dissimilar_terms": ["Kiralık kasa", "Fiziki altın teslimi", "Şube bankacılığı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_035",
+    "category": "compliance",
+    "term": "Uzaktan Kimlik Tespiti",
+    "similar_terms": ["Remote KYC", "Görüntülü görüşme ile müşteri olma", "Dijital onboarding"],
+    "dissimilar_terms": ["Şubeden hesap açılışı", "Islak imza", "Fiziki evrak teslimi"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_036",
+    "category": "data_governance",
+    "term": "Veri İhlali",
+    "similar_terms": ["Data breach", "Siber saldırı", "Bilgi sızıntısı"],
+    "dissimilar_terms": ["Sistem güncellemesi", "Planlı bakım çalışması", "Ağ yavaşlığı"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "reg_037",
+    "category": "regulation",
+    "term": "Kurumsal Yönetim İlkeleri",
+    "similar_terms": ["Corporate governance principles", "Yönetim kurulu yapısı", "Şeffaflık ve hesap verebilirlik"],
+    "dissimilar_terms": ["Bireysel kredi faizleri", "Kredi kartı kampanyaları", "Müşteri sadakat programı"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "reg_038",
+    "category": "audit",
+    "term": "İç Denetim",
+    "similar_terms": ["Internal audit", "Teftiş kurulu", "İç kontrol mekanizması"],
+    "dissimilar_terms": ["Dış denetim", "Bağımsız denetim", "Vergi denetimi"],
+    "difficulty": "medium"
+  }
+]

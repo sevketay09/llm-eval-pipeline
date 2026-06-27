@@ -1,0 +1,464 @@
+[
+  {
+    "id": "tr_para_001",
+    "category": "basit_paraphrasing",
+    "question": "Bu cümleyi anlamı değişmeden yeniden yazın: 'Yağmur yağdığı için maç iptal oldu.'",
+    "expected_answer": "Örnek: 'Maç yağmur yüzünden iptal edildi.' veya 'Yağış nedeniyle maç ertelendi.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_002",
+    "category": "karmaşık_paraphrasing",
+    "question": "Bu paragrafı farklı kelimeler kullanarak yeniden yazın: 'Teknoloji hızla gelişiyor. Her gün yeni cihazlar ve uygulamalar çıkıyor. Bu durum hayatımızı kolaylaştırıyor ama aynı zamanda uyum sağlamak zorlaşıyor.'",
+    "expected_answer": "Örnek: 'Teknolojik ilerleme çok hızlı ilerliyor. Sürekli yeni araçlar ve yazılımlar piyasaya sürülüyor. Bu değişimler yaşamımızı rahatlatsa da, adapte olmak giderek daha zor hale geliyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_003",
+    "category": "özet_paraphrasing",
+    "question": "Bu metni kısaltarak yeniden yazın: 'Kitap okumak, hayal gücünü geliştirir, kelime dağarcığını zenginleştirir ve farklı bakış açıları kazandırır. Ayrıca stresi azaltır ve zihinsel sağlığı destekler.'",
+    "expected_answer": "Örnek: 'Kitap okumak hem zihinsel becerilerimizi geliştirir hem de sağlığımızı destekler.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_004",
+    "category": "genişletilmiş_paraphrasing",
+    "question": "Bu kısa cümleyi detaylandırarak yeniden yazın: 'Spor sağlıklıdır.'",
+    "expected_answer": "Örnek: 'Düzenli spor yapmak, kalp sağlığını korur, kas gelişimini destekler ve genel yaşam kalitesini artırır.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_005",
+    "category": "aktif_pasif_dönüşüm",
+    "question": "Bu etken cümleyi edilgen yapıya çevirin: 'Mimar yeni binayı tasarladı.'",
+    "expected_answer": "'Yeni bina mimar tarafından tasarlandı.' veya 'Yeni bina tasarlandı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_006",
+    "category": "pasif_aktif_dönüşüm",
+    "question": "Bu edilgen cümleyi etken yapıya çevirin: 'Rapor ekip tarafından hazırlandı.'",
+    "expected_answer": "'Ekip raporu hazırladı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_007",
+    "category": "olumlu_olumsuz_dönüşüm",
+    "question": "Bu olumlu cümleyi olumsuz anlamda yeniden yazın: 'Bu proje başarılı oldu.'",
+    "expected_answer": "Örnek: 'Bu proje başarısız oldu.' veya 'Bu proje başarıya ulaşamadı.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_008",
+    "category": "soru_cümlesine_çevirme",
+    "question": "Bu bildirme cümlesini soru cümlesine çevirin: 'Yarın toplantı var.'",
+    "expected_answer": "'Yarın toplantı var mı?' veya 'Yarın toplantı olacak mı?'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_009",
+    "category": "emir_rica_dönüşümü",
+    "question": "Bu emir cümlesini rica haline çevirin: 'Kapıyı kapat.'",
+    "expected_answer": "'Kapıyı kapatır mısın?' veya 'Kapıyı kapatır mısınız lütfen?'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_010",
+    "category": "dolaylı_anlatım",
+    "question": "Ali şunu söyledi: 'Yarın okula gitmeyeceğim.' Bu cümleyi dolaylı anlatımla yazın.",
+    "expected_answer": "'Ali yarın okula gitmeyeceğini söyledi.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_011",
+    "category": "doğrudan_anlatım",
+    "question": "Bu dolaylı anlatım cümlesini doğrudan anlatıma çevirin: 'Ayşe sinemaya gitmek istediğini söyledi.'",
+    "expected_answer": "Ayşe dedi ki: 'Sinemaya gitmek istiyorum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_012",
+    "category": "çoğul_tekil_dönüşümü",
+    "question": "Bu çoğul özne cümlesini tekil özneye çevirin: 'Öğrenciler dersi dinlediler.'",
+    "expected_answer": "'Öğrenci dersi dinledi.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_013",
+    "category": "zaman_değiştirme",
+    "question": "Bu şimdiki zaman cümlesini geçmiş zamana çevirin: 'Parkta yürüyorum.'",
+    "expected_answer": "'Parkta yürüdüm.' veya 'Parkta yürüyordum.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_014",
+    "category": "gelecek_zaman_dönüşümü",
+    "question": "Bu şimdiki zaman cümlesini gelecek zamana çevirin: 'Kitap okuyorum.'",
+    "expected_answer": "'Kitap okuyacağım.' veya 'Kitap okuyacak olacağım.'",
+    "difficulty": "easy"
+  },
+  {
+    "id": "tr_para_015",
+    "category": "bireşik_cümle_ayırma",
+    "question": "Bu bileşik cümleyi iki basit cümleye ayırın: 'Yemek yedikten sonra uyudum.'",
+    "expected_answer": "'Yemek yedim. Sonra uyudum.' veya 'Yemek yedim ve uyudum.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_016",
+    "category": "basit_cümle_birleştirme",
+    "question": "Bu iki basit cümleyi bileşik cümle haline getirin: 'Hava yağıyordu. Dışarı çıkmadım.'",
+    "expected_answer": "'Hava yağdığı için dışarı çıkmadım.' veya 'Hava yağıyordu, bu yüzden dışarı çıkmadım.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_017",
+    "category": "vurgu_değiştirme",
+    "question": "Bu cümlede vurguyu 'okula' kelimesinden 'yürüyerek' kelimesine kaydırarak yeniden yazın: 'Ben okula yürüyerek gidiyorum.'",
+    "expected_answer": "Örnek: 'Okula yürüyerek gidiyorum ben.' veya 'Yürüyerek gidiyorum okula.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_018",
+    "category": "atasözü_açıklama",
+    "question": "'Damlaya damlaya göl olur' atasözünü modern dille yeniden ifade edin.",
+    "expected_answer": "Örnek: 'Küçük adımlar zamanla büyük sonuçlar doğurur.' veya 'Sürekli yapılan küçük çabalar büyük başarı getirir.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_019",
+    "category": "teknik_basit_dil",
+    "question": "Bu teknik cümleyi sade dille yeniden yazın: 'Sistem entegrasyonu tamamlandı ve API endpoint'leri aktif hale getirildi.'",
+    "expected_answer": "Örnek: 'Sistemler birbirine bağlandı ve veri alışverişi başladı.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_020",
+    "category": "arka_plan_ekleme",
+    "question": "Bu basit cümleye bağlam/arka plan ekleyerek zenginleştirin: 'Kitap aldım.'",
+    "expected_answer": "Örnek: 'Dün şehir merkezindeki kitapçıdan uzun zamandır okumak istediğim romanı aldım.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_021",
+    "category": "finansal_paraphrasing",
+    "question": "'Hesaptan para çekme talebimiz onaylandı' cümlesini informal olarak yeniden yazın.",
+    "expected_answer": "Örnek: 'Banka hesaptan paraçekmemi onaylamamış.' veya 'Hesaptan istediğim parayı çekebileceğim.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_022",
+    "category": "negasyon_değişikliği",
+    "question": "Bu çift olumsuz cümleyi olumlu hale getirin: 'Bu kitap kötü değil, hoş değil de değil.'",
+    "expected_answer": "'Bu kitap güzel.' veya 'Bu kitap iyi bir eserdir.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_023",
+    "category": "modalite_değişikliği",
+    "question": "Bu kesin ifadeyi mümkünlük göstercek yapıya çevirin: 'Yarın yağmur yağacak.'",
+    "expected_answer": "'Yarın yağmur yağabilir.' veya 'Yarın yağmur yağması mümkün.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_024",
+    "category": "modalite_tersliği",
+    "question": "Bu mümkünlük ifadesini kesinlik haline çevirin: 'Belgeler eksik olabilir.'",
+    "expected_answer": "'Belgeler eksiktir.' veya 'Belgeler muhakkak eksik.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_025",
+    "category": "bağlaç_değişimi",
+    "question": "Bu cümledeki 've' bağlacını başka bağlaçlar kullanarak paraphrase edin: 'Kitap aldım ve okumaya başladım.'",
+    "expected_answer": "Örnek: 'Kitap alıp okumaya başladım.' veya 'Kitap aldıktan sonra okumaya başladım.' veya 'Kitap aldığında okumaya başladım.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_026",
+    "category": "öznelik_değişikliği",
+    "question": "Bu cümlenin öznesi izmaritleyen yapıya düzenleyin: 'Proje başarı ile tamamlandı.'",
+    "expected_answer": "'Projeyi başarı ile tamamladık.' veya 'Projeyi başarı ile tamamlama başardık.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_027",
+    "category": "üstü_kapalı_açık",
+    "question": "Bu üstü kapalı ifadeyi açık hale getirin: 'Toplantı ertelenmek zorunda kaldı.'",
+    "expected_answer": "'Toplantıyı erteledik' veya 'Toplantı başka bir zamana alındı.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_028",
+    "category": "resmi_gayriresmî",
+    "question": "Bu resmi cümleyi gayriresmî dile çevirin: 'İçerik takvimi hazırlanması neticesinde program onaylanmıştır.'",
+    "expected_answer": "Örnek: 'Program onaylandı çünkü içerik takvimi hazırlandı.' veya 'İçerik planını yaptıktan sonra programı onayladılar.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_029",
+    "category": "gayriresmî_resmi",
+    "question": "Bu gayriresmî cümleyi resmi dile çevirin: 'Toplantıdan sonra taçık kaçtık.'",
+    "expected_answer": "'Toplantının ardından derhal ayrıldık.' veya 'Toplantı bitiminden sonra hemen yanı başladık.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_030",
+    "category": "sosyal_medya_formal",
+    "question": "Bu sosyal medya dilini formal anlatıma çevirin: 'Bu harika, ya 😍 hayatımı değiştirdi lol.'",
+    "expected_answer": "'Bu gelişme harika ve hayatımı olumlu yönde etkiledi.' veya 'Bu etkinlik benim yaşantımda önemli bir değişim yapmış.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_031",
+    "category": "uzunluk_kontrolü_kısaltma",
+    "question": "Bu cümleyi en az 20% kısaltarak, anlam kaybetmeden yeniden yazın: 'Bilgisayar teknolojileri hızla geliştiğinden ötürü, her gün yeni programlar ve yazılımlar piyasaya çıkıyor.'",
+    "expected_answer": "'Bilgisayar teknolojileri hızla gelişiyor, her gün yeni yazılımlar piyasaya çıkıyor.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_032",
+    "category": "uzunluk_kontrolü_genişletme",
+    "question": "Bu kısa cümleyi 50% daha uzun hale getirin, gereksiz detaylar eklemeden: 'Bankaya gittim.'",
+    "expected_answer": "'Sabah erken saatlerde en yakın şubesindeki bankaya giderek işlemlerimi tamamladım.'",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_033",
+    "category": "bağlamsal_paraphrasing",
+    "question": "Finansal bağlamda 'Kredi limitim doldu' cümlesini başka yollar ile ifade edin (3 farklı).",
+    "expected_answer": "Örnek: 1) 'Kredi kartımın limitini tükettim.' 2) 'Verilen limit kullanıldı.' 3) 'Maksimum borçlanma düzeyine ulaştım.'",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_034",
+    "category": "çelişkili_anlam_paraphrasing",
+    "question": "'Boşlukta suyun ağırlığı vardır' cümlesinin paradoksunu açıklayan bir paraphrasing yazın.",
+    "expected_answer": "'Ağırlığı olmayan ortamda, suyun fiziksel varlığı mevcuttur ama kütle hissedilmez.' veya 'Sıfır ağırlık koşullarında suyun varlığı vardır ama ağırlığı yoktur.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_035",
+    "category": "esinlenme_referans_paraphrasing",
+    "question": "'Bir uçan balık gibi usulca geçti' cümlesini kaynağını gösterir şekilde paraphrase edin.",
+    "expected_answer": "Örnek: 'Sanki ufak bir balık havada uçuyormuş gibi sessizce geçti.' veya 'Hareketi bir uçan balığın hareketine benzetilerek, usulca yanımdan geçti.' (García Márquez referansı anlaşılabilir)",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_036",
+    "category": "multiple_interpretasyon",
+    "question": "'Kitapçı kitabı okudu' cümlesini 2 farklı anlama gelecek şekilde paraphrase edin.",
+    "expected_answer": "Anlam 1: 'Kitabı satan kişi (kitapçı) kitabı okudu.' Anlam 2: 'Kitap okuyan kişi (kitapçı unvanı alan), kitabı okudu.' - Paraphrase: 'Kitabın satıcısı metni okuyarak değerlendirdi.' / 'Kitap meraklısı bu yapıtı tamamladı.'",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_037",
+    "category": "akademik_sadelestirme",
+    "question": "Aşağıdaki akademik ve karmaşık metni, ana fikrini ve tüm detaylarını koruyarak, lise seviyesindeki bir öğrencinin anlayabileceği akıcı ve detaylı bir makale formatında yeniden yazın: 'İklim değişikliğinin antropojenik faktörlere bağlı ivmelenmesi, küresel biyoçeşitlilik üzerinde geri döndürülemez tahribatlara yol açmakta olup, ekosistem hizmetlerinin sürdürülebilirliğini kritik eşiğin ötesinde tehdit etmektedir.'",
+    "expected_answer": "İnsan faaliyetlerinin neden olduğu iklim değişikliği giderek hızlanıyor ve bu durum dünya üzerindeki bitki ve hayvan çeşitliliğine kalıcı zararlar veriyor. Doğanın bize sunduğu temiz hava, su ve gıda gibi temel yaşam destek sistemleri, bu hızlı değişim yüzünden artık geri dönüşü olmayan, çok tehlikeli bir noktaya gelmiş durumda. Kısacası, kendi eylemlerimizle doğanın dengesini bozuyor ve geleceğimizi riske atıyoruz.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_038",
+    "category": "hikayelestirme",
+    "question": "'Sabah uyandım, kahvemi içtim ve işe gitmek için evden çıktım.' şeklindeki bu basit ve sıradan cümleyi; sabahın atmosferini, kahvenin kokusunu ve karakterin iç dünyasını yansıtacak şekilde, betimlemelerle dolu uzun bir edebi paragrafa dönüştürerek yeniden yazın.",
+    "expected_answer": "Güneşin ilk ışıkları odamın penceresinden süzülürken, yeni bir günün taze umutlarıyla gözlerimi araladım. Mutfağa geçtiğimde, taze çekilmiş kahve çekirdeklerinin o baş döndürücü, sıcak kokusu tüm evi sarmıştı bile. Fincanımdan yükselen dumanı izlerken zihnimdeki düşünceleri toparladım; ardından, sabahın o serin ve hafif puslu havasını içime çekerek, şehrin uyanan ritmine karışmak üzere adımlarımı sokağa doğru attım.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_039",
+    "category": "perspektif_degisimi",
+    "question": "Aşağıdaki metni, olayı dışarıdan anlatan bir gözlemci (üçüncü tekil şahıs) yerine, olayı bizzat yaşayan ve büyük bir heyecan duyan ana karakterin (birinci tekil şahıs) ağzından, duygularını detaylandırarak yeniden yazın: 'Gemi limana yaklaştığında, güvertedeki yolcular yıllardır görmedikleri vatan toprağına bakarak gözyaşlarına boğuldular. Herkesin yüzünde büyük bir özlem ve kavuşma sevinci vardı.'",
+    "expected_answer": "Gemi ağır ağır limana yaklaşırken, yıllardır hasretini çektiğim vatan toprağı ufukta belirdiğinde kalbim yerinden fırlayacak gibi atmaya başladı. Gözyaşlarıma engel olamıyordum; içimde biriken o devasa özlem, yerini tarifsiz bir kavuşma sevincine bırakmıştı. Etrafımdaki herkes gibi ben de bu anın büyüsüne kapılmış, memleketimin kokusunu derin derin içime çekiyordum.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_040",
+    "category": "ton_degisimi_resmi_eglenceli",
+    "question": "Aşağıdaki sıkıcı ve resmi kullanım kılavuzu metnini, teknolojiye meraklı gençlere hitap eden, enerjik, samimi ve detaylı bir blog yazısı üslubuyla yeniden ifade edin: 'Cihazı başlatmak için güç düğmesine üç saniye basılı tutunuz. Ekran aydınlandığında, kurulum sihirbazı adımlarını sırasıyla takip ederek Wi-Fi bağlantınızı gerçekleştiriniz.'",
+    "expected_answer": "Selam teknoloji tutkunları! Yeni canavarınızı hayata döndürmek için yapmanız gereken tek şey, o sihirli güç tuşuna sadece üç saniye basılı tutmak. Ekranın o muhteşem ışığıyla aydınlandığını gördüğünüzde, arkanıza yaslanın ve kurulum sihirbazının sizi yönlendirmesine izin verin. Wi-Fi şifrenizi girip internete bağlandığınız an, dijital dünyanın kapıları sonuna kadar açılmış olacak!",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_041",
+    "category": "felsefi_genisletme",
+    "question": "'Zaman çok hızlı geçiyor, hiçbir şeye yetişemiyorum.' şeklindeki bu günlük yakınmayı, insanın varoluşsal kaygılarını, modern hayatın hızını ve anı yaşamanın zorluğunu irdeleyen derin ve felsefi bir paragrafa dönüştürerek yeniden yazın.",
+    "expected_answer": "Modern çağın amansız çarkları arasında, zaman adeta parmaklarımızın arasından kayıp giden ince bir kum tanesi gibi hızla akıp gidiyor. İnsan, sürekli bir şeylere yetişme telaşı içinde kendi varoluşunun özünü ıskalıyor; geçmişin pişmanlıkları ile geleceğin kaygıları arasında sıkışıp kalırken, içinde bulunduğu 'an'ın eşsiz güzelliğini ve derinliğini deneyimlemekten mahrum kalıyor.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_042",
+    "category": "hedef_kitle_cocuk",
+    "question": "Aşağıdaki karmaşık biyolojik açıklamayı, 8-10 yaşlarındaki bir çocuğun ilgisini çekecek şekilde, masalsı ögeler ve benzetmeler kullanarak uzun ve eğlenceli bir hikaye formatında yeniden yazın: 'İnsan vücudundaki akyuvarlar, dışarıdan gelen patojenik virüs ve bakterileri tespit ederek fagositoz yoluyla yok eder ve bağışıklık sisteminin savunma mekanizmasını oluşturur.'",
+    "expected_answer": "Vücudumuzun içinde, damarlarımızda devriye gezen minik, cesur şövalyeler yaşar; biz onlara 'akyuvarlar' deriz. Dışarıdan vücudumuza gizlice girmeye çalışan kötü kalpli mikrop ve virüs canavarlarını gördükleri an, bu şövalyeler hemen harekete geçer. Kötü mikropları kocaman bir kucaklamayla sarıp yutarak yok ederler ve böylece kalemiz olan vücudumuzu hastalıklara karşı kahramanca korumuş olurlar!",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_043",
+    "category": "detayli_aciklama",
+    "question": "'Meyveli ağacı taşlarlar.' atasözünü, sadece anlamını vermekle kalmayıp, günümüz iş dünyasından veya sosyal hayattan somut örnekler ve psikolojik tahliller içeren kapsamlı bir deneme paragrafı şeklinde yeniden ifade edin.",
+    "expected_answer": "Toplumda başarıya ulaşmış, yetenekli ve üretken bireyler, tıpkı meyve veren bereketli bir ağaç gibi her zaman dikkat çekerler. Ancak bu dikkat her zaman takdirle sonuçlanmaz; çoğu zaman kıskançlık, rekabet ve eleştiri oklarının hedefi olurlar. İş dünyasında yenilikçi fikirler üreten bir çalışanın veya sosyal hayatta parlayan bir yeteneğin asılsız eleştirilere maruz kalması, aslında onların ne kadar değerli ve 'meyve veren' kişiler olduğunun en açık göstergesidir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_044",
+    "category": "duygusal_derinlik",
+    "question": "Aşağıdaki kuru ve nesnel haber metnini, okuyucunun empati kurmasını sağlayacak, duygusal betimlemeler ve dramatik bir kurgu ile zenginleştirerek uzun bir metin halinde yeniden yazın: 'İtfaiye ekipleri, dün gece çıkan yangında mahsur kalan bir kediyi binanın ikinci katından kurtararak sahibine teslim etti.'",
+    "expected_answer": "Dün gece alevlerin acımasızca sardığı o karanlık binada, çaresiz bir canın sessiz çığlıkları yankılanıyordu. İkinci katın dumanla kaplı penceresinde korkuyla büzüşmüş minik kedi, alevlerin sıcaklığına inat hayata tutunmaya çalışırken, kahraman itfaiyecilerimiz kendi canlarını hiçe sayarak alevlerin arasına daldı. O minik bedenin, gözyaşları içinde bekleyen sahibinin titreyen kollarına bırakıldığı an, umudun ve sevginin ateşten bile güçlü olduğu bir kez daha kanıtlandı.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_045",
+    "category": "mecaz_ve_benzetme",
+    "question": "'Şiddetli bir fırtına çıktı ve ağaçların dalları kırıldı.' cümlesini, doğanın gücünü vurgulayan güçlü mecazlar, kişileştirmeler ve görsel betimlemeler kullanarak destansı bir paragrafa dönüştürün.",
+    "expected_answer": "Gökyüzü aniden öfkeyle kükredi ve doğa, sakladığı tüm hiddeti yeryüzüne kusmaya başladı. Rüzgar, görünmez bir devin kırbacı gibi acımasızca eserken, asırlık ağaçlar bu amansız gücün karşısında çaresizce boyun eğdi; kalın dallar, doğanın bu vahşi senfonisi eşliğinde acı dolu çatırtılarla kırılarak toprağın bağrına teslim oldu.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_046",
+    "category": "karsit_gorus_paraphrasing",
+    "question": "Aşağıdaki metni, ana fikrini tamamen tersine çevirerek (teknolojiyi övmek yerine doğayı ve sadeliği övecek şekilde), ancak aynı detay seviyesini ve ikna edici üslubu koruyarak yeniden yazın: 'Akıllı telefonlar ve sürekli internet bağlantısı, bilgiye anında ulaşmamızı sağlayarak hayatımızı inanılmaz derecede zenginleştiriyor ve bizi küresel bir ağın parçası yapıyor.'",
+    "expected_answer": "Akıllı telefonlardan ve sürekli çevrimiçi olma zorunluluğundan uzaklaşmak, zihnimizi dijital gürültüden arındırarak hayatımızı inanılmaz derecede zenginleştiriyor. Ekranlara bakmak yerine doğanın sessizliğine ve sadeliğine dönmek, bizi sanal bir ağın kölesi olmak yerine, kendi iç dünyamızla ve gerçek çevremizle derin, sahici bir bağ kurmaya davet ediyor.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_047",
+    "category": "tarihsel_kurgu",
+    "question": "'1453 yılında İstanbul fethedildi ve yeni bir çağ başladı.' şeklindeki tarihi bilgiyi, o gün surların önünde bekleyen genç bir askerin gözünden, savaşın atmosferini ve çağ değişiminin ağırlığını hissettiren uzun bir edebi metin olarak yeniden kurgulayın.",
+    "expected_answer": "Sabahın ilk ışıkları Konstantinopolis'in devasa surlarına vururken, kalbim göğüs kafesimi parçalayacakmış gibi atıyordu. Top sesleri yeri göğü inletiyor, havaya karışan barut kokusu genzimizi yakıyordu; ama içimizde, sadece bir şehri değil, koca bir tarihi değiştirecek olmanın o tarifsiz inancı vardı. Surlardan içeri adım attığımız o an, sadece eski bir imparatorluğun yıkılışına değil, yepyeni bir çağın, bizim çağımızın görkemli doğuşuna şahitlik ettiğimizi bütün hücrelerimde hissediyordum.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_048",
+    "category": "distopik_yeniden_yazim",
+    "question": "'Gelecekte yapay zeka sayesinde insanlar daha az çalışacak ve kendilerine daha çok vakit ayırabilecekler.' cümlesini, karanlık ve distopik bir bilim kurgu romanının giriş paragrafı olacak şekilde, karamsar ve detaylı bir üslupla yeniden yazın.",
+    "expected_answer": "Bize yapay zekanın bizi özgürleştireceğini, bitmek bilmeyen mesailerden kurtarıp kendimize ait altın bir çağ sunacağını vaat etmişlerdi. Ancak makineler işlerimizi devraldığında, geriye sadece amaçsızlığın soğuk boşluğu ve metalik bir sessizlik kaldı; artık çalışmıyorduk belki ama, algoritmaların kusursuz gözetimi altında, insan olmanın ne anlama geldiğini çoktan unutmuş, kendi yarattığımız dijital bir hapishanenin gönüllü mahkumları olmuştuk.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_049",
+    "category": "bilimsel_populerlestirme",
+    "question": "Aşağıdaki kuantum fiziği tanımını, günlük hayattan çarpıcı analojiler (benzetmeler) kullanarak, bilime hiç ilgisi olmayan birinin bile merakla okuyacağı uzun ve sürükleyici bir popüler bilim makalesi paragrafına dönüştürün: 'Kuantum süperpozisyonu, bir kuantum sisteminin ölçüm yapılana kadar olası tüm durumlarda aynı anda bulunabilme ilkesidir.'",
+    "expected_answer": "Düşünün ki elinizde sihirli bir bozuk para var ve havaya attınız; para yere düşüp siz ona bakana kadar, o para aynı anda hem yazı hem de turadır! İşte kuantum dünyasının o akıl almaz 'süperpozisyon' kuralı tam olarak budur. Evrenin en küçük yapı taşları, biz onları gözlemleyene kadar tek bir kimliğe bürünmeyi reddeder ve olabilecek tüm ihtimalleri aynı anda, adeta bir hayalet gibi bir arada yaşarlar; ta ki biz bakıp o büyüyü bozana dek.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_050",
+    "category": "nostaljik_paraphrasing",
+    "question": "'Eskiden çocuklar sokakta oynardı, şimdi ise herkes evde tablet başında.' cümlesini, geçmişe duyulan derin bir özlemi (nostalji) yansıtacak şekilde, sokak oyunlarının seslerini ve kokularını betimleyerek uzun bir paragrafa dönüştürün.",
+    "expected_answer": "Bir zamanlar mahalle araları, dizleri yara bere içinde ama gözleri mutlulukla parlayan çocukların şen kahkahalarıyla çınlar, akşam ezanına kadar süren saklambaçların, sekseklerin coşkusu sokakları doldururdu. Şimdilerde ise o cıvıl cıvıl sokakların yerini soğuk bir sessizlik aldı; çocuklarımız, dört duvar arasına hapsolmuş halde, ellerindeki tabletlerin soluk ve yapay ışığında, o eski toprak kokulu, gerçek çocukluk anılarından habersizce büyüyorlar.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_051",
+    "category": "mizahi_abartma",
+    "question": "'Bugün çok yoruldum, eve gidip uyumak istiyorum.' cümlesini, yorgunluğun boyutunu mizahi bir dille ve aşırı abartılar (mübalağa) kullanarak, okuyucuyu güldürecek uzun bir metin şeklinde yeniden yazın.",
+    "expected_answer": "Şu an o kadar yorgunum ki, hücrelerim teker teker istifa dilekçesi veriyor ve kemiklerim un ufak olup rüzgara karışmak üzere! Eğer biri beni şu an eve ışınlamazsa, muhtemelen olduğum yere kıvrılıp bin yıllık bir kış uykusuna yatacağım. Tek hayalim, yatağımla bütünleşip yastığımla akraba olmak ve en az üç gün boyunca dünyayla tüm diplomatik ilişkilerimi kesmek!",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_052",
+    "category": "resmi_rapor_dili",
+    "question": "'Dün ormanda yürürken aniden karşıma kocaman bir ayı çıktı, çok korktum ve hemen kaçtım.' şeklindeki kişisel ve heyecanlı anlatımı, bir orman muhafazasının tuttuğu son derece resmi, objektif ve detaylı bir olay yeri raporu üslubuyla yeniden yazın.",
+    "expected_answer": "Belirtilen tarihte, ormanlık alan içerisindeki rutin devriye faaliyeti esnasında, yetişkin bir boz ayı (Ursus arctos) ile beklenmedik bir yakın temas gerçekleşmiştir. Karşılaşma anında güvenlik protokolleri gereği ani hareketlerden kaçınılmış olup, can güvenliğini sağlamak amacıyla bölgeden ivedilikle ve kontrollü bir şekilde uzaklaşılmış, olay herhangi bir fiziksel zarar yaşanmadan rapor altına alınmıştır.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_053",
+    "category": "empati_odakli_yeniden_yazim",
+    "question": "'Sınavdan düşük not aldığı için ağlayan öğrenciye öğretmeni kızdı.' cümlesini, hem öğrencinin yaşadığı hayal kırıklığını hem de öğretmenin içsel pişmanlığını yansıtacak şekilde, çok boyutlu ve empatik bir paragrafa dönüştürün.",
+    "expected_answer": "Aylarca süren uykusuz gecelerin ardından kağıdındaki o düşük notu gören öğrencinin omuzları çökmüş, gözyaşları yanaklarından süzülürken dünyası başına yıkılmıştı. O anki stres ve yorgunlukla sesini yükselten öğretmen ise, çocuğun o çaresiz bakışlarını gördüğü an kalbinde derin bir sızı hissetti; verdiği anlık tepkinin, o gencecik umutları nasıl kırdığını fark etmenin ağır pişmanlığıyla yutkundu.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_054",
+    "category": "reklam_metni_olusturma",
+    "question": "'Bu yeni elektrikli süpürge çok güçlü çekiyor ve sessiz çalışıyor.' şeklindeki sıradan ürün özelliğini, tüketicinin hayat kalitesini nasıl artıracağını vurgulayan, ikna edici ve coşkulu uzun bir reklam metnine dönüştürün.",
+    "expected_answer": "Evinizdeki temizlik anlayışını baştan yazmaya hazır mısınız? Yeni nesil teknoloji harikası bu elektrikli süpürge, eşsiz emiş gücüyle en inatçı tozları bile saniyeler içinde yok ederken, fısıltı kadar sessiz çalışmasıyla evinizin huzurunu asla bozmaz. Siz kahvenizi yudumlayıp sevdiklerinizle sohbetin tadını çıkarırken, bırakın o, kusursuz temizliğin ve sessizliğin mükemmel uyumunu evinize taşısın!",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_055",
+    "category": "mitolojik_anlatim",
+    "question": "'Güneş battı ve hava karardı.' cümlesini, eski çağlara ait bir efsane veya mitolojik bir metin havasında, tanrıların ve doğaüstü güçlerin işin içinde olduğu destansı bir paragrafa dönüştürerek yeniden yazın.",
+    "expected_answer": "Işık Tanrısı, altından yaldızlı arabasını göğün batı sınırındaki kızıl dağların ardına sürdüğünde, yeryüzü yavaşça onun sıcak nefesinden mahrum kaldı. Gecenin karanlık pelerinini kuşanan Gölgeler Kraliçesi, yıldızlardan örülmüş tacıyla gökyüzüne taht kurarken, tüm fani dünya bu kadim ve sessiz karanlığın gizemli kucağına teslim oldu.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_056",
+    "category": "psikolojik_analiz",
+    "question": "'Arkadaşım mesajıma geç cevap verince ona çok sinirlendim.' cümlesini, kişinin iç dünyasındaki güvensizlikleri, terk edilme korkusunu ve aşırı düşünme (overthinking) halini yansıtan derin bir psikolojik analiz paragrafı olarak yeniden yazın.",
+    "expected_answer": "Ekranda belirmeyen o kısacık cevap, zihnimin karanlık dehlizlerinde uyuyan tüm güvensizliklerimi acımasızca uyandırdı. Dakikalar saatlere dönüşürken, içimdeki o tanıdık terk edilme korkusu büyüdü; 'Acaba yanlış bir şey mi söyledim, yoksa artık benimle konuşmak istemiyor mu?' şeklindeki sonu gelmez kuruntular, basit bir gecikmeyi ruhumu kemiren devasa bir öfke ve kaygı sarmalına dönüştürdü.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_057",
+    "category": "seyahatname_uslubu",
+    "question": "'Kapadokya'ya gittik, balonları izledik ve mağara otelde kaldık.' şeklindeki kuru gezi özetini, ünlü bir gezginin seyahatnamesinden alınmış gibi, mekanın dokusunu, renklerini ve hissettirdiklerini anlatan büyüleyici ve uzun bir paragrafa çevirin.",
+    "expected_answer": "Anadolu'nun masalsı kalbi Kapadokya'ya adım attığımızda, zamanın rüzgarla yonttuğu o peri bacalarının efsunlu silüeti bizi adeta başka bir evrene taşıdı. Şafak vakti gökyüzünü rengarenk bir tuvale çeviren sıcak hava balonlarının o sessiz ve zarif dansını izlerken nefesimiz kesildi; geceyi geçirdiğimiz binlerce yıllık taşların serinliğini taşıyan o otantik mağara odası ise, bize tarihin fısıltılarını ninniler gibi dinletti.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_058",
+    "category": "bilim_kurgu_teknik_betimleme",
+    "question": "'Araba bozuldu ve yolda kaldık.' cümlesini, 22. yüzyılda geçen bir bilim kurgu hikayesinde, uçan bir aracın (hovercar) karmaşık motor arızasını ve karakterlerin ıssız bir gezegende mahsur kalışını anlatan teknik ve gerilimli bir paragrafa dönüştürün.",
+    "expected_answer": "Anti-yerçekimi iticilerinden aniden yükselen tiz bir alarm sesiyle birlikte, plazma reaktörünün ana çekirdeği kritik seviyede aşırı ısındı ve aracımız irtifa kaybetmeye başladı. Sistemlerin birbiri ardına çökmesiyle birlikte, kendimizi kızıl kum fırtınalarının acımasızca dövdüğü, haritası bile çıkarılmamış bu ıssız ve yabancı gezegenin acımasız yüzeyinde, arızalı bir metal yığınının içinde çaresizce mahsur kalmış halde bulduk.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_059",
+    "category": "mektup_formati",
+    "question": "'Seni çok özledim, umarım yakında görüşürüz.' cümlesini, 19. yüzyılda savaşa gitmiş bir askerin, geride bıraktığı sevdiğine yazdığı, hasret, umut ve dönme arzusuyla dolu, edebi ve uzun bir mektup paragrafı şeklinde yeniden yazın.",
+    "expected_answer": "Ruhumun en nadide köşesinde sakladığım sevgili yârim; cephenin bu soğuk ve barut kokan gecelerinde, yüzünün o narin hayali kalbimi ısıtan tek tesellim oluyor. Sana olan hasretim, göğsümde her gün biraz daha büyüyen amansız bir yangın gibi; lakin bil ki, bu karanlık günler elbet bitecek ve ben, o güzel gözlerine yeniden bakabilmek umuduyla, sağ salim kollarına döneceğim günü iple çekiyorum.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_060",
+    "category": "sosyolojik_elestiri",
+    "question": "'İnsanlar artık sadece marka kıyafetler giymek istiyor.' cümlesini, modern tüketim toplumunu, statü kaygısını ve kapitalizmin bireyler üzerindeki etkisini eleştiren, derinlikli ve uzun bir sosyolojik analiz paragrafına dönüştürün.",
+    "expected_answer": "Günümüz tüketim toplumunda bireyler, kendi öz benliklerini ve karakterlerini geliştirmek yerine, üzerlerinde taşıdıkları logolar aracılığıyla sahte bir kimlik ve sosyal statü inşa etme yanılgısına düşmüş durumdalar. Kapitalizmin dayattığı bu amansız gösteriş çılgınlığı, insanları sadece birer tüketim nesnesine indirgerken; giyilen marka kıyafetler, aslında içsel boşlukları örtbas etmeye çalışan modern insanın en trajik ve görünür zırhı haline gelmiştir.",
+    "difficulty": "very_hard"
+  },
+  {
+    "id": "tr_para_061",
+    "category": "dogal_yasam_belgeseli",
+    "question": "'Aslan, ceylanı yakaladı ve yedi.' cümlesini, vahşi doğanın acımasız ama kusursuz dengesini anlatan, bir doğa belgeseli sunucusunun (örneğin David Attenborough) etkileyici, dramatik ve detaylı anlatım tarzıyla yeniden yazın.",
+    "expected_answer": "Afrika savanalarının altın sarısı otları arasında, doğanın o kadim ve acımasız kuralı bir kez daha sahneleniyor. Kasları yay gibi gerilmiş, gözlerini avına dikmiş olan ormanların görkemli kralı, rüzgarın yönünü hesaplayarak yaptığı o kusursuz ve ölümcül sıçrayışla, genç ceylanın kaçış umutlarını saniyeler içinde tüketiyor; bu an, vahşi doğanın hem ürpertici derecede sert hem de yaşam döngüsünün devamı için zorunlu olan o muazzam dengesinin ta kendisidir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_062",
+    "category": "ironik_elestiri",
+    "question": "'Toplantı üç saat sürdü ama hiçbir karar alınmadı.' cümlesini, kurumsal iş hayatının verimsizliğini ve bürokrasinin anlamsızlığını ironik (alaycı) bir dille eleştiren, uzun ve iğneleyici bir paragrafa dönüştürün.",
+    "expected_answer": "Şirketimizin o çok kıymetli beyin takımı, tam üç saat boyunca oksijensiz bir odada toplanarak, kahve tüketim rekorları kırmak ve bol bol havalı kelimeler sarf etmek suretiyle muazzam bir 'hiçbir şey yapmama' eylemine imza attı. Havada uçuşan vizyonlar, misyonlar ve stratejik hedefler o kadar göz kamaştırıcıydı ki, toplantının sonunda tek bir somut karar bile alamadan dağılmayı, kurumsal verimliliğimizin en büyük zaferi olarak kutlamalıyız!",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_063",
+    "category": "masalsi_anlatim",
+    "question": "'Kış geldi ve her yer karla kaplandı.' cümlesini, çocuklara anlatılan bir kış masalının giriş bölümü olacak şekilde, kar tanelerinin dansını ve doğanın uykuya dalışını betimleyen uzun, büyülü bir paragrafa çevirin.",
+    "expected_answer": "Kuzeyin buzdan sarayından yola çıkan Kış Perisi, gümüş asasını gökyüzüne doğru salladığında, bulutların arasından milyonlarca minik, kristal kar tanesi neşeyle dans ederek yeryüzüne süzülmeye başladı. Ormandaki ağaçlar beyaz, yumuşacık battaniyelerine sarınıp derin ve huzurlu bir uykuya dalarken, tüm dünya sanki sihirli bir değnek değmişçesine pırıl pırıl parlayan, sessiz ve masalsı bir pamuk şeker ülkesine dönüştü.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tr_para_064",
+    "category": "gerilim_ve_korku",
+    "question": "'Gece evde yalnızken kapı çaldı.' cümlesini, okuyucunun kalp atışlarını hızlandıracak, ortamdaki sessizliği, karakterin korkusunu ve bilinmezliğin yarattığı gerilimi detaylandıran uzun bir korku hikayesi paragrafına dönüştürün.",
+    "expected_answer": "Gecenin o zifiri karanlığında, evdeki tek ses duvardaki eski saatin sinir bozucu tik-taklarıyken, aniden dış kapıdan gelen o tok ve yavaş vuruş sesi kanımı dondurdu. Nefesimi tuttum; rüzgarın uğultusu mu yoksa dışarıda bekleyen o meçhul silüetin sabırsızlığı mı olduğunu bilemediğim o sağır edici sessizlikte, kalbim göğüs kafesimi kırarcasına atarken, kapının ardındaki o bilinmez karanlığa doğru titreyen adımlarla yürümekten başka çarem kalmamıştı.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_065",
+    "category": "fütüristik_vizyon",
+    "question": "'Gelecekte arabalar uçacak.' şeklindeki klasik tahmini, 2050 yılının mega şehirlerindeki gökyüzü trafiğini, neon ışıkları ve teknolojinin geldiği noktayı görselleştiren, detaylı ve fütüristik bir paragrafa dönüştürerek yeniden yazın.",
+    "expected_answer": "2050 yılının devasa mega kentlerinde, asfalt yollar çoktan tarihe karışmış; yerini, devasa gökdelenlerin neon ışıkları arasında süzülen, sessiz ve otonom uçan araçların oluşturduğu baş döndürücü bir gökyüzü trafiğine bırakmıştı. İnsanlar artık bulutların arasında, manyetik rotalar üzerinde ışık hızında seyahat ederken, aşağıda kalan eski dünyanın kalıntıları, teknolojinin sınır tanımayan bu muazzam yükselişinin gölgesinde sadece soluk birer anı olarak parlıyordu.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "tr_para_066",
+    "category": "sanatsal_elestiri",
+    "question": "'Bu tablo çok güzel, renkleri çok canlı.' şeklindeki basit bir yorumu, profesyonel bir sanat eleştirmeninin kaleminden çıkmış gibi, fırça darbelerini, renk paletinin psikolojik etkisini ve eserin derinliğini analiz eden uzun bir paragrafa çevirin.",
+    "expected_answer": "Sanatçının tuval üzerinde sergilediği bu muazzam renk cümbüşü, sadece görsel bir şölen sunmakla kalmıyor; aynı zamanda cesur fırça darbeleriyle izleyicinin ruhunun en derin köşelerine dokunmayı başarıyor. Sıcak ve soğuk tonların o kusursuz kontrastı, esere inanılmaz bir dinamizm ve duygusal bir derinlik katarken, tablonun her bir santimetresi adeta kendi içinde tutkulu bir hikaye anlatarak izleyiciyi adeta hipnotize ediyor.",
+    "difficulty": "very_hard"
+  }
+]

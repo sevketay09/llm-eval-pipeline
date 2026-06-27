@@ -1,0 +1,25 @@
+services:
+  llm-eval-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: ${BASE_IMAGE:-python:3.12-slim}
+    container_name: llm-eval-dashboard-debug
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      HOME: /tmp
+      API_HOST: 0.0.0.0
+      API_PORT: 8001
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./config:/app/config
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    restart: unless-stopped
+    command: ["python", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8001"]
