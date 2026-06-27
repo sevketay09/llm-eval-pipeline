@@ -37,3 +37,6 @@ annotations/training_data/
 *.swo
 
 .github/
+
+# Internal session docs
+docs/
