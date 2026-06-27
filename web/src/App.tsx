@@ -8,6 +8,7 @@ import {
   Database,
   Activity,
   FlaskConical,
+  ShieldAlert,
 } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
 import RunEvaluation from "./pages/RunEvaluation";
@@ -17,6 +18,7 @@ import HitlReview from "./pages/HitlReview";
 import DatasetStudio from "./pages/DatasetStudio";
 import Traces from "./pages/Traces";
 import Playground from "./pages/Playground";
+import RedTeam from "./pages/RedTeam";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
@@ -25,6 +27,7 @@ const navItems = [
   { to: "/results", icon: BarChart3, label: "Results" },
   { to: "/traces", icon: Activity, label: "Traces" },
   { to: "/playground", icon: FlaskConical, label: "Playground" },
+  { to: "/redteam", icon: ShieldAlert, label: "Red-Team" },
   { to: "/models", icon: Settings, label: "Models" },
   { to: "/review", icon: MessageSquare, label: "Review Desk" },
 ];
@@ -69,6 +72,7 @@ export default function App() {
             <Route path="/results" element={<Results />} />
             <Route path="/traces" element={<Traces />} />
             <Route path="/playground" element={<Playground />} />
+            <Route path="/redteam" element={<RedTeam />} />
             <Route path="/models" element={<Models />} />
             <Route path="/review" element={<HitlReview />} />
           </Routes>

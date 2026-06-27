@@ -18,6 +18,7 @@ from api.routers import (
     experiments_router,
     hitl_router,
     models_router,
+    redteam_router,
     results_router,
     traces_router,
     ws_router,
@@ -63,6 +64,7 @@ def create_app() -> FastAPI:
     app.include_router(custom_datasets_router, prefix="/api")
     app.include_router(traces_router, prefix="/api")
     app.include_router(experiments_router, prefix="/api")
+    app.include_router(redteam_router, prefix="/api")
     app.include_router(ws_router)
 
     @app.get("/api/health")

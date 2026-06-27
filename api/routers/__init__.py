@@ -6,3 +6,4 @@ from .hitl import router as hitl_router
 from .custom_datasets import router as custom_datasets_router
 from .traces import router as traces_router
 from .experiments import router as experiments_router
+from .redteam import router as redteam_router
