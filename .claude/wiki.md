@@ -29,6 +29,8 @@ FastAPI backend + React frontend (Vite/TS) + Streamlit UI for LLM evaluation wit
 - `evaluators/custom_metric.py` — NL→judge prompt for custom metrics (G3).
 - `reports/share.py` — G13: Shareable HTML report, permalink, embed.
 - `web/src/pages/Traces.tsx`, `Playground.tsx`, `RedTeam.tsx`, `CustomMetrics.tsx`, `RagEval.tsx`, `FailureClustering.tsx` — React UI pages.
+- `web/src/components/*` — Shared UI layer (PageHeader, Card, Button, Badge, ScoreBar, EmptyState, Field/Input/Textarea/Select, Spinner, Toast/useToast, CommandPalette, HelpHint) on top of index.css design system. All pages use this; no per-page hardcoded colors.
+- `web/src/nav.ts` — Shared nav data (navGroups/navItems) consumed by App rail + CommandPalette.
 - `web/src/api/client.ts` — All API clients.
 - `conftest.py` — scipy/sklearn/numpy mock for contract test suite.
 
@@ -58,3 +60,4 @@ pytest test_ci_gate_contracts.py test_synthetic_dataset_contracts.py \
 ## Unfinished / Next
 - G2, G4–G7 — Low priority features, backlog.
 - Trace → Eval feedback loop: TraceStore ingests but not yet surfaced in HITL or reports.
+- Frontend redesign (logs/frontend-redesign-plan-27-06-2026.md): Faz 1 DONE (6 off-brand pages → design system + web/src/components/). Faz 2 DONE (App.tsx nav grouped into Evaluate/Analyze/Configure; mobile off-canvas drawer + topbar hamburger; tablet icon-strip with title tooltips). Faz 3 DONE (CommandPalette Cmd+K + ⌘K rail trigger via nav.ts; ToastProvider/useToast wraps App in main.tsx, 5 tool pages converted setError→toast; empty-state CTAs on Dashboard/Results → /run; HelpHint "?" popover via PageHeader help prop on RAG/Failures/Red-Team/Custom Metrics). Faz 4 DONE (FailureClustering "From report" dropdown via resultsApi + "Paste JSON"/Load-example tab toggle; Skeleton component + Dashboard load skeletons + FailureClustering report-list skeleton; a11y — global :focus-visible ring, all expandable rows now role=button/tabIndex/aria-expanded + Enter/Space keyboard, icon-button aria-labels; responsive — table-shell overflow-x scroll). Frontend redesign plan fully complete.

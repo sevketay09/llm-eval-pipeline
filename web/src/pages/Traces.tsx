@@ -13,20 +13,20 @@ import {
   Code,
   X,
 } from "lucide-react";
-import { tracesApi, Trace, TraceSpan, TraceDetail } from "../api/client";
+import { tracesApi, Trace, TraceSpan, TraceDetail } from "@/api/client";
+import { PageHeader, Card, Button, Badge, EmptyState, Input } from "@/components";
+import type { BadgeTone } from "@/components";
 
-// ── Span type color/label map ─────────────────────────────────────────────────
-
-const SPAN_TYPE_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  LLM:       { bg: "#7c3aed22", text: "#a78bfa", label: "LLM" },
-  TOOL:      { bg: "#0369a122", text: "#38bdf8", label: "TOOL" },
-  RETRIEVER: { bg: "#06645322", text: "#34d399", label: "RETR" },
-  AGENT:     { bg: "#b4500622", text: "#fb923c", label: "AGNT" },
-  GENERIC:   { bg: "#37415122", text: "#9ca3af", label: "GEN" },
+const SPAN_TONE: Record<string, { tone: BadgeTone; label: string }> = {
+  LLM: { tone: "violet", label: "LLM" },
+  TOOL: { tone: "info", label: "TOOL" },
+  RETRIEVER: { tone: "success", label: "RETR" },
+  AGENT: { tone: "warning", label: "AGNT" },
+  GENERIC: { tone: "neutral", label: "GEN" },
 };
 
-function spanStyle(type: string): { bg: string; text: string; label: string } {
-  return SPAN_TYPE_STYLES[type.toUpperCase()] ?? SPAN_TYPE_STYLES["GENERIC"]!;
+function spanTone(type: string) {
+  return SPAN_TONE[type.toUpperCase()] ?? SPAN_TONE["GENERIC"]!;
 }
 
 function fmt(ms: number) {
@@ -34,100 +34,57 @@ function fmt(ms: number) {
   return `${(ms / 1000).toFixed(2)}s`;
 }
 
-// ── Span row ──────────────────────────────────────────────────────────────────
-
-interface SpanRowProps {
-  span: TraceSpan;
-  depth: number;
-  isLast: boolean;
-  onShowRaw: (span: TraceSpan) => void;
-}
-
-function SpanRow({ span, depth, isLast: _isLast, onShowRaw }: SpanRowProps) {
-  const [expanded, setExpanded] = useState(false);
-  const st = spanStyle(span.type);
-  const hasFailed =
+function spanFailed(span: TraceSpan): boolean {
+  return (
     typeof span.output === "object" &&
     span.output !== null &&
-    "error" in (span.output as Record<string, unknown>);
+    "error" in (span.output as Record<string, unknown>)
+  );
+}
+
+function SpanRow({ span, depth, onShowRaw }: { span: TraceSpan; depth: number; onShowRaw: (s: TraceSpan) => void }) {
+  const [expanded, setExpanded] = useState(false);
+  const st = spanTone(span.type);
+  const hasFailed = spanFailed(span);
 
   return (
     <div style={{ marginLeft: depth * 20 }}>
       <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "6px 8px",
-          borderRadius: 6,
-          background: hasFailed ? "#7f1d1d22" : "transparent",
-          borderLeft: hasFailed ? "2px solid #ef4444" : "2px solid transparent",
-          cursor: "pointer",
-          userSelect: "none",
-        }}
-        onClick={() => setExpanded((p) => !p)}
+        className={`ds-row-expandable ${hasFailed ? "ds-row-failed" : ""}`}
+        style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.35rem 0.5rem", borderRadius: 8 }}
+        onClick={() => setExpanded(p => !p)}
+        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(p => !p); } }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        aria-label={`Span ${span.name}`}
       >
-        <span style={{ color: "#6b7280", width: 14, flexShrink: 0 }}>
+        <span style={{ color: "var(--text-dim)", width: 14, flexShrink: 0 }}>
           {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </span>
-
-        {/* Type badge */}
-        <span
-          style={{
-            background: st.bg,
-            color: st.text,
-            fontSize: 10,
-            fontWeight: 700,
-            padding: "1px 6px",
-            borderRadius: 4,
-            fontFamily: "monospace",
-            flexShrink: 0,
-          }}
-        >
-          {st.label}
-        </span>
-
-        <span style={{ flex: 1, fontSize: 13, color: "#e5e7eb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <Badge tone={st.tone} mono>{st.label}</Badge>
+        <span className="body-copy" style={{ flex: 1, fontSize: "0.85rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {span.name}
         </span>
-
-        {hasFailed && <AlertCircle size={14} style={{ color: "#ef4444", flexShrink: 0 }} />}
-
-        <span style={{ fontSize: 11, color: "#6b7280", flexShrink: 0 }}>
-          {fmt(span.latency_ms)}
-        </span>
-
-        <button
-          onClick={(e) => { e.stopPropagation(); onShowRaw(span); }}
-          style={{ background: "none", border: "none", cursor: "pointer", color: "#4b5563", padding: 0 }}
-          title="View raw"
-        >
+        {hasFailed && <AlertCircle size={14} style={{ color: "var(--danger)", flexShrink: 0 }} />}
+        <span className="micro-copy" style={{ flexShrink: 0 }}>{fmt(span.latency_ms)}</span>
+        <button className="ds-icon-button" aria-label="View raw" onClick={e => { e.stopPropagation(); onShowRaw(span); }}>
           <Code size={13} />
         </button>
       </div>
 
       {expanded && (
-        <div
-          style={{
-            marginLeft: 22,
-            marginBottom: 4,
-            padding: "8px 10px",
-            background: "#111827",
-            borderRadius: 6,
-            fontSize: 12,
-            color: "#9ca3af",
-          }}
-        >
+        <div style={{ marginLeft: 22, marginBottom: 4 }}>
           {span.input != null && (
-            <div style={{ marginBottom: 6 }}>
-              <span style={{ color: "#6b7280", fontSize: 11 }}>INPUT </span>
-              <span style={{ color: "#d1d5db" }}>{JSON.stringify(span.input).slice(0, 300)}</span>
+            <div style={{ marginBottom: "0.4rem" }}>
+              <span className="ds-field-mini" style={{ display: "inline", marginRight: "0.4rem" }}>Input</span>
+              <span className="micro-copy">{JSON.stringify(span.input).slice(0, 300)}</span>
             </div>
           )}
           {span.output != null && (
             <div>
-              <span style={{ color: "#6b7280", fontSize: 11 }}>OUTPUT </span>
-              <span style={{ color: hasFailed ? "#fca5a5" : "#d1d5db" }}>
+              <span className="ds-field-mini" style={{ display: "inline", marginRight: "0.4rem" }}>Output</span>
+              <span className="micro-copy" style={{ color: hasFailed ? "var(--danger)" : undefined }}>
                 {JSON.stringify(span.output).slice(0, 300)}
               </span>
             </div>
@@ -138,180 +95,66 @@ function SpanRow({ span, depth, isLast: _isLast, onShowRaw }: SpanRowProps) {
   );
 }
 
-// ── Span tree builder ─────────────────────────────────────────────────────────
-
 function buildTree(spans: TraceSpan[]): Array<{ span: TraceSpan; depth: number }> {
   const depthMap = new Map<string, number>();
-
   function getDepth(span: TraceSpan): number {
     if (depthMap.has(span.span_id)) return depthMap.get(span.span_id)!;
-    if (!span.parent_span_id) {
-      depthMap.set(span.span_id, 0);
-      return 0;
-    }
-    const parent = spans.find((s) => s.span_id === span.parent_span_id);
+    if (!span.parent_span_id) { depthMap.set(span.span_id, 0); return 0; }
+    const parent = spans.find(s => s.span_id === span.parent_span_id);
     const d = parent ? getDepth(parent) + 1 : 0;
     depthMap.set(span.span_id, d);
     return d;
   }
-
-  return spans
-    .slice()
-    .sort((a, b) => a.start_ts - b.start_ts)
-    .map((span) => ({ span, depth: getDepth(span) }));
+  return spans.slice().sort((a, b) => a.start_ts - b.start_ts).map(span => ({ span, depth: getDepth(span) }));
 }
 
-// ── Trace detail panel ────────────────────────────────────────────────────────
-
-interface DetailPanelProps {
+function DetailPanel({ detail, onEval, evalStatus }: {
   detail: TraceDetail;
-  onEval: (traceId: string) => void;
+  onEval: (id: string) => void;
   evalStatus: Record<string, "queued" | "error">;
-}
-
-function DetailPanel({ detail, onEval, evalStatus }: DetailPanelProps) {
+}) {
   const [rawSpan, setRawSpan] = useState<TraceSpan | null>(null);
   const { trace, span_count, duration_ms } = detail;
   const tree = buildTree(trace.spans);
+  const queued = evalStatus[trace.trace_id] === "queued";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: 0 }}>
-      {/* Header */}
-      <div
-        style={{
-          padding: "12px 16px",
-          borderBottom: "1px solid #1f2937",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          flexShrink: 0,
-        }}
-      >
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative" }}>
+      <div style={{ padding: "0.9rem 1.1rem", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: "0.7rem" }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: "#f9fafb", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            {trace.name}
-          </div>
-          <div style={{ fontSize: 11, color: "#6b7280", fontFamily: "monospace", marginTop: 2 }}>
-            {trace.trace_id}
-          </div>
+          <div className="body-copy" style={{ fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{trace.name}</div>
+          <div className="micro-copy font-mono">{trace.trace_id}</div>
         </div>
-
-        <div style={{ display: "flex", gap: 6, flexShrink: 0, alignItems: "center" }}>
-          <span style={{ fontSize: 11, color: "#6b7280", display: "flex", alignItems: "center", gap: 3 }}>
-            <Layers size={12} />{span_count}
-          </span>
-          {duration_ms != null && (
-            <span style={{ fontSize: 11, color: "#6b7280", display: "flex", alignItems: "center", gap: 3 }}>
-              <Clock size={12} />{fmt(duration_ms)}
-            </span>
-          )}
-          {trace.tags.length > 0 && trace.tags.map((tag) => (
-            <span
-              key={tag}
-              style={{
-                fontSize: 10,
-                padding: "1px 6px",
-                background: "#1e3a5f",
-                color: "#60a5fa",
-                borderRadius: 4,
-              }}
-            >
-              {tag}
-            </span>
-          ))}
-
-          <button
+        <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0, alignItems: "center", flexWrap: "wrap" }}>
+          <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 3 }}><Layers size={12} />{span_count}</span>
+          {duration_ms != null && <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 3 }}><Clock size={12} />{fmt(duration_ms)}</span>}
+          {trace.tags.map(tag => <Badge key={tag} tone="info">{tag}</Badge>)}
+          <Button
+            icon={queued ? <CheckCircle size={12} /> : <Play size={12} />}
+            disabled={queued}
             onClick={() => onEval(trace.trace_id)}
-            disabled={evalStatus[trace.trace_id] === "queued"}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              padding: "4px 10px",
-              background: evalStatus[trace.trace_id] === "queued" ? "#166534" : "#7c3aed",
-              color: "#fff",
-              border: "none",
-              borderRadius: 6,
-              fontSize: 12,
-              cursor: evalStatus[trace.trace_id] === "queued" ? "default" : "pointer",
-              fontWeight: 600,
-            }}
           >
-            {evalStatus[trace.trace_id] === "queued" ? (
-              <><CheckCircle size={12} /> Queued</>
-            ) : (
-              <><Play size={12} /> Eval</>
-            )}
-          </button>
+            {queued ? "Queued" : "Eval"}
+          </Button>
         </div>
       </div>
 
-      {/* Span tree */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 12px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "0.5rem 0.75rem" }}>
         {tree.length === 0 ? (
-          <div style={{ color: "#4b5563", fontSize: 13, textAlign: "center", marginTop: 40 }}>
-            No spans recorded
-          </div>
+          <EmptyState icon={Layers} title="No spans recorded" />
         ) : (
-          tree.map(({ span, depth }, idx) => (
-            <SpanRow
-              key={span.span_id}
-              span={span}
-              depth={depth}
-              isLast={idx === tree.length - 1}
-              onShowRaw={setRawSpan}
-            />
-          ))
+          tree.map(({ span, depth }) => <SpanRow key={span.span_id} span={span} depth={depth} onShowRaw={setRawSpan} />)
         )}
       </div>
 
-      {/* Raw payload drawer */}
       {rawSpan && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "#00000088",
-            zIndex: 50,
-            display: "flex",
-            alignItems: "flex-end",
-          }}
-          onClick={() => setRawSpan(null)}
-        >
-          <div
-            style={{
-              background: "#111827",
-              width: "100%",
-              maxHeight: "60%",
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 12,
-              padding: 16,
-              overflowY: "auto",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, alignItems: "center" }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#e5e7eb" }}>
-                Raw — {rawSpan.name}
-              </span>
-              <button
-                onClick={() => setRawSpan(null)}
-                style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280" }}
-              >
-                <X size={16} />
-              </button>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 50, display: "flex", alignItems: "flex-end" }} onClick={() => setRawSpan(null)}>
+          <div className="panel-surface" style={{ width: "100%", maxHeight: "60%", borderRadius: "18px 18px 0 0", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.7rem", alignItems: "center" }}>
+              <span className="body-copy" style={{ fontWeight: 600 }}>Raw — {rawSpan.name}</span>
+              <button className="ds-icon-button" aria-label="Close" onClick={() => setRawSpan(null)}><X size={16} /></button>
             </div>
-            <pre
-              style={{
-                fontSize: 11,
-                color: "#9ca3af",
-                overflowX: "auto",
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
-              }}
-            >
-              {JSON.stringify(rawSpan, null, 2)}
-            </pre>
+            <pre className="ds-codeblock">{JSON.stringify(rawSpan, null, 2)}</pre>
           </div>
         </div>
       )}
@@ -319,84 +162,44 @@ function DetailPanel({ detail, onEval, evalStatus }: DetailPanelProps) {
   );
 }
 
-// ── Trace list item ───────────────────────────────────────────────────────────
-
-function TraceListItem({
-  trace,
-  selected,
-  onClick,
-}: {
-  trace: Trace;
-  selected: boolean;
-  onClick: () => void;
-}) {
-  const failedSpans = trace.spans.filter(
-    (s) =>
-      typeof s.output === "object" &&
-      s.output !== null &&
-      "error" in (s.output as Record<string, unknown>)
-  ).length;
-
-  const duration =
-    trace.end_ts != null ? (trace.end_ts - trace.start_ts) * 1000 : null;
-
+function TraceListItem({ trace, selected, onClick }: { trace: Trace; selected: boolean; onClick: () => void }) {
+  const failedSpans = trace.spans.filter(spanFailed).length;
+  const duration = trace.end_ts != null ? (trace.end_ts - trace.start_ts) * 1000 : null;
   return (
     <div
       onClick={onClick}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      aria-label={`Trace ${trace.name ?? trace.trace_id}`}
+      className="ds-row-expandable"
       style={{
-        padding: "10px 14px",
-        borderBottom: "1px solid #1f2937",
-        cursor: "pointer",
-        background: selected ? "#1e293b" : "transparent",
-        borderLeft: selected ? "2px solid #7c3aed" : "2px solid transparent",
-        transition: "background 0.1s",
+        padding: "0.65rem 0.9rem",
+        borderBottom: "1px solid var(--line)",
+        background: selected ? "rgba(255,255,255,0.04)" : "transparent",
+        borderLeft: selected ? "2px solid var(--accent)" : "2px solid transparent",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <span
-          style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: "#e5e7eb",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            flex: 1,
-          }}
-        >
-          {trace.name}
-        </span>
+        <span className="body-copy" style={{ fontWeight: 600, fontSize: "0.85rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{trace.name}</span>
         {failedSpans > 0 && (
-          <span style={{ fontSize: 11, color: "#ef4444", flexShrink: 0, marginLeft: 6, display: "flex", alignItems: "center", gap: 2 }}>
+          <span style={{ fontSize: "0.72rem", color: "var(--danger)", flexShrink: 0, marginLeft: 6, display: "flex", alignItems: "center", gap: 2 }}>
             <AlertCircle size={11} /> {failedSpans}
           </span>
         )}
       </div>
-
-      <div style={{ fontSize: 11, color: "#6b7280", fontFamily: "monospace", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-        {trace.trace_id.slice(0, 16)}…
-      </div>
-
-      <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center", flexWrap: "wrap" }}>
-        <span style={{ fontSize: 11, color: "#4b5563", display: "flex", alignItems: "center", gap: 2 }}>
-          <Layers size={11} /> {trace.spans.length}
-        </span>
-        {duration != null && (
-          <span style={{ fontSize: 11, color: "#4b5563", display: "flex", alignItems: "center", gap: 2 }}>
-            <Clock size={11} /> {fmt(duration)}
-          </span>
-        )}
-        {trace.tags.slice(0, 2).map((tag) => (
-          <span key={tag} style={{ fontSize: 10, color: "#60a5fa", display: "flex", alignItems: "center", gap: 2 }}>
-            <Tag size={10} /> {tag}
-          </span>
+      <div className="micro-copy font-mono" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{trace.trace_id.slice(0, 16)}…</div>
+      <div style={{ display: "flex", gap: "0.6rem", marginTop: "0.3rem", alignItems: "center", flexWrap: "wrap" }}>
+        <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 2 }}><Layers size={11} /> {trace.spans.length}</span>
+        {duration != null && <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 2 }}><Clock size={11} /> {fmt(duration)}</span>}
+        {trace.tags.slice(0, 2).map(tag => (
+          <span key={tag} className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 2, color: "var(--accent-cool)" }}><Tag size={10} /> {tag}</span>
         ))}
       </div>
     </div>
   );
 }
-
-// ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function Traces() {
   const [traces, setTraces] = useState<Trace[]>([]);
@@ -413,29 +216,24 @@ export default function Traces() {
       const res = await tracesApi.list({ limit: 100, tag: tagFilter || undefined });
       setTraces(res.traces);
     } catch {
-      // silent — list will stay stale
+      // silent — list stays stale
     }
   }, [tagFilter]);
 
-  // initial load + tag change
   useEffect(() => {
     setLoading(true);
     loadTraces().finally(() => setLoading(false));
   }, [loadTraces]);
 
-  // auto-refresh
   useEffect(() => {
     if (!autoRefresh) {
       if (intervalRef.current) clearInterval(intervalRef.current);
       return;
     }
     intervalRef.current = setInterval(loadTraces, 4000);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [autoRefresh, loadTraces]);
 
-  // load detail when selection changes
   useEffect(() => {
     if (!selectedId) { setDetail(null); return; }
     tracesApi.get(selectedId).then(setDetail).catch(() => setDetail(null));
@@ -444,140 +242,58 @@ export default function Traces() {
   const handleEval = async (traceId: string) => {
     try {
       await tracesApi.eval(traceId);
-      setEvalStatus((prev) => ({ ...prev, [traceId]: "queued" }));
+      setEvalStatus(prev => ({ ...prev, [traceId]: "queued" }));
     } catch {
-      setEvalStatus((prev) => ({ ...prev, [traceId]: "error" }));
+      setEvalStatus(prev => ({ ...prev, [traceId]: "error" }));
     }
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", color: "#e5e7eb" }}>
-      {/* Toolbar */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "12px 16px",
-          borderBottom: "1px solid #1f2937",
-          flexShrink: 0,
-        }}
-      >
-        <Activity size={18} style={{ color: "#7c3aed" }} />
-        <span style={{ fontWeight: 700, fontSize: 15 }}>Live Traces</span>
+    <div className="page-shell">
+      <PageHeader
+        kicker="Live Traces"
+        title="Trace Observatory"
+        subtitle="Stream live evaluation traces, inspect the span tree, and queue any trace for scoring."
+        actions={
+          <>
+            <Input placeholder="filter by tag…" value={tagFilter} onChange={e => setTagFilter(e.target.value)} style={{ width: 170 }} />
+            <span className="micro-copy">{traces.length} traces</span>
+            <button className="ds-icon-button" aria-label="Refresh" onClick={loadTraces}><RefreshCw size={14} /></button>
+            <Button variant={autoRefresh ? "primary" : "secondary"} onClick={() => setAutoRefresh(p => !p)}>
+              {autoRefresh ? "● LIVE" : "○ PAUSED"}
+            </Button>
+          </>
+        }
+      />
 
-        <input
-          placeholder="filter by tag…"
-          value={tagFilter}
-          onChange={(e) => setTagFilter(e.target.value)}
-          style={{
-            background: "#111827",
-            border: "1px solid #374151",
-            borderRadius: 6,
-            padding: "4px 10px",
-            fontSize: 12,
-            color: "#e5e7eb",
-            width: 160,
-            outline: "none",
-          }}
-        />
+      <div className="grid gap-4 lg:grid-cols-[300px_1fr] items-start">
+        {/* List */}
+        <Card style={{ padding: 0, overflow: "hidden", maxHeight: "72vh", display: "flex", flexDirection: "column" }}>
+          <div style={{ overflowY: "auto" }}>
+            {loading && traces.length === 0 ? (
+              <div style={{ padding: "1.5rem" }}><EmptyState title="Loading…" /></div>
+            ) : traces.length === 0 ? (
+              <div style={{ padding: "1.5rem" }}>
+                <EmptyState icon={Activity} title="No traces yet" hint={<>Instrument your app with <code className="font-mono">@eval.trace</code></>} />
+              </div>
+            ) : (
+              traces.map(t => (
+                <TraceListItem key={t.trace_id} trace={t} selected={t.trace_id === selectedId} onClick={() => setSelectedId(t.trace_id)} />
+              ))
+            )}
+          </div>
+        </Card>
 
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 12, color: "#4b5563" }}>{traces.length} traces</span>
-
-          <button
-            onClick={loadTraces}
-            style={{
-              background: "#1f2937",
-              border: "1px solid #374151",
-              borderRadius: 6,
-              padding: "4px 8px",
-              cursor: "pointer",
-              color: "#9ca3af",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              fontSize: 12,
-            }}
-          >
-            <RefreshCw size={13} />
-          </button>
-
-          <button
-            onClick={() => setAutoRefresh((p) => !p)}
-            style={{
-              background: autoRefresh ? "#166534" : "#1f2937",
-              border: `1px solid ${autoRefresh ? "#15803d" : "#374151"}`,
-              borderRadius: 6,
-              padding: "4px 10px",
-              cursor: "pointer",
-              color: autoRefresh ? "#4ade80" : "#6b7280",
-              fontSize: 12,
-              fontWeight: 600,
-            }}
-          >
-            {autoRefresh ? "● LIVE" : "○ PAUSED"}
-          </button>
-        </div>
-      </div>
-
-      {/* Body: list + detail */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        {/* Trace list */}
-        <div
-          style={{
-            width: 280,
-            flexShrink: 0,
-            borderRight: "1px solid #1f2937",
-            overflowY: "auto",
-          }}
-        >
-          {loading && traces.length === 0 ? (
-            <div style={{ padding: 24, color: "#4b5563", fontSize: 13, textAlign: "center" }}>
-              Loading…
-            </div>
-          ) : traces.length === 0 ? (
-            <div style={{ padding: 24, color: "#4b5563", fontSize: 13, textAlign: "center" }}>
-              <Activity size={32} style={{ margin: "0 auto 12px", opacity: 0.3 }} />
-              No traces yet.
-              <br />
-              Instrument your app with
-              <br />
-              <code style={{ fontSize: 11 }}>@eval.trace</code>
-            </div>
-          ) : (
-            traces.map((t) => (
-              <TraceListItem
-                key={t.trace_id}
-                trace={t}
-                selected={t.trace_id === selectedId}
-                onClick={() => setSelectedId(t.trace_id)}
-              />
-            ))
-          )}
-        </div>
-
-        {/* Detail panel */}
-        <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+        {/* Detail */}
+        <Card style={{ padding: 0, overflow: "hidden", height: "72vh" }}>
           {detail ? (
             <DetailPanel detail={detail} onEval={handleEval} evalStatus={evalStatus} />
           ) : (
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#374151",
-                flexDirection: "column",
-                gap: 10,
-              }}
-            >
-              <Activity size={40} style={{ opacity: 0.3 }} />
-              <span style={{ fontSize: 13 }}>Select a trace to inspect spans</span>
+            <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <EmptyState icon={Activity} title="Select a trace to inspect spans" />
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

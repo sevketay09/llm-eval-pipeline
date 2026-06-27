@@ -1,5 +1,15 @@
 import { useState } from "react";
 import { Sparkles, Play, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  PageHeader,
+  Card,
+  Button,
+  ScoreBar,
+  Field,
+  Input,
+  Textarea,
+  useToast,
+} from "@/components";
 
 const BASE = "/api";
 
@@ -44,43 +54,35 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return r.json();
 }
 
-function ScoreBar({ score }: { score: number | null }) {
-  if (score === null) return <span style={{ color: "#6b7280", fontSize: 12 }}>—</span>;
-  const pct = Math.round(score * 100);
-  const color = score >= 0.7 ? "#4ade80" : score >= 0.4 ? "#fb923c" : "#f87171";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ flex: 1, height: 6, background: "#1e2736", borderRadius: 3 }}>
-        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 3 }} />
-      </div>
-      <span style={{ fontSize: 12, color, fontWeight: 700, minWidth: 32 }}>{pct}%</span>
-    </div>
-  );
-}
-
 function ResultRow({ r }: { r: CaseEvalResult }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <tr onClick={() => setOpen(v => !v)} style={{ cursor: "pointer", borderBottom: "1px solid #1e2736" }}>
-        <td style={{ padding: "8px 10px", color: "#e2e8f0", fontSize: 13, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.question}</td>
-        <td style={{ padding: "8px 10px", minWidth: 120 }}><ScoreBar score={r.score} /></td>
-        <td style={{ padding: "8px 10px", color: "#9ca3af", fontSize: 11 }}>
-          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-        </td>
+      <tr
+        onClick={() => setOpen(v => !v)}
+        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(v => !v); } }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        aria-label={`Case: ${r.question}`}
+        className="ds-row-expandable"
+      >
+        <td style={{ maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.question}</td>
+        <td style={{ minWidth: 140 }}><ScoreBar score={r.score} /></td>
+        <td style={{ width: 28 }}>{open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</td>
       </tr>
       {open && (
-        <tr style={{ background: "#0d1117", borderBottom: "1px solid #1e2736" }}>
-          <td colSpan={3} style={{ padding: "12px 16px" }}>
-            {r.error && <p style={{ color: "#f87171", fontSize: 12 }}>Error: {r.error}</p>}
-            <div style={{ marginBottom: 8 }}>
-              <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 600 }}>ANSWER</span>
-              <p style={{ margin: "4px 0 0", color: "#e2e8f0", fontSize: 12 }}>{r.answer}</p>
+        <tr className="ds-row-detail">
+          <td colSpan={3}>
+            {r.error && <p className="alert-box alert-danger" style={{ marginBottom: "0.6rem" }}>Error: {r.error}</p>}
+            <div style={{ marginBottom: "0.6rem" }}>
+              <span className="ds-field-mini">Answer</span>
+              <p className="body-copy" style={{ margin: 0, fontSize: "0.85rem" }}>{r.answer}</p>
             </div>
             {r.reasoning && (
               <div>
-                <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 600 }}>REASONING</span>
-                <p style={{ margin: "4px 0 0", color: "#9ca3af", fontSize: 12 }}>{r.reasoning}</p>
+                <span className="ds-field-mini">Reasoning</span>
+                <p className="muted-copy" style={{ margin: 0, fontSize: "0.85rem" }}>{r.reasoning}</p>
               </div>
             )}
           </td>
@@ -97,19 +99,19 @@ export default function CustomMetrics() {
   const [cases, setCases] = useState<EvalCase[]>([{ question: "", answer: "", expected_answer: "" }]);
   const [evalResult, setEvalResult] = useState<EvalResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const toast = useToast();
 
   async function generate() {
-    if (!name.trim() || !description.trim()) { setError("Name and description required."); return; }
-    setError(null);
+    if (!name.trim() || !description.trim()) { toast.error("Name and description required."); return; }
     setLoading(true);
     try {
       const m = await apiPost<MetricDetail>("/custom-metrics", { name: name.trim(), description: description.trim() });
       setMetric(m);
       setEvalResult(null);
+      toast.success(`Judge prompt generated for "${m.name}".`);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
+      toast.error(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -118,14 +120,14 @@ export default function CustomMetrics() {
   async function evaluate() {
     if (!metric) return;
     const validCases = cases.filter(c => c.question.trim() && c.answer.trim());
-    if (validCases.length === 0) { setError("Add at least one case with question and answer."); return; }
-    setError(null);
+    if (validCases.length === 0) { toast.error("Add at least one case with question and answer."); return; }
     setLoading(true);
     try {
       const r = await apiPost<EvalResponse>(`/custom-metrics/${metric.metric_id}/evaluate`, { cases: validCases });
       setEvalResult(r);
+      toast.success(`Evaluated ${r.results.length} cases.`);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : String(e));
+      toast.error(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
     }
@@ -135,123 +137,131 @@ export default function CustomMetrics() {
     setCases(prev => prev.map((c, idx) => idx === i ? { ...c, [field]: value } : c));
   }
 
-  function addCase() {
-    setCases(prev => [...prev, { question: "", answer: "", expected_answer: "" }]);
-  }
-
-  function removeCase(i: number) {
-    setCases(prev => prev.filter((_, idx) => idx !== i));
-  }
-
   return (
-    <div style={{ padding: "24px 28px", maxWidth: 900, margin: "0 auto" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
-        <Sparkles size={22} color="#a78bfa" />
-        <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#e2e8f0" }}>Custom Metrics</h1>
-        <span style={{ fontSize: 12, color: "#6b7280" }}>Natural language → judge prompt → evaluate</span>
-      </div>
+    <div className="page-shell motion-stagger-stack">
+      <PageHeader
+        kicker="Custom Metrics"
+        title="Author a Judge"
+        subtitle="Describe what you want to measure in natural language, generate a judge prompt, then score test cases against it."
+        help={
+          <>
+            <strong>1)</strong> Name your metric and describe — in plain language —
+            what good vs. bad looks like. <strong>2)</strong> Generate turns that into
+            a reusable LLM-judge prompt. <strong>3)</strong> Add test cases and
+            evaluate to see per-case scores. Without a configured model you get a dry
+            run; configure one for real scores.
+          </>
+        }
+      />
 
       {/* Step 1 — Define metric */}
-      <div style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 8, padding: 20, marginBottom: 16 }}>
-        <p style={{ margin: "0 0 12px", fontSize: 12, fontWeight: 700, color: "#9ca3af" }}>1. DEFINE METRIC</p>
-        <input
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Metric name (e.g. Empathy Score)"
-          style={{ width: "100%", boxSizing: "border-box", marginBottom: 10, background: "#0d1117", border: "1px solid #1e2736", borderRadius: 6, color: "#e2e8f0", fontSize: 13, padding: "8px 12px" }}
-        />
-        <textarea
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          placeholder="Describe what this metric should measure... (e.g. Rate how empathetic and understanding the response is toward the user's problem, 0=not empathetic, 1=highly empathetic)"
-          rows={3}
-          style={{ width: "100%", boxSizing: "border-box", background: "#0d1117", border: "1px solid #1e2736", borderRadius: 6, color: "#e2e8f0", fontSize: 13, padding: "10px 12px", resize: "vertical" }}
-        />
-        <button
-          onClick={generate}
-          disabled={loading}
-          style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, background: loading ? "#1e2736" : "#7c3aed", color: "#fff", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}
-        >
-          <Sparkles size={14} /> {loading && !metric ? "Generating…" : "Generate Prompt"}
-        </button>
-      </div>
+      <Card>
+        <p className="section-caption" style={{ marginBottom: "0.9rem" }}>1 · Define metric</p>
+        <div className="flex flex-col gap-3">
+          <Field label="Metric name">
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Empathy Score" />
+          </Field>
+          <Field label="Description">
+            <Textarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              placeholder="Rate how empathetic the response is toward the user's problem (0 = not empathetic, 1 = highly empathetic)…"
+              rows={3}
+            />
+          </Field>
+        </div>
+        <div className="button-row" style={{ marginTop: "0.9rem" }}>
+          <Button icon={<Sparkles size={14} />} loading={loading && !metric} onClick={generate}>
+            Generate Prompt
+          </Button>
+        </div>
+      </Card>
 
       {/* Generated prompt */}
       {metric && (
-        <div style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 8, padding: 20, marginBottom: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "#9ca3af" }}>GENERATED JUDGE PROMPT</p>
-            <button onClick={() => setShowPrompt(v => !v)} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer", fontSize: 12 }}>
+        <Card>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
+            <p className="section-caption" style={{ margin: 0 }}>Generated judge prompt</p>
+            <button
+              className="ds-icon-button"
+              style={{ width: "auto", padding: "0.3rem 0.6rem" }}
+              aria-expanded={showPrompt}
+              aria-label={showPrompt ? "Hide judge prompt" : "Show judge prompt"}
+              onClick={() => setShowPrompt(v => !v)}
+            >
               {showPrompt ? "hide" : "show"}
             </button>
           </div>
-          {showPrompt && (
-            <pre style={{ margin: 0, color: "#94a3b8", fontSize: 12, whiteSpace: "pre-wrap", fontFamily: "monospace", background: "#0d1117", padding: 12, borderRadius: 6 }}>{metric.prompt}</pre>
+          {showPrompt ? (
+            <pre className="ds-codeblock">{metric.prompt}</pre>
+          ) : (
+            <p className="body-copy" style={{ margin: 0, fontSize: "0.85rem", color: "var(--success)" }}>
+              Prompt generated for "{metric.name}". Ready to evaluate cases.
+            </p>
           )}
-          {!showPrompt && (
-            <p style={{ margin: 0, color: "#4ade80", fontSize: 12 }}>Prompt generated for "{metric.name}". Ready to evaluate cases.</p>
-          )}
-        </div>
+        </Card>
       )}
 
-      {/* Step 2 — Add cases */}
+      {/* Step 2 — Cases */}
       {metric && (
-        <div style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 8, padding: 20, marginBottom: 16 }}>
-          <p style={{ margin: "0 0 12px", fontSize: 12, fontWeight: 700, color: "#9ca3af" }}>2. TEST CASES</p>
-          {cases.map((c, i) => (
-            <div key={i} style={{ marginBottom: 12, padding: 12, background: "#0d1117", borderRadius: 6, position: "relative" }}>
-              <div style={{ display: "grid", gap: 6 }}>
-                <input value={c.question} onChange={e => updateCase(i, "question", e.target.value)} placeholder="Question" style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 4, color: "#e2e8f0", fontSize: 12, padding: "6px 10px" }} />
-                <input value={c.answer} onChange={e => updateCase(i, "answer", e.target.value)} placeholder="Model answer" style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 4, color: "#e2e8f0", fontSize: 12, padding: "6px 10px" }} />
-                <input value={c.expected_answer} onChange={e => updateCase(i, "expected_answer", e.target.value)} placeholder="Expected answer (optional)" style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 4, color: "#e2e8f0", fontSize: 12, padding: "6px 10px" }} />
+        <Card>
+          <p className="section-caption" style={{ marginBottom: "0.9rem" }}>2 · Test cases</p>
+          <div className="flex flex-col gap-3">
+            {cases.map((c, i) => (
+              <div key={i} className="panel-quiet" style={{ position: "relative", borderRadius: 18, border: "1px solid var(--line)", padding: "0.85rem" }}>
+                <div className="flex flex-col gap-2">
+                  <Input value={c.question} onChange={e => updateCase(i, "question", e.target.value)} placeholder="Question" />
+                  <Input value={c.answer} onChange={e => updateCase(i, "answer", e.target.value)} placeholder="Model answer" />
+                  <Input value={c.expected_answer} onChange={e => updateCase(i, "expected_answer", e.target.value)} placeholder="Expected answer (optional)" />
+                </div>
+                {cases.length > 1 && (
+                  <button
+                    className="ds-icon-button"
+                    aria-label={`Remove case ${i + 1}`}
+                    style={{ position: "absolute", top: 8, right: 8 }}
+                    onClick={() => setCases(prev => prev.filter((_, idx) => idx !== i))}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
-              {cases.length > 1 && (
-                <button onClick={() => removeCase(i)} style={{ position: "absolute", top: 8, right: 8, background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>
-                  <Trash2 size={14} />
-                </button>
-              )}
-            </div>
-          ))}
-          <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={addCase} style={{ display: "flex", alignItems: "center", gap: 4, background: "#1e2736", color: "#9ca3af", border: "none", borderRadius: 6, padding: "6px 12px", fontSize: 12, cursor: "pointer" }}>
-              <Plus size={12} /> Add case
-            </button>
-            <button onClick={evaluate} disabled={loading} style={{ display: "flex", alignItems: "center", gap: 6, background: loading ? "#1e2736" : "#0284c7", color: "#fff", border: "none", borderRadius: 6, padding: "6px 16px", fontSize: 13, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>
-              <Play size={12} /> {loading && evalResult !== null ? "Evaluating…" : "Evaluate"}
-            </button>
+            ))}
           </div>
-        </div>
+          <div className="button-row" style={{ marginTop: "0.9rem" }}>
+            <Button variant="secondary" icon={<Plus size={14} />} onClick={() => setCases(prev => [...prev, { question: "", answer: "", expected_answer: "" }])}>
+              Add case
+            </Button>
+            <Button icon={<Play size={14} />} loading={loading && metric != null && evalResult !== null} onClick={evaluate}>
+              Evaluate
+            </Button>
+          </div>
+        </Card>
       )}
-
-      {error && <p style={{ color: "#f87171", fontSize: 13, marginBottom: 12 }}>{error}</p>}
 
       {/* Results */}
       {evalResult && (
-        <div style={{ background: "#111827", border: "1px solid #1e2736", borderRadius: 8 }}>
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid #1e2736", display: "flex", alignItems: "center", gap: 16 }}>
-            <span style={{ fontSize: 13, color: "#9ca3af" }}>{evalResult.results.length} cases</span>
-            {evalResult.avg_score !== null && (
-              <span style={{ fontSize: 13, color: "#a78bfa", fontWeight: 700 }}>
+        <Card style={{ padding: 0 }}>
+          <div style={{ padding: "0.9rem 1.1rem", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span className="micro-copy">{evalResult.results.length} cases</span>
+            {evalResult.avg_score !== null ? (
+              <span className="body-copy" style={{ fontWeight: 700, color: "var(--accent)" }}>
                 Avg: {Math.round(evalResult.avg_score * 100)}%
               </span>
-            )}
-            {evalResult.avg_score === null && (
-              <span style={{ fontSize: 12, color: "#6b7280" }}>Configure a model to get real scores</span>
+            ) : (
+              <span className="micro-copy">Configure a model to get real scores</span>
             )}
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid #1e2736" }}>
-                {["Question", "Score", ""].map(h => (
-                  <th key={h} style={{ padding: "8px 10px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "#6b7280" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {evalResult.results.map((r, i) => <ResultRow key={i} r={r} />)}
-            </tbody>
-          </table>
-        </div>
+          <div className="table-shell" style={{ border: "none", borderRadius: 0, boxShadow: "none" }}>
+            <table>
+              <thead>
+                <tr>{["Question", "Score", ""].map(h => <th key={h}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {evalResult.results.map((r, i) => <ResultRow key={i} r={r} />)}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
     </div>
   );

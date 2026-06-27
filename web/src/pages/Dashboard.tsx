@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Activity,
   AlertTriangle,
@@ -7,6 +8,7 @@ import {
   Clock,
   FileText,
   PauseCircle,
+  Play,
   Timer,
 } from "lucide-react";
 import {
@@ -16,6 +18,7 @@ import {
   type ReportListItem,
   type ReportSummary,
 } from "@/api/client";
+import { EmptyState, Skeleton } from "@/components";
 
 function MetricCard({
   icon: Icon,
@@ -320,6 +323,7 @@ export default function Dashboard() {
   const [testFilter, setTestFilter] = useState("");
   const [datasetFilter, setDatasetFilter] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   const visibleSnapshots = reportSnapshots.filter((snapshot) => {
     if (!promptVersionFilter) return true;
@@ -361,6 +365,10 @@ export default function Dashboard() {
         const message = loadError instanceof Error ? loadError.message : "Dashboard load failed";
         if (!cancelled) {
           setError(message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoaded(true);
         }
       }
     }
@@ -527,7 +535,34 @@ export default function Dashboard() {
         </div>
       )}
 
-      {!error && (
+      {!error && !loaded && (
+        <div className="motion-rise motion-delay-1 space-y-6">
+          <Skeleton height="9rem" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} height="5.5rem" />
+            ))}
+          </div>
+          <Skeleton height="16rem" />
+        </div>
+      )}
+
+      {!error && loaded && reportSnapshots.length === 0 && (
+        <div className="motion-rise motion-delay-1">
+          <EmptyState
+            icon={FileText}
+            title="No evaluation reports yet"
+            hint="Run your first evaluation to populate the dashboard with health cards, failure distribution and timeline context."
+            action={
+              <Link to="/run" className="button-primary">
+                <Play size={14} /> Run Evaluation
+              </Link>
+            }
+          />
+        </div>
+      )}
+
+      {!error && loaded && reportSnapshots.length > 0 && (
         <>
           <section className="panel-surface panel-roomy motion-rise motion-delay-1 space-y-5">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">

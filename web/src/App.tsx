@@ -1,18 +1,9 @@
-import { Routes, Route, NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Play,
-  BarChart3,
-  Settings,
-  MessageSquare,
-  Database,
-  Activity,
-  FlaskConical,
-  ShieldAlert,
-  Sparkles,
-  BookOpen,
-  AlertTriangle,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Routes, Route, NavLink, useLocation } from "react-router-dom";
+import clsx from "clsx";
+import { Menu, X, Search } from "lucide-react";
+import { navGroups } from "./nav";
+import { CommandPalette } from "./components";
 import Dashboard from "./pages/Dashboard";
 import RunEvaluation from "./pages/RunEvaluation";
 import Results from "./pages/Results";
@@ -26,50 +17,82 @@ import CustomMetrics from "./pages/CustomMetrics";
 import RagEval from "./pages/RagEval";
 import FailureClustering from "./pages/FailureClustering";
 
-const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/run", icon: Play, label: "Run" },
-  { to: "/datasets", icon: Database, label: "Datasets" },
-  { to: "/results", icon: BarChart3, label: "Results" },
-  { to: "/traces", icon: Activity, label: "Traces" },
-  { to: "/playground", icon: FlaskConical, label: "Playground" },
-  { to: "/redteam", icon: ShieldAlert, label: "Red-Team" },
-  { to: "/custom-metrics", icon: Sparkles, label: "Metrics" },
-  { to: "/rag-eval", icon: BookOpen, label: "RAG Eval" },
-  { to: "/failures", icon: AlertTriangle, label: "Failures" },
-  { to: "/models", icon: Settings, label: "Models" },
-  { to: "/review", icon: MessageSquare, label: "Review Desk" },
-];
-
 export default function App() {
+  const [navOpen, setNavOpen] = useState(false);
+  const location = useLocation();
+
+  // Close the mobile drawer on route change.
+  useEffect(() => {
+    setNavOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className="app-shell">
-      <aside className="chrome-rail">
+      <CommandPalette />
+      <header className="mobile-topbar">
+        <button
+          type="button"
+          className="ds-icon-button"
+          aria-label="Open navigation"
+          onClick={() => setNavOpen(true)}
+        >
+          <Menu size={20} />
+        </button>
+        <span className="brand-wordmark">LLM Eval</span>
+      </header>
+
+      {navOpen && <div className="nav-backdrop" onClick={() => setNavOpen(false)} />}
+
+      <aside className={clsx("chrome-rail", navOpen && "is-open")}>
         <div className="brand-block">
-          <span className="brand-kicker hidden lg:block">Signal Lab</span>
-          <span className="brand-wordmark hidden lg:block">LLM Eval</span>
-          <span className="brand-caption hidden lg:block">
+          <button
+            type="button"
+            className="ds-icon-button md:hidden"
+            aria-label="Close navigation"
+            onClick={() => setNavOpen(false)}
+            style={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}
+          >
+            <X size={16} />
+          </button>
+          <span className="brand-kicker">Signal Lab</span>
+          <span className="brand-wordmark">LLM Eval</span>
+          <span className="brand-caption">
             Pipeline observatory for runs, scorecards, model registry and human review.
           </span>
         </div>
 
+        <button
+          type="button"
+          className="cmdk-trigger"
+          onClick={() => window.dispatchEvent(new Event("open-command-palette"))}
+        >
+          <Search size={15} />
+          <span className="nav-text">Quick search</span>
+          <kbd className="cmdk-kbd nav-text">⌘K</kbd>
+        </button>
+
         <nav className="chrome-nav">
-          {navItems.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === "/"}
-              className={({ isActive }) =>
-                `nav-link ${isActive ? "nav-link-active" : ""}`.trim()
-              }
-            >
-              <Icon size={18} />
-              <span className="hidden text-sm lg:block">{label}</span>
-            </NavLink>
+          {navGroups.map((group) => (
+            <div key={group.label} className="nav-group">
+              <span className="nav-group-label">{group.label}</span>
+              {group.items.map(({ to, icon: Icon, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={to === "/"}
+                  title={label}
+                  aria-label={label}
+                  className={({ isActive }) =>
+                    `nav-link ${isActive ? "nav-link-active" : ""}`.trim()
+                  }
+                >
+                  <Icon size={18} />
+                  <span className="nav-text text-sm">{label}</span>
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
-
-
       </aside>
 
       <main className="page-viewport">

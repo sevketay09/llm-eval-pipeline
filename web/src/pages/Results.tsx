@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, BarChart3, Sparkles, Waypoints, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
+import { AlertTriangle, BarChart3, Play, Sparkles, Waypoints, Zap } from "lucide-react";
+import { EmptyState } from "@/components";
 import {
   CartesianGrid,
   Line,
@@ -892,9 +894,13 @@ export default function Results() {
   const [compareRawReports, setCompareRawReports] = useState<Record<string, Record<string, unknown> | null> | null>(null);
   const [compareLoading, setCompareLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [reportsLoaded, setReportsLoaded] = useState(false);
 
   useEffect(() => {
-    resultsApi.listReports().then(setReports);
+    resultsApi
+      .listReports()
+      .then(setReports)
+      .finally(() => setReportsLoaded(true));
   }, []);
 
   useEffect(() => {
@@ -1611,6 +1617,21 @@ export default function Results() {
           </div>
         </div>
       </section>
+
+      {reportsLoaded && reports.length === 0 && (
+        <div className="motion-rise motion-delay-2">
+          <EmptyState
+            icon={BarChart3}
+            title="No reports to explore yet"
+            hint="Once you run an evaluation, its scorecard, model ordering and test-level detail show up here."
+            action={
+              <Link to="/run" className="button-primary">
+                <Play size={14} /> Run Evaluation
+              </Link>
+            }
+          />
+        </div>
+      )}
 
       {(loading || compareLoading) && (
         <div className="motion-rise motion-delay-2 flex items-center justify-center py-12">

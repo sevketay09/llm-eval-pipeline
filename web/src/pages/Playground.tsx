@@ -11,10 +11,21 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
+import {
+  PageHeader,
+  Card,
+  Button,
+  Badge,
+  ScoreBar,
+  EmptyState,
+  Field,
+  Input,
+  Textarea,
+  useToast,
+} from "@/components";
+import type { BadgeTone } from "@/components";
 
 const BASE = "/api";
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Variant { label: string; system_prompt: string }
 interface DatasetCase { case_id: string; input: string; expected: string }
@@ -43,8 +54,6 @@ interface CompareResponse {
   avg_delta: number;
 }
 
-// ── API ───────────────────────────────────────────────────────────────────────
-
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const r = await fetch(`${BASE}${path}`, {
     method: "POST",
@@ -61,45 +70,18 @@ async function apiGet<T>(path: string): Promise<T> {
   return r.json();
 }
 
-// ── Verdict badge ─────────────────────────────────────────────────────────────
-
-const VERDICT_STYLE: Record<string, { color: string; bg: string; Icon: React.ElementType }> = {
-  improved: { color: "#4ade80", bg: "#14532d22", Icon: TrendingUp },
-  regressed: { color: "#f87171", bg: "#7f1d1d22", Icon: TrendingDown },
-  stable:    { color: "#9ca3af", bg: "#37415122", Icon: Minus },
-  missing:   { color: "#fb923c", bg: "#431a0022", Icon: AlertCircle },
+const VERDICT: Record<string, { tone: BadgeTone; Icon: typeof TrendingUp }> = {
+  improved: { tone: "success", Icon: TrendingUp },
+  regressed: { tone: "danger", Icon: TrendingDown },
+  stable: { tone: "neutral", Icon: Minus },
+  missing: { tone: "warning", Icon: AlertCircle },
 };
 
 function VerdictBadge({ verdict }: { verdict: string }) {
-  const st = (VERDICT_STYLE[verdict] ?? VERDICT_STYLE["stable"]) as { color: string; bg: string; Icon: React.ElementType };
-  const { color, bg, Icon } = st;
-  return (
-    <span style={{ background: bg, color, fontSize: 11, fontWeight: 700, padding: "2px 7px", borderRadius: 4, display: "inline-flex", alignItems: "center", gap: 3 }}>
-      <Icon size={11} /> {verdict}
-    </span>
-  );
+  const v = VERDICT[verdict] ?? VERDICT["stable"]!;
+  const { tone, Icon } = v;
+  return <Badge tone={tone}><Icon size={11} /> {verdict}</Badge>;
 }
-
-// ── Score bar ─────────────────────────────────────────────────────────────────
-
-function ScoreBar({ score, delta }: { score: number; delta?: number }) {
-  const color = score >= 0.8 ? "#4ade80" : score >= 0.5 ? "#facc15" : "#f87171";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <div style={{ width: 60, height: 6, background: "#1f2937", borderRadius: 3, overflow: "hidden" }}>
-        <div style={{ width: `${score * 100}%`, height: "100%", background: color, borderRadius: 3 }} />
-      </div>
-      <span style={{ fontSize: 12, color, fontWeight: 600 }}>{(score * 100).toFixed(0)}%</span>
-      {delta != null && (
-        <span style={{ fontSize: 11, color: delta > 0 ? "#4ade80" : delta < 0 ? "#f87171" : "#6b7280" }}>
-          {delta > 0 ? "+" : ""}{(delta * 100).toFixed(0)}%
-        </span>
-      )}
-    </div>
-  );
-}
-
-// ── Diff row ──────────────────────────────────────────────────────────────────
 
 function DiffRow({ diff }: { diff: CaseDiff }) {
   const [expanded, setExpanded] = useState(false);
@@ -107,39 +89,34 @@ function DiffRow({ diff }: { diff: CaseDiff }) {
     <>
       <tr
         onClick={() => setExpanded(p => !p)}
-        style={{ cursor: "pointer", borderBottom: "1px solid #1f2937" }}
+        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded(p => !p); } }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        aria-label={`Case ${diff.case_id} diff`}
+        className="ds-row-expandable"
       >
-        <td style={{ padding: "8px 12px", fontFamily: "monospace", fontSize: 12, color: "#9ca3af" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <td className="table-code">
+          <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
             {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             {diff.case_id}
           </span>
         </td>
-        <td style={{ padding: "8px 12px" }}>
-          <ScoreBar score={diff.base_score} />
-        </td>
-        <td style={{ padding: "8px 12px" }}>
-          <ScoreBar score={diff.compare_score} delta={diff.delta} />
-        </td>
-        <td style={{ padding: "8px 12px" }}>
-          <VerdictBadge verdict={diff.verdict} />
-        </td>
+        <td style={{ minWidth: 130 }}><ScoreBar score={diff.base_score} /></td>
+        <td style={{ minWidth: 160 }}><ScoreBar score={diff.compare_score} delta={diff.delta} /></td>
+        <td><VerdictBadge verdict={diff.verdict} /></td>
       </tr>
       {expanded && (
-        <tr style={{ background: "#0a0f1a" }}>
-          <td colSpan={4} style={{ padding: "10px 16px" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <tr className="ds-row-detail">
+          <td colSpan={4}>
+            <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 4 }}>{diff.base_label}</div>
-                <div style={{ fontSize: 12, color: "#d1d5db", background: "#111827", padding: 8, borderRadius: 6, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                  {diff.base_output || "(empty)"}
-                </div>
+                <div className="ds-field-mini">{diff.base_label}</div>
+                <pre className="ds-codeblock">{diff.base_output || "(empty)"}</pre>
               </div>
               <div>
-                <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 4 }}>{diff.compare_label}</div>
-                <div style={{ fontSize: 12, color: "#d1d5db", background: "#111827", padding: 8, borderRadius: 6, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                  {diff.compare_output || "(empty)"}
-                </div>
+                <div className="ds-field-mini">{diff.compare_label}</div>
+                <pre className="ds-codeblock">{diff.compare_output || "(empty)"}</pre>
               </div>
             </div>
           </td>
@@ -148,8 +125,6 @@ function DiffRow({ diff }: { diff: CaseDiff }) {
     </>
   );
 }
-
-// ── Main page ─────────────────────────────────────────────────────────────────
 
 const DEFAULT_VARIANTS: Variant[] = [
   { label: "v1", system_prompt: "You are a helpful assistant." },
@@ -168,9 +143,9 @@ export default function Playground() {
   const [variants, setVariants] = useState<Variant[]>(DEFAULT_VARIANTS);
   const [cases, setCases] = useState<DatasetCase[]>(DEFAULT_CASES);
   const [running, setRunning] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [compareResult, setCompareResult] = useState<CompareResponse | null>(null);
   const [activeVariantIdx, setActiveVariantIdx] = useState(0);
+  const toast = useToast();
 
   const updateVariant = (idx: number, field: keyof Variant, value: string) => {
     setVariants(vs => vs.map((v, i) => i === idx ? { ...v, [field]: value } : v));
@@ -203,258 +178,164 @@ export default function Playground() {
 
   const runExperiment = async () => {
     setRunning(true);
-    setError(null);
     setCompareResult(null);
     try {
       const created = await apiPost<{ experiment_id: string }>("/experiments", {
-        name,
-        model_key: modelKey,
-        variants,
-        dataset: cases,
+        name, model_key: modelKey, variants, dataset: cases,
       });
       await apiPost(`/experiments/${created.experiment_id}/run`, {});
       const result = await apiGet<CompareResponse>(`/experiments/${created.experiment_id}/compare`);
       setCompareResult(result);
+      toast.success("Experiment complete — compare the variants below.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setRunning(false);
     }
   };
 
+  const activeVariant = variants[activeVariantIdx];
+
   return (
-    <div style={{ display: "flex", height: "100%", color: "#e5e7eb", overflow: "hidden" }}>
-      {/* Left: config panel */}
-      <div style={{ width: 420, flexShrink: 0, borderRight: "1px solid #1f2937", overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className="page-shell motion-stagger-stack">
+      <PageHeader
+        kicker="Prompt Playground"
+        title="A/B Prompt Lab"
+        subtitle="Run two or more system-prompt variants over the same dataset and diff the results case by case."
+      />
 
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <FlaskConical size={18} style={{ color: "#7c3aed" }} />
-          <span style={{ fontWeight: 700, fontSize: 15 }}>Prompt Playground</span>
+      <div className="grid gap-4 lg:grid-cols-[420px_1fr] items-start">
+        {/* Left: config */}
+        <div className="flex flex-col gap-4">
+          <Card>
+            <div className="flex flex-col gap-3">
+              <Field label="Experiment name">
+                <Input value={name} onChange={e => setName(e.target.value)} />
+              </Field>
+              <Field label="Model key (optional)">
+                <Input value={modelKey} onChange={e => setModelKey(e.target.value)} placeholder="e.g. gpt-4o" />
+              </Field>
+            </div>
+          </Card>
+
+          {/* Variants */}
+          <Card>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.7rem" }}>
+              <span className="section-caption">Prompt variants</span>
+              <Button variant="secondary" icon={<Plus size={12} />} onClick={addVariant}>Add</Button>
+            </div>
+            <div className="tab-strip" style={{ flexWrap: "wrap", marginBottom: "0.7rem" }}>
+              {variants.map((v, i) => (
+                <button
+                  key={i}
+                  className={`tab-button ${activeVariantIdx === i ? "tab-button-active" : ""}`}
+                  onClick={() => setActiveVariantIdx(i)}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}
+                >
+                  {v.label}
+                  {variants.length > 2 && (
+                    <Trash2 size={11} onClick={e => { e.stopPropagation(); removeVariant(i); }} />
+                  )}
+                </button>
+              ))}
+            </div>
+            {activeVariant && (
+              <div className="flex flex-col gap-2">
+                <Input value={activeVariant.label} onChange={e => updateVariant(activeVariantIdx, "label", e.target.value)} placeholder="Label" />
+                <Textarea
+                  value={activeVariant.system_prompt}
+                  onChange={e => updateVariant(activeVariantIdx, "system_prompt", e.target.value)}
+                  placeholder="System prompt…"
+                  rows={6}
+                  className="font-mono"
+                />
+              </div>
+            )}
+          </Card>
+
+          {/* Dataset */}
+          <Card>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.7rem" }}>
+              <span className="section-caption">Dataset ({cases.length} cases)</span>
+              <Button variant="secondary" icon={<Plus size={12} />} onClick={addCase}>Add case</Button>
+            </div>
+            <div className="flex flex-col gap-2">
+              {cases.map((c, i) => (
+                <div key={i} className="panel-quiet" style={{ borderRadius: 16, border: "1px solid var(--line)", padding: "0.6rem" }}>
+                  <div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.4rem" }}>
+                    <Input value={c.case_id} onChange={e => updateCase(i, "case_id", e.target.value)} placeholder="ID" style={{ width: 90 }} />
+                    <button className="ds-icon-button" aria-label={`Remove case ${i + 1}`} onClick={() => removeCase(i)}>
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                  <Input value={c.input} onChange={e => updateCase(i, "input", e.target.value)} placeholder="User input" style={{ marginBottom: "0.4rem" }} />
+                  <Input value={c.expected} onChange={e => updateCase(i, "expected", e.target.value)} placeholder="Expected output (for scoring)" />
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Button
+            icon={<Play size={15} />}
+            loading={running}
+            disabled={cases.length === 0 || variants.length < 2}
+            onClick={runExperiment}
+          >
+            {running ? "Running…" : "Run Experiment"}
+          </Button>
         </div>
 
-        {/* Name + model */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <label style={{ fontSize: 12, color: "#6b7280" }}>Experiment name</label>
-          <input
-            value={name}
-            onChange={e => setName(e.target.value)}
-            style={inputStyle}
-          />
-          <label style={{ fontSize: 12, color: "#6b7280" }}>Model key (optional)</label>
-          <input
-            value={modelKey}
-            onChange={e => setModelKey(e.target.value)}
-            placeholder="e.g. gpt-4o"
-            style={inputStyle}
-          />
-        </div>
-
-        {/* Variant editor */}
+        {/* Right: results */}
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Prompt Variants</span>
-            <button onClick={addVariant} style={smallBtnStyle}>
-              <Plus size={12} /> Add
-            </button>
-          </div>
-          <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
-            {variants.map((v, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveVariantIdx(i)}
-                style={{
-                  ...tabStyle,
-                  background: activeVariantIdx === i ? "#7c3aed" : "#1f2937",
-                  color: activeVariantIdx === i ? "#fff" : "#9ca3af",
-                }}
-              >
-                {v.label}
-                {variants.length > 2 && (
-                  <Trash2
-                    size={10}
-                    style={{ marginLeft: 4 }}
-                    onClick={e => { e.stopPropagation(); removeVariant(i); }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-          {variants[activeVariantIdx] && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <input
-                value={variants[activeVariantIdx].label}
-                onChange={e => updateVariant(activeVariantIdx, "label", e.target.value)}
-                placeholder="Label"
-                style={inputStyle}
+          {!compareResult ? (
+            <Card style={{ minHeight: 320, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <EmptyState
+                icon={FlaskConical}
+                title="No comparison yet"
+                hint="Configure variants and dataset, then run the experiment."
               />
-              <textarea
-                value={variants[activeVariantIdx].system_prompt}
-                onChange={e => updateVariant(activeVariantIdx, "system_prompt", e.target.value)}
-                placeholder="System prompt…"
-                rows={6}
-                style={{ ...inputStyle, resize: "vertical", fontFamily: "monospace", fontSize: 12 }}
-              />
+            </Card>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { label: "Improved", count: compareResult.improved, color: "var(--success)" },
+                  { label: "Regressed", count: compareResult.regressed, color: "var(--danger)" },
+                  { label: "Stable", count: compareResult.stable, color: "var(--text-dim)" },
+                  { label: "Missing", count: compareResult.missing, color: "var(--warning)" },
+                ].map(({ label, count, color }) => (
+                  <Card key={label} className="stat-card" style={{ minWidth: 96, textAlign: "center" }}>
+                    <div className="stat-value" style={{ fontSize: "1.6rem", color }}>{count}</div>
+                    <p className="stat-label">{label}</p>
+                  </Card>
+                ))}
+                <Card className="stat-card" style={{ minWidth: 96, textAlign: "center" }}>
+                  <div className="stat-value" style={{ fontSize: "1.6rem", color: compareResult.avg_delta >= 0 ? "var(--success)" : "var(--danger)" }}>
+                    {compareResult.avg_delta >= 0 ? "+" : ""}{(compareResult.avg_delta * 100).toFixed(1)}%
+                  </div>
+                  <p className="stat-label">Avg Δ</p>
+                </Card>
+              </div>
+
+              <div className="table-shell">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Case</th>
+                      <th>{compareResult.base_label}</th>
+                      <th>{compareResult.compare_label}</th>
+                      <th>Verdict</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {compareResult.diffs.map(diff => <DiffRow key={diff.case_id} diff={diff} />)}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
-
-        {/* Dataset editor */}
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>Dataset ({cases.length} cases)</span>
-            <button onClick={addCase} style={smallBtnStyle}>
-              <Plus size={12} /> Add case
-            </button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {cases.map((c, i) => (
-              <div key={i} style={{ background: "#111827", borderRadius: 6, padding: 8 }}>
-                <div style={{ display: "flex", gap: 6, marginBottom: 6 }}>
-                  <input
-                    value={c.case_id}
-                    onChange={e => updateCase(i, "case_id", e.target.value)}
-                    placeholder="ID"
-                    style={{ ...inputStyle, width: 80 }}
-                  />
-                  <button onClick={() => removeCase(i)} style={{ background: "none", border: "none", cursor: "pointer", color: "#4b5563" }}>
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-                <input
-                  value={c.input}
-                  onChange={e => updateCase(i, "input", e.target.value)}
-                  placeholder="User input"
-                  style={{ ...inputStyle, marginBottom: 4 }}
-                />
-                <input
-                  value={c.expected}
-                  onChange={e => updateCase(i, "expected", e.target.value)}
-                  placeholder="Expected output (for scoring)"
-                  style={inputStyle}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Run button */}
-        <button
-          onClick={runExperiment}
-          disabled={running || cases.length === 0 || variants.length < 2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 6,
-            padding: "10px 16px",
-            background: running ? "#374151" : "#7c3aed",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            cursor: running ? "default" : "pointer",
-            fontWeight: 700,
-            fontSize: 14,
-          }}
-        >
-          <Play size={15} />
-          {running ? "Running…" : "Run Experiment"}
-        </button>
-
-        {error && (
-          <div style={{ background: "#7f1d1d22", border: "1px solid #ef4444", borderRadius: 6, padding: 10, fontSize: 12, color: "#f87171" }}>
-            {error}
-          </div>
-        )}
-      </div>
-
-      {/* Right: diff results */}
-      <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
-        {!compareResult ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", color: "#374151", gap: 12 }}>
-            <FlaskConical size={48} style={{ opacity: 0.3 }} />
-            <span style={{ fontSize: 14 }}>Configure variants and dataset, then run the experiment.</span>
-          </div>
-        ) : (
-          <>
-            {/* Summary bar */}
-            <div style={{ display: "flex", gap: 16, marginBottom: 20, flexWrap: "wrap" }}>
-              {[
-                { label: "Improved", count: compareResult.improved, color: "#4ade80" },
-                { label: "Regressed", count: compareResult.regressed, color: "#f87171" },
-                { label: "Stable", count: compareResult.stable, color: "#9ca3af" },
-                { label: "Missing", count: compareResult.missing, color: "#fb923c" },
-              ].map(({ label, count, color }) => (
-                <div key={label} style={{ background: "#111827", borderRadius: 8, padding: "12px 16px", minWidth: 90 }}>
-                  <div style={{ fontSize: 22, fontWeight: 700, color }}>{count}</div>
-                  <div style={{ fontSize: 11, color: "#6b7280" }}>{label}</div>
-                </div>
-              ))}
-              <div style={{ background: "#111827", borderRadius: 8, padding: "12px 16px", minWidth: 90 }}>
-                <div style={{ fontSize: 22, fontWeight: 700, color: compareResult.avg_delta >= 0 ? "#4ade80" : "#f87171" }}>
-                  {compareResult.avg_delta >= 0 ? "+" : ""}{(compareResult.avg_delta * 100).toFixed(1)}%
-                </div>
-                <div style={{ fontSize: 11, color: "#6b7280" }}>Avg Δ</div>
-              </div>
-            </div>
-
-            {/* Diff table */}
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid #1f2937" }}>
-                  <th style={{ padding: "8px 12px", textAlign: "left", fontSize: 12, color: "#6b7280", fontWeight: 600 }}>Case</th>
-                  <th style={{ padding: "8px 12px", textAlign: "left", fontSize: 12, color: "#6b7280", fontWeight: 600 }}>{compareResult.base_label}</th>
-                  <th style={{ padding: "8px 12px", textAlign: "left", fontSize: 12, color: "#6b7280", fontWeight: 600 }}>{compareResult.compare_label}</th>
-                  <th style={{ padding: "8px 12px", textAlign: "left", fontSize: 12, color: "#6b7280", fontWeight: 600 }}>Verdict</th>
-                </tr>
-              </thead>
-              <tbody>
-                {compareResult.diffs.map(diff => (
-                  <DiffRow key={diff.case_id} diff={diff} />
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
       </div>
     </div>
   );
 }
-
-// ── Shared styles ─────────────────────────────────────────────────────────────
-
-const inputStyle: React.CSSProperties = {
-  background: "#1f2937",
-  border: "1px solid #374151",
-  borderRadius: 6,
-  padding: "6px 10px",
-  fontSize: 13,
-  color: "#e5e7eb",
-  width: "100%",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const smallBtnStyle: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 4,
-  padding: "4px 8px",
-  background: "#1f2937",
-  border: "1px solid #374151",
-  borderRadius: 6,
-  cursor: "pointer",
-  color: "#9ca3af",
-  fontSize: 12,
-};
-
-const tabStyle: React.CSSProperties = {
-  display: "inline-flex",
-  alignItems: "center",
-  padding: "4px 10px",
-  borderRadius: 6,
-  border: "none",
-  cursor: "pointer",
-  fontSize: 12,
-  fontWeight: 600,
-};
