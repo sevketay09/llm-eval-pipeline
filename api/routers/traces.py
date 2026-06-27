@@ -6,11 +6,13 @@ from typing import Annotated, List, Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from api.schemas.traces import TraceDetail, TraceIngestRequest, TraceListResponse, TraceSchema
-from api.services.trace_service import TraceStore
+from api.services.trace_service import TraceStore, _SAMPLED_TAG
+from tracing.sampler import OnlineSampler
 
 router = APIRouter(prefix="/traces", tags=["traces"])
 
-_store = TraceStore()
+_sampler = OnlineSampler(rate=0.1)
+_store = TraceStore(sampler=_sampler)
 
 
 def get_store() -> TraceStore:
@@ -60,4 +62,13 @@ async def eval_trace(
     t = await store.get(trace_id)
     if t is None:
         raise HTTPException(404, f"Trace '{trace_id}' not found")
-    return {"trace_id": trace_id, "status": "eval_queued", "span_count": len(t.spans)}
+    already_sampled = _SAMPLED_TAG in t.tags
+    sampled = already_sampled or _sampler.sample(trace_id)
+    if sampled and not already_sampled:
+        await store.tag(trace_id, _SAMPLED_TAG)
+    return {
+        "trace_id": trace_id,
+        "status": "queued" if sampled else "skipped",
+        "sampled": sampled,
+        "span_count": len(t.spans),
+    }

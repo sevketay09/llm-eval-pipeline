@@ -14,6 +14,7 @@ import {
 import {
   hitlApi,
   resultsApi,
+  tracesApi,
   type CalibrationInsights,
   type CalibrationSampleSetResponse,
   type MetricBacklogItem,
@@ -21,6 +22,7 @@ import {
   type PendingItemStatus,
   type HitlStats,
   type ReportListItem,
+  type Trace,
 } from "../api/client";
 
 type CorrectionType = "approve" | "adjust" | "reject";
@@ -506,6 +508,7 @@ export default function HitlReview() {
   const [reviewerPersonaFilter, setReviewerPersonaFilter] = useState<ReviewerPersona | "">("");
   const [disagreementOnly, setDisagreementOnly] = useState(false);
   const [highRiskOnly, setHighRiskOnly] = useState(false);
+  const [traceCandidates, setTraceCandidates] = useState<Trace[]>([]);
   const [generating, setGenerating] = useState(false);
   const [genReport, setGenReport] = useState("");
   const [genSample, setGenSample] = useState(5);
@@ -556,7 +559,7 @@ export default function HitlReview() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [items, st, calibrationInsights, calibrationSampleSet, backlogItems, reportItems] = await Promise.all([
+      const [items, st, calibrationInsights, calibrationSampleSet, backlogItems, reportItems, sampledTraces] = await Promise.all([
         hitlApi.getPending(100, {
           category: categoryFilter || undefined,
           owner: ownerFilter.trim() || undefined,
@@ -567,6 +570,7 @@ export default function HitlReview() {
         hitlApi.getCalibrationSamples(),
         hitlApi.getMetricBacklog(),
         resultsApi.listReports(20),
+        tracesApi.list({ tag: "eval_sampled", limit: 50 }),
       ]);
       setPending(items);
       setStats(st);
@@ -574,6 +578,7 @@ export default function HitlReview() {
       setCalibrationSamples(calibrationSampleSet);
       setMetricBacklog(backlogItems);
       setReports(reportItems);
+      setTraceCandidates(sampledTraces.traces);
       setCurrentIdx(0);
     } catch (e) {
       console.error("Failed to load HITL data", e);
@@ -1637,6 +1642,44 @@ export default function HitlReview() {
           </p>
         </div>
       )}
+
+      <div className="panel-surface panel-quiet motion-rise motion-delay-7 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="section-caption mb-2">Trace Queue</p>
+            <h2 className="section-heading">Online-Sampled Traces</h2>
+            <p className="page-subtitle mt-1 text-sm">
+              Traces tagged <code>eval_sampled</code> by the online sampler — ready for human spot-check.
+            </p>
+          </div>
+          <span className="provider-chip">{traceCandidates.length} sampled</span>
+        </div>
+        {traceCandidates.length === 0 ? (
+          <p className="micro-copy">No sampled traces yet. Ingest traces and the online sampler will queue candidates here.</p>
+        ) : (
+          <div className="space-y-2">
+            {traceCandidates.map((trace) => (
+              <div
+                key={trace.trace_id}
+                className="rounded-[1rem] border border-[rgba(124,58,237,0.16)] px-4 py-3"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-[#e5e7eb]">{trace.name}</span>
+                    <span className="micro-copy font-mono">{trace.trace_id.slice(0, 20)}…</span>
+                  </div>
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
+                    <span className="provider-chip">{trace.spans.length} spans</span>
+                    {trace.tags.filter((t) => t !== "eval_sampled").map((tag) => (
+                      <span key={tag} className="provider-chip">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

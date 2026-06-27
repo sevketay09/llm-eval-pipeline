@@ -107,7 +107,8 @@ class TestEvalEndpoint:
         client.post("/api/traces/ingest", json=_trace_payload("ev1"))
         r = client.post("/api/traces/ev1/eval")
         assert r.status_code == 202
-        assert r.json()["status"] == "eval_queued"
+        assert r.json()["status"] in {"queued", "skipped"}
+        assert "sampled" in r.json()
 
     def test_eval_missing_404(self, client):
         r = client.post("/api/traces/missing/eval")
