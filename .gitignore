@@ -38,5 +38,6 @@ annotations/training_data/
 
 .github/
 
-# Internal session docs
+# Internal session docs and Claude memory
 docs/
+.claude/
