@@ -15,6 +15,7 @@ from api.config import get_settings
 from api.routers import (
     custom_datasets_router,
     evaluations_router,
+    experiments_router,
     hitl_router,
     models_router,
     results_router,
@@ -61,6 +62,7 @@ def create_app() -> FastAPI:
     app.include_router(hitl_router, prefix="/api")
     app.include_router(custom_datasets_router, prefix="/api")
     app.include_router(traces_router, prefix="/api")
+    app.include_router(experiments_router, prefix="/api")
     app.include_router(ws_router)
 
     @app.get("/api/health")

@@ -25,8 +25,8 @@ const SPAN_TYPE_STYLES: Record<string, { bg: string; text: string; label: string
   GENERIC:   { bg: "#37415122", text: "#9ca3af", label: "GEN" },
 };
 
-function spanStyle(type: string) {
-  return SPAN_TYPE_STYLES[type.toUpperCase()] ?? SPAN_TYPE_STYLES.GENERIC;
+function spanStyle(type: string): { bg: string; text: string; label: string } {
+  return SPAN_TYPE_STYLES[type.toUpperCase()] ?? SPAN_TYPE_STYLES["GENERIC"]!;
 }
 
 function fmt(ms: number) {
