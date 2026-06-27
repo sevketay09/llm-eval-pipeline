@@ -9,6 +9,9 @@ import {
   Activity,
   FlaskConical,
   ShieldAlert,
+  Sparkles,
+  BookOpen,
+  AlertTriangle,
 } from "lucide-react";
 import Dashboard from "./pages/Dashboard";
 import RunEvaluation from "./pages/RunEvaluation";
@@ -19,6 +22,9 @@ import DatasetStudio from "./pages/DatasetStudio";
 import Traces from "./pages/Traces";
 import Playground from "./pages/Playground";
 import RedTeam from "./pages/RedTeam";
+import CustomMetrics from "./pages/CustomMetrics";
+import RagEval from "./pages/RagEval";
+import FailureClustering from "./pages/FailureClustering";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
@@ -28,6 +34,9 @@ const navItems = [
   { to: "/traces", icon: Activity, label: "Traces" },
   { to: "/playground", icon: FlaskConical, label: "Playground" },
   { to: "/redteam", icon: ShieldAlert, label: "Red-Team" },
+  { to: "/custom-metrics", icon: Sparkles, label: "Metrics" },
+  { to: "/rag-eval", icon: BookOpen, label: "RAG Eval" },
+  { to: "/failures", icon: AlertTriangle, label: "Failures" },
   { to: "/models", icon: Settings, label: "Models" },
   { to: "/review", icon: MessageSquare, label: "Review Desk" },
 ];
@@ -73,6 +82,9 @@ export default function App() {
             <Route path="/traces" element={<Traces />} />
             <Route path="/playground" element={<Playground />} />
             <Route path="/redteam" element={<RedTeam />} />
+            <Route path="/custom-metrics" element={<CustomMetrics />} />
+            <Route path="/rag-eval" element={<RagEval />} />
+            <Route path="/failures" element={<FailureClustering />} />
             <Route path="/models" element={<Models />} />
             <Route path="/review" element={<HitlReview />} />
           </Routes>

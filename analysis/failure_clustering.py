@@ -42,10 +42,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.feature_extraction.text import TfidfVectorizer
-
 # Stopwords for keyword extraction (Turkish + English)
 STOPWORDS = {
     "ve", "bir", "bu", "ile", "için", "da", "de", "mi", "mu", "mü", "mı", "ne",
@@ -124,15 +120,11 @@ def extract_failures(
     return failures
 
 
-def _tfidf_embed(texts: list[str]) -> np.ndarray:
-    """Default embedding function using TF-IDF vectorization.
+def _tfidf_embed(texts: list) -> Any:
+    """Default embedding function using TF-IDF vectorization."""
+    import numpy as np
+    from sklearn.feature_extraction.text import TfidfVectorizer
 
-    Args:
-        texts: list of text strings
-
-    Returns:
-        (n_samples, n_features) array of TF-IDF vectors
-    """
     if not texts:
         return np.array([]).reshape(0, 0)
 
@@ -141,10 +133,10 @@ def _tfidf_embed(texts: list[str]) -> np.ndarray:
 
 
 def cluster_failures(
-    failures: list[dict[str, Any]],
+    failures: list,
     n_clusters: Optional[int] = None,
-    embed_fn: Optional[Callable[[list[str]], np.ndarray]] = None
-) -> list[dict[str, Any]]:
+    embed_fn: Optional[Callable] = None,
+) -> list:
     """Cluster failures by semantic similarity.
 
     Uses KMeans with injected embedding function. Auto-selects cluster count
@@ -175,11 +167,14 @@ def cluster_failures(
     n_clusters = max(2, min(n_clusters, len(failures)))
 
     # KMeans clustering (seeded for determinism)
+    import numpy as np
+    from sklearn.cluster import KMeans
+
     kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     labels = kmeans.fit_predict(embeddings)
 
     # Group failures by cluster
-    clusters_dict: dict[int, list[tuple[int, dict[str, Any]]]] = {}
+    clusters_dict: dict = {}
     for idx, label in enumerate(labels):
         if label not in clusters_dict:
             clusters_dict[label] = []
@@ -267,8 +262,8 @@ def compute_failure_summary(
     report: dict[str, Any],
     threshold: float = 0.6,
     n_clusters: Optional[int] = None,
-    embed_fn: Optional[Callable[[list[str]], np.ndarray]] = None,
-    label_fn: Optional[Callable[[list[str]], str]] = None
+    embed_fn: Optional[Callable] = None,
+    label_fn: Optional[Callable] = None
 ) -> dict[str, Any]:
     """Orchestrate failure extraction, clustering, and labeling.
 

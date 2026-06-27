@@ -1,0 +1,77 @@
+"""Contract tests for api/routers/rag_eval.py."""
+from __future__ import annotations
+import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from api.routers.rag_eval import router as rag_eval_router
+
+
+@pytest.fixture()
+def client():
+    app = FastAPI()
+    app.include_router(rag_eval_router, prefix="/api")
+    with TestClient(app) as c:
+        yield c
+
+
+def _payload(**overrides):
+    base = {
+        "question": "What is the return policy?",
+        "contexts": [
+            {"text": "Returns are accepted within 30 days of purchase."},
+            {"text": "Contact support for refunds."},
+        ],
+        "answer": "You can return items within 30 days.",
+        "expected_answer": "Returns accepted within 30 days.",
+    }
+    base.update(overrides)
+    return base
+
+
+class TestRagEvalEndpoint:
+    def test_evaluate_200(self, client):
+        r = client.post("/api/rag-eval", json=_payload())
+        assert r.status_code == 200
+
+    def test_requires_question(self, client):
+        r = client.post("/api/rag-eval", json={**_payload(), "question": ""})
+        assert r.status_code == 422
+
+    def test_requires_contexts(self, client):
+        r = client.post("/api/rag-eval", json={**_payload(), "contexts": []})
+        assert r.status_code == 422
+
+    def test_requires_answer(self, client):
+        r = client.post("/api/rag-eval", json={**_payload(), "answer": ""})
+        assert r.status_code == 422
+
+    def test_returns_all_component_scores(self, client):
+        body = client.post("/api/rag-eval", json=_payload()).json()
+        for field in ("context_precision", "context_recall", "faithfulness", "answer_relevance", "overall_score"):
+            assert field in body
+            assert isinstance(body[field], float)
+
+    def test_scores_in_range(self, client):
+        body = client.post("/api/rag-eval", json=_payload()).json()
+        for field in ("context_precision", "context_recall", "faithfulness", "answer_relevance", "overall_score"):
+            assert 0.0 <= body[field] <= 1.0
+
+    def test_fault_component_present(self, client):
+        body = client.post("/api/rag-eval", json=_payload()).json()
+        assert "fault_component" in body
+        assert body["fault_component"] in ("retriever", "generator", "both", "none")
+
+    def test_overall_is_average_of_components(self, client):
+        body = client.post("/api/rag-eval", json=_payload()).json()
+        expected = round((body["context_precision"] + body["context_recall"] +
+                         body["faithfulness"] + body["answer_relevance"]) / 4, 4)
+        assert abs(body["overall_score"] - expected) < 0.001
+
+    def test_without_expected_answer(self, client):
+        payload = {k: v for k, v in _payload().items() if k != "expected_answer"}
+        r = client.post("/api/rag-eval", json=payload)
+        assert r.status_code == 200
+
+    def test_returns_question_in_response(self, client):
+        body = client.post("/api/rag-eval", json=_payload()).json()
+        assert body["question"] == _payload()["question"]

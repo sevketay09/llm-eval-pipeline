@@ -5,5 +5,8 @@ from .websocket import router as ws_router
 from .hitl import router as hitl_router
 from .custom_datasets import router as custom_datasets_router
 from .traces import router as traces_router
+from .custom_metrics import router as custom_metrics_router
 from .experiments import router as experiments_router
+from .failure_clustering import router as failure_clustering_router
+from .rag_eval import router as rag_eval_router
 from .redteam import router as redteam_router

@@ -14,10 +14,13 @@ from fastapi.responses import FileResponse
 from api.config import get_settings
 from api.routers import (
     custom_datasets_router,
+    custom_metrics_router,
     evaluations_router,
     experiments_router,
+    failure_clustering_router,
     hitl_router,
     models_router,
+    rag_eval_router,
     redteam_router,
     results_router,
     traces_router,
@@ -65,6 +68,9 @@ def create_app() -> FastAPI:
     app.include_router(traces_router, prefix="/api")
     app.include_router(experiments_router, prefix="/api")
     app.include_router(redteam_router, prefix="/api")
+    app.include_router(custom_metrics_router, prefix="/api")
+    app.include_router(rag_eval_router, prefix="/api")
+    app.include_router(failure_clustering_router, prefix="/api")
     app.include_router(ws_router)
 
     @app.get("/api/health")
