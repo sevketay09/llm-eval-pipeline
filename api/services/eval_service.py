@@ -221,18 +221,6 @@ class EvalService:
         else:
             custom_dataset_kind = None
 
-        # Update progress for each model
-        total_models = len(request.models)
-        for idx, model in enumerate(request.models):
-            run.current_model = model
-            run.progress = idx / total_models
-            if custom_dataset_name:
-                run.message = f"Evaluating {model} on {custom_dataset_name} ({idx + 1}/{total_models})"
-            else:
-                run.message = f"Evaluating {model} ({idx + 1}/{total_models})"
-            # Note: Can't await here since we're in sync context
-            # Progress will be polled via WebSocket
-
         try:
             result = evaluate(
                 models=request.models,
@@ -249,6 +237,7 @@ class EvalService:
                 custom_dataset_path=custom_dataset_path,
                 custom_dataset_name=custom_dataset_name,
                 custom_dataset_kind=custom_dataset_kind,
+                run=run,
             )
         except EvalRunError:
             raise

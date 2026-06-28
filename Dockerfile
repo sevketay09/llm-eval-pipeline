@@ -27,12 +27,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt ./
 RUN pip install --upgrade pip && pip install -r requirements.txt && \
-    python -c "import nltk; \
-nltk.download('punkt_tab', quiet=True); \
-nltk.download('wordnet', quiet=True); \
-nltk.download('punkt', quiet=True); \
-nltk.download('perluniprops', quiet=True); \
-nltk.download('omw-1.4', quiet=True)"
+    python -c "import nltk; d='/usr/local/share/nltk_data'; \
+nltk.download('punkt_tab', quiet=True, download_dir=d); \
+nltk.download('wordnet', quiet=True, download_dir=d); \
+nltk.download('punkt', quiet=True, download_dir=d); \
+nltk.download('perluniprops', quiet=True, download_dir=d); \
+nltk.download('omw-1.4', quiet=True, download_dir=d)"
 
 COPY . .
 COPY --from=web-builder /build/web/dist /app/web/dist

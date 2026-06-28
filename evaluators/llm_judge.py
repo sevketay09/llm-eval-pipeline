@@ -403,8 +403,9 @@ JSON formatında yanıt verin:
             {"role": "system", "content": "Sen bir değerlendirme uzmanısın. Verilen kriterlere göre yanıtları objektif şekilde etiketlersin. Puanlama ölçeğine kesinlikle uymalısın. Anlamsal olarak doğru ve beklenen cevapla aynı anlama gelen yanıtları, sadece daha kısa/uzun veya farklı ifade edildiği için cezalandırma."},
             {"role": "user", "content": prompt}
         ]
-        
-        result = self.judge.generate(messages, temperature=0.0, max_tokens=1024)
+
+        logger.info(f"[judge] Evaluating criterion='{criterion}' | query_len={len(query)} chars")
+        result = self.judge.generate(messages)
         
         # Parse JSON response
         try:
@@ -449,7 +450,8 @@ JSON formatında yanıt verin:
                 "judge_disagreement": None,
                 "judge_agreement": None
             }
-            
+
+            logger.info(f"[judge] criterion='{criterion}' → label={label} score={score:.2f}")
             if not self.secondary_judge:
                 return primary_result
 

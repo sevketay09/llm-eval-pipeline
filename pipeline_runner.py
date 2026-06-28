@@ -2291,8 +2291,10 @@ class EvaluationPipeline:
         config_path: str = "config/models.yaml",
         use_cache: bool = True,
         judge_model_key: str = None,
-        runtime_overrides: Optional[Dict[str, Any]] = None
+        runtime_overrides: Optional[Dict[str, Any]] = None,
+        run=None,
     ):
+        self._run = run
         self.config_path = config_path
         self.config = self._load_config()
         self.test_config = self._load_test_config()
@@ -2973,7 +2975,8 @@ class EvaluationPipeline:
         geval_eval = self._initialize_geval_evaluator()
         azure_quality_eval = self._initialize_azure_quality_evaluator()
         
-        for item in tqdm(dataset, desc=test_name):
+        total_items = len(dataset)
+        for item_idx, item in enumerate(tqdm(dataset, desc=test_name)):
             if isinstance(item, SingleTurnCase):
                 qa_case = item
             else:
@@ -2986,10 +2989,12 @@ class EvaluationPipeline:
                     )
                     continue
 
+            logger.debug(f"[{test_name}] item {item_idx + 1}/{total_items} id={qa_case.case_id}")
+
             # Generate answer
             system_prompt = qa_case.system_prompt or "Sen yardımcı bir asistansın. Soruları Türkçe olarak açık ve doğru şekilde cevapla."
             system_prompt = self._inject_schema_instruction(system_prompt, schema)
-            
+
             # Build messages with optional few-shot examples
             task_config = getattr(self, '_task_registry', {}).get(test_name, {})
             if get_few_shot_config(task_config):
@@ -3001,10 +3006,12 @@ class EvaluationPipeline:
                 ]
 
             response = model.generate(messages, response_format=response_format)
-            
+
             if response['content'] is None:
-                logger.warning(f"Empty response for item {qa_case.case_id} in {test_name}")
+                logger.warning(f"[{test_name}] item {item_idx + 1} empty response | error={response.get('error')} | model={model.model_name}")
                 continue
+
+            logger.debug(f"[{test_name}] item {item_idx + 1}/{total_items} done | latency={response.get('latency', 0):.2f}s | tokens={response.get('usage', {}).get('output_tokens', 0)}")
             
             structured = self._parse_structured_output(response['content'], schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
@@ -6853,13 +6860,20 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
             ).to_payload()
             
             # Run each test
-            for test_name in tests_to_run:
+            total_tests = len(tests_to_run)
+            for test_idx, test_name in enumerate(tests_to_run):
                 if test_name not in test_mapping:
                     logger.warning(f"Test not found: {test_name}")
                     continue
-                
+
+                if self._run:
+                    self._run.current_test = test_name
+                    self._run.current_model = model_key
+                    self._run.progress = test_idx / max(total_tests, 1)
+                    self._run.message = f"{model_key} — {test_name} ({test_idx + 1}/{total_tests})"
+
                 dataset_path, test_func = test_mapping[test_name]
-                
+
                 try:
                     dataset = self.load_dataset(
                         dataset_path,
@@ -6896,6 +6910,8 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 self.results["models"][model_key] = model_results
                 if output_path:
                     self.save_results(output_path, quiet=True)
+                if self._run:
+                    self._run.progress = (test_idx + 1) / max(total_tests, 1)
             
             self._update_model_overall_metrics(model, model_results)
             self.results["models"][model_key] = model_results

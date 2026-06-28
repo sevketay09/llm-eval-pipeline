@@ -2,6 +2,7 @@
 Unified LLM Adapter
 Supports: OpenAI API, Azure OpenAI, vLLM, Ollama, LM Studio (OpenAI compatible), Anthropic Claude
 """
+import re
 import time
 import json
 import asyncio
@@ -11,7 +12,8 @@ from typing import List, Dict, Any, Optional, Union
 from openai import OpenAI, AzureOpenAI
 from anthropic import Anthropic
 import tiktoken
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+import logging as _logging
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -45,11 +47,10 @@ class UnifiedLLMAdapter:
             self.provider = "azure"  # Normalize provider name
         else:
             # OpenAI or OpenAI-compatible (vLLM, Ollama, LM Studio)
-            self.client = OpenAI(
-                base_url=config["base_url"],
-                api_key=config.get("api_key", "dummy"),
-                timeout=120.0
-            )
+            kwargs = {"api_key": config.get("api_key", "dummy"), "timeout": 120.0}
+            if config.get("base_url"):
+                kwargs["base_url"] = config["base_url"]
+            self.client = OpenAI(**kwargs)
         
         # Cost tracking
         self.total_input_tokens = 0
@@ -63,7 +64,8 @@ class UnifiedLLMAdapter:
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=retry_if_exception_type((Exception,))
+        retry=retry_if_exception_type((Exception,)),
+        before_sleep=before_sleep_log(logger, _logging.WARNING),
     )
     def generate(
         self,
@@ -97,31 +99,35 @@ class UnifiedLLMAdapter:
         if self.config.get("force_max_tokens") is not None:
             max_tokens = int(self.config["force_max_tokens"])
         
+        logger.debug(f"[{self.model_name}] → API call | messages={len(messages)} temperature={temperature} max_tokens={max_tokens}")
+
         try:
             if self.provider == "anthropic":
                 result = self._generate_anthropic(messages, tools, temperature, max_tokens, **kwargs)
             else:
                 result = self._generate_openai(messages, tools, temperature, max_tokens, **kwargs)
-            
+
             latency = time.time() - start_time
             result['latency'] = latency
             self.latencies.append(latency)
-            
+
             # Update tracking
             self.total_input_tokens += result['usage']['input_tokens']
             self.total_output_tokens += result['usage']['output_tokens']
-            
+
+            logger.debug(f"[{self.model_name}] ← response | {result['usage']['output_tokens']} tokens in {latency:.2f}s")
             return result
-            
+
         except Exception as e:
             latency = time.time() - start_time
             self.latencies.append(latency)
             self.error_count += 1
-            if "timeout" in str(e).lower():
+            is_timeout = "timeout" in str(e).lower() or "timed out" in str(e).lower()
+            if is_timeout:
                 self.timeout_count += 1
-                logger.warning(f"Timeout on {self.model_name}: {e}")
+                logger.error(f"[{self.model_name}] TIMEOUT after {latency:.2f}s: {type(e).__name__}: {e}")
             else:
-                logger.error(f"Generation error on {self.model_name}: {e}")
+                logger.error(f"[{self.model_name}] ERROR after {latency:.2f}s: {type(e).__name__}: {e}")
             return {
                 'content': None,
                 'tool_calls': None,
@@ -173,7 +179,8 @@ class UnifiedLLMAdapter:
         
         # Parse response
         message = response.choices[0].message
-        content = message.content or ""
+        raw = message.content or ""
+        content = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL).strip()
         tool_calls = None
         
         if hasattr(message, 'tool_calls') and message.tool_calls:

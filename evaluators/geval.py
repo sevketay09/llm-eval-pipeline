@@ -144,14 +144,18 @@ Yanıtını JSON formatında ver:
             {"role": "user", "content": prompt},
         ]
 
-        result = self.judge.generate(messages, temperature=0.0, max_tokens=800)
-        content = result.get("content", "")
+        logger.debug(f"[geval] Generating plan for criteria='{criteria_name}'")
+        result = self.judge.generate(messages)
+        content = result.get("content") or ""
+        if not content:
+            logger.warning(f"[geval] plan empty response for '{criteria_name}' | error: {result.get('error')} | model: {result.get('model')}")
 
         try:
             parsed = self._parse_json(content)
             steps = parsed.get("evaluation_steps", [])
-        except (json.JSONDecodeError, ValueError):
-            logger.warning(f"G-Eval plan generation parse failed for '{criteria_name}'")
+            logger.debug(f"[geval] plan ready for '{criteria_name}': {len(steps)} steps")
+        except (json.JSONDecodeError, ValueError, AttributeError):
+            logger.warning(f"[geval] plan parse failed for '{criteria_name}' | raw: {content[:500]!r}")
             steps = [f"Kriteri '{criteria_name}' doğrudan değerlendir."]
 
         if self._cache_plans:
@@ -190,16 +194,20 @@ Yanıtını JSON formatında ver:
             {"role": "user", "content": prompt},
         ]
 
-        result = self.judge.generate(messages, temperature=0.0, max_tokens=1200)
-        content = result.get("content", "")
+        logger.debug(f"[geval] Scoring criteria='{criteria_name}' | query_len={len(query)} response_len={len(response)}")
+        result = self.judge.generate(messages)
+        content = result.get("content") or ""
+        if not content:
+            logger.warning(f"[geval] scoring empty response for '{criteria_name}' | error: {result.get('error')} | full: {result}")
 
         try:
             parsed = self._parse_json(content)
             score = float(parsed.get("score", 0))
             reasoning = parsed.get("reasoning", "")
             step_evaluations = parsed.get("step_evaluations", [])
-        except (json.JSONDecodeError, ValueError, TypeError):
-            logger.warning(f"G-Eval scoring parse failed for '{criteria_name}'")
+            logger.info(f"[geval] '{criteria_name}' → score={score:.2f}")
+        except (json.JSONDecodeError, ValueError, TypeError, AttributeError):
+            logger.warning(f"[geval] scoring parse failed for '{criteria_name}' | raw: {content[:500]!r}")
             score = 0.0
             reasoning = "Parse error"
             step_evaluations = []
@@ -298,16 +306,26 @@ Yanıtını JSON formatında ver:
             text = text.split("```json")[1].split("```")[0].strip()
         elif "```" in text:
             text = text.split("```")[1].split("```")[0].strip()
-        
+
         # Try direct parse
         try:
             return json.loads(text)
         except json.JSONDecodeError:
             pass
-        
-        # Try to find JSON object in text
-        match = re.search(r'\{[^{}]*\}', text, re.DOTALL)
-        if match:
-            return json.loads(match.group())
-        
+
+        # Find outermost JSON object by tracking brace depth
+        start = text.find("{")
+        if start != -1:
+            depth = 0
+            for i, ch in enumerate(text[start:], start):
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        try:
+                            return json.loads(text[start:i + 1])
+                        except json.JSONDecodeError:
+                            break
+
         raise ValueError(f"No valid JSON found in: {text[:200]}")

@@ -47,6 +47,7 @@ def evaluate(
     custom_dataset_path: Optional[str] = None,
     custom_dataset_name: Optional[str] = None,
     custom_dataset_kind: Optional[str] = None,
+    run=None,
 ) -> Dict[str, Any]:
     """Run a full evaluation suite programmatically.
     
@@ -76,6 +77,7 @@ def evaluate(
         config_path=config_path,
         judge_model_key=judge_model,
         runtime_overrides=runtime_overrides,
+        run=run,
     )
 
     if custom_dataset_path:
@@ -140,6 +142,7 @@ def evaluate_single(
         config_path=config_path,
         judge_model_key=judge_model,
         runtime_overrides=runtime_overrides,
+        run=run,
     )
 
     # Build test mapping from registry

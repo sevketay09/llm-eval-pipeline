@@ -382,6 +382,15 @@ export default function RunEvaluation() {
             <span className="micro-copy">{(progress.progress * 100).toFixed(0)}%</span>
           </div>
 
+          {progress.status === "running" && progress.progress === 0 && progress.elapsed_seconds < 60 && (
+            <div className="rounded-[1rem] border border-[rgba(180,140,40,0.25)] bg-[rgba(180,140,40,0.08)] px-4 py-3 text-sm">
+              <p className="micro-copy">
+                <span className="body-copy font-medium">İlk çalıştırma:</span>{" "}
+                NLP veri paketleri (NLTK) indiriliyor olabilir. Bu işlem ilk seferinde 30–60 saniye sürebilir — progress bar beklenenden geç başlayabilir.
+              </p>
+            </div>
+          )}
+
           {progress.status === "failed" && (progress.error_code || progress.error_stage) && (
             <div className="rounded-[1rem] border border-[rgba(155,61,46,0.22)] bg-[rgba(155,61,46,0.08)] px-4 py-3 text-sm">
               <p className="body-copy font-medium">Structured failure context</p>
