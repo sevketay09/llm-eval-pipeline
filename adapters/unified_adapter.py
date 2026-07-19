@@ -8,6 +8,7 @@ import json
 import asyncio
 import ssl
 import certifi
+import threading
 from typing import List, Dict, Any, Optional, Union
 from openai import OpenAI, AzureOpenAI
 from anthropic import Anthropic
@@ -55,11 +56,14 @@ class UnifiedLLMAdapter:
         # Cost tracking
         self.total_input_tokens = 0
         self.total_output_tokens = 0
-        
+
         # Performance tracking
         self.latencies = []
         self.error_count = 0
         self.timeout_count = 0
+
+        # Lock for stats mutation (concurrent item processing)
+        self._stats_lock = threading.Lock()
     
     @retry(
         stop=stop_after_attempt(3),
@@ -109,22 +113,23 @@ class UnifiedLLMAdapter:
 
             latency = time.time() - start_time
             result['latency'] = latency
-            self.latencies.append(latency)
-
-            # Update tracking
-            self.total_input_tokens += result['usage']['input_tokens']
-            self.total_output_tokens += result['usage']['output_tokens']
+            with self._stats_lock:
+                self.latencies.append(latency)
+                self.total_input_tokens += result['usage']['input_tokens']
+                self.total_output_tokens += result['usage']['output_tokens']
 
             logger.debug(f"[{self.model_name}] ← response | {result['usage']['output_tokens']} tokens in {latency:.2f}s")
             return result
 
         except Exception as e:
             latency = time.time() - start_time
-            self.latencies.append(latency)
-            self.error_count += 1
             is_timeout = "timeout" in str(e).lower() or "timed out" in str(e).lower()
+            with self._stats_lock:
+                self.latencies.append(latency)
+                self.error_count += 1
+                if is_timeout:
+                    self.timeout_count += 1
             if is_timeout:
-                self.timeout_count += 1
                 logger.error(f"[{self.model_name}] TIMEOUT after {latency:.2f}s: {type(e).__name__}: {e}")
             else:
                 logger.error(f"[{self.model_name}] ERROR after {latency:.2f}s: {type(e).__name__}: {e}")

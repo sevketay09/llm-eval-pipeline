@@ -1,3 +1,5 @@
+concurrent_items: 3
+
 humaneval_execution:
   disable_network: true
   docker_image: your-registry/minimal-python:3.11

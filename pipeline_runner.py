@@ -7,6 +7,7 @@ import time
 import os
 import re
 import uuid
+import threading
 from pathlib import Path
 from typing import Callable, Dict, List, Any, Mapping, Optional, Tuple
 from datetime import datetime
@@ -37,11 +38,10 @@ from evaluators import (
     evaluate_multiple_choice,
     evaluate_gsm8k
 )
-from evaluators.nlp_metrics import NLPMetricsEvaluator, is_available as nlp_metrics_available
 from evaluators.geval import GEvalEvaluator
-from evaluators.azure_quality import AzureQualityEvaluator, is_quality_available
-from evaluators.azure_agent import AzureAgentEvaluator, is_agent_eval_available
-from evaluators.faithfulness import FaithfulnessEvaluator, is_faithfulness_available
+from evaluators.quality_judge import QualityJudgeEvaluator, is_quality_available
+from evaluators.agent_judge import AgentJudgeEvaluator, is_agent_eval_available
+from evaluators.groundedness_judge import GroundednessJudgeEvaluator, is_faithfulness_available
 from evaluators.embedding_eval import (
     SemanticSimilarityEvaluator,
     RetrievalEvaluator,
@@ -146,9 +146,8 @@ def _parse_context_retention_score(content: str) -> Optional[float]:
 def _build_qa_metric_results(
     accuracy_judge: Dict[str, Any],
     hallucination_score: Dict[str, Any],
-    nlp_scores: Dict[str, Any],
     geval_scores: Dict[str, Any],
-    azure_quality_scores: Dict[str, Any],
+    quality_scores: Dict[str, Any],
     json_correctness_metric: Optional[Dict[str, Any]] = None,
     prompt_alignment_metric: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
@@ -170,13 +169,6 @@ def _build_qa_metric_results(
 
     metric_results.extend(
         build_metric_results_from_mapping(
-            nlp_scores,
-            provider="nlp_metrics",
-            group="nlp",
-        )
-    )
-    metric_results.extend(
-        build_metric_results_from_mapping(
             geval_scores,
             provider="g_eval",
             group="qa",
@@ -184,8 +176,8 @@ def _build_qa_metric_results(
     )
     metric_results.extend(
         build_metric_results_from_mapping(
-            azure_quality_scores,
-            provider="azure_quality",
+            quality_scores,
+            provider="quality_judge",
             group="quality",
         )
     )
@@ -203,7 +195,7 @@ def _build_reasoning_metric_results(
     cot_eval: Dict[str, Any],
     accuracy_score: Dict[str, Any],
     geval_scores: Dict[str, Any],
-    azure_quality_scores: Dict[str, Any],
+    quality_scores: Dict[str, Any],
     json_correctness_metric: Optional[Dict[str, Any]] = None,
     prompt_alignment_metric: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
@@ -237,8 +229,8 @@ def _build_reasoning_metric_results(
     )
     metric_results.extend(
         build_metric_results_from_mapping(
-            azure_quality_scores,
-            provider="azure_quality",
+            quality_scores,
+            provider="quality_judge",
             group="quality",
         )
     )
@@ -253,7 +245,7 @@ def _build_reasoning_metric_results(
 
 def _build_agentic_metric_results(
     plan_eval: Dict[str, Any],
-    azure_agent_scores: Dict[str, Any],
+    agent_scores: Dict[str, Any],
 ) -> List[Dict[str, Any]]:
     thresholds = {
         "plan_adherence": 0.7,
@@ -310,11 +302,11 @@ def _build_agentic_metric_results(
         )
 
     plan_score = plan_eval.get("score") if isinstance(plan_eval, dict) else None
-    task_adherence_payload = azure_agent_scores.get("task_adherence") if isinstance(azure_agent_scores.get("task_adherence"), dict) else {}
-    tool_accuracy_payload = azure_agent_scores.get("tool_call_accuracy") if isinstance(azure_agent_scores.get("tool_call_accuracy"), dict) else {}
-    response_payload = azure_agent_scores.get("response_completeness") if isinstance(azure_agent_scores.get("response_completeness"), dict) else {}
-    intent_payload = azure_agent_scores.get("intent_resolution") if isinstance(azure_agent_scores.get("intent_resolution"), dict) else {}
-    aggregate_score = azure_agent_scores.get("aggregate_score")
+    task_adherence_payload = agent_scores.get("task_adherence") if isinstance(agent_scores.get("task_adherence"), dict) else {}
+    tool_accuracy_payload = agent_scores.get("tool_call_accuracy") if isinstance(agent_scores.get("tool_call_accuracy"), dict) else {}
+    response_payload = agent_scores.get("response_completeness") if isinstance(agent_scores.get("response_completeness"), dict) else {}
+    intent_payload = agent_scores.get("intent_resolution") if isinstance(agent_scores.get("intent_resolution"), dict) else {}
+    aggregate_score = agent_scores.get("aggregate_score")
 
     task_completion_score = task_adherence_payload.get("score")
     if not isinstance(task_completion_score, (int, float)):
@@ -332,15 +324,15 @@ def _build_agentic_metric_results(
         build_agent_pack_metric(
             "task_completion",
             task_completion_score,
-            provider="azure_agent",
+            provider="agent_judge",
             source_metric="task_adherence.score",
             reason=task_adherence_payload.get("reasoning") if isinstance(task_adherence_payload, dict) else None,
-            raw_payload=task_adherence_payload if isinstance(task_adherence_payload, dict) else azure_agent_scores or None,
+            raw_payload=task_adherence_payload if isinstance(task_adherence_payload, dict) else agent_scores or None,
         ),
         build_agent_pack_metric(
             "tool_correctness",
             tool_accuracy_payload.get("score") if isinstance(tool_accuracy_payload, dict) else None,
-            provider="azure_agent",
+            provider="agent_judge",
             source_metric="tool_call_accuracy.score",
             reason=tool_accuracy_payload.get("reasoning") if isinstance(tool_accuracy_payload, dict) else None,
             raw_payload=tool_accuracy_payload if isinstance(tool_accuracy_payload, dict) else None,
@@ -348,14 +340,14 @@ def _build_agentic_metric_results(
         build_agent_pack_metric(
             "step_efficiency",
             aggregate_score,
-            provider="azure_agent",
+            provider="agent_judge",
             source_metric="aggregate_score",
-            raw_payload=azure_agent_scores or None,
+            raw_payload=agent_scores or None,
         ),
         build_agent_pack_metric(
             "response_completeness",
             response_payload.get("score") if isinstance(response_payload, dict) else None,
-            provider="azure_agent",
+            provider="agent_judge",
             source_metric="response_completeness.score",
             reason=response_payload.get("reasoning") if isinstance(response_payload, dict) else None,
             raw_payload=response_payload if isinstance(response_payload, dict) else None,
@@ -363,7 +355,7 @@ def _build_agentic_metric_results(
         build_agent_pack_metric(
             "intent_resolution",
             intent_payload.get("score") if isinstance(intent_payload, dict) else None,
-            provider="azure_agent",
+            provider="agent_judge",
             source_metric="intent_resolution.score",
             reason=intent_payload.get("reasoning") if isinstance(intent_payload, dict) else None,
             raw_payload=intent_payload if isinstance(intent_payload, dict) else None,
@@ -1651,14 +1643,15 @@ def _extract_turn_retrieval_context(turn_payload: Dict[str, Any]) -> Optional[st
 
 def _evaluate_multi_turn_groundedness(
     turn_results: List[Dict[str, Any]],
+    judge_adapter=None,
 ) -> Optional[Dict[int, Dict[str, Any]]]:
-    if not turn_results or not is_faithfulness_available():
+    if not turn_results or not is_faithfulness_available() or judge_adapter is None:
         return None
 
     try:
-        evaluator = FaithfulnessEvaluator()
+        evaluator = GroundednessJudgeEvaluator(judge_adapter)
     except Exception as exc:
-        logger.warning(f"Failed to initialize FaithfulnessEvaluator for multi-turn groundedness: {exc}")
+        logger.warning(f"Failed to initialize GroundednessJudgeEvaluator for multi-turn groundedness: {exc}")
         return None
 
     groundedness_by_turn: Dict[int, Dict[str, Any]] = {}
@@ -1874,26 +1867,26 @@ class EvaluationPipeline:
             logger.warning(f"Failed to initialize GEvalEvaluator: {exc}")
             return None
 
-    def _initialize_azure_quality_evaluator(self) -> Optional[AzureQualityEvaluator]:
-        """Initialize Azure quality evaluators when SDK and credentials are available."""
+    def _initialize_quality_evaluator(self) -> Optional[QualityJudgeEvaluator]:
+        """Initialize quality judge evaluator."""
         if not is_quality_available():
             return None
         try:
-            return AzureQualityEvaluator()
+            return QualityJudgeEvaluator(self.judge_adapter)
         except Exception as exc:
-            logger.warning(f"Failed to initialize AzureQualityEvaluator: {exc}")
+            logger.warning(f"Failed to initialize QualityJudgeEvaluator: {exc}")
             return None
 
-    def _initialize_azure_agent_evaluator(self) -> Optional[AzureAgentEvaluator]:
-        """Initialize Azure agent evaluators when SDK and credentials are available."""
+    def _initialize_agent_evaluator(self) -> Optional[AgentJudgeEvaluator]:
+        """Initialize agent judge evaluator."""
         if not is_agent_eval_available():
             return None
         try:
-            evaluator = AzureAgentEvaluator()
-            logger.info("Azure Agent Evaluator initialized for agentic test")
+            evaluator = AgentJudgeEvaluator(self.judge_adapter)
+            logger.info("Agent Judge Evaluator initialized for agentic test")
             return evaluator
         except Exception as exc:
-            logger.warning(f"Failed to initialize AzureAgentEvaluator: {exc}")
+            logger.warning(f"Failed to initialize AgentJudgeEvaluator: {exc}")
             return None
 
     def _run_provider_safely(
@@ -1946,9 +1939,9 @@ class EvaluationPipeline:
             return None
         return round(float(normalized_score), 4)
 
-    def _evaluate_azure_quality_scores(
+    def _evaluate_quality_scores(
         self,
-        evaluator: Optional[AzureQualityEvaluator],
+        evaluator: Optional[QualityJudgeEvaluator],
         *,
         query: str,
         response: str,
@@ -1978,9 +1971,9 @@ class EvaluationPipeline:
             if isinstance(metric_value, (int, float))
         }
 
-    def _evaluate_azure_agent_scores(
+    def _evaluate_agent_scores(
         self,
-        evaluator: Optional[AzureAgentEvaluator],
+        evaluator: Optional[AgentJudgeEvaluator],
         *,
         query: str,
         response: str,
@@ -2126,7 +2119,7 @@ class EvaluationPipeline:
         response_latency: float,
         structured_output: Dict[str, Any],
         metric_results: List[Dict[str, Any]],
-        azure_agent_scores: Dict[str, Any],
+        agent_scores: Dict[str, Any],
         tool_trace_result: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Build a span-first trace payload for an agentic case."""
@@ -2153,7 +2146,7 @@ class EvaluationPipeline:
                 "available_tools": list(agentic_case.available_tools),
                 "expected_tools": list(agentic_case.expected_tools),
                 "expected_tool_arguments": dict(agentic_case.expected_tool_arguments),
-                "evaluation_mode": azure_agent_scores.get("evaluation_mode"),
+                "evaluation_mode": agent_scores.get("evaluation_mode"),
             },
         })
 
@@ -2466,10 +2459,20 @@ class EvaluationPipeline:
         test_runner: Callable[..., Dict[str, Any]],
         output_path: Optional[str],
     ) -> None:
-        for model_key in model_keys:
+        total_models = max(len(model_keys), 1)
+        for model_idx, model_key in enumerate(model_keys):
             model = self.initialize_model(model_key)
             model.reset_stats()
             model_results = self._build_custom_model_results(model_key, model)
+
+            # Progress setup for item-level tracking inside run_qa_test
+            self._progress_test_idx = model_idx
+            self._progress_total_tests = total_models
+            if self._run:
+                self._run.current_model = model_key
+                self._run.current_test = test_name
+                self._run.message = f"{model_key} — {test_name}"
+                self._run.progress = model_idx / total_models
 
             try:
                 test_result = test_runner(model, dataset, judge, test_name)
@@ -2548,7 +2551,8 @@ class EvaluationPipeline:
         judge = self.initialize_judge() if has_non_embedding_tests else None
 
         # Run each test with all models in parallel
-        for test_name in tests_to_run:
+        total_tests = max(len(tests_to_run), 1)
+        for test_idx, test_name in enumerate(tests_to_run):
             if test_name not in test_mapping:
                 logger.warning(f"Test not found in mapping: {test_name}")
                 continue
@@ -2556,6 +2560,17 @@ class EvaluationPipeline:
             dataset_path, test_func = test_mapping[test_name]
 
             logger.info(f"Running test: {test_name} (parallel mode)")
+
+            # Progress: mark test start (test-level granularity)
+            if self._run:
+                self._run.current_test = test_name
+                self._run.current_model = ", ".join(model_keys)
+                self._run.progress = test_idx / total_tests
+                self._run.message = f"{test_name} ({test_idx + 1}/{total_tests})"
+
+            # Enable item-level progress inside run_qa_test (smooth bar within a test)
+            self._progress_test_idx = test_idx
+            self._progress_total_tests = total_tests
 
             # Load dataset once
             try:
@@ -2604,6 +2619,10 @@ class EvaluationPipeline:
                         ),
                     )
                     self._update_model_overall_metrics(models[model_key], self.results["models"][model_key])
+
+            # Progress: mark test complete
+            if self._run:
+                self._run.progress = (test_idx + 1) / total_tests
 
             # Incremental save after each test
             if output_path:
@@ -2971,12 +2990,16 @@ class EvaluationPipeline:
         # Initialize additional evaluators
         hallucination_eval = HallucinationEvaluator(self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
-        nlp_eval = NLPMetricsEvaluator() if nlp_metrics_available() else None
         geval_eval = self._initialize_geval_evaluator()
-        azure_quality_eval = self._initialize_azure_quality_evaluator()
+        quality_eval = self._initialize_quality_evaluator()
         
         total_items = len(dataset)
-        for item_idx, item in enumerate(tqdm(dataset, desc=test_name)):
+        concurrent_items = int(self.test_config.get("concurrent_items", 3))
+
+        _progress_lock = threading.Lock()
+        _completed = [0]
+
+        def _process_qa_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, SingleTurnCase):
                 qa_case = item
             else:
@@ -2984,99 +3007,95 @@ class EvaluationPipeline:
                     qa_case = SingleTurnCase.from_payload(item)
                 except ValueError as exc:
                     item_id = item.get("id", "unknown") if isinstance(item, dict) else "unknown"
-                    logger.warning(
-                        f"Skipping invalid QA item {item_id} in {test_name}: {exc}"
-                    )
-                    continue
+                    logger.warning(f"Skipping invalid QA item {item_id} in {test_name}: {exc}")
+                    return None
 
             logger.debug(f"[{test_name}] item {item_idx + 1}/{total_items} id={qa_case.case_id}")
 
-            # Generate answer
             system_prompt = qa_case.system_prompt or "Sen yardımcı bir asistansın. Soruları Türkçe olarak açık ve doğru şekilde cevapla."
             system_prompt = self._inject_schema_instruction(system_prompt, schema)
 
-            # Build messages with optional few-shot examples
             task_config = getattr(self, '_task_registry', {}).get(test_name, {})
             if get_few_shot_config(task_config):
                 messages = prepare_messages_with_few_shot(task_config, system_prompt, qa_case.input_text)
             else:
                 messages = [
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": qa_case.input_text}
+                    {"role": "user", "content": qa_case.input_text},
                 ]
 
             response = model.generate(messages, response_format=response_format)
 
             if response['content'] is None:
                 logger.warning(f"[{test_name}] item {item_idx + 1} empty response | error={response.get('error')} | model={model.model_name}")
-                continue
+                return None
 
             logger.debug(f"[{test_name}] item {item_idx + 1}/{total_items} done | latency={response.get('latency', 0):.2f}s | tokens={response.get('usage', {}).get('output_tokens', 0)}")
-            
+
             structured = self._parse_structured_output(response['content'], schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
             answer_text = response['content']
             if structured["is_valid"]:
                 answer_text = structured["parsed"].get("answer") or structured["parsed"].get("final_answer") or response['content']
-            prompt_alignment_eval = instruction_eval.evaluate(
-                _build_prompt_alignment_instruction(system_prompt, qa_case.input_text),
-                response['content'],
-            )
+
+            _input_text   = qa_case.input_text
+            _answer_text  = answer_text
+            _expected     = qa_case.expected_output or ""
+            _reference    = qa_case.reference_output
+            _has_expected = qa_case.has_expected_output
+            _case_id      = qa_case.case_id
+            _raw_content  = response['content']
+            _sys_prompt   = system_prompt
+
+            def _run_accuracy():
+                if _has_expected:
+                    return judge.evaluate("accuracy", _input_text, _answer_text, _expected)
+                score = AccuracyEvaluator.evaluate(_answer_text, _expected, eval_type="auto")
+                label = "YANLIS" if score["score"] < 0.5 else "TAM_DOGRU"
+                return {"score": score["score"], "label": label, "reasoning": "Automatic"}
+
+            def _run_hallucination():
+                if _reference:
+                    return hallucination_eval.check_hallucination(_input_text, _answer_text, _reference)
+                return {"score": 1.0}
+
+            def _run_geval():
+                if geval_eval and not _has_expected:
+                    score = self._evaluate_geval_criterion(
+                        geval_eval, "relevance",
+                        query=_input_text, response=_answer_text,
+                        reference=None, test_name=test_name, item_id=_case_id,
+                    )
+                    return {"relevance": score} if score is not None else {}
+                return {}
+
+            def _run_quality():
+                return self._evaluate_quality_scores(
+                    quality_eval,
+                    query=_input_text, response=_answer_text,
+                    test_name=test_name, item_id=_case_id,
+                )
+
+            def _run_instruction():
+                return instruction_eval.evaluate(
+                    _build_prompt_alignment_instruction(_sys_prompt, _input_text),
+                    _raw_content,
+                )
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as _pool:
+                _f_acc  = _pool.submit(_run_accuracy)
+                _f_hall = _pool.submit(_run_hallucination)
+                _f_gev  = _pool.submit(_run_geval)
+                _f_qual = _pool.submit(_run_quality)
+                _f_inst = _pool.submit(_run_instruction)
+
+                accuracy_judge        = _f_acc.result()
+                hallucination_score   = _f_hall.result()
+                geval_scores          = _f_gev.result()
+                quality_scores        = _f_qual.result()
+                prompt_alignment_eval = _f_inst.result()
+
             prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
-
-            # Evaluate with different metrics
-            # Hallucination check if reference provided
-            hallucination_score = {"score": 1.0}
-            reference = qa_case.reference_output
-            if reference:
-                hallucination_score = hallucination_eval.check_hallucination(
-                    qa_case.input_text,
-                    answer_text,
-                    reference
-                )
-            
-            if qa_case.has_expected_output:
-                accuracy_judge = judge.evaluate(
-                    "accuracy",
-                    qa_case.input_text,
-                    answer_text,
-                    qa_case.expected_output or ""
-                )
-            else:
-                accuracy_score = AccuracyEvaluator.evaluate(
-                    answer_text,
-                    qa_case.expected_output or "",
-                    eval_type="auto"
-                )
-                accuracy_judge = {"score": accuracy_score["score"], "label": "YANLIS" if accuracy_score["score"] < 0.5 else "TAM_DOGRU", "reasoning": "Automatic"}
-            
-            # NLP metrics (BLEU, ROUGE, METEOR, GLEU, F1) when ground truth available
-            nlp_scores = {}
-            if nlp_eval and qa_case.expected_output:
-                nlp_scores = nlp_eval.evaluate(answer_text, qa_case.expected_output)
-
-            geval_scores = {}
-            if geval_eval:
-                primary_criterion = "correctness" if qa_case.has_expected_output else "relevance"
-                normalized_score = self._evaluate_geval_criterion(
-                    geval_eval,
-                    primary_criterion,
-                    query=qa_case.input_text,
-                    response=answer_text,
-                    reference=qa_case.expected_output,
-                    test_name=test_name,
-                    item_id=qa_case.case_id,
-                )
-                if normalized_score is not None:
-                    geval_scores[primary_criterion] = normalized_score
-
-            azure_quality_scores = self._evaluate_azure_quality_scores(
-                azure_quality_eval,
-                query=qa_case.input_text,
-                response=answer_text,
-                test_name=test_name,
-                item_id=qa_case.case_id,
-            )
 
             result = {
                 "id": qa_case.case_id,
@@ -3089,7 +3108,7 @@ class EvaluationPipeline:
                 "structured_output": {
                     "is_valid": structured["is_valid"],
                     "parse_error": structured["parse_error"],
-                    "schema_error": structured["schema_error"]
+                    "schema_error": structured["schema_error"],
                 },
                 "json_correctness": (
                     json_correctness_metric.get("raw_payload")
@@ -3104,9 +3123,8 @@ class EvaluationPipeline:
                 "metric_results": _build_qa_metric_results(
                     accuracy_judge=accuracy_judge,
                     hallucination_score=hallucination_score,
-                    nlp_scores=nlp_scores,
                     geval_scores=geval_scores,
-                    azure_quality_scores=azure_quality_scores,
+                    quality_scores=quality_scores,
                     json_correctness_metric=json_correctness_metric,
                     prompt_alignment_metric=prompt_alignment_metric,
                 ),
@@ -3116,16 +3134,34 @@ class EvaluationPipeline:
                     "hallucination": hallucination_score["score"],
                     **({"json_correctness": json_correctness_metric.get("value")} if isinstance((json_correctness_metric or {}).get("value"), (int, float)) else {}),
                     **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
-                    **({"nlp_metrics": nlp_scores} if nlp_scores else {}),
                     **({"geval": geval_scores} if geval_scores else {}),
-                    **({"azure_quality": azure_quality_scores} if azure_quality_scores else {}),
+                    **({"quality_judge": quality_scores} if quality_scores else {}),
                 },
                 "latency": response['latency'],
-                "tokens": response['usage']
+                "tokens": response['usage'],
             }
-            
-            results.append(result)
-        
+
+            with _progress_lock:
+                _completed[0] += 1
+                completed = _completed[0]
+
+            if self._run and hasattr(self, '_progress_test_idx') and hasattr(self, '_progress_total_tests'):
+                t_idx = self._progress_test_idx
+                t_total = max(self._progress_total_tests, 1)
+                self._run.progress = (t_idx + completed / max(total_items, 1)) / t_total
+
+            return result
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_items) as _item_pool:
+            futures = {
+                _item_pool.submit(_process_qa_item, idx, item): idx
+                for idx, item in enumerate(dataset)
+            }
+            for future in tqdm(concurrent.futures.as_completed(futures), total=total_items, desc=test_name):
+                result = future.result()
+                if result is not None:
+                    results.append(result)
+
         # Build label distribution
         total = len(results)
         tam = sum(1 for r in results if r["scores"]["judge_label"] == "TAM_DOGRU")
@@ -3138,13 +3174,6 @@ class EvaluationPipeline:
         overall_score = round((tam * 1.0 + kismen * 0.5) / total, 3) if total else 0.0
 
         schema_fail_rate = sum(1 for r in results if not r["structured_output"]["is_valid"]) / total if total else 0
-
-        # Aggregate NLP metrics
-        nlp_results = [r["scores"]["nlp_metrics"] for r in results if "nlp_metrics" in r["scores"]]
-        avg_nlp = {}
-        if nlp_results:
-            for key in nlp_results[0]:
-                avg_nlp[key] = round(sum(nr[key] for nr in nlp_results) / len(nlp_results), 4)
 
         # Per-category breakdown
         category_stats = CategoryMetrics.calculate_per_category(results)
@@ -3170,7 +3199,7 @@ class EvaluationPipeline:
         if prompt_alignment_values:
             summary_avg_scores["prompt_alignment"] = round(sum(prompt_alignment_values) / len(prompt_alignment_values), 4)
         self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "geval", "geval_")
-        self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "azure_quality", "azure_")
+        self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "quality_judge", "quality_")
 
         json_correctness_items = [
             result.get("json_correctness")
@@ -3200,7 +3229,6 @@ class EvaluationPipeline:
                 },
                 "avg_scores": summary_avg_scores,
                 "avg_hallucination": round(avg_hallucination, 3),
-                "avg_nlp_metrics": avg_nlp,
                 "json_correctness_summary": {
                     "total_cases": len(json_correctness_items),
                     "valid_cases": sum(1 for item in json_correctness_items if item.get("is_valid") is True),
@@ -3239,7 +3267,7 @@ class EvaluationPipeline:
         cot_evaluator = ChainOfThoughtEvaluator(self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         geval_eval = self._initialize_geval_evaluator()
-        azure_quality_eval = self._initialize_azure_quality_evaluator()
+        quality_eval = self._initialize_quality_evaluator()
         
         for item in tqdm(dataset, desc=test_name):
             if isinstance(item, ReasoningCase):
@@ -3271,72 +3299,74 @@ class EvaluationPipeline:
             
             structured = self._parse_structured_output(response['content'], schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
-            prompt_alignment_eval = instruction_eval.evaluate(
-                _build_prompt_alignment_instruction(system_prompt, reasoning_case.input_text),
-                response['content'],
-            )
-            prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
             reasoning_text = response['content']
             final_answer = response['content']
             if structured["is_valid"]:
                 reasoning_text = structured["parsed"].get("reasoning", response['content'])
                 final_answer = structured["parsed"].get("final_answer", response['content'])
 
-            # Evaluate reasoning quality
-            reasoning_eval = judge.evaluate(
-                "reasoning_quality",
-                reasoning_case.input_text,
-                reasoning_text,
-                reasoning_case.expected_reasoning or ""
-            )
-            
-            # Chain-of-thought evaluation
-            cot_eval = cot_evaluator.evaluate(
-                reasoning_case.input_text,
-                reasoning_text
-            )
-            
-            # Check answer accuracy
-            accuracy_score = AccuracyEvaluator.evaluate(
-                final_answer,
-                reasoning_case.expected_output or "",
-                eval_type="auto"
-            )
+            # Capture loop-local variables for closures
+            _input_text      = reasoning_case.input_text
+            _reasoning_text  = reasoning_text
+            _final_answer    = final_answer
+            _exp_reasoning   = reasoning_case.expected_reasoning or ""
+            _exp_output      = reasoning_case.expected_output or ""
+            _has_expected    = reasoning_case.has_expected_output
+            _case_id         = reasoning_case.case_id
+            _raw_content     = response['content']
 
-            geval_scores = {}
-            if geval_eval:
+            def _run_instruction_r():
+                return instruction_eval.evaluate(
+                    _build_prompt_alignment_instruction(system_prompt, _input_text),
+                    _raw_content,
+                )
+
+            def _run_reasoning():
+                return judge.evaluate("reasoning_quality", _input_text, _reasoning_text, _exp_reasoning)
+
+            def _run_cot():
+                return cot_evaluator.evaluate(_input_text, _reasoning_text)
+
+            def _run_accuracy_r():
+                return AccuracyEvaluator.evaluate(_final_answer, _exp_output, eval_type="auto")
+
+            def _run_geval_r():
+                scores = {}
+                if not geval_eval:
+                    return scores
                 coherence_score = self._evaluate_geval_criterion(
-                    geval_eval,
-                    "coherence",
-                    query=reasoning_case.input_text,
-                    response=reasoning_text,
-                    reference=reasoning_case.expected_reasoning,
-                    test_name=test_name,
-                    item_id=reasoning_case.case_id,
+                    geval_eval, "coherence",
+                    query=_input_text, response=_reasoning_text,
+                    reference=_exp_reasoning or None,
+                    test_name=test_name, item_id=_case_id,
                 )
                 if coherence_score is not None:
-                    geval_scores["coherence"] = coherence_score
+                    scores["coherence"] = coherence_score
+                return scores
 
-                if reasoning_case.has_expected_output:
-                    correctness_score = self._evaluate_geval_criterion(
-                        geval_eval,
-                        "correctness",
-                        query=reasoning_case.input_text,
-                        response=final_answer,
-                        reference=reasoning_case.expected_output,
-                        test_name=test_name,
-                        item_id=reasoning_case.case_id,
-                    )
-                    if correctness_score is not None:
-                        geval_scores["correctness"] = correctness_score
+            def _run_quality_r():
+                return self._evaluate_quality_scores(
+                    quality_eval,
+                    query=_input_text, response=_final_answer,
+                    test_name=test_name, item_id=_case_id,
+                )
 
-            azure_quality_scores = self._evaluate_azure_quality_scores(
-                azure_quality_eval,
-                query=reasoning_case.input_text,
-                response=final_answer,
-                test_name=test_name,
-                item_id=reasoning_case.case_id,
-            )
+            with concurrent.futures.ThreadPoolExecutor(max_workers=6) as _pool:
+                _f_inst  = _pool.submit(_run_instruction_r)
+                _f_reas  = _pool.submit(_run_reasoning)
+                _f_cot   = _pool.submit(_run_cot)
+                _f_acc   = _pool.submit(_run_accuracy_r)
+                _f_gev   = _pool.submit(_run_geval_r)
+                _f_qual  = _pool.submit(_run_quality_r)
+
+                prompt_alignment_eval = _f_inst.result()
+                reasoning_eval        = _f_reas.result()
+                cot_eval              = _f_cot.result()
+                accuracy_score        = _f_acc.result()
+                geval_scores          = _f_gev.result()
+                quality_scores  = _f_qual.result()
+
+            prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
             
             result = {
                 "id": reasoning_case.case_id,
@@ -3366,7 +3396,7 @@ class EvaluationPipeline:
                     cot_eval=cot_eval,
                     accuracy_score=accuracy_score,
                     geval_scores=geval_scores,
-                    azure_quality_scores=azure_quality_scores,
+                    quality_scores=quality_scores,
                     json_correctness_metric=json_correctness_metric,
                     prompt_alignment_metric=prompt_alignment_metric,
                 ),
@@ -3377,7 +3407,7 @@ class EvaluationPipeline:
                     **({"json_correctness": json_correctness_metric.get("value")} if isinstance((json_correctness_metric or {}).get("value"), (int, float)) else {}),
                     **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                     **({"geval": geval_scores} if geval_scores else {}),
-                    **({"azure_quality": azure_quality_scores} if azure_quality_scores else {}),
+                    **({"quality_judge": quality_scores} if quality_scores else {}),
                 },
                 "judge": {
                     **_build_judge_trace(
@@ -3413,7 +3443,7 @@ class EvaluationPipeline:
         if prompt_alignment_values:
             avg_scores["prompt_alignment"] = round(sum(prompt_alignment_values) / len(prompt_alignment_values), 4)
         self._extend_avg_scores_with_nested_metrics(avg_scores, results, "geval", "geval_")
-        self._extend_avg_scores_with_nested_metrics(avg_scores, results, "azure_quality", "azure_")
+        self._extend_avg_scores_with_nested_metrics(avg_scores, results, "quality_judge", "quality_")
 
         json_correctness_items = [
             result.get("json_correctness")
@@ -3501,18 +3531,29 @@ class EvaluationPipeline:
 
             structured = self._parse_structured_output(response.get('content') or "", schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
-            prompt_alignment_eval = instruction_eval.evaluate(
-                _build_prompt_alignment_instruction(system_prompt, function_case.input_text),
-                response.get('content') or "",
-            )
+
+            _fc_input   = function_case.input_text
+            _fc_content = response.get('content') or ""
+            _fc_calls   = response.get('tool_calls')
+            _fc_tool    = function_case.expected_tool or ""
+            _fc_params  = function_case.expected_params
+
+            def _run_fc_instruction():
+                return instruction_eval.evaluate(
+                    _build_prompt_alignment_instruction(system_prompt, _fc_input),
+                    _fc_content,
+                )
+
+            def _run_fc_eval():
+                return FunctionCallingEvaluator.evaluate(_fc_calls, _fc_tool, _fc_params)
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=2) as _pool:
+                _f_inst = _pool.submit(_run_fc_instruction)
+                _f_fc   = _pool.submit(_run_fc_eval)
+                prompt_alignment_eval = _f_inst.result()
+                fc_eval               = _f_fc.result()
+
             prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
-            
-            # Evaluate function calling
-            fc_eval = FunctionCallingEvaluator.evaluate(
-                response.get('tool_calls'),
-                function_case.expected_tool or "",
-                function_case.expected_params
-            )
             
             result = {
                 "id": function_case.case_id,
@@ -4044,7 +4085,7 @@ class EvaluationPipeline:
         
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
 
-        agent_eval = self._initialize_azure_agent_evaluator()
+        agent_eval = self._initialize_agent_evaluator()
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         dynamic_agent_eval = DynamicFunctionCallingEvaluator(judge_adapter=judge)
         
@@ -4112,7 +4153,7 @@ class EvaluationPipeline:
             )
             
             # Azure Agent SDK evaluation (task adherence + response completeness)
-            azure_agent_scores = self._evaluate_azure_agent_scores(
+            agent_scores = self._evaluate_agent_scores(
                 agent_eval,
                 query=agentic_case.input_text,
                 response=answer_text,
@@ -4124,7 +4165,7 @@ class EvaluationPipeline:
             )
             metric_results = _build_agentic_metric_results(
                 plan_eval=plan_eval,
-                azure_agent_scores=azure_agent_scores,
+                agent_scores=agent_scores,
             )
             tool_selection_summary = _evaluate_agentic_tool_selection(
                 agentic_case.expected_tools,
@@ -4167,7 +4208,7 @@ class EvaluationPipeline:
                 response_latency=response['latency'],
                 structured_output=structured,
                 metric_results=metric_results,
-                azure_agent_scores=azure_agent_scores,
+                agent_scores=agent_scores,
                 tool_trace_result=tool_trace_result,
             )
             
@@ -4180,8 +4221,8 @@ class EvaluationPipeline:
                 "model_response": answer_text,
                 "trace": trace_payload,
                 "agent_evaluation": {
-                    "mode": azure_agent_scores.get("evaluation_mode", "unavailable"),
-                    "aggregate_score": azure_agent_scores.get("aggregate_score"),
+                    "mode": agent_scores.get("evaluation_mode", "unavailable"),
+                    "aggregate_score": agent_scores.get("aggregate_score"),
                     "trace_supported": bool(resolved_mock_tools),
                     "trace_used": bool(tool_trace_result.get("conversation_history")),
                 },
@@ -4225,7 +4266,7 @@ class EvaluationPipeline:
                     **({"tool_selection": tool_selection_summary.get("score")} if isinstance((tool_selection_summary or {}).get("score"), (int, float)) else {}),
                     **({"argument_correctness": argument_correctness_summary.get("score")} if isinstance((argument_correctness_summary or {}).get("score"), (int, float)) else {}),
                     **({"tool_use_efficiency": tool_use_efficiency_summary.get("score")} if isinstance((tool_use_efficiency_summary or {}).get("score"), (int, float)) else {}),
-                    **({"azure_agent": azure_agent_scores} if azure_agent_scores else {})
+                    **({"agent_judge": agent_scores} if agent_scores else {})
                 },
                 "judge": {
                     **_build_judge_trace(
@@ -4245,12 +4286,12 @@ class EvaluationPipeline:
         summary_avg_scores = {
             "plan_quality": avg_plan_quality
         }
-        self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "azure_agent", "azure_")
+        self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "agent_judge", "agent_")
         self._extend_avg_scores_with_nested_score_entries(
             summary_avg_scores,
             results,
-            "azure_agent",
-            "azure_",
+            "agent_judge",
+            "agent_",
             (
                 "task_adherence",
                 "tool_call_accuracy",
@@ -4520,7 +4561,7 @@ class EvaluationPipeline:
                     context_score = 0.8
 
             intent_resolution_score, unresolved_intent_summary = _annotate_unresolved_intents(turn_results)
-            groundedness_by_turn = _evaluate_multi_turn_groundedness(turn_results)
+            groundedness_by_turn = _evaluate_multi_turn_groundedness(turn_results, judge_adapter=self.judge_adapter)
             metric_scores, metric_results = _build_multi_turn_metric_results(
                 turn_results,
                 context_score,
@@ -4658,14 +4699,14 @@ class EvaluationPipeline:
         rag_evaluator = RAGEvaluator(self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        # Initialize Faithfulness (Azure Groundedness) evaluator if available
+        # Initialize Groundedness judge evaluator if available
         faithfulness_eval = None
-        if is_faithfulness_available():
+        if is_faithfulness_available() and self.judge_adapter:
             try:
-                faithfulness_eval = FaithfulnessEvaluator()
-                logger.info("FaithfulnessEvaluator (Azure Groundedness) initialized for RAG test")
+                faithfulness_eval = GroundednessJudgeEvaluator(self.judge_adapter)
+                logger.info("GroundednessJudgeEvaluator initialized for RAG test")
             except Exception as e:
-                logger.warning(f"Failed to initialize FaithfulnessEvaluator: {e}")
+                logger.warning(f"Failed to initialize GroundednessJudgeEvaluator: {e}")
         
         for item in tqdm(dataset, desc=test_name):
             if isinstance(item, RAGCase):
@@ -6872,6 +6913,8 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     self._run.progress = test_idx / max(total_tests, 1)
                     self._run.message = f"{model_key} — {test_name} ({test_idx + 1}/{total_tests})"
 
+                self._progress_test_idx = test_idx
+                self._progress_total_tests = total_tests
                 dataset_path, test_func = test_mapping[test_name]
 
                 try:
@@ -7292,6 +7335,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 store_path=store_path,
                 source_file=os.path.basename(output_path)
             )
+
+            # Also persist the standalone per-eval JSON report so the Results UI
+            # (which lists reports/*.json and expects a top-level `models` key)
+            # can read this run. Without this, only the cumulative store file
+            # exists and the UI shows "0 models".
+            if os.path.abspath(output_path) != os.path.abspath(store_path):
+                with open(output_path, "w", encoding="utf-8") as report_file:
+                    json.dump(sanitized_results, report_file, ensure_ascii=False, indent=2)
 
             markdown_path = str(Path(output_path).with_suffix(".md"))
             with open(markdown_path, "w", encoding="utf-8") as markdown_file:

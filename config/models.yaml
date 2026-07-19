@@ -145,10 +145,30 @@ models:
     supports_response_format: false
     supports_streaming: true
     temperature: 0.0
-
-# ==================== EMBEDDING MODELS ====================
+  qwen3-plus:
+    provider: openai
+    model_name: qwen/qwen3.7-plus
+    api_key: ${OPENROUTER_API_KEY}
+    base_url: https://openrouter.ai/api/v1
+    max_tokens: 4096
+    temperature: 0.0
+    supports_function_calling: true
+    supports_streaming: true
+    supports_response_format: true
+  deepseek-v4-pro:
+    provider: openai
+    model_name: deepseek/deepseek-v4-pro
+    api_key: ${OPENROUTER_API_KEY}
+    base_url: https://openrouter.ai/api/v1
+    max_tokens: 16000
+    temperature: 0.0
+    supports_function_calling: true
+    supports_streaming: true
+    supports_response_format: true
+    extra_body:
+      reasoning:
+        effort: none
 embedding_models:
-  # LiteLLM Deployed Models (Internal)
   jina-v3-litellm:
     provider: litellm
     model_name: jina-v3
@@ -157,7 +177,6 @@ embedding_models:
     embedding_dim: 1024
     max_sequence_length: 8192
     timeout: 30.0
-  
   multi-qa-mpnet-litellm:
     provider: litellm
     model_name: multi-qa-mpnet
@@ -166,7 +185,6 @@ embedding_models:
     embedding_dim: 768
     max_sequence_length: 512
     timeout: 30.0
-  
   qwen3-embedding-litellm:
     provider: litellm
     model_name: qwen3-embedding
@@ -175,8 +193,6 @@ embedding_models:
     embedding_dim: 1024
     max_sequence_length: 8192
     timeout: 30.0
-  
-  # HuggingFace Local Models (for local testing)
   multilingual-e5-large:
     provider: huggingface
     model_name: intfloat/multilingual-e5-large
@@ -184,7 +200,6 @@ embedding_models:
     embedding_dim: 1024
     max_sequence_length: 512
     batch_size: 32
-  
   paraphrase-multilingual-mpnet:
     provider: huggingface
     model_name: sentence-transformers/paraphrase-multilingual-mpnet-base-v2
@@ -192,7 +207,6 @@ embedding_models:
     embedding_dim: 768
     max_sequence_length: 512
     batch_size: 32
-  
   labse:
     provider: huggingface
     model_name: sentence-transformers/LaBSE
@@ -200,9 +214,6 @@ embedding_models:
     embedding_dim: 768
     max_sequence_length: 256
     batch_size: 32
-  
-  # vLLM Deployed Models (Internal)
-  
   multi-qa-mpnet-base-dot-v1-vllm:
     provider: vllm
     model_name: multi-qa-mpnet-base-dot-v1
@@ -211,7 +222,6 @@ embedding_models:
     embedding_dim: 768
     max_sequence_length: 512
     timeout: 30.0
-  
   qwen3-embed-vllm:
     provider: vllm
     model_name: qwen3-embed
@@ -220,8 +230,6 @@ embedding_models:
     embedding_dim: 1024
     max_sequence_length: 8192
     timeout: 30.0
-  
-  # OpenAI API (if needed)
   text-embedding-3-large-openai:
     provider: openai
     model_name: text-embedding-3-large
@@ -230,4 +238,3 @@ embedding_models:
     embedding_dim: 3072
     max_sequence_length: 8191
     timeout: 30.0
-

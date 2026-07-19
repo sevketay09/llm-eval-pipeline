@@ -404,7 +404,7 @@ JSON formatında yanıt verin:
             {"role": "user", "content": prompt}
         ]
 
-        logger.info(f"[judge] Evaluating criterion='{criterion}' | query_len={len(query)} chars")
+        logger.info(f"[judge] Evaluating criterion='{criterion}' | query_len={len(question)} chars")
         result = self.judge.generate(messages)
         
         # Parse JSON response

@@ -16,11 +16,10 @@ from .prompt_compression_eval import PromptCompressionEvaluator
 from .negative_constraints_eval import NegativeConstraintsEvaluator
 from .adversarial_eval import AdversarialEvaluator
 from .language_mix_eval import LanguageMixEvaluator
-from .nlp_metrics import NLPMetricsEvaluator, is_available as nlp_metrics_available
-from .azure_quality import AzureQualityEvaluator, is_quality_available
+from .quality_judge import QualityJudgeEvaluator, is_quality_available
 from .geval import GEvalEvaluator, BUILTIN_CRITERIA as GEVAL_CRITERIA
-from .azure_agent import AzureAgentEvaluator, is_agent_eval_available
-from .faithfulness import FaithfulnessEvaluator, is_faithfulness_available
+from .agent_judge import AgentJudgeEvaluator, is_agent_eval_available
+from .groundedness_judge import GroundednessJudgeEvaluator, is_faithfulness_available
 
 __all__ = [
     'LLMJudgeEvaluator',
@@ -51,14 +50,12 @@ __all__ = [
     'NegativeConstraintsEvaluator',
     'AdversarialEvaluator',
     'LanguageMixEvaluator',
-    'NLPMetricsEvaluator',
-    'nlp_metrics_available',
-    'AzureQualityEvaluator',
+    'QualityJudgeEvaluator',
     'is_quality_available',
     'GEvalEvaluator',
     'GEVAL_CRITERIA',
-    'AzureAgentEvaluator',
+    'AgentJudgeEvaluator',
     'is_agent_eval_available',
-    'FaithfulnessEvaluator',
+    'GroundednessJudgeEvaluator',
     'is_faithfulness_available'
 ]

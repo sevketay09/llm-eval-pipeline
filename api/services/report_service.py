@@ -514,6 +514,9 @@ class ReportService:
             return []
 
         files = sorted(self._dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        # The cumulative store is not a per-eval report (schema: {version, runs, ...});
+        # exclude it so it doesn't surface in the Results list as "0 models".
+        files = [f for f in files if f.name != "evaluations_store.json"]
         items = []
         for f in files[:limit]:
             stat = f.stat()
