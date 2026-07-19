@@ -12,13 +12,15 @@ import {
   Timer,
 } from "lucide-react";
 import {
+  hitlApi,
   modelsApi,
   resultsApi,
+  type CalibrationInsights,
   type ModelListResponse,
   type ReportListItem,
   type ReportSummary,
 } from "@/api/client";
-import { EmptyState, Skeleton } from "@/components";
+import { Badge, EmptyState, Skeleton } from "@/components";
 
 function MetricCard({
   icon: Icon,
@@ -324,11 +326,28 @@ export default function Dashboard() {
   const [datasetFilter, setDatasetFilter] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [calibration, setCalibration] = useState<CalibrationInsights | null>(null);
 
   const visibleSnapshots = reportSnapshots.filter((snapshot) => {
     if (!promptVersionFilter) return true;
     return (snapshot.promptVersion ?? "") === promptVersionFilter;
   });
+
+  useEffect(() => {
+    let cancelled = false;
+    // Endpoint 500s until enough reviewed annotations exist — card simply hides
+    hitlApi
+      .getCalibration()
+      .then((insights) => {
+        if (!cancelled) setCalibration(insights);
+      })
+      .catch(() => {
+        if (!cancelled) setCalibration(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -671,6 +690,61 @@ export default function Dashboard() {
             <MetricCard icon={Clock} label="Visible Cost" value={visibleModelCost > 0 ? visibleModelCost.toFixed(4) : "—"} />
             <MetricCard icon={Timer} label="Avg Latency" value={avgLatency != null ? `${avgLatency.toFixed(1)} ms` : "—"} />
           </div>
+
+          {calibration?.overall_metrics?.reliability_verdict &&
+            calibration.overall_metrics.reliability_verdict !== "insufficient_data" && (
+            <section className="panel-surface panel-roomy mt-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="section-caption mb-1">Judge Reliability</p>
+                  <h2 className="section-heading">LLM judge vs human reviewers</h2>
+                </div>
+                <Badge
+                  tone={
+                    calibration.overall_metrics.reliability_verdict === "reliable"
+                      ? "success"
+                      : calibration.overall_metrics.reliability_verdict === "acceptable"
+                        ? "warning"
+                        : "danger"
+                  }
+                >
+                  {calibration.overall_metrics.reliability_verdict}
+                </Badge>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div>
+                  <p className="micro-copy">Cohen's κ</p>
+                  <p className="body-copy mt-1 text-lg font-semibold">
+                    {calibration.overall_metrics.cohens_kappa ?? "—"}
+                  </p>
+                  <p className="micro-copy mt-1">{calibration.overall_metrics.kappa_interpretation ?? ""}</p>
+                </div>
+                <div>
+                  <p className="micro-copy">Spearman ρ</p>
+                  <p className="body-copy mt-1 text-lg font-semibold">
+                    {calibration.overall_metrics.spearman_rho ?? "—"}
+                  </p>
+                  <p className="micro-copy mt-1">rank correlation</p>
+                </div>
+                <div>
+                  <p className="micro-copy">Judge bias</p>
+                  <p className="body-copy mt-1 text-lg font-semibold">
+                    {calibration.overall_metrics.judge_bias != null
+                      ? `${calibration.overall_metrics.judge_bias > 0 ? "+" : ""}${calibration.overall_metrics.judge_bias.toFixed(3)}`
+                      : "—"}
+                  </p>
+                  <p className="micro-copy mt-1">mean shift vs human</p>
+                </div>
+                <div>
+                  <p className="micro-copy">Reviewed pairs</p>
+                  <p className="body-copy mt-1 text-lg font-semibold">
+                    {calibration.overall_metrics.reliability_n ?? "—"}
+                  </p>
+                  <p className="micro-copy mt-1">completed annotations</p>
+                </div>
+              </div>
+            </section>
+          )}
 
           <section className="motion-rise motion-delay-2 mt-6 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(20rem,0.8fr)]">
             <div className="panel-surface panel-roomy space-y-4">

@@ -699,6 +699,11 @@ export interface CalibrationInsights {
     average_agreement?: number;
     mean_absolute_error?: number;
     judge_bias?: number;
+    spearman_rho?: number | null;
+    cohens_kappa?: number | null;
+    kappa_interpretation?: string;
+    reliability_verdict?: string;
+    reliability_n?: number;
   };
   recommendations: CalibrationRecommendation[];
   disagreement_taxonomy?: {
