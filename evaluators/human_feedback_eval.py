@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from adapters.unified_adapter import UnifiedLLMAdapter
+from analysis.judge_reliability import compute_judge_reliability
 from utils.human_annotations import AnnotationManager, HumanAnnotation
 import statistics
 
@@ -472,11 +473,28 @@ class HumanFeedbackEvaluator:
         disagreements = self.get_disagreement_cases(threshold=0.3)
         prompt_version_comparison = self.summarize_prompt_versions(annotations=annotations)
 
+        reliability = compute_judge_reliability([
+            (ann.llm_judge_score, ann.human_score)
+            for ann in annotations
+            if isinstance(ann.llm_judge_score, (int, float))
+            and isinstance(ann.human_score, (int, float))
+        ])
+        if reliability["verdict"] == "needs_calibration" and reliability["n"] >= 5:
+            recommendations.append({
+                "issue": f"Low chance-corrected agreement (kappa={reliability['cohens_kappa']}, {reliability['kappa_interpretation']})",
+                "recommendation": "Judge and human raters disagree beyond chance level; review judge prompts against annotated examples"
+            })
+
         return {
             "overall_metrics": {
                 "average_agreement": judge_accuracy.get("average_agreement", 0),
                 "mean_absolute_error": mae,
-                "judge_bias": bias
+                "judge_bias": bias,
+                "spearman_rho": reliability["spearman_rho"],
+                "cohens_kappa": reliability["cohens_kappa"],
+                "kappa_interpretation": reliability["kappa_interpretation"],
+                "reliability_verdict": reliability["verdict"],
+                "reliability_n": reliability["n"],
             },
             "recommendations": recommendations,
             "disagreement_taxonomy": _summarize_disagreement_taxonomy(disagreements),

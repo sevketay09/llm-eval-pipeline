@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-369%20passed-brightgreen.svg)](#testler)
+[![Tests](https://img.shields.io/badge/tests-382%20passed-brightgreen.svg)](#testler)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Modelleri karşılaştırın · Canlı trace izleyin · Prompt'larınızı deneyin · Güvenliği test edin*
@@ -548,7 +548,7 @@ pytest tests/test_redteam_router_contracts.py  # tek dosya
 pytest -k "experiments"                         # filtreli
 ```
 
-**Mevcut baseline: 369 contract testi pass.**
+**Mevcut baseline: 382 contract testi pass.**
 
 Test izolasyonu için root `conftest.py`:
 - scipy (numpy 2.x binary compat) → `MagicMock`
