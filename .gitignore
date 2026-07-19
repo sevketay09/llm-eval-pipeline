@@ -13,6 +13,13 @@ venv/
 *.crt
 secrets.yaml
 secrets.yml
+key.txt
+
+# Local backups
+*.backup
+
+# Frontend deps
+node_modules/
 
 # Build/cache
 .cache/
