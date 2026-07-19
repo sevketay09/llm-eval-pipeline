@@ -22,20 +22,27 @@ from evaluators.comparative_eval import ComparativeEvaluator
 class ArenaRunner:
     """Run head-to-head comparisons between two models"""
     
-    def __init__(self, config_path: str = "config/models.yaml", judge_model_key: str = None):
+    def __init__(self, config_path: str = "config/models.yaml", judge_model_key: str = None, swap_positions: bool = True):
         self.config_path = config_path
         self.config = self._load_config()
-        
+        # Judge twice with A/B swapped to cancel position bias (disable with --no-swap)
+        self.swap_positions = swap_positions
+
         # Initialize judge
         self.judge_model_key = judge_model_key or self._get_default_judge()
-        print(f"Using judge: {self.judge_model_key}")
+        print(f"Using judge: {self.judge_model_key} (position swap: {'on' if swap_positions else 'off'})")
         self.judge_adapter = self._initialize_adapter(self.judge_model_key)
         self.evaluator = ComparativeEvaluator(self.judge_adapter)
     
     def _load_config(self) -> Dict:
-        """Load models config"""
+        """Load models config with ${ENV_VAR} expansion (same as pipeline_runner)"""
+        import os
         with open(self.config_path) as f:
-            return yaml.safe_load(f)
+            config = yaml.safe_load(f)
+        config_str = yaml.dump(config)
+        for key, value in os.environ.items():
+            config_str = config_str.replace(f"${{{key}}}", value)
+        return yaml.safe_load(config_str)
     
     def _get_default_judge(self) -> str:
         """Get default judge model from config"""
@@ -53,13 +60,8 @@ class ArenaRunner:
         if model_key not in self.config["models"]:
             raise ValueError(f"Model '{model_key}' not found in config")
         
-        model_config = self.config["models"][model_key]
-        return UnifiedLLMAdapter(
-            model_name=model_config["model_name"],
-            provider=model_config["provider"],
-            api_key=model_config.get("api_key"),
-            base_url=model_config.get("base_url")
-        )
+        model_config = dict(self.config["models"][model_key])
+        return UnifiedLLMAdapter(model_config, model_key=model_key)
     
     def load_dataset(self, dataset_path: str, max_samples: int = None) -> List[Dict[str, Any]]:
         """Load test dataset"""
@@ -139,7 +141,12 @@ class ArenaRunner:
             
             # Compare responses
             try:
-                comparison = self.evaluator.compare(
+                compare_fn = (
+                    self.evaluator.compare_with_swap
+                    if self.swap_positions
+                    else self.evaluator.compare
+                )
+                comparison = compare_fn(
                     question=question,
                     response_a=response_a,
                     response_b=response_b,
@@ -169,10 +176,15 @@ class ArenaRunner:
                 "reasoning": comparison.get("reasoning", ""),
                 "score_difference": comparison.get("score_difference", 0)
             }
+            if "position_consistent" in comparison:
+                result["position_consistent"] = comparison["position_consistent"]
             results.append(result)
         
         # Calculate summary
         total = len(results)
+        position_inconsistent = sum(
+            1 for r in results if r.get("position_consistent") is False
+        )
         summary = {
             "model_a": model_a_key,
             "model_b": model_b_key,
@@ -180,6 +192,8 @@ class ArenaRunner:
             "model_a_wins": model_a_wins,
             "model_b_wins": model_b_wins,
             "ties": ties,
+            "position_swap_enabled": self.swap_positions,
+            "position_inconsistent": position_inconsistent,
             "model_a_win_rate": (model_a_wins / total * 100) if total > 0 else 0,
             "model_b_win_rate": (model_b_wins / total * 100) if total > 0 else 0,
             "tie_rate": (ties / total * 100) if total > 0 else 0
@@ -300,6 +314,8 @@ class ArenaRunner:
         print(f"{'Ties':30s} : {summary['ties']:3d} ({summary['tie_rate']:.1f}%)")
         print(f"{'='*80}")
         print(f"Total Battles: {summary['total_battles']}")
+        if summary.get("position_swap_enabled"):
+            print(f"Position-bias check: {summary.get('position_inconsistent', 0)} tutarsız karar Tie sayıldı")
         
         # Determine winner
         if summary['model_a_wins'] > summary['model_b_wins']:
@@ -324,11 +340,13 @@ def main():
     parser.add_argument("--max-samples", type=int, help="Maximum samples per dataset")
     parser.add_argument("--judge", help="Judge model key (default: auto-select)")
     parser.add_argument("--output-dir", default="reports/arena", help="Output directory")
-    
+    parser.add_argument("--no-swap", action="store_true",
+                        help="Disable position-bias mitigation (judge only once, without A/B swap)")
+
     args = parser.parse_args()
-    
+
     # Initialize arena runner
-    runner = ArenaRunner(judge_model_key=args.judge)
+    runner = ArenaRunner(judge_model_key=args.judge, swap_positions=not args.no_swap)
     
     # Determine datasets
     if args.all:
