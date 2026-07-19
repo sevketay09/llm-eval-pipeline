@@ -7,6 +7,7 @@ Output schema identical to AzureAgentEvaluator for backward compatibility.
 import json
 from typing import Dict, Any, List, Optional, Union
 from adapters.unified_adapter import UnifiedLLMAdapter
+from evaluators.judge_utils import request_judge_json, extract_score
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -174,25 +175,18 @@ Sadece JSON formatında yanıt ver:
             {"role": "system", "content": "Sen bir ajan değerlendirme uzmanısın. Verilen kriterlere göre ajan konuşmalarını objektif şekilde puanla. Sadece JSON formatında yanıt ver."},
             {"role": "user", "content": prompt},
         ]
-        result = self.judge.generate(messages)
-        content = (result.get("content") or "").strip()
+        parsed = request_judge_json(self.judge, messages, f"agent_judge:{metric}")
+        raw_score = extract_score(parsed, f"agent_judge:{metric}")
+        if raw_score is None:
+            # None (not 0.0) so aggregate averages exclude failed evaluations.
+            return {"score": None, "reasoning": "parse error", "result": "error", "raw": parsed or {}}
 
-        try:
-            if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
-            parsed = json.loads(content)
-            raw_score = float(parsed.get("score", 0))
-            score = max(0.0, min(5.0, raw_score))
-            normalized = round(score / 5.0, 4)
-            reasoning = parsed.get("reasoning", "")
-            res = parsed.get("result", "")
-            logger.debug(f"[agent_judge] {metric} → score={score:.1f} result={res}")
-            return {"score": normalized, "reasoning": reasoning, "result": res, "raw": parsed}
-        except Exception as e:
-            logger.warning(f"[agent_judge] {metric} parse failed: {e} | raw: {content[:200]!r}")
-            return {"score": 0.0, "reasoning": "parse error", "result": "error", "raw": {}}
+        score = max(0.0, min(5.0, raw_score))
+        normalized = round(score / 5.0, 4)
+        reasoning = parsed.get("reasoning", "")
+        res = parsed.get("result", "")
+        logger.debug(f"[agent_judge] {metric} → score={score:.1f} result={res}")
+        return {"score": normalized, "reasoning": reasoning, "result": res, "raw": parsed}
 
     def evaluate_task_adherence(
         self,
@@ -259,17 +253,18 @@ Sadece JSON formatında yanıt ver:
         completeness = self.evaluate_response_completeness(query, response)
         intent = self.evaluate_intent_resolution(query, response)
 
-        valid_scores = [r["score"] for r in (task, tool, completeness, intent) if r["score"] > 0]
-        avg = sum(valid_scores) / len(valid_scores) if valid_scores else 0.0
+        valid_scores = [r["score"] for r in (task, tool, completeness, intent) if isinstance(r["score"], (int, float))]
+        avg = round(sum(valid_scores) / len(valid_scores), 4) if valid_scores else None
 
-        logger.info(f"[agent_judge] evaluate_all → task={task['score']:.2f} tool={tool['score']:.2f} completeness={completeness['score']:.2f} intent={intent['score']:.2f} avg={avg:.2f}")
+        _fmt = lambda r: f"{r['score']:.2f}" if isinstance(r["score"], (int, float)) else "err"
+        logger.info(f"[agent_judge] evaluate_all → task={_fmt(task)} tool={_fmt(tool)} completeness={_fmt(completeness)} intent={_fmt(intent)} avg={avg}")
 
         return {
             "task_adherence": task,
             "tool_call_accuracy": tool,
             "response_completeness": completeness,
             "intent_resolution": intent,
-            "aggregate_score": round(avg, 4),
+            "aggregate_score": avg,
         }
 
     def evaluate_simple(
@@ -281,13 +276,13 @@ Sadece JSON formatında yanıt ver:
         completeness = self.evaluate_response_completeness(query, response)
         intent = self.evaluate_intent_resolution(query, response)
 
-        valid_scores = [r["score"] for r in (completeness, intent) if r["score"] > 0]
-        avg = sum(valid_scores) / len(valid_scores) if valid_scores else 0.0
+        valid_scores = [r["score"] for r in (completeness, intent) if isinstance(r["score"], (int, float))]
+        avg = round(sum(valid_scores) / len(valid_scores), 4) if valid_scores else None
 
         return {
             "response_completeness": completeness,
             "intent_resolution": intent,
-            "aggregate_score": round(avg, 4),
+            "aggregate_score": avg,
         }
 
 

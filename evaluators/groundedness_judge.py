@@ -4,9 +4,9 @@ LLM-as-judge for RAG faithfulness / context grounding.
 No Azure dependency. Uses UnifiedLLMAdapter.
 Output schema identical to FaithfulnessEvaluator for backward compatibility.
 """
-import json
 from typing import Dict, Any, Optional
 from adapters.unified_adapter import UnifiedLLMAdapter
+from evaluators.judge_utils import request_judge_json, extract_score
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -109,39 +109,33 @@ Sadece JSON formatında yanıt ver:
             {"role": "user", "content": prompt},
         ]
 
-        result = self.judge.generate(messages)
-        content = (result.get("content") or "").strip()
-
-        try:
-            if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
-            parsed = json.loads(content)
-            raw_score = float(parsed.get("score", 0))
-            score = max(1.0, min(5.0, raw_score))
-            reasoning = parsed.get("reasoning", "")
-            res = parsed.get("result", "pass" if score >= self._threshold else "fail")
-            is_faithful = score >= self._threshold
-            logger.debug(f"[groundedness_judge] score={score:.1f} is_faithful={is_faithful}")
+        parsed = request_judge_json(self.judge, messages, "groundedness_judge")
+        raw_score = extract_score(parsed, "groundedness_judge")
+        if raw_score is None:
+            # Parse/score failure: score stays None so aggregations exclude
+            # this item instead of counting it as a genuine 0.
             return {
-                "score": score,
-                "normalized_score": round(score / 5.0, 4),
-                "is_faithful": is_faithful,
-                "reasoning": reasoning,
-                "result": res,
-                "raw": parsed,
-            }
-        except Exception as e:
-            logger.warning(f"[groundedness_judge] parse failed: {e} | raw: {content[:200]!r}")
-            return {
-                "score": 0.0,
-                "normalized_score": 0.0,
-                "is_faithful": False,
+                "score": None,
+                "normalized_score": None,
+                "is_faithful": None,
                 "reasoning": "parse error",
                 "result": "error",
-                "raw": {},
+                "raw": parsed or {},
             }
+
+        score = max(1.0, min(5.0, raw_score))
+        reasoning = parsed.get("reasoning", "")
+        res = parsed.get("result", "pass" if score >= self._threshold else "fail")
+        is_faithful = score >= self._threshold
+        logger.debug(f"[groundedness_judge] score={score:.1f} is_faithful={is_faithful}")
+        return {
+            "score": score,
+            "normalized_score": round(score / 5.0, 4),
+            "is_faithful": is_faithful,
+            "reasoning": reasoning,
+            "result": res,
+            "raw": parsed,
+        }
 
     def evaluate_batch(self, items: list) -> list:
         """Evaluate faithfulness for a batch of items.

@@ -3,10 +3,10 @@ Quality Judge Evaluator — replaces azure_quality.py.
 LLM-as-judge for coherence, fluency, relevance, groundedness.
 No Azure dependency. Uses UnifiedLLMAdapter (same judge model as pipeline).
 """
-import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, Any, Optional
 from adapters.unified_adapter import UnifiedLLMAdapter
+from evaluators.judge_utils import request_judge_json, extract_score
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -90,23 +90,17 @@ Yanıtını JSON formatında ver:
             {"role": "system", "content": "Sen bir metin kalitesi değerlendirme uzmanısın. Verilen kriterlere göre yanıtları objektif şekilde puanla. Sadece JSON formatında yanıt ver."},
             {"role": "user", "content": prompt},
         ]
-        result = self.judge.generate(messages)
-        content = (result.get("content") or "").strip()
+        parsed = request_judge_json(self.judge, messages, f"quality_judge:{metric}")
+        raw_score = extract_score(parsed, f"quality_judge:{metric}")
+        if raw_score is None:
+            # None (not 0.0) so callers can drop the metric instead of
+            # polluting averages with a fake zero.
+            return {"score": None, "normalized": None, "reasoning": "parse error"}
 
-        try:
-            if "```json" in content:
-                content = content.split("```json")[1].split("```")[0].strip()
-            elif "```" in content:
-                content = content.split("```")[1].split("```")[0].strip()
-            parsed = json.loads(content)
-            raw_score = float(parsed.get("score", 0))
-            score = max(0.0, min(5.0, raw_score))
-            reasoning = parsed.get("reasoning", "")
-            logger.debug(f"[quality_judge] {metric} → score={score:.1f}")
-            return {"score": score, "normalized": round(score / 5.0, 4), "reasoning": reasoning}
-        except Exception as e:
-            logger.warning(f"[quality_judge] {metric} parse failed: {e} | raw: {content[:200]!r}")
-            return {"score": 0.0, "normalized": 0.0, "reasoning": "parse error"}
+        score = max(0.0, min(5.0, raw_score))
+        reasoning = parsed.get("reasoning", "")
+        logger.debug(f"[quality_judge] {metric} → score={score:.1f}")
+        return {"score": score, "normalized": round(score / 5.0, 4), "reasoning": reasoning}
 
     def evaluate_coherence(self, query: str, response: str) -> Dict[str, Any]:
         prompt = self._PROMPTS["coherence"].format(query=query, response=response)
@@ -148,17 +142,24 @@ Yanıtını JSON formatında ver:
             tasks["groundedness"] = lambda: self.evaluate_groundedness(query, response, context)["score"]
 
         scores: Dict[str, float] = {}
+        failed = []
         with ThreadPoolExecutor(max_workers=len(tasks)) as executor:
             futures = {executor.submit(fn): name for name, fn in tasks.items()}
             for future in as_completed(futures):
                 name = futures[future]
                 try:
-                    scores[name] = future.result()
+                    value = future.result()
                 except Exception as e:
                     logger.warning(f"[quality_judge] {name} failed: {e}")
-                    scores[name] = 0.0
+                    value = None
+                # Failed metrics are omitted entirely — downstream mapping
+                # builders treat a missing key as "not scored".
+                if isinstance(value, (int, float)):
+                    scores[name] = value
+                else:
+                    failed.append(name)
 
-        logger.info(f"[quality_judge] evaluate_all → {scores}")
+        logger.info(f"[quality_judge] evaluate_all → {scores}" + (f" | failed: {failed}" if failed else ""))
         return scores
 
 
