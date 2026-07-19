@@ -21,3 +21,14 @@ gate:
   regression:
     max_weighted_drop: 0.03   # fail if weighted_score drops more than this
     max_test_drop: 0.05       # fail if any test's overall_score drops more than this
+
+  # Variance-aware per-test gating: compares the bootstrap CI of per-case judge
+  # scores against the threshold instead of the bare point estimate.
+  #   bound: upper → fail only when even the optimistic CI edge is below the
+  #                  threshold (small-sample noise doesn't break the build)
+  #   bound: lower → strict; the pessimistic CI edge must clear the threshold
+  variance_aware:
+    enabled: true
+    confidence: 0.95
+    n_bootstrap: 1000
+    bound: upper

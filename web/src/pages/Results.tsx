@@ -55,6 +55,24 @@ function formatMetric(value?: number | null, digits = 2) {
   return value.toFixed(digits);
 }
 
+// 95% CI of the mean per-case judge score (normal approximation for display;
+// the CI gate itself uses bootstrap server-side)
+function judgeScoreCi(testResult: unknown): [number, number, number] | null {
+  const results = (testResult as Record<string, unknown> | null)?.results;
+  if (!Array.isArray(results)) return null;
+  const scores: number[] = [];
+  for (const item of results) {
+    const value = ((item as Record<string, unknown>)?.scores as Record<string, unknown> | undefined)?.judge_score;
+    if (typeof value === "number" && !Number.isNaN(value)) scores.push(value);
+  }
+  const n = scores.length;
+  if (n < 2) return null;
+  const mean = scores.reduce((a, b) => a + b, 0) / n;
+  const sd = Math.sqrt(scores.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1));
+  const half = (1.96 * sd) / Math.sqrt(n);
+  return [Math.max(0, mean - half), Math.min(1, mean + half), n];
+}
+
 function formatTimestamp(value?: string | null) {
   if (!value) return "—";
   const date = new Date(value);
@@ -3656,6 +3674,7 @@ export default function Results() {
                     <th>Model</th>
                     <th>Test</th>
                     <th>Score</th>
+                    <th>95% CI</th>
                     <th>Intent</th>
                     <th>Items</th>
                   </tr>
@@ -3676,6 +3695,18 @@ export default function Results() {
                           ) : (
                             "—"
                           )}
+                        </td>
+                        <td>
+                          {(() => {
+                            const ci = judgeScoreCi(testResult);
+                            return ci ? (
+                              <span className="micro-copy whitespace-nowrap">
+                                {ci[0].toFixed(3)} – {ci[1].toFixed(3)}
+                              </span>
+                            ) : (
+                              "—"
+                            );
+                          })()}
                         </td>
                         <td>
                           {testResult.summary?.avg_scores?.intent_resolution != null ? (

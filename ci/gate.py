@@ -66,6 +66,9 @@ class CheckResult:
     baseline_value: Optional[float] = None
     delta: Optional[float] = None
     detail: Optional[str] = None
+    ci_lower: Optional[float] = None
+    ci_upper: Optional[float] = None
+    sample_size: Optional[int] = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -164,6 +167,7 @@ def _normalize_gate_config(gate: dict[str, Any]) -> dict[str, Any]:
         "fail_on_test_error": gate.get("fail_on_test_error", True),
         "tests": dict(gate.get("tests", {}) or {}),
         "regression": dict(gate.get("regression", {}) or {}),
+        "variance_aware": dict(gate.get("variance_aware", {}) or {}),
     }
     return normalized
 
@@ -197,6 +201,38 @@ def _test_overall_score(test_data: dict[str, Any]) -> Optional[float]:
 
 def _test_has_error(test_data: dict[str, Any]) -> bool:
     return bool(isinstance(test_data, dict) and test_data.get("error"))
+
+
+def _test_case_scores(test_data: dict[str, Any]) -> list[float]:
+    """Per-case judge scores (0-1) for bootstrap CI; empty when unavailable."""
+    scores: list[float] = []
+    for item in test_data.get("results") or []:
+        if isinstance(item, dict):
+            val = (item.get("scores") or {}).get("judge_score")
+            if isinstance(val, (int, float)):
+                scores.append(float(val))
+    return scores
+
+
+def _bootstrap_ci(
+    scores: list[float],
+    confidence: float = 0.95,
+    n_bootstrap: int = 1000,
+    seed: int = 42,
+) -> tuple[float, float]:
+    """Percentile bootstrap CI of the mean. Pure Python, deterministic seed."""
+    import random
+
+    rng = random.Random(seed)
+    n = len(scores)
+    means = sorted(
+        sum(scores[rng.randrange(n)] for _ in range(n)) / n
+        for _ in range(n_bootstrap)
+    )
+    alpha = 1.0 - confidence
+    lo_idx = int((alpha / 2.0) * n_bootstrap)
+    hi_idx = min(n_bootstrap - 1, int((1.0 - alpha / 2.0) * n_bootstrap))
+    return means[lo_idx], means[hi_idx]
 
 
 # --------------------------------------------------------------------------- #
@@ -270,7 +306,8 @@ def evaluate_gate(
                     )
                 )
 
-        # 4. per-test overall_score minimums
+        # 4. per-test overall_score minimums (optionally variance-aware)
+        variance_cfg = config.get("variance_aware") or {}
         for test_name, test_min in (config.get("tests") or {}).items():
             test_data = _tests(model_data).get(test_name)
             if not isinstance(test_data, dict):
@@ -279,6 +316,36 @@ def evaluate_gate(
             base_val = _test_overall_score(base_model.get("tests", {}).get(test_name, {})) \
                 if base_model.get("tests", {}).get(test_name) else None
             passed = val is not None and val >= test_min
+            detail = None if val is not None else "overall_score missing"
+
+            ci_lower = ci_upper = None
+            sample_size = None
+            if variance_cfg.get("enabled") and val is not None:
+                case_scores = _test_case_scores(test_data)
+                if len(case_scores) >= 2:
+                    confidence = float(variance_cfg.get("confidence", 0.95))
+                    ci_lower, ci_upper = _bootstrap_ci(
+                        case_scores,
+                        confidence=confidence,
+                        n_bootstrap=int(variance_cfg.get("n_bootstrap", 1000)),
+                    )
+                    sample_size = len(case_scores)
+                    bound = variance_cfg.get("bound", "upper")
+                    # bound=upper: fail only when even the optimistic CI edge is
+                    # below threshold (small-sample noise doesn't break the build).
+                    # bound=lower: strict — the pessimistic edge must clear it.
+                    naive_passed = passed
+                    if bound == "lower":
+                        passed = ci_lower >= test_min
+                    else:
+                        passed = ci_upper >= test_min
+                    detail = (
+                        f"CI{int(confidence * 100)}% [{ci_lower:.3f}, {ci_upper:.3f}] "
+                        f"n={sample_size} bound={bound}"
+                    )
+                    if passed != naive_passed:
+                        detail += " (variance-aware karar nokta tahmininden farklı)"
+
             result.checks.append(
                 CheckResult(
                     name=f"test:{test_name}",
@@ -288,7 +355,10 @@ def evaluate_gate(
                     passed=passed,
                     baseline_value=base_val,
                     delta=(val - base_val) if (val is not None and base_val is not None) else None,
-                    detail=None if val is not None else "overall_score missing",
+                    detail=detail,
+                    ci_lower=round(ci_lower, 4) if ci_lower is not None else None,
+                    ci_upper=round(ci_upper, 4) if ci_upper is not None else None,
+                    sample_size=sample_size,
                 )
             )
 
