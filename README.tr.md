@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-358%20passed-brightgreen.svg)](#testler)
+[![Tests](https://img.shields.io/badge/tests-364%20passed-brightgreen.svg)](#testler)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Modelleri karşılaştırın · Canlı trace izleyin · Prompt'larınızı deneyin · Güvenliği test edin*
@@ -121,6 +121,15 @@ uvicorn api.main:app --host 0.0.0.0 --port 8001
 cp .env.example .env             # .env içini doldurun
 docker compose up --build        # http://localhost:8001
 ```
+
+### 60 Saniyede Demo (API key gerekmez)
+
+```bash
+make demo            # mock model ile offline smoke eval → Dashboard dolu gelir
+make demo-docker     # aynı demo, Docker image içinde
+```
+
+Demo koşusu `reports/` altına gerçek bir rapor yazar; ardından `make dev` ile Dashboard'ı açıp sonuçları gezebilirsiniz.
 
 ### Komut Satırı
 
@@ -539,7 +548,7 @@ pytest tests/test_redteam_router_contracts.py  # tek dosya
 pytest -k "experiments"                         # filtreli
 ```
 
-**Mevcut baseline: 358 contract testi pass.**
+**Mevcut baseline: 364 contract testi pass.**
 
 Test izolasyonu için root `conftest.py`:
 - scipy (numpy 2.x binary compat) → `MagicMock`

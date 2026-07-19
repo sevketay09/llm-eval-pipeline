@@ -35,7 +35,10 @@ class UnifiedLLMAdapter:
         logger.debug(f"Initializing adapter for {self.model_name} (provider: {self.provider})")
         
         # Initialize appropriate client
-        if self.provider == "anthropic":
+        if self.provider == "mock":
+            # Offline demo provider: deterministic canned responses, no network.
+            self.client = None
+        elif self.provider == "anthropic":
             self.client = Anthropic(api_key=config["api_key"])
         elif self.provider == "azure" or "azure" in config.get("base_url", "").lower() or "api_version" in config:
             # Azure OpenAI
@@ -106,7 +109,9 @@ class UnifiedLLMAdapter:
         logger.debug(f"[{self.model_name}] → API call | messages={len(messages)} temperature={temperature} max_tokens={max_tokens}")
 
         try:
-            if self.provider == "anthropic":
+            if self.provider == "mock":
+                result = self._generate_mock(messages, tools, **kwargs)
+            elif self.provider == "anthropic":
                 result = self._generate_anthropic(messages, tools, temperature, max_tokens, **kwargs)
             else:
                 result = self._generate_openai(messages, tools, temperature, max_tokens, **kwargs)
@@ -283,6 +288,68 @@ class UnifiedLLMAdapter:
             'model': self.model_name
         }
     
+    def _generate_mock(
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List[Dict]],
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Deterministic offline responses for demo runs (provider: mock).
+
+        - Judge-style prompts (mention JSON output) get a fixed positive verdict
+          covering every judge schema in the pipeline (label / score / result).
+        - Tool-enabled calls answer with a call to the first available tool.
+        - Everything else gets a short canned answer echoing the question.
+        """
+        prompt_text = " ".join(str(m.get("content") or "") for m in messages)
+        content = None
+        tool_calls = None
+
+        if "JSON" in prompt_text or "json" in prompt_text:
+            content = json.dumps({
+                "label": "TAM_DOGRU",
+                "score": 4,
+                "reasoning": "Demo mock judge: sabit olumlu karar (gerçek bir değerlendirme değildir).",
+                "result": "pass",
+            }, ensure_ascii=False)
+        elif tools:
+            tool = tools[0].get("function", tools[0])
+            required = (tool.get("parameters") or {}).get("required", [])
+            props = (tool.get("parameters") or {}).get("properties", {})
+            arguments = {}
+            for param in required:
+                param_type = (props.get(param) or {}).get("type", "string")
+                arguments[param] = 1 if param_type in ("integer", "number") else "demo"
+            tool_calls = [{
+                "id": "mock-call-1",
+                "name": tool.get("name", "unknown_tool"),
+                "arguments": arguments,
+            }]
+            content = ""
+        else:
+            last_user = next(
+                (m.get("content") or "" for m in reversed(messages) if m.get("role") == "user"),
+                "",
+            )
+            content = (
+                "Bu bir demo yanıtıdır (mock model). Soru özeti: "
+                + last_user[:160]
+            )
+
+        input_tokens = max(1, len(prompt_text) // 4)
+        output_tokens = max(1, len(content or "") // 4)
+        time.sleep(0.01)  # tiny non-zero latency so throughput metrics stay sane
+
+        return {
+            'content': content,
+            'tool_calls': tool_calls,
+            'usage': {
+                'input_tokens': input_tokens,
+                'output_tokens': output_tokens
+            },
+            'model': self.model_name
+        }
+
     def _convert_tools_to_anthropic(self, openai_tools: List[Dict]) -> List[Dict]:
         """Convert OpenAI tool format to Anthropic format"""
         anthropic_tools = []

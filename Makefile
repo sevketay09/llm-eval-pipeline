@@ -16,11 +16,13 @@ WEB_PORT ?= 5173
 
 .PHONY: help install-requirements clean docker-build docker-run docker-push \
 	build-debug up-debug down-debug tail-logs restart-debug start-debug clear-results \
-	dev dev-backend dev-frontend build-frontend preview-frontend check-api
+	dev dev-backend dev-frontend build-frontend preview-frontend check-api demo demo-docker
 
 help:
 	@echo "Available targets:"
 	@echo "  install-requirements - Install Python dependencies"
+	@echo "  demo                 - Offline demo eval with the mock model (no API keys)"
+	@echo "  demo-docker          - Same demo eval inside the Docker image"
 	@echo "  dev                  - Run FastAPI backend and Vite frontend together"
 	@echo "  dev-backend          - Run FastAPI backend with reload"
 	@echo "  dev-frontend         - Run Vite frontend dev server"
@@ -40,6 +42,16 @@ help:
 
 install-requirements:
 	pip install -r requirements.txt
+
+demo:
+	python main.py --models demo-model --suite smoke --judge demo-model
+
+demo-docker:
+	docker compose build llm-eval-dashboard
+	docker run --rm --user $$(id -u):$$(id -g) -e HOME=/tmp \
+		-v $(CURDIR):/app -w /app \
+		llm-eval-pipeline-llm-eval-dashboard:latest \
+		python main.py --models demo-model --suite smoke --judge demo-model
 
 dev:
 	@trap 'kill 0' EXIT INT TERM; \

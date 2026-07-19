@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-358%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-364%20passed-brightgreen.svg)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Compare models · Watch live traces · Experiment with prompts · Attack your own guardrails*
@@ -121,6 +121,15 @@ uvicorn api.main:app --host 0.0.0.0 --port 8001
 cp .env.example .env             # fill in your keys
 docker compose up --build        # http://localhost:8001
 ```
+
+### 60-Second Demo (no API keys needed)
+
+```bash
+make demo            # offline smoke eval with the mock model → populated dashboard
+make demo-docker     # same demo inside the Docker image
+```
+
+The demo run writes a real report into `reports/`; open the dashboard afterwards with `make dev` and explore the results.
 
 ### Command Line
 
@@ -539,7 +548,7 @@ pytest tests/test_redteam_router_contracts.py  # single file
 pytest -k "experiments"                         # filtered
 ```
 
-**Current baseline: 358 contract tests passing.**
+**Current baseline: 364 contract tests passing.**
 
 Root `conftest.py` for test isolation:
 - scipy (numpy 2.x binary compat) → `MagicMock`
