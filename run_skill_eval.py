@@ -9,6 +9,10 @@ Kullanım:
     # Lint + task-fit judge + birleşik skor:
     python run_skill_eval.py --skill path/to/SKILL.md \
         --task "Haftalık satış CSV'sinden bölge raporu üret" --model demo-model
+
+    # Trigger simulation (routing precision/recall over labeled prompts):
+    python run_skill_eval.py --skill path/to/SKILL.md \
+        --trigger-prompts prompts.json --model demo-model --repeats 3
 """
 import argparse
 import json
@@ -25,15 +29,34 @@ def main() -> int:
     parser.add_argument("--model", default=None, help="Judge model key from config/models.yaml")
     parser.add_argument("--output", default=None, help="Output JSON path (default: reports/skill_eval_<ts>.json)")
     parser.add_argument("--no-save", action="store_true", help="Do not persist a report")
+    parser.add_argument(
+        "--trigger-prompts",
+        default=None,
+        help='Path to a JSON file: [{"text": "...", "expected": true|false|"ambiguous"}, ...]',
+    )
+    parser.add_argument("--repeats", type=int, default=1, help="Trials per prompt for trigger simulation (majority vote)")
     args = parser.parse_args()
 
     if args.task and not args.model:
         raise SystemExit("--task requires --model (judge model key)")
+    if args.trigger_prompts and not args.model:
+        raise SystemExit("--trigger-prompts requires --model (judge model key)")
 
     skill_text = Path(args.skill).read_text(encoding="utf-8")
     service = SkillEvalService()
 
-    if args.task:
+    if args.trigger_prompts:
+        prompts = json.loads(Path(args.trigger_prompts).read_text(encoding="utf-8"))
+        report = service.trigger(skill_text, prompts, args.model, repeats=args.repeats)
+        summary = report["summary"]
+        print(f"\nSkill    : {args.skill} (name: {report['skill']['name']})")
+        print(f"Verdict  : {summary['verdict']}")
+        print(f"Precision: {summary['precision']}  Recall: {summary['recall']}  F1: {summary['f1']}")
+        print(f"Scored   : {summary['scored']}  Skipped: {summary['skipped']}  Ambiguous: {summary['ambiguous_count']}")
+        for r in report["results"]:
+            mark = "?" if r["correct"] is None else ("OK" if r["correct"] else "X")
+            print(f"  [{mark}] expected={r['expected']} predicted={r['predicted']} :: {r['text']}")
+    elif args.task:
         report = service.full(skill_text, args.task, args.model, save=not args.no_save and not args.output)
         lint = report["lint"]
         fit = report["fit"]

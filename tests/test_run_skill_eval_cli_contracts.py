@@ -60,6 +60,24 @@ class RunSkillEvalCliTests(unittest.TestCase):
         self.assertIn("[error] frontmatter_valid", result.stdout)
         self.assertIn("[error] sec_pipe_to_shell", result.stdout)
 
+    def test_trigger_prompts_without_model_exits_with_error(self):
+        prompts_path = self.tmpdir / "prompts.json"
+        prompts_path.write_text(json.dumps([{"text": "do it", "expected": True}]), encoding="utf-8")
+        result = _run_cli("--skill", str(self.skill_path), "--trigger-prompts", str(prompts_path))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("--trigger-prompts requires --model", result.stderr)
+
+    def test_trigger_prompts_with_unknown_model_fails(self):
+        prompts_path = self.tmpdir / "prompts.json"
+        prompts_path.write_text(json.dumps([{"text": "do it", "expected": True}]), encoding="utf-8")
+        result = _run_cli(
+            "--skill", str(self.skill_path),
+            "--trigger-prompts", str(prompts_path),
+            "--model", "definitely-not-a-real-model",
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("definitely-not-a-real-model", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

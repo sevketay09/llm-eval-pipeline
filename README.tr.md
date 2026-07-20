@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-612%20passed-brightgreen.svg)](#testler)
+[![Tests](https://img.shields.io/badge/tests-633%20passed-brightgreen.svg)](#testler)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Modelleri karşılaştırın · Canlı trace izleyin · Prompt'larınızı deneyin · Güvenliği test edin*
@@ -510,10 +510,11 @@ python run_contamination.py --model gpt-4o --dataset eval_datasets/regression/go
 
 ## Skill Quality Lab
 
-Agent SKILL.md dosyalarını değerlendirir: elindeki skill, yaptırmak istediğin iş için yeterli mi? İki katman, sıfır yeni bağımlılık:
+Agent SKILL.md dosyalarını değerlendirir: elindeki skill, yaptırmak istediğin iş için yeterli mi? Üç katman, sıfır yeni bağımlılık:
 
 - **Statik lint** (anında, LLM'siz): frontmatter/name/description doğrulama, gövde token bütçesi, boş bölümler, progressive-disclosure ipucu ve altı güvenlik deseni (pipe-to-shell, yıkıcı `rm`, base64-exec, sudo, secret dosya okuma, env sızdırma). Skor 0-100.
 - **Task-fit judge** (LLM): beş kriter — kapsam örtüşmesi, talimat netliği, eksiksizlik, konvansiyon uyumu, verimlilik riski — her biri 0-1 + skill'den birebir kanıt alıntısı, artı eksikler ve öneriler. Karar: `fit` / `partial_fit` / `unfit`. Birleşik skor = `0.5×lint + 0.5×fit`.
+- **Trigger simülasyonu** (LLM): judge modeli skill'in sadece `name`+`description` alanlarıyla (gövde asla gösterilmez) etiketli bir prompt setine (`true`/`false`/`"ambiguous"`) karşı sınar, her prompt için `repeats` deneme + çoğunluk oyu. Precision/recall/F1/false-positive-rate ve karar döner — `reliable` / `over_triggering` / `under_triggering` / `unreliable` / `insufficient_data` (en az 4 skorlu prompt gerekir).
 
 ```bash
 # Sadece statik lint
@@ -521,9 +522,14 @@ python run_skill_eval.py --skill path/to/SKILL.md
 
 # Lint + task-fit + birleşik skor (reports/skill_eval_<ts>.json'a kaydedilir)
 python run_skill_eval.py --skill path/to/SKILL.md --task "Haftalık satış CSV'sinden bölge raporu üret" --model gpt-4o
+
+# Trigger simülasyonu — etiketli prompt seti üzerinde routing precision/recall
+python run_skill_eval.py --skill path/to/SKILL.md --trigger-prompts prompts.json --model gpt-4o --repeats 3
 ```
 
-Dashboard'daki **Skill Lab** sayfası (`/skill-lab`) ve API üzerinden de kullanılabilir: `POST /api/skill-eval/lint`, `/fit`, `/full`, `GET /api/skill-eval/reports`.
+`prompts.json`: `[{"text": "...", "expected": true|false|"ambiguous"}, ...]`
+
+Dashboard'daki **Skill Lab** sayfası (`/skill-lab`) ve API üzerinden de kullanılabilir: `POST /api/skill-eval/lint`, `/fit`, `/trigger`, `/full`, `GET /api/skill-eval/reports`.
 
 ---
 
@@ -579,7 +585,7 @@ pytest tests/test_redteam_router_contracts.py  # tek dosya
 pytest -k "experiments"                         # filtreli
 ```
 
-**Mevcut baseline: 612 contract testi pass.**
+**Mevcut baseline: 633 contract testi pass.**
 
 Test izolasyonu için root `conftest.py`:
 - scipy (numpy 2.x binary compat) → `MagicMock`

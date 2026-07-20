@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-612%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-633%20passed-brightgreen.svg)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Compare models · Watch live traces · Experiment with prompts · Attack your own guardrails*
@@ -510,10 +510,11 @@ Output: per-case similarity + `clean` / `inconclusive` / `contamination_suspecte
 
 ## Skill Quality Lab
 
-Evaluates agent SKILL.md files: is this skill good enough for the job you want done? Two layers, zero new dependencies:
+Evaluates agent SKILL.md files: is this skill good enough for the job you want done? Three layers, zero new dependencies:
 
 - **Static lint** (instant, no LLM): frontmatter/name/description validation, body token budget, empty sections, progressive-disclosure hint, and six security red-flag patterns (pipe-to-shell, destructive `rm`, base64-exec, sudo, secret-file access, env exfiltration). Score 0-100.
 - **Task-fit judge** (LLM): five criteria — scope coverage, instruction clarity, completeness, convention alignment, efficiency risk — each 0-1 with a verbatim evidence quote from the skill, plus gaps and suggestions. Verdict: `fit` / `partial_fit` / `unfit`. Combined score = `0.5×lint + 0.5×fit`.
+- **Trigger simulation** (LLM): probes the judge model with only the skill's `name`+`description` (never the body) against a labeled prompt set (`true`/`false`/`"ambiguous"`), `repeats` trials per prompt with majority vote. Reports precision/recall/F1/false-positive-rate and a verdict — `reliable` / `over_triggering` / `under_triggering` / `unreliable` / `insufficient_data` (needs ≥4 scored prompts).
 
 ```bash
 # Static lint only
@@ -521,9 +522,14 @@ python run_skill_eval.py --skill path/to/SKILL.md
 
 # Lint + task-fit + combined score (saved to reports/skill_eval_<ts>.json)
 python run_skill_eval.py --skill path/to/SKILL.md --task "Generate weekly regional sales report from CSV" --model gpt-4o
+
+# Trigger simulation — routing precision/recall over a labeled prompt set
+python run_skill_eval.py --skill path/to/SKILL.md --trigger-prompts prompts.json --model gpt-4o --repeats 3
 ```
 
-Also available as the **Skill Lab** page in the dashboard (`/skill-lab`) and via API: `POST /api/skill-eval/lint`, `/fit`, `/full`, `GET /api/skill-eval/reports`.
+`prompts.json`: `[{"text": "...", "expected": true|false|"ambiguous"}, ...]`
+
+Also available as the **Skill Lab** page in the dashboard (`/skill-lab`) and via API: `POST /api/skill-eval/lint`, `/fit`, `/trigger`, `/full`, `GET /api/skill-eval/reports`.
 
 ---
 
@@ -579,7 +585,7 @@ pytest tests/test_redteam_router_contracts.py  # single file
 pytest -k "experiments"                         # filtered
 ```
 
-**Current baseline: 612 contract tests passing.**
+**Current baseline: 633 contract tests passing.**
 
 Root `conftest.py` for test isolation:
 - scipy (numpy 2.x binary compat) → `MagicMock`

@@ -16,7 +16,6 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from analysis.skill_lint import split_frontmatter
-from evaluators.judge_utils import request_judge_json
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -129,6 +128,10 @@ class SkillTriggerChecker:
         self.repeats = max(1, int(repeats))
 
     def _probe_once(self, meta: Dict[str, str], prompt_text: str) -> Optional[bool]:
+        # Lazy import: evaluators/__init__ drags in scipy-dependent modules,
+        # which must not be a requirement for lint-only / import-time paths.
+        from evaluators.judge_utils import request_judge_json
+
         messages = [
             {
                 "role": "system",
