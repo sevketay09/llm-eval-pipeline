@@ -23,6 +23,7 @@ from api.routers import (
     rag_eval_router,
     redteam_router,
     results_router,
+    skill_eval_router,
     traces_router,
     ws_router,
 )
@@ -71,6 +72,7 @@ def create_app() -> FastAPI:
     app.include_router(custom_metrics_router, prefix="/api")
     app.include_router(rag_eval_router, prefix="/api")
     app.include_router(failure_clustering_router, prefix="/api")
+    app.include_router(skill_eval_router, prefix="/api")
     app.include_router(ws_router)
 
     @app.get("/api/health")

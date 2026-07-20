@@ -10,3 +10,4 @@ from .experiments import router as experiments_router
 from .failure_clustering import router as failure_clustering_router
 from .rag_eval import router as rag_eval_router
 from .redteam import router as redteam_router
+from .skill_eval import router as skill_eval_router
