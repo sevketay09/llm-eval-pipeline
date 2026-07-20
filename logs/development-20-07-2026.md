@@ -11,3 +11,10 @@ The user approved step S1 of the Skill Quality Lab plan: a static SKILL.md linte
 Files touched: analysis/skill_lint.py (new) and tests/test_skill_lint_contracts.py (new).
 Implemented frontmatter/name/description validation, body size and dead-section checks, progressive-disclosure detection, and six security red-flag patterns (pipe-to-shell, destructive rm, base64-exec, sudo, secret-file access, env exfiltration), producing a 0-100 score with per-check severity.
 Outcome: 20 new contract tests pass and the full suite is 582/582 green; committed and pushed to feature/skill-quality-lab.
+
+## Skill Quality Lab — S2 task-fit judge approval ve implementation
+
+The user approved step S2 of the Skill Quality Lab: a task-fit LLM judge scoring a SKILL.md against the user's task description, and also asked for a dedicated plan tracking file in logs/.
+Files touched: evaluators/skill_fit_judge.py (new), tests/test_skill_fit_judge_contracts.py (new), and logs/skill-lab-plan-20-07-2026.md (new plan tracker with step table, references, and S1 marked done).
+Implemented a 5-criterion rubric (scope_coverage, instruction_clarity, completeness, convention_alignment, efficiency_risk) with per-criterion 0-1 score plus verbatim evidence quote, fit/partial_fit/unfit verdict bands at 0.75/0.5, and parse-failure-returns-None semantics reusing judge_utils.request_judge_json.
+Outcome: 13 new contract tests pass and the full suite is 595/595 green; committed and pushed to feature/skill-quality-lab.
