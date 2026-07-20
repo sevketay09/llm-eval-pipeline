@@ -41,7 +41,15 @@ class TestMakeSession:
 
 class TestCategories:
     def test_all_categories_present(self):
-        expected = {"prompt_injection", "jailbreak", "persona_override", "boundary_test", "role_confusion"}
+        expected = {
+            "prompt_injection",
+            "jailbreak",
+            "persona_override",
+            "boundary_test",
+            "role_confusion",
+            "tool_result_injection",
+            "tool_poisoning",
+        }
         assert set(CATEGORIES) == expected
 
 

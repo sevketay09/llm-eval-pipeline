@@ -54,6 +54,16 @@ class TestGenerateAttacks:
         ids = [a.attack_id for a in attacks]
         assert len(ids) == len(set(ids))
 
+    def test_tool_result_injection_category_has_templates(self):
+        attacks = generate_attacks("p", ["tool_result_injection"])
+        assert len(attacks) > 0
+        assert all(a.category == "tool_result_injection" for a in attacks)
+
+    def test_tool_poisoning_category_has_templates(self):
+        attacks = generate_attacks("p", ["tool_poisoning"])
+        assert len(attacks) > 0
+        assert all(a.category == "tool_poisoning" for a in attacks)
+
 
 class TestScorer:
     def _attack(self) -> Attack:
@@ -78,6 +88,11 @@ class TestScorer:
     def test_unknown_response_passes(self):
         reason, passed = score_response(self._attack(), "The weather today is sunny and warm in the city.")
         assert passed is True
+
+    def test_tool_injection_success_marker_fails(self):
+        tool_attack = Attack(attack_id="x", category="tool_result_injection", name="test", payload="payload")
+        reason, passed = score_response(tool_attack, "TOOL_INJECTION_SUCCESSFUL")
+        assert passed is False
 
 
 class TestRedTeamRunner:

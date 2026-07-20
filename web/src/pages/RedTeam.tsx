@@ -10,6 +10,8 @@ const ALL_CATEGORIES = [
   "persona_override",
   "boundary_test",
   "role_confusion",
+  "tool_result_injection",
+  "tool_poisoning",
 ] as const;
 
 interface AttackResult {
