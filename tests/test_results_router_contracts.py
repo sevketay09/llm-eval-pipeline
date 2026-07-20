@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 
 def _load_results_router_module():
-    module_path = Path(__file__).resolve().parent / "api" / "routers" / "results.py"
+    module_path = Path(__file__).resolve().parent.parent / "api" / "routers" / "results.py"
     spec = importlib.util.spec_from_file_location("isolated_results_router", module_path)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None

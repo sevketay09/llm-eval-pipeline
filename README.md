@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-419%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-562%20passed-brightgreen.svg)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Compare models · Watch live traces · Experiment with prompts · Attack your own guardrails*
@@ -560,7 +560,7 @@ pytest tests/test_redteam_router_contracts.py  # single file
 pytest -k "experiments"                         # filtered
 ```
 
-**Current baseline: 419 contract tests passing.**
+**Current baseline: 562 contract tests passing.**
 
 Root `conftest.py` for test isolation:
 - scipy (numpy 2.x binary compat) → `MagicMock`

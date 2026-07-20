@@ -7,7 +7,7 @@ import yaml
 
 class RegressionGoldenContractsTests(unittest.TestCase):
     def setUp(self):
-        self.root = Path(__file__).resolve().parent
+        self.root = Path(__file__).resolve().parent.parent
         self.dataset_path = self.root / "eval_datasets/regression/golden.json"
         self.registry_path = self.root / "config/task_registry.yaml"
         self.tests_config_path = self.root / "config/tests.yaml"

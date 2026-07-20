@@ -30,10 +30,11 @@ def _load_evaluate_api_module():
     class FakeEvaluationPipeline:
         instances = []
 
-        def __init__(self, config_path, judge_model_key=None, runtime_overrides=None):
+        def __init__(self, config_path, judge_model_key=None, runtime_overrides=None, run=None):
             self.config_path = config_path
             self.judge_model_key = judge_model_key
             self.runtime_overrides = runtime_overrides
+            self.run = run
             self.calls = []
             self.saved_paths = []
             self.loaded_datasets = []
@@ -82,17 +83,27 @@ def _load_evaluate_api_module():
             return {"kind": "judge", "count": self.judge_init_count}
 
     fake_pipeline_runner.EvaluationPipeline = FakeEvaluationPipeline
-    sys.modules["pipeline_runner"] = fake_pipeline_runner
 
     fake_dotenv = types.ModuleType("dotenv")
     fake_dotenv.load_dotenv = lambda *args, **kwargs: None
-    sys.modules["dotenv"] = fake_dotenv
 
-    module_path = Path(__file__).resolve().parent / "evaluate_api.py"
-    spec = importlib.util.spec_from_file_location("isolated_evaluate_api", module_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(module)
+    # Swap fakes in only for the isolated import, then restore — leaking the
+    # fake pipeline_runner breaks every later test that imports the real one.
+    saved = {name: sys.modules.get(name) for name in ("pipeline_runner", "dotenv")}
+    sys.modules["pipeline_runner"] = fake_pipeline_runner
+    sys.modules["dotenv"] = fake_dotenv
+    try:
+        module_path = Path(__file__).resolve().parent.parent / "evaluate_api.py"
+        spec = importlib.util.spec_from_file_location("isolated_evaluate_api", module_path)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(module)
+    finally:
+        for name, original in saved.items():
+            if original is None:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = original
     return module, FakeEvaluationPipeline
 
 

@@ -120,6 +120,7 @@ def evaluate_single(
     config_path: str = "config/models.yaml",
     judge_model: Optional[str] = None,
     temperature: Optional[float] = None,
+    run=None,
 ) -> Dict[str, Any]:
     """Run a single test on a single model.
     

@@ -7,7 +7,7 @@ import numpy as np
 
 
 def _load_embedding_adapter_class():
-    module_path = Path(__file__).resolve().parent / "adapters" / "embedding_adapter.py"
+    module_path = Path(__file__).resolve().parent.parent / "adapters" / "embedding_adapter.py"
     spec = importlib.util.spec_from_file_location("isolated_embedding_adapter", module_path)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None

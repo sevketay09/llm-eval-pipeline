@@ -24,6 +24,29 @@ for _mod in _SCIPY_MODS:
     if _mod not in sys.modules:
         sys.modules[_mod] = MagicMock()
 
+
+def _pure_ttest_1samp(arr, popmean):
+    """Pure-Python one-sample t-test (normal-approx p) for the scipy.stats mock."""
+    import math
+
+    xs = [float(x) - popmean for x in arr]
+    n = len(xs)
+    mean = sum(xs) / n
+    var = sum((x - mean) ** 2 for x in xs) / (n - 1) if n > 1 else 0.0
+    sd = var ** 0.5
+    if sd == 0:
+        return (float("inf") if mean else 0.0, 0.0 if mean else 1.0)
+    t = mean / (sd / n ** 0.5)
+    p = math.erfc(abs(t) / math.sqrt(2))  # two-sided, normal approximation
+    return (t, p)
+
+
+if isinstance(sys.modules["scipy.stats"], MagicMock):
+    sys.modules["scipy.stats"].ttest_1samp = _pure_ttest_1samp
+    sys.modules["scipy.stats"].wilcoxon = lambda arr, **kw: (0.0, 1.0)
+    if isinstance(sys.modules["scipy"], MagicMock):
+        sys.modules["scipy"].stats = sys.modules["scipy.stats"]
+
 # ── sklearn mock — pure-numpy KMeans so injectable-fn tests pass ──────────────
 
 def _make_sklearn_mock() -> ModuleType:
@@ -104,3 +127,22 @@ def _make_sklearn_mock() -> ModuleType:
 
 if "sklearn" not in sys.modules:
     _make_sklearn_mock()
+
+
+# ── event-loop guard ──────────────────────────────────────────────────────────
+# Python 3.9: asyncio.Lock() at service __init__ needs a current event loop.
+# Tests that call asyncio.run() leave none behind, breaking later router tests.
+import asyncio
+
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def _ensure_event_loop():
+    try:
+        loop = asyncio.get_event_loop_policy().get_event_loop()
+        if loop.is_closed():
+            raise RuntimeError
+    except RuntimeError:
+        asyncio.set_event_loop(asyncio.new_event_loop())
+    yield

@@ -3174,10 +3174,13 @@ class EvaluationPipeline:
                 _item_pool.submit(_process_qa_item, idx, item): idx
                 for idx, item in enumerate(dataset)
             }
+            _indexed_results = {}
             for future in tqdm(concurrent.futures.as_completed(futures), total=total_items, desc=test_name):
                 result = future.result()
                 if result is not None:
-                    results.append(result)
+                    _indexed_results[futures[future]] = result
+            # Report in dataset order regardless of completion order
+            results.extend(_indexed_results[idx] for idx in sorted(_indexed_results))
 
         # Build label distribution
         total = len(results)

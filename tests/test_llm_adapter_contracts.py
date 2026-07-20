@@ -48,7 +48,7 @@ def _load_unified_adapter_module():
     fake_tiktoken = types.ModuleType("tiktoken")
     sys.modules["tiktoken"] = fake_tiktoken
 
-    module_path = Path(__file__).resolve().parent / "adapters" / "unified_adapter.py"
+    module_path = Path(__file__).resolve().parent.parent / "adapters" / "unified_adapter.py"
     spec = importlib.util.spec_from_file_location("isolated_unified_adapter", module_path)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None

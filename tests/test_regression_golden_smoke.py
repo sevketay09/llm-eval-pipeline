@@ -92,6 +92,8 @@ class _FakePipelineContext:
     def __init__(self):
         self.judge_adapter = object()
         self._task_registry = {}
+        self.test_config = {"concurrent_items": 1}  # deterministic result order for golden asserts
+        self._run = None
 
     def _inject_schema_instruction(self, system_prompt, schema):
         return system_prompt
@@ -99,13 +101,13 @@ class _FakePipelineContext:
     def _initialize_geval_evaluator(self):
         return None
 
-    def _initialize_azure_quality_evaluator(self):
+    def _initialize_quality_evaluator(self):
         return None
 
     def _evaluate_geval_criterion(self, *args, **kwargs):
         return None
 
-    def _evaluate_azure_quality_scores(self, *args, **kwargs):
+    def _evaluate_quality_scores(self, *args, **kwargs):
         return {}
 
     def _extend_avg_scores_with_nested_metrics(self, *args, **kwargs):
@@ -124,7 +126,7 @@ class _FakePipelineContext:
 class RegressionGoldenSmokeTests(unittest.TestCase):
     def test_run_qa_test_preserves_golden_cases_and_builds_expected_summary(self):
         module = _load_pipeline_runner_module()
-        dataset_path = Path(__file__).resolve().parent / "eval_datasets/regression/golden.json"
+        dataset_path = Path(__file__).resolve().parent.parent / "eval_datasets/regression/golden.json"
         golden_cases = json.loads(dataset_path.read_text(encoding="utf-8"))[:3]
         fake_context = _FakePipelineContext()
         fake_model = _FakeModel()

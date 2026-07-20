@@ -10,7 +10,7 @@ from api.services.eval_service import EvalRun, EvalService
 
 
 def _load_evaluations_router_module():
-    module_path = Path(__file__).resolve().parent / "api" / "routers" / "evaluations.py"
+    module_path = Path(__file__).resolve().parent.parent / "api" / "routers" / "evaluations.py"
     spec = importlib.util.spec_from_file_location("isolated_evaluations_router", module_path)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None

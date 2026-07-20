@@ -85,6 +85,10 @@ class _FakePipelineContext:
         self.models = []
         self.saved_paths = []
         self.final_saved_exports = []
+        self._run = None
+
+    def _attach_ai_commentaries(self, model_keys):
+        return None
 
     def _build_test_mapping(self):
         return {
