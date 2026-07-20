@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-562%20passed-brightgreen.svg)](#testler)
+[![Tests](https://img.shields.io/badge/tests-612%20passed-brightgreen.svg)](#testler)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Modelleri karşılaştırın · Canlı trace izleyin · Prompt'larınızı deneyin · Güvenliği test edin*
@@ -508,6 +508,25 @@ python run_contamination.py --model gpt-4o --dataset eval_datasets/regression/go
 
 ---
 
+## Skill Quality Lab
+
+Agent SKILL.md dosyalarını değerlendirir: elindeki skill, yaptırmak istediğin iş için yeterli mi? İki katman, sıfır yeni bağımlılık:
+
+- **Statik lint** (anında, LLM'siz): frontmatter/name/description doğrulama, gövde token bütçesi, boş bölümler, progressive-disclosure ipucu ve altı güvenlik deseni (pipe-to-shell, yıkıcı `rm`, base64-exec, sudo, secret dosya okuma, env sızdırma). Skor 0-100.
+- **Task-fit judge** (LLM): beş kriter — kapsam örtüşmesi, talimat netliği, eksiksizlik, konvansiyon uyumu, verimlilik riski — her biri 0-1 + skill'den birebir kanıt alıntısı, artı eksikler ve öneriler. Karar: `fit` / `partial_fit` / `unfit`. Birleşik skor = `0.5×lint + 0.5×fit`.
+
+```bash
+# Sadece statik lint
+python run_skill_eval.py --skill path/to/SKILL.md
+
+# Lint + task-fit + birleşik skor (reports/skill_eval_<ts>.json'a kaydedilir)
+python run_skill_eval.py --skill path/to/SKILL.md --task "Haftalık satış CSV'sinden bölge raporu üret" --model gpt-4o
+```
+
+Dashboard'daki **Skill Lab** sayfası (`/skill-lab`) ve API üzerinden de kullanılabilir: `POST /api/skill-eval/lint`, `/fit`, `/full`, `GET /api/skill-eval/reports`.
+
+---
+
 ## Skor Hesaplama
 
 ### Katman 1 — Item Bazında
@@ -560,7 +579,7 @@ pytest tests/test_redteam_router_contracts.py  # tek dosya
 pytest -k "experiments"                         # filtreli
 ```
 
-**Mevcut baseline: 562 contract testi pass.**
+**Mevcut baseline: 612 contract testi pass.**
 
 Test izolasyonu için root `conftest.py`:
 - scipy (numpy 2.x binary compat) → `MagicMock`

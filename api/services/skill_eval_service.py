@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, List, Optional
 import yaml
 
 from analysis.skill_lint import lint_skill
-from evaluators.skill_fit_judge import SkillFitJudge
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -54,6 +53,10 @@ class SkillEvalService:
 
         Raises ValueError for an unknown judge_model key.
         """
+        # Lazy import: pulling evaluators/__init__ drags in scipy-dependent
+        # modules, which must not be a requirement for the lint-only path.
+        from evaluators.skill_fit_judge import SkillFitJudge
+
         adapter = self.adapter_factory(judge_model, self.config_path)
         return SkillFitJudge(adapter).evaluate(skill_text, task_description)
 

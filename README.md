@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-562%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-612%20passed-brightgreen.svg)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Compare models · Watch live traces · Experiment with prompts · Attack your own guardrails*
@@ -508,6 +508,25 @@ Output: per-case similarity + `clean` / `inconclusive` / `contamination_suspecte
 
 ---
 
+## Skill Quality Lab
+
+Evaluates agent SKILL.md files: is this skill good enough for the job you want done? Two layers, zero new dependencies:
+
+- **Static lint** (instant, no LLM): frontmatter/name/description validation, body token budget, empty sections, progressive-disclosure hint, and six security red-flag patterns (pipe-to-shell, destructive `rm`, base64-exec, sudo, secret-file access, env exfiltration). Score 0-100.
+- **Task-fit judge** (LLM): five criteria — scope coverage, instruction clarity, completeness, convention alignment, efficiency risk — each 0-1 with a verbatim evidence quote from the skill, plus gaps and suggestions. Verdict: `fit` / `partial_fit` / `unfit`. Combined score = `0.5×lint + 0.5×fit`.
+
+```bash
+# Static lint only
+python run_skill_eval.py --skill path/to/SKILL.md
+
+# Lint + task-fit + combined score (saved to reports/skill_eval_<ts>.json)
+python run_skill_eval.py --skill path/to/SKILL.md --task "Generate weekly regional sales report from CSV" --model gpt-4o
+```
+
+Also available as the **Skill Lab** page in the dashboard (`/skill-lab`) and via API: `POST /api/skill-eval/lint`, `/fit`, `/full`, `GET /api/skill-eval/reports`.
+
+---
+
 ## Scoring
 
 ### Layer 1 — Per Item
@@ -560,7 +579,7 @@ pytest tests/test_redteam_router_contracts.py  # single file
 pytest -k "experiments"                         # filtered
 ```
 
-**Current baseline: 562 contract tests passing.**
+**Current baseline: 612 contract tests passing.**
 
 Root `conftest.py` for test isolation:
 - scipy (numpy 2.x binary compat) → `MagicMock`
