@@ -60,6 +60,24 @@ class SkillEvalService:
         adapter = self.adapter_factory(judge_model, self.config_path)
         return SkillFitJudge(adapter).evaluate(skill_text, task_description)
 
+    def trigger(
+        self,
+        skill_text: str,
+        prompts: List[Dict[str, Any]],
+        judge_model: str,
+        repeats: int = 1,
+    ) -> Dict[str, Any]:
+        """Routing precision/recall report for a labeled prompt set.
+
+        Raises ValueError for an unknown judge_model key.
+        """
+        # Lazy import for the same reason as fit(): keep the lint-only
+        # path free of the scipy-dependent evaluators/__init__ chain.
+        from analysis.skill_trigger import SkillTriggerChecker
+
+        adapter = self.adapter_factory(judge_model, self.config_path)
+        return SkillTriggerChecker(adapter, repeats=repeats).run(skill_text, prompts)
+
     def full(
         self,
         skill_text: str,

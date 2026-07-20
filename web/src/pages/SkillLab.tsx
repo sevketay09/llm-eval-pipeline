@@ -63,6 +63,34 @@ interface FullReport {
   report_path?: string;
 }
 
+interface TriggerPromptResult {
+  text: string;
+  expected: boolean | "ambiguous";
+  predicted: boolean | null;
+  trigger_rate: number | null;
+  trials: number;
+  correct: boolean | null;
+}
+
+interface TriggerSummary {
+  precision: number | null;
+  recall: number | null;
+  f1: number | null;
+  accuracy: number | null;
+  false_positive_rate: number | null;
+  scored: number;
+  skipped: number;
+  ambiguous_count: number;
+  ambiguous_trigger_rate: number | null;
+  verdict: "reliable" | "over_triggering" | "under_triggering" | "unreliable" | "insufficient_data";
+}
+
+interface TriggerReport {
+  skill: { name: string; description: string };
+  summary: TriggerSummary;
+  results: TriggerPromptResult[];
+}
+
 interface ReportSummary {
   filename: string;
   timestamp: string | null;
@@ -118,6 +146,41 @@ Load the CSV, group by region, write totals to report.csv.
 
 See [details](./reference.md) for column mapping.
 `;
+
+const TRIGGER_VERDICT_TONE: Record<string, "success" | "warning" | "danger" | "neutral"> = {
+  reliable: "success",
+  over_triggering: "warning",
+  under_triggering: "warning",
+  unreliable: "danger",
+  insufficient_data: "neutral",
+};
+
+const SAMPLE_TRIGGER_PROMPTS = [
+  "TRUE: Generate the weekly sales CSV report",
+  "TRUE: Build the regional sales report from data.csv",
+  "FALSE: What is the weather in Ankara?",
+  "FALSE: Translate this sentence to German",
+  "AMBIGUOUS: Summarize this spreadsheet somehow",
+].join("\n");
+
+interface ParsedTriggerPrompt {
+  text: string;
+  expected: boolean | "ambiguous";
+}
+
+function parseTriggerPrompts(raw: string): ParsedTriggerPrompt[] {
+  const prompts: ParsedTriggerPrompt[] = [];
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const match = trimmed.match(/^(TRUE|FALSE|AMBIGUOUS)\s*:\s*(.+)$/i);
+    if (!match || !match[1] || !match[2]) continue;
+    const upper = match[1].toUpperCase();
+    const expected: boolean | "ambiguous" = upper === "TRUE" ? true : upper === "FALSE" ? false : "ambiguous";
+    prompts.push({ text: match[2].trim(), expected });
+  }
+  return prompts;
+}
 
 function LintPanel({ lint }: { lint: LintReport }) {
   const failed = lint.checks.filter((c) => !c.passed);
@@ -211,6 +274,69 @@ function FitPanel({ fit }: { fit: FitReport }) {
   );
 }
 
+function TriggerPanel({ report }: { report: TriggerReport }) {
+  const { summary } = report;
+  const pct = (v: number | null) => (v == null ? "—" : `${Math.round(v * 100)}%`);
+  return (
+    <Card>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", marginBottom: "0.8rem" }}>
+        <p className="section-caption" style={{ margin: 0, flex: 1 }}>Trigger simulation</p>
+        <Badge tone={TRIGGER_VERDICT_TONE[summary.verdict] ?? "neutral"}>
+          {summary.verdict.replace("_", " ")}
+        </Badge>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3" style={{ marginBottom: "0.9rem" }}>
+        <Card className="stat-card" style={{ textAlign: "center" }}>
+          <div className="stat-value" style={{ fontSize: "1.5rem" }}>{pct(summary.precision)}</div>
+          <p className="stat-label">precision</p>
+        </Card>
+        <Card className="stat-card" style={{ textAlign: "center" }}>
+          <div className="stat-value" style={{ fontSize: "1.5rem" }}>{pct(summary.recall)}</div>
+          <p className="stat-label">recall</p>
+        </Card>
+        <Card className="stat-card" style={{ textAlign: "center" }}>
+          <div className="stat-value" style={{ fontSize: "1.5rem" }}>{pct(summary.f1)}</div>
+          <p className="stat-label">F1</p>
+        </Card>
+      </div>
+
+      <p className="micro-copy" style={{ margin: "0 0 0.6rem" }}>
+        {summary.scored} scored · {summary.skipped} skipped (unparseable)
+        {summary.ambiguous_count > 0 &&
+          ` · ${summary.ambiguous_count} ambiguous (${pct(summary.ambiguous_trigger_rate)} trigger rate)`}
+      </p>
+
+      <div className="table-shell" style={{ border: "none", boxShadow: "none", borderRadius: 0 }}>
+        <table>
+          <thead>
+            <tr>{["Prompt", "Expected", "Predicted", "Trials", "Result"].map((h) => <th key={h}>{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {report.results.map((r, i) => (
+              <tr key={i}>
+                <td style={{ fontSize: "0.82rem" }}>{r.text}</td>
+                <td>{r.expected === "ambiguous" ? "ambiguous" : r.expected ? "true" : "false"}</td>
+                <td>{r.predicted == null ? "—" : r.predicted ? "true" : "false"}</td>
+                <td>{r.trials}</td>
+                <td>
+                  {r.correct == null ? (
+                    <Badge tone="neutral">n/a</Badge>
+                  ) : r.correct ? (
+                    <Badge tone="success">correct</Badge>
+                  ) : (
+                    <Badge tone="danger">wrong</Badge>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
+
 export default function SkillLab() {
   const [skillText, setSkillText] = useState("");
   const [task, setTask] = useState("");
@@ -220,6 +346,10 @@ export default function SkillLab() {
   const [full, setFull] = useState<FullReport | null>(null);
   const [history, setHistory] = useState<ReportSummary[]>([]);
   const [loading, setLoading] = useState(false);
+  const [triggerPromptsText, setTriggerPromptsText] = useState(SAMPLE_TRIGGER_PROMPTS);
+  const [repeats, setRepeats] = useState(1);
+  const [triggerReport, setTriggerReport] = useState<TriggerReport | null>(null);
+  const [triggerLoading, setTriggerLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
 
@@ -295,6 +425,37 @@ export default function SkillLab() {
       toast.error(e instanceof Error ? e.message : String(e));
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function runTrigger() {
+    if (!skillText.trim()) {
+      toast.error("Paste or upload a SKILL.md first.");
+      return;
+    }
+    if (!judgeModel) {
+      toast.error("Pick a judge model.");
+      return;
+    }
+    const prompts = parseTriggerPrompts(triggerPromptsText);
+    if (prompts.length === 0) {
+      toast.error("Add at least one prompt (TRUE:/FALSE:/AMBIGUOUS: prefix).");
+      return;
+    }
+    setTriggerLoading(true);
+    try {
+      const r = await apiPost<TriggerReport>("/skill-eval/trigger", {
+        skill_text: skillText,
+        judge_model: judgeModel,
+        prompts,
+        repeats,
+      });
+      setTriggerReport(r);
+      toast.success(`Trigger sim done — verdict: ${r.summary.verdict.replace("_", " ")}.`);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    } finally {
+      setTriggerLoading(false);
     }
   }
 
@@ -420,6 +581,40 @@ export default function SkillLab() {
           {full?.fit && <FitPanel fit={full.fit} />}
         </div>
       )}
+
+      {/* Trigger simulation */}
+      <Card>
+        <p className="section-caption" style={{ marginBottom: "0.3rem" }}>Trigger simulation</p>
+        <p className="micro-copy" style={{ margin: "0 0 0.7rem" }}>
+          Probes the judge model with only the skill's <strong>name + description</strong> (never the
+          body) against labeled prompts, to see whether routing actually fires when it should.
+        </p>
+        <Field label={'Labeled prompts — one per line: "TRUE: …", "FALSE: …", or "AMBIGUOUS: …"'}>
+          <Textarea
+            value={triggerPromptsText}
+            onChange={(e) => setTriggerPromptsText(e.target.value)}
+            rows={6}
+            className="font-mono"
+            style={{ fontSize: "0.76rem" }}
+          />
+        </Field>
+        <div className="grid gap-3 sm:grid-cols-2" style={{ marginTop: "0.6rem" }}>
+          <Field label="Repeats per prompt (majority vote)">
+            <Select value={String(repeats)} onChange={(e) => setRepeats(Number(e.target.value))}>
+              {[1, 2, 3, 5].map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+        <div className="button-row" style={{ marginTop: "0.9rem" }}>
+          <Button icon={<Play size={14} />} loading={triggerLoading} onClick={runTrigger}>
+            Run trigger simulation
+          </Button>
+        </div>
+      </Card>
+
+      {triggerReport && <TriggerPanel report={triggerReport} />}
 
       {/* History */}
       {history.length > 0 && (

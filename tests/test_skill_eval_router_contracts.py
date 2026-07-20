@@ -52,6 +52,32 @@ def _stub_factory(content=None):
     return factory
 
 
+class TriggerStubAdapter:
+    """Triggers when the user prompt mentions csv/report/sales — deterministic stand-in."""
+
+    def generate(self, messages, response_format=None, max_tokens=None):
+        prompt = messages[1]["content"].lower()
+        trigger = any(word in prompt for word in ("csv", "report", "sales"))
+        return {"content": json.dumps({"trigger": trigger}), "latency": 0.1, "usage": {}}
+
+
+def _trigger_factory():
+    def factory(model_key, config_path):
+        if model_key == "missing-model":
+            raise ValueError(f"Model '{model_key}' not found in config")
+        return TriggerStubAdapter()
+
+    return factory
+
+
+TRIGGER_PROMPTS = [
+    {"text": "Generate the weekly sales CSV report", "expected": True},
+    {"text": "Build the regional sales report", "expected": True},
+    {"text": "What is the weather today?", "expected": False},
+    {"text": "Translate this to German", "expected": False},
+]
+
+
 def _load_router_module():
     module_path = Path(__file__).resolve().parent.parent / "api" / "routers" / "skill_eval.py"
     spec = importlib.util.spec_from_file_location("isolated_skill_eval_router", module_path)
@@ -61,9 +87,11 @@ def _load_router_module():
     return module
 
 
-def _client(tmpdir, content=None):
+def _client(tmpdir, content=None, adapter_factory=None):
     module = _load_router_module()
-    module._service = SkillEvalService(reports_dir=tmpdir, adapter_factory=_stub_factory(content))
+    module._service = SkillEvalService(
+        reports_dir=tmpdir, adapter_factory=adapter_factory or _stub_factory(content)
+    )
     app = FastAPI()
     app.include_router(module.router, prefix="/api")
     return TestClient(app)
@@ -108,6 +136,17 @@ class SkillEvalServiceTests(unittest.TestCase):
         self.assertIsNotNone(self.service.get_report(filename))
         self.assertIsNone(self.service.get_report("../../etc/passwd"))
         self.assertIsNone(self.service.get_report("other_report.json"))
+
+    def test_trigger_delegates_to_skill_trigger_checker(self):
+        service = SkillEvalService(reports_dir=self.tmpdir, adapter_factory=_trigger_factory())
+        report = service.trigger(SKILL_TEXT, TRIGGER_PROMPTS, "demo-model")
+        self.assertEqual(report["summary"]["verdict"], "reliable")
+        self.assertEqual(len(report["results"]), 4)
+
+    def test_trigger_raises_for_unknown_model(self):
+        service = SkillEvalService(reports_dir=self.tmpdir, adapter_factory=_trigger_factory())
+        with self.assertRaises(ValueError):
+            service.trigger(SKILL_TEXT, TRIGGER_PROMPTS, "missing-model")
 
 
 class SkillEvalRouterTests(unittest.TestCase):
@@ -184,6 +223,38 @@ class SkillEvalRouterTests(unittest.TestCase):
     def test_report_detail_404_for_missing_file(self):
         response = _client(self.tmpdir).get("/api/skill-eval/reports/skill_eval_nope.json")
         self.assertEqual(response.status_code, 404)
+
+    def test_trigger_endpoint_returns_routing_report(self):
+        response = _client(self.tmpdir, adapter_factory=_trigger_factory()).post(
+            "/api/skill-eval/trigger",
+            json={
+                "skill_text": SKILL_TEXT,
+                "judge_model": "demo-model",
+                "prompts": TRIGGER_PROMPTS,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["summary"]["verdict"], "reliable")
+        self.assertEqual(len(body["results"]), 4)
+
+    def test_trigger_endpoint_404_for_unknown_model(self):
+        response = _client(self.tmpdir, adapter_factory=_trigger_factory()).post(
+            "/api/skill-eval/trigger",
+            json={
+                "skill_text": SKILL_TEXT,
+                "judge_model": "missing-model",
+                "prompts": TRIGGER_PROMPTS,
+            },
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_trigger_endpoint_rejects_empty_prompts(self):
+        response = _client(self.tmpdir, adapter_factory=_trigger_factory()).post(
+            "/api/skill-eval/trigger",
+            json={"skill_text": SKILL_TEXT, "judge_model": "demo-model", "prompts": []},
+        )
+        self.assertEqual(response.status_code, 422)
 
 
 if __name__ == "__main__":

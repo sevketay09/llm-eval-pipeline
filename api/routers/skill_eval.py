@@ -3,7 +3,12 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query
 
-from api.schemas.skill_eval import SkillFitRequest, SkillFullRequest, SkillLintRequest
+from api.schemas.skill_eval import (
+    SkillFitRequest,
+    SkillFullRequest,
+    SkillLintRequest,
+    SkillTriggerRequest,
+)
 from api.services.skill_eval_service import SkillEvalService
 
 router = APIRouter(prefix="/skill-eval", tags=["skill-eval"])
@@ -25,6 +30,19 @@ def fit_skill(req: SkillFitRequest):
     if result is None:
         raise HTTPException(status_code=502, detail="Judge output unusable (parse failed or empty input)")
     return result
+
+
+@router.post("/trigger")
+def trigger_skill(req: SkillTriggerRequest):
+    try:
+        return _service.trigger(
+            req.skill_text,
+            [p.model_dump() for p in req.prompts],
+            req.judge_model,
+            repeats=req.repeats,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.post("/full")
