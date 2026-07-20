@@ -760,6 +760,84 @@ def _build_agentic_tool_use_efficiency_metric(efficiency_summary: Optional[Dict[
     return serialized[0] if serialized else None
 
 
+def _evaluate_agentic_tool_call_order(
+    expected_tools: List[str],
+    tool_calls: Any,
+) -> Optional[Dict[str, Any]]:
+    """Sequence/plan-adherence: were the expected tools called in the expected order?
+
+    Only meaningful when the case declares 2+ expected tool calls — with a single
+    expected tool there is no order to violate. Uses the same longest-subsequence
+    match already proven for function_calling_chain's order_score, applied here to
+    multi-turn agentic tool-trace results (mcp_tool_use / agentic_workflows), which
+    previously only had set-based tool_selection (no ordering signal).
+    """
+    normalized_expected = [
+        name for name in (_normalize_tool_name(t) for t in (expected_tools or [])) if name
+    ]
+    if len(normalized_expected) < 2:
+        return None
+
+    called_sequence = _extract_tool_call_sequence(tool_calls)
+    if not called_sequence:
+        return {
+            "score": 0.0,
+            "expected_sequence": normalized_expected,
+            "called_sequence": [],
+            "matched_in_order": 0,
+            "reason": "No tool calls were executed; sequence adherence is zero.",
+            "exact_match": False,
+        }
+
+    idx = 0
+    for name in called_sequence:
+        if idx < len(normalized_expected) and name == normalized_expected[idx]:
+            idx += 1
+    score = idx / len(normalized_expected)
+
+    if idx == len(normalized_expected):
+        reason = "Expected tools were called in the expected order."
+    else:
+        reason = f"Matched {idx}/{len(normalized_expected)} expected tools in order before diverging."
+
+    return {
+        "score": round(score, 4),
+        "expected_sequence": normalized_expected,
+        "called_sequence": called_sequence,
+        "matched_in_order": idx,
+        "reason": reason,
+        "exact_match": idx == len(normalized_expected),
+    }
+
+
+def _build_agentic_order_adherence_metric(order_summary: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not isinstance(order_summary, dict):
+        return None
+
+    score = order_summary.get("score")
+    if not isinstance(score, (int, float)):
+        return None
+
+    threshold = 0.7
+    metric_result = build_metric_result(
+        "order_adherence",
+        float(score),
+        provider="agentic_trace",
+        group="tool_usage_pack",
+        normalized_value=float(score),
+        success=float(score) >= threshold,
+        reason=order_summary.get("reason") or f"order_adherence {'meets' if float(score) >= threshold else 'below'} threshold {threshold:.2f}",
+        metadata={
+            "threshold": threshold,
+            "strict_mode": False,
+            "source_metric": "agentic_trace.order_adherence",
+        },
+        raw_payload=order_summary,
+    )
+    serialized = serialize_metric_results([metric_result])
+    return serialized[0] if serialized else None
+
+
 def _build_agentic_mcp_task_completion_metric(tool_trace_result: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     if not isinstance(tool_trace_result, dict):
         return None
@@ -4210,6 +4288,13 @@ class EvaluationPipeline:
             tool_use_efficiency_metric = _build_agentic_tool_use_efficiency_metric(tool_use_efficiency_summary)
             if tool_use_efficiency_metric is not None:
                 metric_results.append(tool_use_efficiency_metric)
+            order_adherence_summary = _evaluate_agentic_tool_call_order(
+                agentic_case.expected_tools,
+                tool_trace_result.get("tool_calls", []),
+            )
+            order_adherence_metric = _build_agentic_order_adherence_metric(order_adherence_summary)
+            if order_adherence_metric is not None:
+                metric_results.append(order_adherence_metric)
             mcp_task_completion_metric = _build_agentic_mcp_task_completion_metric(tool_trace_result)
             if mcp_task_completion_metric is not None:
                 metric_results.append(mcp_task_completion_metric)
@@ -4257,6 +4342,7 @@ class EvaluationPipeline:
                 "tool_misuse": tool_selection_summary,
                 "argument_misuse": argument_correctness_summary,
                 "tool_efficiency": tool_use_efficiency_summary,
+                "tool_order_adherence": order_adherence_summary,
                 "mcp_task_completion": (
                     mcp_task_completion_metric.get("raw_payload")
                     if isinstance(mcp_task_completion_metric, dict)
@@ -4366,6 +4452,11 @@ class EvaluationPipeline:
             for item_result in results
             if isinstance(item_result.get("tool_efficiency"), dict)
         ]
+        tool_order_adherence_items = [
+            item_result.get("tool_order_adherence")
+            for item_result in results
+            if isinstance(item_result.get("tool_order_adherence"), dict)
+        ]
         mcp_task_completion_items = [
             item_result.get("mcp_task_completion")
             for item_result in results
@@ -4436,6 +4527,14 @@ class EvaluationPipeline:
                     "failed_call_total": sum(int(item.get("failed_calls", 0)) for item in tool_efficiency_items),
                     "redundant_call_total": sum(int(item.get("redundant_calls", 0)) for item in tool_efficiency_items),
                     "excess_call_total": sum(int(item.get("excess_calls", 0)) for item in tool_efficiency_items),
+                },
+                "tool_order_adherence_summary": {
+                    "cases_with_expected_sequence": len(tool_order_adherence_items),
+                    "exact_match_cases": sum(1 for item in tool_order_adherence_items if item.get("exact_match")),
+                    "average_score": round(
+                        sum(float(item.get("score", 0.0)) for item in tool_order_adherence_items) / len(tool_order_adherence_items),
+                        4,
+                    ) if tool_order_adherence_items else 0.0,
                 },
                 "mcp_task_completion_summary": {
                     "cases_with_judge": len(mcp_task_completion_items),
