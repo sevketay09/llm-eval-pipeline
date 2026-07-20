@@ -91,6 +91,10 @@ def _make_sklearn_mock() -> ModuleType:
     sys.modules["sklearn.cluster"] = cluster_mod
     sys.modules["sklearn.feature_extraction"] = sklearn_mod.feature_extraction
     sys.modules["sklearn.feature_extraction.text"] = text_mod
+    metrics_mod = MagicMock()
+    sklearn_mod.metrics = metrics_mod
+    sys.modules["sklearn.metrics"] = metrics_mod
+    sys.modules["sklearn.metrics.pairwise"] = metrics_mod.pairwise
     sys.modules["sklearn.utils"] = MagicMock()
     sys.modules["sklearn.utils.murmurhash"] = MagicMock()
     sys.modules["sklearn.base"] = MagicMock()

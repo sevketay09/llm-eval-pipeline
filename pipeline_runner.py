@@ -39,6 +39,7 @@ from evaluators import (
     evaluate_gsm8k
 )
 from evaluators.geval import GEvalEvaluator
+from evaluators.nlp_metrics import NLPMetricsEvaluator, is_available as nlp_metrics_available
 from evaluators.quality_judge import QualityJudgeEvaluator, is_quality_available
 from evaluators.agent_judge import AgentJudgeEvaluator, is_agent_eval_available
 from evaluators.groundedness_judge import GroundednessJudgeEvaluator, is_faithfulness_available
@@ -150,6 +151,7 @@ def _build_qa_metric_results(
     quality_scores: Dict[str, Any],
     json_correctness_metric: Optional[Dict[str, Any]] = None,
     prompt_alignment_metric: Optional[Dict[str, Any]] = None,
+    nlp_scores: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
     metric_results = [
         build_metric_result_from_payload(
@@ -181,6 +183,14 @@ def _build_qa_metric_results(
             group="quality",
         )
     )
+    if nlp_scores:
+        metric_results.extend(
+            build_metric_results_from_mapping(
+                nlp_scores,
+                provider="nlp_metrics",
+                group="nlp",
+            )
+        )
     serialized = serialize_metric_results(metric_results)
     if isinstance(json_correctness_metric, dict):
         serialized.append(json_correctness_metric)
@@ -2992,6 +3002,7 @@ class EvaluationPipeline:
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         geval_eval = self._initialize_geval_evaluator()
         quality_eval = self._initialize_quality_evaluator()
+        nlp_eval = NLPMetricsEvaluator() if nlp_metrics_available() else None
         
         total_items = len(dataset)
         concurrent_items = int(self.test_config.get("concurrent_items", 3))
@@ -3097,6 +3108,10 @@ class EvaluationPipeline:
 
             prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
 
+            nlp_scores = {}
+            if nlp_eval and _has_expected:
+                nlp_scores = nlp_eval.evaluate(_answer_text, _expected)
+
             result = {
                 "id": qa_case.case_id,
                 "category": qa_case.resolved_category,
@@ -3127,6 +3142,7 @@ class EvaluationPipeline:
                     quality_scores=quality_scores,
                     json_correctness_metric=json_correctness_metric,
                     prompt_alignment_metric=prompt_alignment_metric,
+                    nlp_scores=nlp_scores,
                 ),
                 "scores": {
                     "judge_label": accuracy_judge.get("label", "YANLIS"),
@@ -3136,6 +3152,7 @@ class EvaluationPipeline:
                     **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                     **({"geval": geval_scores} if geval_scores else {}),
                     **({"quality_judge": quality_scores} if quality_scores else {}),
+                    **({"nlp_metrics": nlp_scores} if nlp_scores else {}),
                 },
                 "latency": response['latency'],
                 "tokens": response['usage'],
@@ -3200,6 +3217,7 @@ class EvaluationPipeline:
             summary_avg_scores["prompt_alignment"] = round(sum(prompt_alignment_values) / len(prompt_alignment_values), 4)
         self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "geval", "geval_")
         self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "quality_judge", "quality_")
+        self._extend_avg_scores_with_nested_metrics(summary_avg_scores, results, "nlp_metrics", "nlp_")
 
         json_correctness_items = [
             result.get("json_correctness")
