@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-403%20passed-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-419%20passed-brightgreen.svg)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Compare models · Watch live traces · Experiment with prompts · Attack your own guardrails*
@@ -496,6 +496,18 @@ The action writes the gate summary to `$GITHUB_STEP_SUMMARY`, posts a PR comment
 
 ---
 
+## Contamination Check
+
+Detects test-set leakage (memorization) via a guided-completion probe: the model sees only the first ~60% of each test question and is asked to continue verbatim. High ROUGE-L similarity with the hidden tail — or verbatim n-gram containment of the expected answer — flags the case.
+
+```bash
+python run_contamination.py --model gpt-4o --dataset eval_datasets/regression/golden.json --sample 20
+```
+
+Output: per-case similarity + `clean` / `inconclusive` / `contamination_suspected` verdict, saved to `reports/contamination_<ts>.json`. Pure Python, no extra dependencies.
+
+---
+
 ## Scoring
 
 ### Layer 1 — Per Item
@@ -548,7 +560,7 @@ pytest tests/test_redteam_router_contracts.py  # single file
 pytest -k "experiments"                         # filtered
 ```
 
-**Current baseline: 403 contract tests passing.**
+**Current baseline: 419 contract tests passing.**
 
 Root `conftest.py` for test isolation:
 - scipy (numpy 2.x binary compat) → `MagicMock`

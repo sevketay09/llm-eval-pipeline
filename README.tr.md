@@ -7,7 +7,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
-[![Tests](https://img.shields.io/badge/tests-403%20passed-brightgreen.svg)](#testler)
+[![Tests](https://img.shields.io/badge/tests-419%20passed-brightgreen.svg)](#testler)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Modelleri karşılaştırın · Canlı trace izleyin · Prompt'larınızı deneyin · Güvenliği test edin*
@@ -496,6 +496,18 @@ Action: Gate özetini `$GITHUB_STEP_SUMMARY`'ye yazar, PR yorumu gönderir, `llm
 
 ---
 
+## Kontaminasyon Kontrolü
+
+Test seti sızıntısını (ezber) guided-completion probe ile tespit eder: model her test sorusunun sadece ilk ~%60'ını görür ve birebir devam ettirmesi istenir. Gizli kuyrukla yüksek ROUGE-L benzerliği — veya beklenen cevabın birebir n-gram içerimi — o case'i işaretler.
+
+```bash
+python run_contamination.py --model gpt-4o --dataset eval_datasets/regression/golden.json --sample 20
+```
+
+Çıktı: case bazlı benzerlik + `clean` / `inconclusive` / `contamination_suspected` kararı, `reports/contamination_<ts>.json` dosyasına yazılır. Saf Python, ekstra bağımlılık yok.
+
+---
+
 ## Skor Hesaplama
 
 ### Katman 1 — Item Bazında
@@ -548,7 +560,7 @@ pytest tests/test_redteam_router_contracts.py  # tek dosya
 pytest -k "experiments"                         # filtreli
 ```
 
-**Mevcut baseline: 403 contract testi pass.**
+**Mevcut baseline: 419 contract testi pass.**
 
 Test izolasyonu için root `conftest.py`:
 - scipy (numpy 2.x binary compat) → `MagicMock`
