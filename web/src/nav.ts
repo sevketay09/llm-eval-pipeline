@@ -11,6 +11,7 @@ import {
   Sparkles,
   BookOpen,
   AlertTriangle,
+  BadgeCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -44,6 +45,7 @@ export const navGroups: NavGroup[] = [
       { to: "/rag-eval", icon: BookOpen, label: "RAG Eval" },
       { to: "/custom-metrics", icon: Sparkles, label: "Metrics" },
       { to: "/redteam", icon: ShieldAlert, label: "Red-Team" },
+      { to: "/skill-lab", icon: BadgeCheck, label: "Skill Lab" },
     ],
   },
   {

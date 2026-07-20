@@ -16,6 +16,7 @@ import RedTeam from "./pages/RedTeam";
 import CustomMetrics from "./pages/CustomMetrics";
 import RagEval from "./pages/RagEval";
 import FailureClustering from "./pages/FailureClustering";
+import SkillLab from "./pages/SkillLab";
 
 export default function App() {
   const [navOpen, setNavOpen] = useState(false);
@@ -108,6 +109,7 @@ export default function App() {
             <Route path="/custom-metrics" element={<CustomMetrics />} />
             <Route path="/rag-eval" element={<RagEval />} />
             <Route path="/failures" element={<FailureClustering />} />
+            <Route path="/skill-lab" element={<SkillLab />} />
             <Route path="/models" element={<Models />} />
             <Route path="/review" element={<HitlReview />} />
           </Routes>
