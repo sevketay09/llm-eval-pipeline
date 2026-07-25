@@ -17,6 +17,7 @@ import {
   tracesApi,
   type CalibrationInsights,
   type CalibrationSampleSetResponse,
+  type InterRaterReliability,
   type MetricBacklogItem,
   type PendingItem,
   type PendingItemStatus,
@@ -495,6 +496,7 @@ export default function HitlReview() {
   const [stats, setStats] = useState<HitlStats | null>(null);
   const [calibration, setCalibration] = useState<CalibrationInsights | null>(null);
   const [calibrationSamples, setCalibrationSamples] = useState<CalibrationSampleSetResponse | null>(null);
+  const [interRaterReliability, setInterRaterReliability] = useState<InterRaterReliability | null>(null);
   const [metricBacklog, setMetricBacklog] = useState<MetricBacklogItem[]>([]);
   const [reports, setReports] = useState<ReportListItem[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -559,7 +561,7 @@ export default function HitlReview() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [items, st, calibrationInsights, calibrationSampleSet, backlogItems, reportItems, sampledTraces] = await Promise.all([
+      const [items, st, calibrationInsights, calibrationSampleSet, reliability, backlogItems, reportItems, sampledTraces] = await Promise.all([
         hitlApi.getPending(100, {
           category: categoryFilter || undefined,
           owner: ownerFilter.trim() || undefined,
@@ -568,6 +570,7 @@ export default function HitlReview() {
         hitlApi.getStats(),
         hitlApi.getCalibration(),
         hitlApi.getCalibrationSamples(),
+        hitlApi.getInterRaterReliability(),
         hitlApi.getMetricBacklog(),
         resultsApi.listReports(20),
         tracesApi.list({ tag: "eval_sampled", limit: 50 }),
@@ -576,6 +579,7 @@ export default function HitlReview() {
       setStats(st);
       setCalibration(calibrationInsights);
       setCalibrationSamples(calibrationSampleSet);
+      setInterRaterReliability(reliability);
       setMetricBacklog(backlogItems);
       setReports(reportItems);
       setTraceCandidates(sampledTraces.traces);
@@ -619,7 +623,7 @@ export default function HitlReview() {
 
   const refreshQueue = useCallback(
     async (itemIdToKeep?: string) => {
-      const [items, refreshedStats, refreshedCalibration, refreshedSamples, refreshedBacklog] = await Promise.all([
+      const [items, refreshedStats, refreshedCalibration, refreshedSamples, refreshedReliability, refreshedBacklog] = await Promise.all([
         hitlApi.getPending(100, {
           category: categoryFilter || undefined,
           owner: ownerFilter.trim() || undefined,
@@ -628,12 +632,14 @@ export default function HitlReview() {
         hitlApi.getStats(),
         hitlApi.getCalibration(),
         hitlApi.getCalibrationSamples(),
+        hitlApi.getInterRaterReliability(),
         hitlApi.getMetricBacklog(),
       ]);
       setPending(items);
       setStats(refreshedStats);
       setCalibration(refreshedCalibration);
       setCalibrationSamples(refreshedSamples);
+      setInterRaterReliability(refreshedReliability);
       setMetricBacklog(refreshedBacklog);
       setCurrentIdx((prev) => {
         if (!items.length) return 0;
@@ -1115,6 +1121,32 @@ export default function HitlReview() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+          {interRaterReliability?.applicable && (
+            <div className="space-y-3">
+              <div>
+                <p className="section-caption">Inter-Rater Agreement</p>
+                <p className="micro-copy mt-2">
+                  {interRaterReliability.multi_reviewer_case_count} case(s) were reviewed by 2+ distinct annotators —
+                  agreement across those overlapping reviews. Single-reviewer cases aren't included; this is an
+                  optional signal, not a requirement.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="rounded-[1rem] hairline px-4 py-3">
+                  <p className="micro-copy">Agreement</p>
+                  <p className="body-copy mt-1 font-semibold">{((interRaterReliability.average_agreement ?? 0) * 100).toFixed(1)}%</p>
+                </div>
+                <div className="rounded-[1rem] hairline px-4 py-3">
+                  <p className="micro-copy">Within Tolerance</p>
+                  <p className="body-copy mt-1 font-semibold">{((interRaterReliability.within_tolerance_rate ?? 0) * 100).toFixed(1)}%</p>
+                </div>
+                <div className="rounded-[1rem] hairline px-4 py-3">
+                  <p className="micro-copy">Overlapping Cases</p>
+                  <p className="body-copy mt-1 font-semibold">{interRaterReliability.multi_reviewer_case_count} / {interRaterReliability.total_reviewed_cases}</p>
+                </div>
               </div>
             </div>
           )}

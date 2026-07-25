@@ -749,6 +749,17 @@ export interface CalibrationSampleSetResponse {
   samples: CalibrationSampleCase[];
 }
 
+export interface InterRaterReliability {
+  applicable: boolean;
+  multi_reviewer_case_count: number;
+  total_reviewed_cases: number;
+  average_agreement?: number | null;
+  mean_pairwise_absolute_difference?: number | null;
+  within_tolerance_rate?: number | null;
+  tolerance?: number | null;
+  distinct_annotators?: number | null;
+}
+
 export interface ExportTrainingResponse {
   output_file: string;
   exported_count: number;
@@ -793,6 +804,7 @@ export const hitlApi = {
   getCalibration: () => request<CalibrationInsights>("/hitl/calibration"),
   getCalibrationSamples: (sampleSize = 12) =>
     request<CalibrationSampleSetResponse>(`/hitl/calibration-samples?sample_size=${sampleSize}`),
+  getInterRaterReliability: () => request<InterRaterReliability>("/hitl/inter-rater-reliability"),
   generate: (report_filename: string, sample_per_test = 5) =>
     request<{ added_count: number; report: string }>("/hitl/generate", {
       method: "POST",

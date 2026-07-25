@@ -117,6 +117,22 @@ class CalibrationInsights(BaseModel):
     ready_for_finetuning: bool = False
 
 
+class InterRaterReliability(BaseModel):
+    """Agreement between distinct human reviewers on the same case.
+
+    Single-reviewer workflows are a fully supported usage mode; `applicable`
+    is False (not an error) whenever no case has been reviewed by 2+ annotators.
+    """
+    applicable: bool = False
+    multi_reviewer_case_count: int = 0
+    total_reviewed_cases: int = 0
+    average_agreement: Optional[float] = None
+    mean_pairwise_absolute_difference: Optional[float] = None
+    within_tolerance_rate: Optional[float] = None
+    tolerance: Optional[float] = None
+    distinct_annotators: Optional[int] = None
+
+
 class DisagreementExportResponse(BaseModel):
     """Response after exporting disagreement cases."""
     output_file: str

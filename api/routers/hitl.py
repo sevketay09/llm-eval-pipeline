@@ -12,6 +12,7 @@ from api.schemas.hitl import (
     AnnotationResponse,
     MetricBacklogItem,
     CalibrationInsights,
+    InterRaterReliability,
     CalibrationSampleSetResponse,
     DisagreementExportResponse,
     HitlStats,
@@ -180,6 +181,19 @@ async def get_calibration_insights():
     """Get judge calibration metrics and recommendations from reviewed annotations."""
     insights = _evaluator.get_calibration_insights()
     return CalibrationInsights(**insights)
+
+
+@router.get("/inter-rater-reliability", response_model=InterRaterReliability)
+async def get_inter_rater_reliability(
+    tolerance: Annotated[float, Query(ge=0.0, le=1.0)] = 0.15,
+):
+    """Agreement between distinct human reviewers on the same case, where available.
+
+    Single-reviewer workflows are fully supported; this simply reports
+    `applicable: false` rather than an error when no case has 2+ reviewers.
+    """
+    reliability = _evaluator.compute_inter_rater_reliability(tolerance=tolerance)
+    return InterRaterReliability(**reliability)
 
 
 @router.get("/calibration-samples", response_model=CalibrationSampleSetResponse)

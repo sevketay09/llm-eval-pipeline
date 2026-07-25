@@ -503,6 +503,62 @@ class HumanFeedbackEvaluator:
             "ready_for_finetuning": judge_accuracy.get("total_comparisons", 0) >= 50
         }
 
+    def compute_inter_rater_reliability(self, tolerance: float = 0.15) -> Dict[str, Any]:
+        """
+        Measure agreement between distinct human reviewers on the same case.
+
+        Only meaningful when a case has been annotated by 2+ distinct annotator_ids —
+        single-reviewer workflows are a fully supported usage mode, so this returns
+        `applicable: False` rather than an error when no such overlap exists.
+        """
+        annotations = self.annotation_manager.load_all_annotations(status="completed")
+
+        grouped: Dict[tuple, List[HumanAnnotation]] = defaultdict(list)
+        for ann in annotations:
+            grouped[(ann.test_id, ann.model_name)].append(ann)
+
+        multi_reviewer_cases = []
+        for (test_id, model_name), items in grouped.items():
+            by_annotator: Dict[str, HumanAnnotation] = {}
+            for item in sorted(items, key=lambda a: a.timestamp):
+                by_annotator[item.annotator_id] = item
+            if len(by_annotator) < 2:
+                continue
+
+            scores = [ann.human_score for ann in by_annotator.values()]
+            pairwise_diffs = [
+                abs(a - b)
+                for i, a in enumerate(scores)
+                for b in scores[i + 1:]
+            ]
+            multi_reviewer_cases.append({
+                "test_id": test_id,
+                "model_name": model_name,
+                "reviewer_count": len(scores),
+                "mean_pairwise_absolute_difference": statistics.mean(pairwise_diffs),
+            })
+
+        if not multi_reviewer_cases:
+            return {
+                "applicable": False,
+                "multi_reviewer_case_count": 0,
+                "total_reviewed_cases": len(grouped),
+            }
+
+        all_diffs = [case["mean_pairwise_absolute_difference"] for case in multi_reviewer_cases]
+        within_tolerance = sum(1 for diff in all_diffs if diff <= tolerance)
+
+        return {
+            "applicable": True,
+            "multi_reviewer_case_count": len(multi_reviewer_cases),
+            "total_reviewed_cases": len(grouped),
+            "average_agreement": statistics.mean(1 - diff for diff in all_diffs),
+            "mean_pairwise_absolute_difference": statistics.mean(all_diffs),
+            "within_tolerance_rate": within_tolerance / len(multi_reviewer_cases),
+            "tolerance": tolerance,
+            "distinct_annotators": len({ann.annotator_id for ann in annotations}),
+        }
+
     def get_disagreement_cases(self, threshold: float = 0.3) -> List[Dict[str, Any]]:
         """Collect cases where human and LLM-judge scores diverge beyond a threshold."""
         annotations = self.annotation_manager.load_all_annotations(status="completed")
