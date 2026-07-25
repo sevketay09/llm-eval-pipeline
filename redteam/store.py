@@ -4,9 +4,11 @@ No imports from api/, utils/, adapters/.
 """
 from __future__ import annotations
 
+import json
 import time
 import uuid
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List, Optional
 
 CATEGORIES = [
@@ -35,6 +37,15 @@ class Attack:
             "payload": self.payload,
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> "Attack":
+        return cls(
+            attack_id=data["attack_id"],
+            category=data["category"],
+            name=data["name"],
+            payload=data["payload"],
+        )
+
 
 @dataclass
 class AttackResult:
@@ -61,6 +72,20 @@ class AttackResult:
             "error": self.error,
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> "AttackResult":
+        return cls(
+            attack_id=data["attack_id"],
+            category=data["category"],
+            name=data["name"],
+            payload=data["payload"],
+            response=data["response"],
+            passed=data["passed"],
+            reason=data["reason"],
+            latency_ms=data["latency_ms"],
+            error=data.get("error", ""),
+        )
+
 
 @dataclass
 class RedTeamSession:
@@ -86,6 +111,20 @@ class RedTeamSession:
             "created_at": self.created_at,
             "finished_at": self.finished_at,
         }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "RedTeamSession":
+        return cls(
+            session_id=data["session_id"],
+            system_prompt=data["system_prompt"],
+            categories=data.get("categories", []),
+            attacks=[Attack.from_dict(a) for a in data.get("attacks", [])],
+            results=[AttackResult.from_dict(r) for r in data.get("results", [])],
+            status=data.get("status", "pending"),
+            error=data.get("error", ""),
+            created_at=data.get("created_at", time.time()),
+            finished_at=data.get("finished_at"),
+        )
 
 
 _MAX_SESSIONS = 200
@@ -116,6 +155,25 @@ class RedTeamStore:
 
     def count(self) -> int:
         return len(self._store)
+
+    def save(self, path: Path) -> None:
+        """Snapshot current state to disk (atomic write) so a process restart doesn't lose it."""
+        data = [self._store[sid].to_dict() for sid in self._order if sid in self._store]
+        tmp_path = path.with_suffix(path.suffix + ".tmp")
+        tmp_path.write_text(json.dumps(data, indent=2))
+        tmp_path.replace(path)
+
+    def load_from(self, path: Path) -> None:
+        """Replace current state with a previously saved snapshot, if one exists."""
+        if not path.exists():
+            return
+        raw = json.loads(path.read_text())
+        self._store = {}
+        self._order = []
+        for item in raw:
+            session = RedTeamSession.from_dict(item)
+            self._order.append(session.session_id)
+            self._store[session.session_id] = session
 
 
 def make_session(

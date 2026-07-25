@@ -129,3 +129,31 @@ class TestTraceStoreDelete:
         store = TraceStore()
         ok = asyncio.get_event_loop().run_until_complete(store.delete("nope"))
         assert ok is False
+
+
+class TestTraceStorePersistence:
+    def test_save_and_load_from_round_trips(self, tmp_path):
+        path = tmp_path / "traces.json"
+        loop = asyncio.get_event_loop()
+        store = TraceStore()
+        t = make_trace("t1", tags=["eval_sampled"], run_id="run-1")
+        loop.run_until_complete(store.ingest([t]))
+        loop.run_until_complete(store.save(path))
+
+        reloaded = TraceStore()
+        loop.run_until_complete(reloaded.load_from(path))
+
+        restored = loop.run_until_complete(reloaded.get("t1"))
+        assert restored is not None
+        assert restored.name == "test_fn"
+        assert "eval_sampled" in restored.tags
+
+    def test_load_from_missing_file_is_noop(self, tmp_path):
+        store = TraceStore()
+        asyncio.get_event_loop().run_until_complete(store.load_from(tmp_path / "does-not-exist.json"))
+        assert store.count() == 0
+
+    def test_save_without_path_is_noop(self):
+        store = TraceStore()
+        # No dump_path configured and no explicit path passed — should not raise.
+        asyncio.get_event_loop().run_until_complete(store.save())

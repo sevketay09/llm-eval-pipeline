@@ -1,8 +1,10 @@
 """Custom metric service — generate judge prompts + evaluate cases."""
 from __future__ import annotations
 
+import json
 import time
 import uuid
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from api.schemas.custom_metrics import (
@@ -30,6 +32,28 @@ class _MetricRecord:
         self.status = "ready"
         self.created_at = time.time()
 
+    def to_dict(self) -> Dict:
+        return {
+            "metric_id": self.metric_id,
+            "name": self.name,
+            "description": self.description,
+            "prompt": self.prompt,
+            "status": self.status,
+            "created_at": self.created_at,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "_MetricRecord":
+        rec = cls(
+            metric_id=data["metric_id"],
+            name=data["name"],
+            description=data["description"],
+            prompt=data["prompt"],
+        )
+        rec.status = data.get("status", "ready")
+        rec.created_at = data.get("created_at", time.time())
+        return rec
+
 
 class CustomMetricService:
     def __init__(self) -> None:
@@ -56,6 +80,25 @@ class CustomMetricService:
 
     def list(self) -> List[_MetricRecord]:
         return [self._store[mid] for mid in self._order if mid in self._store]
+
+    def save(self, path: Path) -> None:
+        """Snapshot current state to disk (atomic write) so a process restart doesn't lose it."""
+        data = [self._store[mid].to_dict() for mid in self._order if mid in self._store]
+        tmp_path = path.with_suffix(path.suffix + ".tmp")
+        tmp_path.write_text(json.dumps(data, indent=2))
+        tmp_path.replace(path)
+
+    def load_from(self, path: Path) -> None:
+        """Replace current state with a previously saved snapshot, if one exists."""
+        if not path.exists():
+            return
+        raw = json.loads(path.read_text())
+        self._store = {}
+        self._order = []
+        for item in raw:
+            rec = _MetricRecord.from_dict(item)
+            self._order.append(rec.metric_id)
+            self._store[rec.metric_id] = rec
 
     def evaluate(
         self,

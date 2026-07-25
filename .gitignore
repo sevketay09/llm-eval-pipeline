@@ -31,6 +31,7 @@ build/
 # Runtime outputs
 reports/
 logs/
+data/state/
 
 # HITL annotations (may contain real user data)
 annotations/completed/

@@ -106,3 +106,25 @@ class TestEvaluateEndpoint:
         mid = client.post("/api/custom-metrics", json=_create_payload()).json()["metric_id"]
         r = client.post(f"/api/custom-metrics/{mid}/evaluate", json={"cases": []})
         assert r.status_code == 422
+
+
+class TestCustomMetricServicePersistence:
+    def test_save_and_load_from_round_trips(self, tmp_path):
+        path = tmp_path / "custom_metrics.json"
+        svc = CustomMetricService()
+        rec = svc.create(name="Empathy", description="Rate empathy")
+        svc.save(path)
+
+        reloaded = CustomMetricService()
+        reloaded.load_from(path)
+
+        restored = reloaded.get(rec.metric_id)
+        assert restored is not None
+        assert restored.name == "Empathy"
+        assert restored.prompt == rec.prompt
+        assert restored.status == "ready"
+
+    def test_load_from_missing_file_is_noop(self, tmp_path):
+        svc = CustomMetricService()
+        svc.load_from(tmp_path / "does-not-exist.json")
+        assert svc.list() == []

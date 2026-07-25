@@ -80,12 +80,30 @@ class TraceStore:
                 self._order.remove(trace_id)
             return True
 
-    async def dump(self) -> None:
-        if not self._dump_path:
+    async def save(self, path: Optional[Path] = None) -> None:
+        """Snapshot current state to disk (atomic write) so a process restart doesn't lose it."""
+        target = path or self._dump_path
+        if not target:
             return
         async with self._lock:
-            data = [t.model_dump() for t in self._store.values()]
-        self._dump_path.write_text(json.dumps(data, indent=2))
+            data = [self._store[tid].model_dump(mode="json") for tid in self._order if tid in self._store]
+        tmp_path = target.with_suffix(target.suffix + ".tmp")
+        tmp_path.write_text(json.dumps(data, indent=2))
+        tmp_path.replace(target)
+
+    async def load_from(self, path: Optional[Path] = None) -> None:
+        """Replace current state with a previously saved snapshot, if one exists."""
+        target = path or self._dump_path
+        if not target or not target.exists():
+            return
+        raw = json.loads(target.read_text())
+        async with self._lock:
+            self._store = {}
+            self._order = []
+            for item in raw:
+                t = TraceSchema.model_validate(item)
+                self._order.append(t.trace_id)
+                self._store[t.trace_id] = t
 
     def count(self) -> int:
         return len(self._store)

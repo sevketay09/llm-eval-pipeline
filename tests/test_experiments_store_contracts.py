@@ -134,3 +134,41 @@ class TestExperimentStore:
             store.create(_exp(name=f"e{i}"))
         assert store.count() <= _MAX_EXPERIMENTS
         assert store.get(first_id) is None
+
+
+class TestExperimentStorePersistence:
+    def test_save_and_load_from_round_trips(self, tmp_path):
+        path = tmp_path / "experiments.json"
+        store = ExperimentStore()
+        exp = _exp(name="persisted")
+        exp.results = [VariantResult(variant_label="v1", case_id="c0", output="out", score=0.8, latency_ms=12.3)]
+        store.create(exp)
+        store.save(path)
+
+        reloaded = ExperimentStore()
+        reloaded.load_from(path)
+
+        restored = reloaded.get(exp.experiment_id)
+        assert restored is not None
+        assert restored.name == "persisted"
+        assert restored.results[0].output == "out"
+        assert reloaded.list()[0].experiment_id == exp.experiment_id
+
+    def test_load_from_missing_file_is_noop(self, tmp_path):
+        store = ExperimentStore()
+        store.load_from(tmp_path / "does-not-exist.json")
+        assert store.count() == 0
+
+    def test_save_preserves_insertion_order(self, tmp_path):
+        path = tmp_path / "experiments.json"
+        store = ExperimentStore()
+        ids = []
+        for i in range(3):
+            exp = _exp(name=f"e{i}")
+            ids.append(exp.experiment_id)
+            store.create(exp)
+        store.save(path)
+
+        reloaded = ExperimentStore()
+        reloaded.load_from(path)
+        assert [e.experiment_id for e in reloaded.list()] == ids

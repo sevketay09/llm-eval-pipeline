@@ -156,6 +156,8 @@ make start-debug      # Docker debug stack
 
 Proje birbirinden bağımsız (standalone) modüllerin tek yönlü bağımlılıkla birleştiği bir yapıya sahiptir. Her modül kendi dataclass'larını ve in-memory store'unu barındırır; `api/` katmanı bunları REST endpoint'lerine taşır.
 
+**Kalıcılık modeli:** `ExperimentStore`, `RedTeamStore`, `CustomMetricService` ve `TraceStore` in-memory, FIFO-eviction'lı store'lardır (baştan itibaren JSONL/JSON dosyasına yazan `AnnotationManager` ve `CustomDatasetService`'in aksine). Process yeniden başlatıldığında deneylerin, red-team oturumlarının, custom metric'lerin ve trace'lerin sessizce silinmesini önlemek için uygulama artık bu dört store'u `EVAL_STATE_DIR` altına (varsayılan `data/state/`) disk'e snapshot'lıyor — startup'ta geri yükleniyor, her 60 saniyede bir ve temiz kapanışta kaydediliyor. Bu "restart = her şey gider" sorununu kapatır ama birden fazla worker process'i arasında (`uvicorn --workers N`) paylaşım sağlamaz — her worker RAM'inde hâlâ kendi kopyasını tutar, bu yüzden çoklu-worker deployment'lar gerçek bir paylaşımlı backend'e (Redis/Postgres) ihtiyaç duyar; proje hâlâ tek worker process varsayımına dayanır.
+
 ### tracing/ — Online Eval & Trace Ingestion
 
 Kendi LLM uygulamanızı enstrüman edin; canlı trace'leri platforma gönderin.

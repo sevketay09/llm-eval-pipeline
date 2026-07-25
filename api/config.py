@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     task_registry_path: str = "config/task_registry.yaml"
     reports_dir: str = "reports"
     generated_datasets_dir: str = "eval_datasets/generated"
+    state_dir: str = "data/state"
 
     model_config = {
         "env_prefix": "EVAL_",

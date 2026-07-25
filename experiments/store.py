@@ -21,6 +21,10 @@ class PromptVariant:
     def to_dict(self) -> Dict:
         return {"label": self.label, "system_prompt": self.system_prompt, "metadata": self.metadata}
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> "PromptVariant":
+        return cls(label=data["label"], system_prompt=data["system_prompt"], metadata=data.get("metadata", {}))
+
 
 @dataclass
 class ExperimentCase:
@@ -36,6 +40,15 @@ class ExperimentCase:
             "expected": self.expected,
             "metadata": self.metadata,
         }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "ExperimentCase":
+        return cls(
+            case_id=data["case_id"],
+            input=data["input"],
+            expected=data.get("expected", ""),
+            metadata=data.get("metadata", {}),
+        )
 
 
 @dataclass
@@ -56,6 +69,17 @@ class VariantResult:
             "latency_ms": self.latency_ms,
             "error": self.error,
         }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "VariantResult":
+        return cls(
+            variant_label=data["variant_label"],
+            case_id=data["case_id"],
+            output=data["output"],
+            score=data["score"],
+            latency_ms=data["latency_ms"],
+            error=data.get("error", ""),
+        )
 
 
 @dataclass
@@ -85,15 +109,29 @@ class Experiment:
             "finished_at": self.finished_at,
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> "Experiment":
+        return cls(
+            experiment_id=data["experiment_id"],
+            name=data["name"],
+            variants=[PromptVariant.from_dict(v) for v in data.get("variants", [])],
+            dataset=[ExperimentCase.from_dict(c) for c in data.get("dataset", [])],
+            model_key=data.get("model_key", ""),
+            results=[VariantResult.from_dict(r) for r in data.get("results", [])],
+            status=data.get("status", "pending"),
+            error=data.get("error", ""),
+            created_at=data.get("created_at", time.time()),
+            finished_at=data.get("finished_at"),
+        )
+
 
 _MAX_EXPERIMENTS = 500
 
 
 class ExperimentStore:
-    def __init__(self, dump_path: Optional[Path] = None):
+    def __init__(self):
         self._store: Dict[str, Experiment] = {}
         self._order: List[str] = []
-        self._dump_path = dump_path
 
     def create(self, experiment: Experiment) -> Experiment:
         if experiment.experiment_id not in self._store:
@@ -124,11 +162,24 @@ class ExperimentStore:
     def count(self) -> int:
         return len(self._store)
 
-    def dump(self) -> None:
-        if not self._dump_path:
+    def save(self, path: Path) -> None:
+        """Snapshot current state to disk (atomic write) so a process restart doesn't lose it."""
+        data = [self._store[eid].to_dict() for eid in self._order if eid in self._store]
+        tmp_path = path.with_suffix(path.suffix + ".tmp")
+        tmp_path.write_text(json.dumps(data, indent=2))
+        tmp_path.replace(path)
+
+    def load_from(self, path: Path) -> None:
+        """Replace current state with a previously saved snapshot, if one exists."""
+        if not path.exists():
             return
-        data = [exp.to_dict() for exp in self._store.values()]
-        self._dump_path.write_text(json.dumps(data, indent=2))
+        raw = json.loads(path.read_text())
+        self._store = {}
+        self._order = []
+        for item in raw:
+            exp = Experiment.from_dict(item)
+            self._order.append(exp.experiment_id)
+            self._store[exp.experiment_id] = exp
 
 
 def make_experiment(

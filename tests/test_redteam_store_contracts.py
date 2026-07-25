@@ -130,3 +130,31 @@ class TestAttackResultToDict:
         assert "reason" in d
         assert "latency_ms" in d
         assert "error" in d
+
+
+class TestRedTeamStorePersistence:
+    def test_save_and_load_from_round_trips(self, tmp_path):
+        path = tmp_path / "redteam_sessions.json"
+        store = RedTeamStore()
+        session = make_session("be helpful", ["jailbreak"])
+        attack = _make_attack()
+        session.attacks = [attack]
+        session.results = [_make_result(attack)]
+        session.status = "done"
+        store.create(session)
+        store.save(path)
+
+        reloaded = RedTeamStore()
+        reloaded.load_from(path)
+
+        restored = reloaded.get(session.session_id)
+        assert restored is not None
+        assert restored.system_prompt == "be helpful"
+        assert restored.status == "done"
+        assert restored.attacks[0].attack_id == attack.attack_id
+        assert restored.results[0].passed is True
+
+    def test_load_from_missing_file_is_noop(self, tmp_path):
+        store = RedTeamStore()
+        store.load_from(tmp_path / "does-not-exist.json")
+        assert store.count() == 0

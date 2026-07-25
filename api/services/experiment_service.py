@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import time
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 from api.schemas.experiments import (
@@ -48,6 +49,12 @@ class ExperimentService:
 
     def list(self, limit: int = 50) -> List[Experiment]:
         return self._store.list(limit=limit)
+
+    def save_state(self, path: Path) -> None:
+        self._store.save(path)
+
+    def load_state(self, path: Path) -> None:
+        self._store.load_from(path)
 
     async def run(
         self,

@@ -156,6 +156,8 @@ make start-debug      # Docker debug stack
 
 The project is built from standalone modules joined by one-way dependencies. Each module owns its dataclasses and in-memory store; the `api/` layer exposes them as REST endpoints.
 
+**Persistence model:** `ExperimentStore`, `RedTeamStore`, `CustomMetricService`, and `TraceStore` are in-memory, FIFO-evicting stores (as opposed to `AnnotationManager` and `CustomDatasetService`, which are JSONL/JSON-file-backed from the start). To keep a process restart from silently wiping out experiments, red-team sessions, custom metrics, and traces, the app now snapshots all four to disk under `EVAL_STATE_DIR` (default `data/state/`) — restored on startup, saved every 60s and on clean shutdown. This closes the "restart loses everything" gap but **does not** make these stores shared across multiple worker processes (`uvicorn --workers N`) — each worker still holds its own copy in RAM, so multi-worker deployments need a real shared backend (Redis/Postgres) instead; this project still assumes a single worker process.
+
 ### tracing/ — Online Eval & Trace Ingestion
 
 Instrument your own LLM application and stream live traces into the platform.
