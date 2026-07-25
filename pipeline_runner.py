@@ -3065,6 +3065,38 @@ class EvaluationPipeline:
         raw_score = next(iter(case_result.scores.values()), None)
         return self._coerce_score_value(raw_score)
     
+    def _make_progress_ticker(self, total_items: int):
+        """Callback invoked once per item completion, for a smooth in-test progress bar.
+
+        Interpolates within the current test's slot in the overall run progress
+        (test_idx / total_tests), so a slow multi-minute test no longer sits frozen
+        at its test-start percentage for its entire duration. No-op if this run
+        isn't wired for progress tracking (e.g. outside the API/dashboard).
+        """
+        lock = threading.Lock()
+        completed = [0]
+
+        def _tick() -> None:
+            with lock:
+                completed[0] += 1
+                done = completed[0]
+            if self._run and hasattr(self, '_progress_test_idx') and hasattr(self, '_progress_total_tests'):
+                t_idx = self._progress_test_idx
+                t_total = max(self._progress_total_tests, 1)
+                self._run.progress = (t_idx + done / max(total_items, 1)) / t_total
+
+        return _tick
+
+    def _iter_with_progress(self, dataset: List[Any], desc: str):
+        """Drop-in replacement for `tqdm(dataset, desc=desc)` that also ticks run progress
+        after each item — including items skipped via `continue` in the caller's loop body,
+        since the tick fires on generator resume regardless of how the prior iteration exited.
+        """
+        tick = self._make_progress_ticker(len(dataset))
+        for item in tqdm(dataset, desc=desc):
+            yield item
+            tick()
+
     def run_qa_test(
         self,
         model: UnifiedLLMAdapter,
@@ -3373,7 +3405,7 @@ class EvaluationPipeline:
         geval_eval = self._initialize_geval_evaluator()
         quality_eval = self._initialize_quality_evaluator()
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, ReasoningCase):
                 reasoning_case = item
             else:
@@ -3607,7 +3639,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, FunctionCallingCase):
                 function_case = item
             else:
@@ -3782,7 +3814,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
 
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, ToolWorkflowCase):
                 workflow_case = item
             else:
@@ -4043,7 +4075,7 @@ class EvaluationPipeline:
         results = []
         total_score = 0.0
 
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, ToolWorkflowCase):
                 workflow_case = item
             else:
@@ -4193,7 +4225,7 @@ class EvaluationPipeline:
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         dynamic_agent_eval = DynamicFunctionCallingEvaluator(judge_adapter=judge)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, AgenticCase):
                 agentic_case = item
             else:
@@ -4587,7 +4619,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, MultiTurnConversationCase):
                 conversation_case = item
             else:
@@ -4833,7 +4865,7 @@ class EvaluationPipeline:
             except Exception as e:
                 logger.warning(f"Failed to initialize GroundednessJudgeEvaluator: {e}")
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, RAGCase):
                 rag_case = item
             else:
@@ -5009,7 +5041,7 @@ class EvaluationPipeline:
         safety_eval = SafetyEvaluator(self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, EdgeCase):
                 edge_case = item
             else:
@@ -5296,7 +5328,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             if isinstance(item, PIIDetectionCase):
                 pii_case = item
             else:
@@ -5530,7 +5562,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         # Take subset for consistency testing (it's expensive)
         test_dataset = dataset[:5] if len(dataset) > 5 else dataset
         
-        for item in tqdm(test_dataset, desc=test_name):
+        for item in self._iter_with_progress(test_dataset, test_name):
             question = item.question if isinstance(item, ConsistencyCase) else item.get("question", "")
             item_id = item.case_id if isinstance(item, ConsistencyCase) else item.get("id")
             
@@ -5643,7 +5675,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         if temperatures is None:
             temperatures = [0.0, 0.3, 0.7]
         
-        for item in tqdm(test_dataset, desc=test_name):
+        for item in self._iter_with_progress(test_dataset, test_name):
             if isinstance(item, ConsistencyCase):
                 question = item.question
                 item_id = item.case_id
@@ -5806,7 +5838,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         # Take subset for prompt compression testing (expensive)
         test_dataset = dataset[:5] if len(dataset) > 5 else dataset
         
-        for item in tqdm(test_dataset, desc=test_name):
+        for item in self._iter_with_progress(test_dataset, test_name):
             try:
                 if isinstance(item, PromptCompressionCase):
                     original_prompt = item.original_prompt
@@ -5999,7 +6031,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         constraints_eval = NegativeConstraintsEvaluator(judge_adapter=self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             try:
                 if isinstance(item, NegativeConstraintCase):
                     constraint_case = item
@@ -6193,7 +6225,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         adversarial_eval = AdversarialEvaluator(judge_adapter=self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             try:
                 if isinstance(item, AdversarialCase):
                     adversarial_case = item
@@ -6442,7 +6474,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         lang_eval = LanguageMixEvaluator(judge_adapter=self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             try:
                 if isinstance(item, LanguageMixCase):
                     language_case = item
@@ -6662,7 +6694,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
             results = []
 
         if test_name != "humaneval":
-            for item in tqdm(dataset, desc=test_name):
+            for item in self._iter_with_progress(dataset, test_name):
                 if isinstance(item, BenchmarkCase):
                     benchmark_case = item
                 else:
@@ -7505,7 +7537,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         all_embeddings2 = []
         all_expected_scores = []
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             sentence1 = item["sentence1"]
             sentence2 = item["sentence2"]
             expected_score = item["similarity_score"]
@@ -7578,7 +7610,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         all_doc_embeddings = []
         all_relevance_labels = []
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             query = item["query"]
             positive_docs = item["positive_docs"]
             hard_negatives = item.get("hard_negatives", [])
@@ -7662,7 +7694,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         results = []
         clustering_results = []
         
-        for item in tqdm(dataset, desc=test_name):
+        for item in self._iter_with_progress(dataset, test_name):
             term = item["term"]
             similar_terms = item["similar_terms"]
             dissimilar_terms = item["dissimilar_terms"]
