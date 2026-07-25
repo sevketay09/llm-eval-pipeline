@@ -59,4 +59,7 @@ def compare_reports(
 ):
     if len(filenames) < 2:
         raise HTTPException(400, "Need at least 2 reports to compare")
-    return svc.compare_reports(filenames)
+    result = svc.compare_reports(filenames)
+    if len(result) < 2:
+        raise HTTPException(400, "At least two comparable eval reports are required")
+    return result

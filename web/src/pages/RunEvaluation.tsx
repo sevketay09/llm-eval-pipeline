@@ -385,8 +385,8 @@ export default function RunEvaluation() {
           {progress.status === "running" && progress.progress === 0 && progress.elapsed_seconds < 60 && (
             <div className="rounded-[1rem] border border-[rgba(180,140,40,0.25)] bg-[rgba(180,140,40,0.08)] px-4 py-3 text-sm">
               <p className="micro-copy">
-                <span className="body-copy font-medium">İlk çalıştırma:</span>{" "}
-                NLP veri paketleri (NLTK) indiriliyor olabilir. Bu işlem ilk seferinde 30–60 saniye sürebilir — progress bar beklenenden geç başlayabilir.
+                <span className="body-copy font-medium">First run:</span>{" "}
+                NLP data packages (NLTK) may be downloading. This can take 30–60 seconds on the first run — the progress bar may start later than expected.
               </p>
             </div>
           )}

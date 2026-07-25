@@ -476,6 +476,111 @@ class ReportServiceContractTests(unittest.TestCase):
             self.assertIsNone(reports[0].suite)
             self.assertEqual(reports[0].export_links.raw, "/api/results/reports/broken.json/raw")
 
+    def test_list_reports_excludes_meta_json_sidecars(self):
+        """*.meta.json sidecars are not listed in reports."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report_path = Path(tmpdir) / "eval_20260725.json"
+            report_path.write_text(json.dumps(_build_report_payload()), encoding="utf-8")
+
+            meta_path = Path(tmpdir) / "eval_20260725.json.meta.json"
+            meta_payload = {
+                "run_id": "run-123",
+                "timestamp": "2026-07-25T12:00:00Z",
+                "result_hash": "abc123",
+            }
+            meta_path.write_text(json.dumps(meta_payload), encoding="utf-8")
+
+            service = ReportService()
+            service._dir = Path(tmpdir)
+
+            reports = service.list_reports(limit=10)
+
+            # Only the eval report should be listed, not the .meta.json
+            self.assertEqual(len(reports), 1)
+            self.assertEqual(reports[0].filename, "eval_20260725.json")
+
+    def test_list_reports_excludes_contamination_shaped_json_without_models(self):
+        """Non-eval JSON (dict without models key) is not listed."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            contamination_path = Path(tmpdir) / "contamination_20260720.json"
+            contamination_payload = {
+                "summary": {"total_cases": 5},
+                "cases": [{"id": "case-1"}],
+                "model": "gpt-4",
+                "dataset": "test-set",
+                "timestamp": "2026-07-20T05:20:09Z",
+            }
+            contamination_path.write_text(json.dumps(contamination_payload), encoding="utf-8")
+
+            service = ReportService()
+            service._dir = Path(tmpdir)
+
+            reports = service.list_reports(limit=10)
+
+            # Contamination report should be excluded (no models key)
+            self.assertEqual(len(reports), 0)
+
+    def test_list_reports_includes_valid_eval_report_with_model_count_and_suite(self):
+        """Valid eval report is listed with correct model_count and suite."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report_path = Path(tmpdir) / "eval_report.json"
+            payload = _build_report_payload()
+            payload["models"]["another-model"] = {}
+            report_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            service = ReportService()
+            service._dir = Path(tmpdir)
+
+            reports = service.list_reports(limit=10)
+
+            self.assertEqual(len(reports), 1)
+            self.assertEqual(reports[0].filename, "eval_report.json")
+            self.assertEqual(reports[0].model_count, 2)
+            self.assertEqual(reports[0].suite, "smoke")
+
+    def test_list_reports_resolves_suite_via_metadata_fallback(self):
+        """Suite falls back to metadata.test_suite when run_metadata absent."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report_path = Path(tmpdir) / "fallback_report.json"
+            payload = _build_report_payload()
+            # Remove run_metadata, add suite to metadata instead
+            del payload["run_metadata"]
+            payload["metadata"] = {"test_suite": "integration"}
+            report_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            service = ReportService()
+            service._dir = Path(tmpdir)
+
+            reports = service.list_reports(limit=10)
+
+            self.assertEqual(len(reports), 1)
+            self.assertEqual(reports[0].suite, "integration")
+
+    def test_compare_reports_skips_non_eval_json_entries(self):
+        """compare_reports skips filenames pointing at non-eval JSON."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            valid_report_path = Path(tmpdir) / "valid.json"
+            valid_report_path.write_text(json.dumps(_build_report_payload()), encoding="utf-8")
+
+            contamination_path = Path(tmpdir) / "contamination.json"
+            contamination_payload = {
+                "summary": {"total_cases": 5},
+                "cases": [],
+                "model": "gpt-4",
+                "dataset": "test-set",
+            }
+            contamination_path.write_text(json.dumps(contamination_payload), encoding="utf-8")
+
+            service = ReportService()
+            service._dir = Path(tmpdir)
+
+            compare = service.compare_reports(["valid.json", "contamination.json"])
+
+            # Only valid.json should be in the result; contamination.json should be skipped
+            self.assertEqual(len(compare), 1)
+            self.assertIn("valid.json", compare)
+            self.assertNotIn("contamination.json", compare)
+
 
 if __name__ == "__main__":
     unittest.main()

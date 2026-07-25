@@ -2856,7 +2856,12 @@ class EvaluationPipeline:
         """Initialize judge model"""
         # Use override if provided, otherwise use config
         judge_config = self.config.get("judge_model", {})
-        judge_key = self._judge_model_key or judge_config.get("model_key", "qwen-31-onprem")
+        judge_key = self._judge_model_key or judge_config.get("model_key")
+        if not judge_key:
+            raise ValueError(
+                "No judge model configured. Set 'judge_model.model_key' in "
+                f"{self.config_path} or pass judge_model_key explicitly."
+            )
         logger.info(f"Initializing judge model: '{judge_key}'")
         self.judge_adapter = self.initialize_model(judge_key, apply_runtime_overrides=False)
         secondary_key = judge_config.get("secondary_model_key")

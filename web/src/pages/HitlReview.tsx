@@ -218,7 +218,7 @@ function buildMetricSuggestions(
     pushSuggestion(
       "cluster_regression_gate",
       "Repeatable failure family",
-      "Aynı queue reason ve kategori birden fazla review’da tekrar ediyor; bunu regression gate olarak ayırmak tekrar eden üretim kaçaklarını erken yakalar.",
+      "The same queue reason and category repeat across multiple reviews; isolating this as a regression gate catches recurring production failures early.",
       [
         `${relatedCluster.count} reviewed cases`,
         `avg delta ${relatedCluster.average_delta.toFixed(2)}`,
@@ -231,7 +231,7 @@ function buildMetricSuggestions(
     pushSuggestion(
       "risk_guardrail",
       "High-risk guardrail",
-      "Bu vaka yüksek öncelik veya risk sinyali taşıyor; ayrı bir guardrail metriği ile panel kuyruğuna düşmeden otomatik yakalanmalı.",
+      "This case carries high priority or risk signals; it should be caught automatically with a dedicated guardrail metric before falling into the human queue.",
       [
         `priority ${item.review_priority.toFixed(1)}`,
         ...(signals.riskTags.slice(0, 2).length ? signals.riskTags.slice(0, 2) : [item.queue_reason]),
@@ -243,28 +243,28 @@ function buildMetricSuggestions(
     pushSuggestion(
       "schema_reliability",
       "Structured output schema check",
-      "Sorun structured output veya schema güvenilirliğine benziyor; parse/shape doğrulamasını ayrı metrik yapmak review yükünü düşürür.",
+      "The issue looks like structured output or schema reliability; making parse/shape validation a separate metric reduces review burden.",
       [item.test_category, item.queue_reason]
     );
   } else if (includesAny(haystack, ["tool", "function", "retriever"])) {
     pushSuggestion(
       "tool_path_accuracy",
       "Tool path correctness",
-      "Vaka tool veya retrieval yoluna temas ediyor; seçim doğruluğu ve eksik araç çağrısını ayrı metrikte puanlamak daha ayrıştırıcı olur.",
+      "This case touches tool or retrieval paths; scoring selection correctness and missing tool calls as separate metrics would be more discriminative.",
       [item.test_category, item.queue_reason]
     );
   } else if (includesAny(haystack, ["faithfulness", "ground", "retrieval", "citation", "hallucination"])) {
     pushSuggestion(
       "retrieval_grounding",
       "Retrieval grounding",
-      "Bu failure retrieval veya faithfulness ailesine benziyor; bağlam sadakatini ayrı metrikte izlemek uygun.",
+      "This failure looks like a retrieval or faithfulness issue; tracking context fidelity as a separate metric is appropriate.",
       [item.test_category, item.queue_reason]
     );
   } else if (includesAny(haystack, ["persona", "intent", "escalation", "conversation", "tone"])) {
     pushSuggestion(
       "conversation_continuity",
       "Conversation continuity",
-      "Çok turlu davranış, persona veya escalation akışına temas eden bir vaka; turn-level continuity metriği daha uygun sinyal üretir.",
+      "A case touching multi-turn behavior, persona, or escalation flow; a turn-level continuity metric produces a more fitting signal.",
       [item.test_category, signals.casePersona ?? item.queue_reason]
     );
   }
@@ -273,7 +273,7 @@ function buildMetricSuggestions(
     pushSuggestion(
       "judge_alignment_rubric",
       "Judge alignment rubric",
-      "Judge split yüksek; aynı failure family için daha net rubric veya deterministic metric eklenmesi insan kuyruğunu azaltır.",
+      "Judge split is high; adding a clearer rubric or deterministic metric for this failure family would reduce the human queue.",
       [`split ${(item.judge_disagreement ?? 0).toFixed(2)}`, item.llm_judge_label]
     );
   }
@@ -282,7 +282,7 @@ function buildMetricSuggestions(
     pushSuggestion(
       "queue_reason_regression",
       "Queue reason regression check",
-      "Bu vaka için en güvenli başlangıç, queue reason etrafında dar bir regression metriği oluşturmaktır.",
+      "The safest starting point for this case is to build a narrow regression metric around the queue reason.",
       [item.test_category, item.queue_reason]
     );
   }
@@ -829,7 +829,7 @@ export default function HitlReview() {
           </div>
           <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
             {metricBacklog.slice(0, 4).map((entry) => (
-              <div key={entry.entry_id} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+              <div key={entry.entry_id} className="rounded-[1rem] hairline px-4 py-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="provider-chip">{entry.test_category}</span>
                   <span className="provider-chip">{entry.correction_type}</span>
@@ -863,17 +863,17 @@ export default function HitlReview() {
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Largest Cluster</p>
               <p className="body-copy mt-1 font-semibold">{topFailureCluster?.count ?? 0} reviewed failures</p>
               <p className="micro-copy mt-2 line-clamp-2">{topFailureCluster?.queue_reason ?? "No repeated failure cluster yet."}</p>
             </div>
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Distinct Categories</p>
               <p className="body-copy mt-1 font-semibold">{new Set(failureClusters.map((cluster) => cluster.test_category)).size}</p>
               <p className="micro-copy mt-2">Clustered from review-derived metric backlog entries.</p>
             </div>
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Highest Avg Delta</p>
               <p className="body-copy mt-1 font-semibold">
                 {failureClusters.length ? Math.max(...failureClusters.map((cluster) => cluster.average_delta)).toFixed(2) : "0.00"}
@@ -884,7 +884,7 @@ export default function HitlReview() {
 
           <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
             {failureClusters.slice(0, 6).map((cluster) => (
-              <div key={cluster.cluster_id} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-4 space-y-3">
+              <div key={cluster.cluster_id} className="rounded-[1rem] hairline px-4 py-4 space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="provider-chip">{cluster.test_category}</span>
                   <span className="provider-chip">{cluster.correction_type}</span>
@@ -984,7 +984,7 @@ export default function HitlReview() {
               className="control-surface"
             />
           </div>
-          <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+          <div className="rounded-[1rem] hairline px-4 py-3">
             <p className="micro-copy">Ready now</p>
             <p className="body-copy mt-1 font-semibold">{stats?.training_ready_examples ?? 0} examples</p>
           </div>
@@ -1005,19 +1005,19 @@ export default function HitlReview() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Agreement</p>
               <p className="body-copy mt-1 font-semibold">{((calibration.overall_metrics.average_agreement ?? 0) * 100).toFixed(1)}%</p>
             </div>
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Mean Abs Error</p>
               <p className="body-copy mt-1 font-semibold">{(calibration.overall_metrics.mean_absolute_error ?? 0).toFixed(2)}</p>
             </div>
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Judge Bias</p>
               <p className="body-copy mt-1 font-semibold">{(calibration.overall_metrics.judge_bias ?? 0).toFixed(2)}</p>
             </div>
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Calibration Set</p>
               <p className="body-copy mt-1 font-semibold">{calibration.training_data_available}</p>
             </div>
@@ -1035,7 +1035,7 @@ export default function HitlReview() {
                 className="control-surface"
               />
             </div>
-            <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+            <div className="rounded-[1rem] hairline px-4 py-3">
               <p className="micro-copy">Fine-tuning Readiness</p>
               <p className="body-copy mt-1 font-semibold">{calibration.ready_for_finetuning ? "Ready" : "Collect More"}</p>
             </div>
@@ -1046,7 +1046,7 @@ export default function HitlReview() {
           </div>
           <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
             {(calibration.recommendations.length ? calibration.recommendations : [{ issue: "No major drift", recommendation: "Current reviewed sample looks stable enough to keep the current judge prompt." }]).map((item) => (
-              <div key={`${item.issue}-${item.recommendation}`} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+              <div key={`${item.issue}-${item.recommendation}`} className="rounded-[1rem] hairline px-4 py-3">
                 <p className="micro-copy">{item.issue}</p>
                 <p className="body-copy mt-2 text-sm">{item.recommendation}</p>
               </div>
@@ -1067,7 +1067,7 @@ export default function HitlReview() {
               </div>
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
                 {calibration.disagreement_taxonomy.top_reasons.map((item) => (
-                  <div key={item.reason} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                  <div key={item.reason} className="rounded-[1rem] hairline px-4 py-3">
                     <p className="micro-copy">Primary reason</p>
                     <p className="body-copy mt-2 text-sm font-semibold capitalize">{item.label}</p>
                     <p className="micro-copy mt-2">{item.count} reviewed cases</p>
@@ -1094,7 +1094,7 @@ export default function HitlReview() {
               </div>
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
                 {calibration.prompt_version_comparison.versions.slice(0, 6).map((version) => (
-                  <div key={version.prompt_version} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                  <div key={version.prompt_version} className="rounded-[1rem] hairline px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="provider-chip">{version.prompt_version}</span>
                       <span className="provider-chip">{version.reviewed_cases} reviewed</span>
@@ -1133,7 +1133,7 @@ export default function HitlReview() {
               </div>
               <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
                 {calibrationSamples.samples.slice(0, 6).map((sample) => (
-                  <div key={`${sample.bucket}-${sample.test_id}-${sample.model_name}`} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                  <div key={`${sample.bucket}-${sample.test_id}-${sample.model_name}`} className="rounded-[1rem] hairline px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="provider-chip">{sample.bucket.replace(/_/g, " ")}</span>
                       <span className="provider-chip">{sample.test_category}</span>
@@ -1271,7 +1271,7 @@ export default function HitlReview() {
                   key={item.item_id}
                   type="button"
                   onClick={() => setCurrentIdx(index)}
-                  className={`flex items-start gap-3 rounded-[1rem] border px-3 py-3 text-left transition ${isFocused ? "border-[rgba(168,106,42,0.55)] bg-[rgba(44,32,14,0.88)]" : "border-[rgba(129,177,166,0.18)] bg-[rgba(13,20,24,0.72)]"}`}
+                  className={`flex items-start gap-3 rounded-[1rem] border px-3 py-3 text-left transition ${isFocused ? "border-[rgba(138,229,197,0.55)] bg-[rgba(13,32,28,0.88)]" : "hairline bg-[rgba(13,20,24,0.72)]"}`}
                 >
                   <input
                     type="checkbox"
@@ -1408,7 +1408,7 @@ export default function HitlReview() {
                   <span className="provider-chip">{current.llm_judge_label}</span>
                 </div>
                 <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-                  <div className="rounded-[1.1rem] border border-[rgba(136,109,72,0.16)] p-4">
+                  <div className="rounded-[1.1rem] hairline p-4">
                     <div className="flex items-center justify-between gap-3">
                       <p className="section-caption">Primary Judge</p>
                       {current.primary_judge_score != null && <ScoreBadge score={current.primary_judge_score} />}
@@ -1419,7 +1419,7 @@ export default function HitlReview() {
                     </div>
                   </div>
 
-                  <div className="rounded-[1.1rem] border border-[rgba(136,109,72,0.16)] p-4">
+                  <div className="rounded-[1.1rem] hairline p-4">
                     <div className="flex items-center justify-between gap-3">
                       <p className="section-caption">Secondary Judge</p>
                       {current.secondary_judge_score != null ? (
@@ -1571,9 +1571,9 @@ export default function HitlReview() {
                     </div>
                   )}
                 </div>
-                <div className="rounded-[1rem] border border-[rgba(168,106,42,0.18)] bg-[rgba(250,245,238,0.78)] px-3 py-3">
+                <div className="rounded-[1rem] callout-warn px-3 py-3">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 text-[rgba(168,106,42,0.88)]" />
+                    <AlertTriangle className="mt-0.5 h-4 w-4 callout-warn-icon" />
                     <div>
                       <p className="micro-copy">Queue Reason</p>
                       <p className="body-copy mt-1 text-sm">{current.queue_reason}</p>
@@ -1600,19 +1600,19 @@ export default function HitlReview() {
                     </div>
                     <Sparkles className="h-4 w-4 muted-copy" />
                   </div>
-                  <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                  <div className="rounded-[1rem] hairline px-4 py-3">
                     <div className="flex flex-wrap gap-2">
                       <span className="provider-chip">lane {currentSignals.suggestedReviewerPersona.toUpperCase()}</span>
                       {currentSignals.isHighRisk && <span className="provider-chip">high risk</span>}
                       {(current.judge_disagreement ?? 0) >= disagreementThreshold && <span className="provider-chip">split above cutoff</span>}
                     </div>
                     <p className="micro-copy mt-3">
-                      Bu panel, mevcut case’i reusable metriğe çevirmek için en yakın üç aday yönü gösterir.
+                      This panel shows the three closest candidate directions to turn the current case into a reusable metric.
                     </p>
                   </div>
                   <div className="space-y-3">
                     {currentSuggestions.map((suggestion) => (
-                      <div key={suggestion.key} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                      <div key={suggestion.key} className="rounded-[1rem] hairline px-4 py-3">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="provider-chip">{suggestion.metricFamily}</span>
                           <span className="provider-chip">{suggestion.candidateName}</span>

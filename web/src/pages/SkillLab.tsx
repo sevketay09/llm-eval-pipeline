@@ -523,7 +523,7 @@ export default function SkillLab() {
               value={task}
               onChange={(e) => setTask(e.target.value)}
               rows={3}
-              placeholder="e.g. Haftalık satış CSV'sinden bölge bazlı toplam raporu üret…"
+              placeholder="e.g. Generate a regional totals report from a weekly sales CSV…"
             />
           </Field>
           <Field label="Judge model">

@@ -514,22 +514,47 @@ class ReportService:
             return []
 
         files = sorted(self._dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-        # The cumulative store is not a per-eval report (schema: {version, runs, ...});
-        # exclude it so it doesn't surface in the Results list as "0 models".
-        files = [f for f in files if f.name != "evaluations_store.json"]
+
+        # Name-based exclusion: skip .meta.json sidecars and evaluations_store variants
+        files = [f for f in files if not f.name.endswith(".meta.json") and not f.name.startswith("evaluations_store")]
+
         items = []
-        for f in files[:limit]:
+        for f in files:
             stat = f.stat()
             encoded_name = quote(f.name)
             # Quick peek for metadata
             model_count, suite = None, None
+            skip_file = False
+
             try:
                 with open(f, "r", encoding="utf-8") as fh:
                     data = json.load(fh)
-                model_count = len(data.get("models", {}))
-                suite = data.get("run_metadata", {}).get("test_suite")
+
+                # Structural exclusion: only keep files where models is a dict
+                if isinstance(data, dict):
+                    if not isinstance(data.get("models"), dict):
+                        # Parsed successfully as dict but no valid models key → skip
+                        skip_file = True
+                    else:
+                        # Valid eval report
+                        model_count = len(data.get("models", {}))
+                        # Suite fallback chain: run_metadata.test_suite → metadata.test_suite
+                        run_metadata = data.get("run_metadata")
+                        if isinstance(run_metadata, dict):
+                            suite = run_metadata.get("test_suite")
+                        if suite is None:
+                            metadata = data.get("metadata")
+                            if isinstance(metadata, dict):
+                                suite = metadata.get("test_suite")
+                else:
+                    # Parsed but not a dict → skip
+                    skip_file = True
             except Exception:
+                # Malformed JSON files are still listed with null metadata
                 pass
+
+            if skip_file:
+                continue
 
             items.append(ReportListItem(
                 filename=f.name,
@@ -544,6 +569,11 @@ class ReportService:
                     html=f"/api/results/reports/{encoded_name}/html",
                 ),
             ))
+
+            # Apply limit to post-filter items
+            if len(items) >= limit:
+                break
+
         return items
 
     def _build_statistical_comparison(self, data: dict[str, Any]) -> dict[str, Any]:
@@ -657,6 +687,9 @@ class ReportService:
         for fn in filenames:
             summary = self.get_report(fn)
             if summary:
+                # Skip entries without usable model data
+                if not isinstance(summary.models, dict) or not summary.models:
+                    continue
                 metadata = summary.metadata if isinstance(summary.metadata, dict) else {}
                 reports[fn] = {
                     "model_scores": summary.model_scores,

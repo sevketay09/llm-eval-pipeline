@@ -775,6 +775,34 @@ textarea {
   color: var(--accent);
 }
 
+.subpanel {
+  border: 1px solid var(--line);
+  background: rgba(17, 27, 31, 0.55);
+}
+
+.subpanel-selected {
+  border: 1px solid rgba(138, 229, 197, 0.38);
+  background: rgba(138, 229, 197, 0.10);
+}
+
+.subpanel-danger {
+  border: 1px solid rgba(255, 142, 123, 0.30);
+  background: rgba(255, 142, 123, 0.10);
+}
+
+.hairline { border: 1px solid var(--line); }
+.hairline-strong { border: 1px solid var(--line-strong); }
+
+.callout-warn {
+  border: 1px solid rgba(242, 207, 120, 0.26);
+  background: rgba(242, 207, 120, 0.10);
+  color: var(--text-body);
+}
+
+.callout-warn-icon {
+  color: var(--warning);
+}
+
 .micro-copy {
   font-family: var(--font-body);
   font-size: 0.74rem;

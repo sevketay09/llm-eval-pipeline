@@ -672,7 +672,7 @@ export default function Dashboard() {
                   ))}
                 </select>
               </div>
-              <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+              <div className="rounded-[1rem] hairline px-4 py-3">
                 <p className="micro-copy">Visible cases</p>
                 <p className="body-copy mt-1 text-lg font-semibold">{filteredRunCases.length}</p>
                 <p className="micro-copy mt-2">From {runCaseRows.length} total case results in the selected run.</p>
@@ -804,8 +804,8 @@ export default function Dashboard() {
                             <span className="body-copy">{testName}</span>
                             <span className="micro-copy">{count} fail · {formatPercent(share)}</span>
                           </div>
-                          <div className="mt-2 h-2 rounded-full bg-[rgba(136,109,72,0.12)]">
-                            <div className="h-2 rounded-full bg-[rgba(168,106,42,0.72)]" style={{ width: `${Math.max(6, share * 100)}%` }} />
+                          <div className="mt-2 h-2 rounded-full bg-[rgba(129,177,166,0.16)]">
+                            <div className="h-2 rounded-full bg-[rgba(138,229,197,0.72)]" style={{ width: `${Math.max(6, share * 100)}%` }} />
                           </div>
                         </div>
                       );
@@ -824,7 +824,7 @@ export default function Dashboard() {
                 <div className="space-y-3">
                   {failureReasons.length > 0 ? (
                     failureReasons.map(([reason, count]) => (
-                      <div key={`${reason}-${count}`} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                      <div key={`${reason}-${count}`} className="rounded-[1rem] hairline px-4 py-3">
                         <div className="flex items-center justify-between gap-3">
                           <p className="body-copy text-sm line-clamp-2">{reason}</p>
                           <span className="provider-chip">{count}</span>
@@ -859,7 +859,7 @@ export default function Dashboard() {
                         setTestFilter("");
                         setDatasetFilter("");
                       }}
-                      className={`panel-surface panel-quiet space-y-4 text-left ${isSelected ? "border-[rgba(168,106,42,0.45)] bg-[rgba(250,245,238,0.86)]" : ""}`}
+                      className={`panel-surface panel-quiet space-y-4 text-left ${isSelected ? "subpanel-selected" : ""}`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -868,7 +868,7 @@ export default function Dashboard() {
                         </div>
                         {isSelected && <span className="provider-chip">selected</span>}
                       </div>
-                      <div className="h-2 rounded-full bg-[rgba(136,109,72,0.12)]">
+                      <div className="h-2 rounded-full bg-[rgba(129,177,166,0.16)]">
                         <div className="h-2 rounded-full bg-[rgba(62,128,96,0.75)]" style={{ width: `${barWidth}%` }} />
                       </div>
                       <div className="grid grid-cols-2 gap-3 text-sm">

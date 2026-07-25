@@ -121,7 +121,7 @@ function EfficiencyTooltip({
   if (!active || !point) return null;
 
   return (
-    <div className="panel-surface panel-quiet max-w-xs space-y-2 border border-[rgba(136,109,72,0.18)] p-3">
+    <div className="panel-surface panel-quiet max-w-xs space-y-2 hairline p-3">
       <p className="body-copy font-semibold">{point.model}</p>
       <p className="micro-copy">Score: {point.overall_score.toFixed(3)}</p>
       <p className="micro-copy">Avg tokens / eval: {formatMetric(point.avg_tokens_per_eval, 1)}</p>
@@ -911,6 +911,7 @@ export default function Results() {
   const [compareData, setCompareData] = useState<Record<string, ReportCompareSummary> | null>(null);
   const [compareRawReports, setCompareRawReports] = useState<Record<string, Record<string, unknown> | null> | null>(null);
   const [compareLoading, setCompareLoading] = useState(false);
+  const [compareError, setCompareError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [reportsLoaded, setReportsLoaded] = useState(false);
 
@@ -964,10 +965,13 @@ export default function Results() {
       setCompareData(null);
       setCompareRawReports(null);
       setCompareLoading(false);
+      setCompareError(null);
       return;
     }
 
+    let cancelled = false;
     setCompareLoading(true);
+    setCompareError(null);
     Promise.all([
       resultsApi.compare(compareSelection),
       Promise.all(
@@ -978,10 +982,27 @@ export default function Results() {
       ),
     ])
       .then(([summary, rawEntries]) => {
-        setCompareData(summary);
-        setCompareRawReports(Object.fromEntries(rawEntries));
+        if (!cancelled) {
+          setCompareData(summary);
+          setCompareRawReports(Object.fromEntries(rawEntries));
+        }
       })
-      .finally(() => setCompareLoading(false));
+      .catch((error) => {
+        if (!cancelled) {
+          setCompareData(null);
+          setCompareRawReports(null);
+          setCompareError(error?.message || "Failed to load compare data");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setCompareLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [compareSelection]);
 
   useEffect(() => {
@@ -1253,6 +1274,9 @@ export default function Results() {
         })
         .filter((entry) => entry.rows.length > 0)
     : [];
+  const compareHasScores = compareSelection.length >= 2
+    && compareData
+    && Object.values(compareData).some(entry => Object.keys(entry.model_scores ?? {}).length > 0);
   const baselineEfficiencyDriftEntries = baselineFilename && baselineComparisonModels
     ? compareSelection
         .filter((filename) => filename !== baselineFilename)
@@ -1586,23 +1610,53 @@ export default function Results() {
           </div>
 
           <div>
-            <label className="label">Continuity Compare</label>
-            <select
-              multiple
-              value={compareSelection}
-              onChange={(e) => {
-                const values = Array.from(e.target.selectedOptions).map((option) => option.value);
-                setCompareSelection(values);
-              }}
-              className="control-surface min-h-36"
-            >
+            <div className="flex items-center justify-between">
+              <label className="label">Continuity Compare</label>
+              <div className="flex items-center gap-2">
+                <span className="provider-chip">{compareSelection.length} selected</span>
+                {compareSelection.length > 0 && (
+                  <button
+                    type="button"
+                    className="button-secondary"
+                    onClick={() => setCompareSelection([])}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="subpanel mt-1 max-h-64 space-y-1 overflow-y-auto rounded-[1rem] p-2">
               {reports.map((r) => (
-                <option key={`compare-${r.filename}`} value={r.filename}>
-                  {r.filename} — {r.suite ?? "?"}
-                </option>
+                <label
+                  key={`compare-${r.filename}`}
+                  className={`flex cursor-pointer items-start gap-2 rounded-[0.8rem] px-2 py-2 text-left transition ${
+                    compareSelection.includes(r.filename) ? "subpanel-selected" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={compareSelection.includes(r.filename)}
+                    onChange={() => {
+                      if (compareSelection.includes(r.filename)) {
+                        setCompareSelection(compareSelection.filter((f) => f !== r.filename));
+                      } else {
+                        setCompareSelection([...compareSelection, r.filename]);
+                      }
+                    }}
+                    className="mt-1 flex-shrink-0 accent-[#8ae5c5]"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="body-copy text-sm break-all">{r.filename}</div>
+                    <div className="micro-copy">
+                      {r.suite ?? "unknown suite"} · {r.model_count ?? "?"} models · {new Date(r.modified).toLocaleString()}
+                    </div>
+                  </div>
+                </label>
               ))}
-            </select>
-            <p className="micro-copy mt-2">Iki veya daha fazla rapor secerek continuity farklarini karsilastir.</p>
+            </div>
+            {compareSelection.length < 2 && (
+              <p className="micro-copy mt-2">Select at least two reports — continuity and model score differences are then computed.</p>
+            )}
             {compareSelection.length >= 2 && (
               <div className="mt-3">
                 <label className="label">Baseline Run</label>
@@ -1617,7 +1671,7 @@ export default function Results() {
                     </option>
                   ))}
                 </select>
-                <p className="micro-copy mt-2">Secili baseline rapora gore model score delta tablosu olusturulur.</p>
+                <p className="micro-copy mt-2">Model score delta table is built relative to the selected baseline report.</p>
                 <div className="mt-3">
                   <label className="label">Regression Threshold</label>
                   <input
@@ -1628,7 +1682,7 @@ export default function Results() {
                     onChange={(e) => setRegressionThreshold(Number.parseFloat(e.target.value) || 0)}
                     className="control-surface"
                   />
-                  <p className="micro-copy mt-2">Delta mutlak degeri bu esigi gectiginde iyilesme veya regresyon olarak isaretlenir.</p>
+                  <p className="micro-copy mt-2">A case is flagged as improved or regressed once the absolute delta crosses this threshold.</p>
                 </div>
               </div>
             )}
@@ -1657,13 +1711,29 @@ export default function Results() {
         </div>
       )}
 
+      {compareSelection.length >= 2 && !compareLoading && compareError && (
+        <section className="motion-rise motion-delay-2">
+          <div className="callout-warn rounded-[1rem] px-4 py-3">
+            <p className="body-copy">{compareError}</p>
+          </div>
+        </section>
+      )}
+
+      {compareSelection.length >= 2 && !compareLoading && compareData && !compareHasScores && (
+        <section className="motion-rise motion-delay-2">
+          <div className="callout-warn rounded-[1rem] px-4 py-3">
+            <p className="body-copy">Secili raporlarda karsilastirilabilir model skoru yok.</p>
+          </div>
+        </section>
+      )}
+
       {compareContinuityEntries.length > 0 && !compareLoading && (
         <section className="motion-rise motion-delay-2 space-y-4">
           <div>
             <p className="section-caption mb-2">Continuity Compare</p>
             <h2 className="section-heading">Cross-Report Intent Drift</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Multi-turn continuity sinyalini secilen raporlar arasinda dogrudan oku.
+              Read multi-turn continuity signals directly across selected reports.
             </p>
           </div>
 
@@ -1727,7 +1797,7 @@ export default function Results() {
             <p className="section-caption mb-2">Structured Output Compare</p>
             <h2 className="section-heading">Cross-Report Reliability Drift</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Secilen raporlar arasinda schema compliance ve en kirilgan test veya dataset kaynaklarini hizli oku.
+              Quickly review schema compliance and the most brittle tests or data sources across selected reports.
             </p>
           </div>
 
@@ -1781,7 +1851,7 @@ export default function Results() {
             <p className="section-caption mb-2">Baseline Compare</p>
             <h2 className="section-heading">Run Score Delta Wall</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Secili baseline rapora gore model score farklarini hizli oku; pozitif delta iyilesmeyi, negatif delta regresyonu gosterir.
+              Quickly review model score differences against the baseline; positive delta indicates improvement, negative indicates regression.
             </p>
           </div>
 
@@ -1867,7 +1937,7 @@ export default function Results() {
             <p className="section-caption mb-2">Efficiency Drift</p>
             <h2 className="section-heading">Baseline Latency and Cost Drift</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Secili baseline rapora gore latency, cost, quality-per-latency ve quality-per-cost degisimlerini model bazinda hizli oku.
+              Quickly review latency, cost, quality-per-latency, and quality-per-cost changes across models against the baseline.
             </p>
           </div>
 
@@ -1936,7 +2006,7 @@ export default function Results() {
             <p className="section-caption mb-2">Provider Cost Drift</p>
             <h2 className="section-heading">Baseline Provider Spend Drift</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Secili baseline rapora gore provider bazli spend payi ve token-normalized cost degisimlerini hizli oku.
+              Quickly review provider-level spend share and token-normalized cost changes against the baseline.
             </p>
           </div>
 
@@ -2000,7 +2070,7 @@ export default function Results() {
             <p className="section-caption mb-2">Regression Desk</p>
             <h2 className="section-heading">New Failures Introduced</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Baseline'da fail etmeyen ama aday raporda fail eden case'leri model ve test bazinda gor.
+              See cases that passed on the baseline but fail on the candidate report, broken down by model and test.
             </p>
           </div>
 
@@ -2064,7 +2134,7 @@ export default function Results() {
             <p className="section-caption mb-2">Dataset Drift</p>
             <h2 className="section-heading">Baseline Dataset Changes</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Baseline rapora gore dataset kimligi, kapsam boyutu ve test-level dataset label degisimlerini hizli oku.
+              Quickly review dataset identity, scope size, and test-level dataset label changes against the baseline.
             </p>
           </div>
 
@@ -2087,7 +2157,7 @@ export default function Results() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                  <div className="rounded-[1.2rem] hairline p-4">
                     <p className="section-caption mb-2">Baseline Dataset</p>
                     <p className="body-copy font-semibold">{entry.baseline.name ?? "—"}</p>
                     <p className="micro-copy mt-2 break-words">{entry.baseline.path ?? "—"}</p>
@@ -2095,7 +2165,7 @@ export default function Results() {
                     <p className="micro-copy mt-2">labels: {entry.baseline.labels.join(", ") || "—"}</p>
                   </div>
 
-                  <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                  <div className="rounded-[1.2rem] hairline p-4">
                     <p className="section-caption mb-2">Candidate Dataset</p>
                     <p className="body-copy font-semibold">{entry.candidate.name ?? "—"}</p>
                     <p className="micro-copy mt-2 break-words">{entry.candidate.path ?? "—"}</p>
@@ -2201,10 +2271,10 @@ export default function Results() {
             return (
               <section className="motion-rise motion-delay-1 space-y-4">
                 <div>
-                  <p className="section-caption mb-2">Yapay Zeka Yorumu</p>
-                  <h2 className="section-heading">Model Değerlendirme Yorumları</h2>
+                  <p className="section-caption mb-2">AI Commentary</p>
+                  <h2 className="section-heading">Model Evaluation Commentary</h2>
                   <p className="page-subtitle max-w-3xl text-sm">
-                    Her model için judge tarafından otomatik üretilmiş Türkçe değerlendirme.
+                    AI-generated evaluation commentary for each model, automatically produced by the judge.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -2223,7 +2293,7 @@ export default function Results() {
                           <div className="flex flex-wrap items-center gap-2">
                             {isBest && (
                               <span className="provider-chip bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-                                En İyi Skor
+                                Best Score
                               </span>
                             )}
                             {typeof overallScore === "number" && (
@@ -2234,7 +2304,7 @@ export default function Results() {
                         <p className="body-copy leading-relaxed text-sm">{commentary}</p>
                         {judgeKey && (
                           <p className="micro-copy mt-1 text-right opacity-60">
-                            ✦ {judgeKey} tarafından değerlendirildi
+                            ✦ Evaluated by {judgeKey}
                           </p>
                         )}
                       </div>
@@ -2292,10 +2362,10 @@ export default function Results() {
                           key={row.key}
                           type="button"
                           onClick={() => setSelectedConversationKey(row.key)}
-                          className={`w-full rounded-[1.2rem] border px-4 py-3 text-left transition ${
+                          className={`w-full rounded-[1.2rem] px-4 py-3 text-left transition ${
                             isSelected
-                              ? "border-[rgba(168,106,42,0.38)] bg-[rgba(250,245,238,0.82)]"
-                              : "border-[rgba(136,109,72,0.16)] bg-white/70"
+                              ? "subpanel-selected"
+                              : "subpanel"
                           }`}
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -2336,10 +2406,10 @@ export default function Results() {
                         {selectedConversation.turns.map((turn) => (
                           <div
                             key={`${selectedConversation.key}-turn-${turn.turnNumber}`}
-                            className={`rounded-[1.2rem] border px-4 py-4 ${
+                            className={`rounded-[1.2rem] px-4 py-4 ${
                               turn.failed
-                                ? "border-[rgba(174,57,31,0.28)] bg-[rgba(255,245,241,0.92)]"
-                                : "border-[rgba(136,109,72,0.16)] bg-white/80"
+                                ? "subpanel-danger"
+                                : "subpanel"
                             }`}
                           >
                             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -2355,11 +2425,11 @@ export default function Results() {
                             </div>
 
                             <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-                              <div className="rounded-[1rem] border border-[rgba(136,109,72,0.14)] px-4 py-3">
+                              <div className="rounded-[1rem] hairline px-4 py-3">
                                 <p className="micro-copy">User</p>
                                 <p className="body-copy mt-2 whitespace-pre-wrap text-sm">{turn.userMessage || "—"}</p>
                               </div>
-                              <div className="rounded-[1rem] border border-[rgba(136,109,72,0.14)] px-4 py-3">
+                              <div className="rounded-[1rem] hairline px-4 py-3">
                                 <p className="micro-copy">Assistant</p>
                                 <p className="body-copy mt-2 whitespace-pre-wrap text-sm">{turn.assistantResponse || "No response captured"}</p>
                               </div>
@@ -2426,7 +2496,7 @@ export default function Results() {
                         </div>
                         <div className="space-y-3">
                           {selectedConversation.noteCandidates.map((note) => (
-                            <div key={note} className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                            <div key={note} className="rounded-[1rem] hairline px-4 py-3">
                               <p className="body-copy text-sm">{note}</p>
                             </div>
                           ))}
@@ -2445,7 +2515,7 @@ export default function Results() {
                 <p className="section-caption mb-2">Agent Trace Terminal</p>
                 <h2 className="section-heading">Span-first execution trace</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Agent çalışmasını terminal benzeri ama okunabilir bir tree yapıda gör; step type badge, süre, metric score, pass/fail durumu ve raw payload drawer ayni yerde.
+                  View agent execution in a terminal-like but readable tree structure; step type badge, duration, metric score, pass/fail status, and raw payload drawer all in one place.
                 </p>
               </div>
 
@@ -2486,10 +2556,10 @@ export default function Results() {
                           key={row.key}
                           type="button"
                           onClick={() => setSelectedTraceKey(row.key)}
-                          className={`w-full rounded-[1.2rem] border px-4 py-3 text-left transition ${
+                          className={`w-full rounded-[1.2rem] px-4 py-3 text-left transition body-copy ${
                             isSelected
-                              ? "border-[rgba(168,106,42,0.38)] bg-[rgba(250,245,238,0.92)] text-[rgba(60,45,25,0.97)]"
-                              : "border-[rgba(136,109,72,0.22)] bg-white/90 text-[rgba(45,38,28,0.92)]"
+                              ? "subpanel-selected"
+                              : "subpanel"
                           }`}
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -2525,12 +2595,12 @@ export default function Results() {
                       </div>
                     </div>
 
-                    <div className="rounded-[1rem] border border-[rgba(136,109,72,0.16)] px-4 py-3">
+                    <div className="rounded-[1rem] hairline px-4 py-3">
                       <p className="micro-copy">Top reasoning</p>
                       <p className="body-copy mt-2 text-sm whitespace-pre-wrap">{selectedTrace.topReasoning}</p>
                     </div>
 
-                    <div className="space-y-3 rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] bg-[rgba(34,29,24,0.96)] px-4 py-4 text-[0.92rem] text-[rgba(245,238,227,0.92)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                    <div className="space-y-3 rounded-[1.2rem] hairline bg-[rgba(34,29,24,0.96)] px-4 py-4 text-[0.92rem] text-[rgba(245,238,227,0.92)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
                       {selectedTrace.spans.map((span) => {
                         const isFailed = span.status === "failed";
                         const statusTone = isFailed ? "text-[rgba(255,164,146,0.98)]" : span.status === "partial" ? "text-[rgba(255,214,140,0.95)]" : "text-[rgba(181,240,205,0.96)]";
@@ -2610,7 +2680,7 @@ export default function Results() {
                 <p className="section-caption mb-2">Run Summary</p>
                 <h2 className="section-heading">Efficiency Pulse</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Seçili run icin token, spend ve latency sinyalini ust ozet seviyesinde hizli oku.
+                  Quickly read token, spend, and latency signals for the selected run at a high summary level.
                 </p>
               </div>
 
@@ -2674,7 +2744,7 @@ export default function Results() {
                 <p className="section-caption mb-2">Judge Desk</p>
                 <h2 className="section-heading">Judge Disagreement Radar</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Primary ve secondary judge nerede ayrisiyor, queue icin hangi ornekler en yuksek sinyali uretiyor burada gor.
+                  See where primary and secondary judges diverge, and which examples produce the strongest signals for the queue.
                 </p>
               </div>
 
@@ -2682,22 +2752,22 @@ export default function Results() {
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Panel Cases</p>
                   <p className="metric-value text-2xl">{formatCount(disagreement.total_panel_cases)}</p>
-                  <p className="micro-copy">Secondary judge verisi olan ornekler</p>
+                  <p className="micro-copy">Cases with secondary judge data</p>
                 </div>
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">High Splits</p>
                   <p className="metric-value text-2xl">{formatCount(disagreement.high_disagreement_cases)}</p>
-                  <p className="micro-copy">Queue icin en kritik ayrismalar</p>
+                  <p className="micro-copy">Most critical splits for the queue</p>
                 </div>
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Strongest Split Model</p>
                   <p className="metric-value text-xl">{disagreement.strongest_split_model ?? "—"}</p>
-                  <p className="micro-copy">Mean disagreement lideri</p>
+                  <p className="micro-copy">Leader in mean disagreement</p>
                 </div>
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Recommended Queue</p>
                   <p className="metric-value text-2xl">{formatCount(disagreement.recommended_queue_size)}</p>
-                  <p className="micro-copy">Auto-review icin secilen sinyal havuzu</p>
+                  <p className="micro-copy">Signal pool selected for auto-review</p>
                 </div>
               </div>
 
@@ -2709,7 +2779,7 @@ export default function Results() {
                   </div>
                   <div className="space-y-3">
                     {disagreement.by_model.map((entry) => (
-                      <div key={entry.model} className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                      <div key={entry.model} className="rounded-[1.2rem] hairline p-4">
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <p className="body-copy font-semibold">{entry.model}</p>
@@ -2739,7 +2809,7 @@ export default function Results() {
                   </div>
                   <div className="space-y-3">
                     {topDisagreementCases.map((item) => (
-                      <div key={`${item.model}-${item.test_name}-${item.test_id}`} className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                      <div key={`${item.model}-${item.test_name}-${item.test_id}`} className="rounded-[1.2rem] hairline p-4">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div>
                             <p className="section-caption mb-1">{item.model} · {item.test_name}</p>
@@ -2760,8 +2830,8 @@ export default function Results() {
                             <p className="body-copy mt-1">{item.secondary_judge_label ?? "—"} {item.secondary_judge_score != null ? `· ${item.secondary_judge_score.toFixed(2)}` : ""}</p>
                           </div>
                         </div>
-                        <div className="mt-3 flex items-start gap-2 rounded-[1rem] border border-[rgba(168,106,42,0.18)] bg-[rgba(250,245,238,0.78)] px-3 py-2">
-                          <AlertTriangle size={16} className="mt-0.5 text-[rgba(168,106,42,0.88)]" />
+                        <div className="mt-3 flex items-start gap-2 rounded-[1rem] callout-warn px-3 py-2">
+                          <AlertTriangle size={16} className="mt-0.5 callout-warn-icon" />
                           <p className="micro-copy">{item.queue_reason}</p>
                         </div>
                       </div>
@@ -2778,7 +2848,7 @@ export default function Results() {
                 <p className="section-caption mb-2">Policy Desk</p>
                 <h2 className="section-heading">Policy-Aware Review Summary</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Safety ve policy vakalarini tek taxonomy altinda oku; hangi ailelerin queue, severity ve review ihtiyaci urettigini hizlica ayir.
+                  Review safety and policy cases under a unified taxonomy; quickly separate which families generate queue, severity, and review needs.
                 </p>
               </div>
 
@@ -2786,17 +2856,17 @@ export default function Results() {
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Policy Cases</p>
                   <p className="metric-value text-2xl">{formatCount(policySummary.total_policy_cases)}</p>
-                  <p className="micro-copy">Taxonomy altina giren safety/policy vakalari</p>
+                  <p className="micro-copy">Safety and policy cases in taxonomy</p>
                 </div>
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Flagged Cases</p>
                   <p className="metric-value text-2xl">{formatCount(policySummary.flagged_case_count)}</p>
-                  <p className="micro-copy">Violation, queue veya guardrail sinyali tasiyan ornekler</p>
+                  <p className="micro-copy">Cases carrying violation, queue, or guardrail signals</p>
                 </div>
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">High Severity</p>
                   <p className="metric-value text-2xl">{formatCount(policySummary.high_severity_case_count)}</p>
-                  <p className="micro-copy">High veya critical risk seviyesine cikan vakalar</p>
+                  <p className="micro-copy">Cases reaching high or critical risk levels</p>
                 </div>
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Queue Candidates</p>
@@ -2828,7 +2898,7 @@ export default function Results() {
 
                   <div className="space-y-3">
                     {policySummary.by_policy_type.map((item) => (
-                      <div key={item.policy_type} className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                      <div key={item.policy_type} className="rounded-[1.2rem] hairline p-4">
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <p className="body-copy font-semibold">{item.policy_type}</p>
@@ -2858,7 +2928,7 @@ export default function Results() {
                   </div>
                   <div className="space-y-3">
                     {topPolicyCases.map((item) => (
-                      <div key={`${item.model}-${item.test_name}-${item.test_id}`} className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                      <div key={`${item.model}-${item.test_name}-${item.test_id}`} className="rounded-[1.2rem] hairline p-4">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div>
                             <p className="section-caption mb-1">{item.model} · {item.test_name}</p>
@@ -2880,8 +2950,8 @@ export default function Results() {
                             <p className="body-copy mt-1">{item.violation_detected ? "yes" : "no"}</p>
                           </div>
                         </div>
-                        <div className="mt-3 flex items-start gap-2 rounded-[1rem] border border-[rgba(168,106,42,0.18)] bg-[rgba(250,245,238,0.78)] px-3 py-2">
-                          <AlertTriangle size={16} className="mt-0.5 text-[rgba(168,106,42,0.88)]" />
+                        <div className="mt-3 flex items-start gap-2 rounded-[1rem] callout-warn px-3 py-2">
+                          <AlertTriangle size={16} className="mt-0.5 callout-warn-icon" />
                           <p className="micro-copy">{item.queue_reason || "Policy-aware export summary captured this case without a queue reason yet."}</p>
                         </div>
                       </div>
@@ -2901,22 +2971,22 @@ export default function Results() {
                   </div>
 
                   <div className="motion-stagger-grid grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                    <div className="rounded-[1.2rem] hairline p-4">
                       <p className="metric-label">Total Reviews</p>
                       <p className="metric-value text-2xl">{formatCount(policyAudit.total_reviews)}</p>
                       <p className="micro-copy">Latest: {formatTimestamp(policyAudit.latest_review_at)}</p>
                     </div>
-                    <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                    <div className="rounded-[1.2rem] hairline p-4">
                       <p className="metric-label">Confirmed</p>
                       <p className="metric-value text-2xl">{formatCount(policyAudit.confirmed_violation_count)}</p>
                       <p className="micro-copy">Reviewer onayli ihlaller</p>
                     </div>
-                    <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                    <div className="rounded-[1.2rem] hairline p-4">
                       <p className="metric-label">False Positives</p>
                       <p className="metric-value text-2xl">{formatCount(policyAudit.false_positive_count)}</p>
                       <p className="micro-copy">Haksiz policy/safety flag duzeltmeleri</p>
                     </div>
-                    <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                    <div className="rounded-[1.2rem] hairline p-4">
                       <p className="metric-label">Needs Follow-Up</p>
                       <p className="metric-value text-2xl">{formatCount(policyAudit.needs_follow_up_count)}</p>
                       <p className="micro-copy">Ek SME veya policy karari gerekenler</p>
@@ -2925,7 +2995,7 @@ export default function Results() {
 
                   <div className="space-y-3">
                     {recentPolicyReviews.map((review) => (
-                      <div key={review.annotation_id} className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                      <div key={review.annotation_id} className="rounded-[1.2rem] hairline p-4">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div>
                             <p className="section-caption mb-1">{review.model} · {review.test_name}</p>
@@ -2956,14 +3026,14 @@ export default function Results() {
                         </div>
 
                         {review.queue_reason && (
-                          <div className="mt-3 flex items-start gap-2 rounded-[1rem] border border-[rgba(168,106,42,0.18)] bg-[rgba(250,245,238,0.78)] px-3 py-2">
-                            <AlertTriangle size={16} className="mt-0.5 text-[rgba(168,106,42,0.88)]" />
+                          <div className="mt-3 flex items-start gap-2 rounded-[1rem] callout-warn px-3 py-2">
+                            <AlertTriangle size={16} className="mt-0.5 callout-warn-icon" />
                             <p className="micro-copy">{review.queue_reason}</p>
                           </div>
                         )}
 
                         {review.notes && (
-                          <div className="mt-3 rounded-[1rem] border border-[rgba(136,109,72,0.16)] bg-white/60 px-3 py-2">
+                          <div className="mt-3 rounded-[1rem] subpanel px-3 py-2">
                             <p className="micro-copy">{review.notes}</p>
                           </div>
                         )}
@@ -2982,10 +3052,10 @@ export default function Results() {
             return (
               <section className="motion-rise motion-delay-2 space-y-4">
                 <div>
-                  <p className="section-caption mb-2">İstatistiksel Analiz</p>
-                  <h2 className="section-heading">İstatistiksel Anlamlılık</h2>
+                  <p className="section-caption mb-2">Statistical Analysis</p>
+                  <h2 className="section-heading">Statistical Significance</h2>
                   <p className="page-subtitle max-w-3xl text-sm">
-                    Bootstrap CI ve Wilcoxon testlerine dayalı model karşılaştırması.
+                    Model comparison based on bootstrap CI and Wilcoxon tests.
                   </p>
                   <p className="micro-copy mt-1">
                     α={statComp.alpha}, %{(statComp.confidence * 100).toFixed(0)} CI · seed={statComp.seed}
@@ -2994,7 +3064,7 @@ export default function Results() {
 
                 <div className="panel-surface panel-quiet space-y-4">
                   <div>
-                    <p className="section-caption mb-2">Model Metrikleri</p>
+                    <p className="section-caption mb-2">Model Metrics</p>
                     <h3 className="section-heading">Per-Model CI</h3>
                   </div>
                   <div className="table-shell overflow-x-auto">
@@ -3002,8 +3072,8 @@ export default function Results() {
                       <thead>
                         <tr>
                           <th>Model</th>
-                          <th>Ağırlıklı Skor</th>
-                          <th>Ortalama</th>
+                          <th>Weighted Score</th>
+                          <th>Mean</th>
                           <th>%95 CI</th>
                           <th>n</th>
                           <th></th>
@@ -3017,7 +3087,7 @@ export default function Results() {
                             <td className="micro-copy">{m.mean_test_score.toFixed(4)}</td>
                             <td className="micro-copy">[{m.ci_lower.toFixed(4)}, {m.ci_upper.toFixed(4)}]</td>
                             <td className="micro-copy">{m.n_tests}</td>
-                            <td>{m.small_sample && <span className="provider-chip">küçük örneklem</span>}</td>
+                            <td>{m.small_sample && <span className="provider-chip">small sample</span>}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -3028,7 +3098,7 @@ export default function Results() {
                 {statComp.pairwise.length > 0 && (
                   <div className="panel-surface panel-quiet space-y-4">
                     <div>
-                      <p className="section-caption mb-2">İkili Karşılaştırma</p>
+                      <p className="section-caption mb-2">Pairwise Comparison</p>
                       <h3 className="section-heading">Pairwise Test</h3>
                     </div>
                     <div className="table-shell overflow-x-auto">
@@ -3041,7 +3111,7 @@ export default function Results() {
                             <th>p</th>
                             <th>Wilcoxon p</th>
                             <th>Etki</th>
-                            <th>Sonuç</th>
+                            <th>Verdict</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -3069,8 +3139,8 @@ export default function Results() {
                 {statComp.warnings.length > 0 && (
                   <div className="space-y-2">
                     {statComp.warnings.map((warning, i) => (
-                      <div key={`stat-warning-${i}`} className="flex items-start gap-2 rounded-[1rem] border border-[rgba(168,106,42,0.18)] bg-[rgba(250,245,238,0.78)] px-3 py-2">
-                        <AlertTriangle size={16} className="mt-0.5 text-[rgba(168,106,42,0.88)]" />
+                      <div key={`stat-warning-${i}`} className="flex items-start gap-2 rounded-[1rem] callout-warn px-3 py-2">
+                        <AlertTriangle size={16} className="mt-0.5 callout-warn-icon" />
                         <p className="micro-copy">{warning}</p>
                       </div>
                     ))}
@@ -3103,7 +3173,7 @@ export default function Results() {
                 <p className="section-caption mb-2">Structured Output</p>
                 <h2 className="section-heading">Reliability Breakdown</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Model bazinda schema compliance, en kirilgan test ve dataset kaynaklarini tek tabloda oku.
+                  Review schema compliance, most brittle tests, and data sources by model in one table.
                 </p>
               </div>
 
@@ -3150,7 +3220,7 @@ export default function Results() {
                 <p className="section-caption mb-2">Trendlines</p>
                 <h2 className="section-heading">Overall Score Time Series</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Secili run icin model bazli overall score zaman serisini ve trend yonunu dogrudan oku.
+                  Read the overall score time series and trend direction by model for the selected run directly.
                 </p>
               </div>
 
@@ -3178,16 +3248,16 @@ export default function Results() {
                     <div className="h-64 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={row.points} margin={{ top: 12, right: 12, bottom: 8, left: 0 }}>
-                          <CartesianGrid stroke="rgba(136,109,72,0.18)" strokeDasharray="4 4" />
+                          <CartesianGrid stroke="rgba(129,177,166,0.18)" strokeDasharray="4 4" />
                           <XAxis
                             dataKey="label"
                             tick={{ fill: "rgba(84, 63, 38, 0.88)", fontSize: 12 }}
-                            stroke="rgba(136,109,72,0.3)"
+                            stroke="rgba(129,177,166,0.34)"
                           />
                           <YAxis
                             domain={[0, 1]}
                             tick={{ fill: "rgba(84, 63, 38, 0.88)", fontSize: 12 }}
-                            stroke="rgba(136,109,72,0.3)"
+                            stroke="rgba(129,177,166,0.34)"
                             tickFormatter={(value) => formatMetric(Number(value), 2)}
                           />
                           <Tooltip
@@ -3227,8 +3297,8 @@ export default function Results() {
                   <p className="section-caption mb-2">Efficiency</p>
                   <h2 className="section-heading">Token Efficiency Scoreboard</h2>
                   <p className="page-subtitle max-w-3xl text-sm">
-                    Ayni suite icinde kaliteyi, modelin tükettigi token yüküyle birlikte oku.
-                    Solda daha az token, yukarida daha yüksek kalite daha iyi.
+                    Review quality alongside the token cost per model within the same suite.
+                    Better efficiency is: lower token on the left, higher quality on top.
                   </p>
                 </div>
 
@@ -3291,11 +3361,11 @@ export default function Results() {
                       <div>
                         <p className="section-caption mb-2">Bottleneck Panel</p>
                         <h3 className="section-heading">Latency and Cost Hotspots</h3>
-                        <p className="micro-copy mt-2">Run icindeki en yavas, en pahali ve en dusuk quality-per-latency sinyallerini hizli oku.</p>
+                        <p className="micro-copy mt-2">Quickly identify the slowest, costliest, and lowest quality-per-latency signals in the run.</p>
                       </div>
 
                       <div className="space-y-3">
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <div className="flex items-center gap-3">
                             <div className="metric-emblem">
                               <AlertTriangle size={18} />
@@ -3312,7 +3382,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <div className="flex items-center gap-3">
                             <div className="metric-emblem">
                               <BarChart3 size={18} />
@@ -3329,7 +3399,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <div className="flex items-center gap-3">
                             <div className="metric-emblem">
                               <Zap size={18} />
@@ -3346,7 +3416,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <div className="flex items-center gap-3">
                             <div className="metric-emblem">
                               <Sparkles size={18} />
@@ -3420,11 +3490,11 @@ export default function Results() {
                       <div>
                         <p className="section-caption mb-2">Provider Cost</p>
                         <h3 className="section-heading">Normalized Provider Spend</h3>
-                        <p className="micro-copy mt-2">Provider bazli cost share ve token-normalized spend sinyalini selected report icinde hizli oku.</p>
+                        <p className="micro-copy mt-2">Quickly read provider-based cost share and token-normalized spend signals within the selected report.</p>
                       </div>
 
                       <div className="space-y-3">
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <p className="metric-label">Dominant Spend Provider</p>
                           <p className="metric-value mt-2 text-xl">{dominantProviderCost?.provider ?? "—"}</p>
                           <p className="micro-copy mt-2">
@@ -3434,7 +3504,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <p className="metric-label">Leanest Provider Spend</p>
                           <p className="metric-value mt-2 text-xl">{leanestProviderCost?.provider ?? "—"}</p>
                           <p className="micro-copy mt-2">
@@ -3444,7 +3514,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <p className="metric-label">Provider Coverage</p>
                           <p className="metric-value mt-2 text-xl">{formatCount(normalizedProviderCostRows.length)}</p>
                           <p className="micro-copy mt-2">
@@ -3497,12 +3567,12 @@ export default function Results() {
                         <p className="section-caption mb-2">Evaluator Families</p>
                         <h3 className="section-heading">Metric Execution Footprint</h3>
                         <p className="micro-copy mt-2">
-                          Metric provider ailelerinin coverage, score ve goze carpan cost sinyalini ayni yerde oku.
+                          Read metric provider families' coverage, score, and notable cost signals in one place.
                         </p>
                       </div>
 
                       <div className="space-y-3">
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <p className="metric-label">Highest Metric Volume</p>
                           <p className="metric-value mt-2 text-xl">{topEvaluatorByVolume?.provider ?? "—"}</p>
                           <p className="micro-copy mt-2">
@@ -3512,7 +3582,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <p className="metric-label">Highest Observed Evaluator Cost</p>
                           <p className="metric-value mt-2 text-xl">{topEvaluatorByObservedCost?.provider ?? "—"}</p>
                           <p className="micro-copy mt-2">
@@ -3522,7 +3592,7 @@ export default function Results() {
                           </p>
                         </div>
 
-                        <div className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div className="rounded-[1.2rem] hairline p-4">
                           <p className="metric-label">Best Evaluator Score</p>
                           <p className="metric-value mt-2 text-xl">{bestEvaluatorScore?.provider ?? "—"}</p>
                           <p className="micro-copy mt-2">
@@ -3586,13 +3656,13 @@ export default function Results() {
                     <div className="h-80 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <ScatterChart margin={{ top: 12, right: 12, bottom: 18, left: 0 }}>
-                          <CartesianGrid stroke="rgba(136,109,72,0.18)" strokeDasharray="4 4" />
+                          <CartesianGrid stroke="rgba(129,177,166,0.18)" strokeDasharray="4 4" />
                           <XAxis
                             type="number"
                             dataKey="avg_tokens_per_eval"
                             name="Avg Tokens / Eval"
                             tick={{ fill: "rgba(84, 63, 38, 0.88)", fontSize: 12 }}
-                            stroke="rgba(136,109,72,0.3)"
+                            stroke="rgba(129,177,166,0.34)"
                             tickFormatter={(value) => formatMetric(Number(value), 0)}
                           />
                           <YAxis
@@ -3601,7 +3671,7 @@ export default function Results() {
                             dataKey="overall_score"
                             name="Overall Score"
                             tick={{ fill: "rgba(84, 63, 38, 0.88)", fontSize: 12 }}
-                            stroke="rgba(136,109,72,0.3)"
+                            stroke="rgba(129,177,166,0.34)"
                             tickFormatter={(value) => formatMetric(Number(value), 2)}
                           />
                           <Tooltip content={<EfficiencyTooltip />} cursor={{ strokeDasharray: "4 4" }} />
@@ -3625,7 +3695,7 @@ export default function Results() {
                     </div>
                     <div className="space-y-3">
                       {efficiencyLeaderboard.map((point, index) => (
-                        <div key={point.model} className="rounded-[1.2rem] border border-[rgba(136,109,72,0.16)] p-4">
+                        <div key={point.model} className="rounded-[1.2rem] hairline p-4">
                           <div className="flex items-start justify-between gap-4">
                             <div>
                               <p className="section-caption mb-1">#{index + 1}</p>
