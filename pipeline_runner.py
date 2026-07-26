@@ -3842,7 +3842,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
 
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_tool_chain_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, ToolWorkflowCase):
                 workflow_case = item
             else:
@@ -3853,7 +3853,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid tool chain item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             expected_tools: List[str] = workflow_case.expected_tools
             expected_order: bool = workflow_case.expected_order
@@ -3901,7 +3901,7 @@ class EvaluationPipeline:
 
             overall_score = 0.7 * tool_coverage + 0.3 * order_score
 
-            results.append({
+            return {
                 "id": workflow_case.case_id,
                 "category": workflow_case.resolved_category,
                 "prompt": workflow_case.input_text,
@@ -3921,7 +3921,9 @@ class EvaluationPipeline:
                     **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                 },
                 "latency": response.get("latency", 0),
-            })
+            }
+
+        results = self._run_items_concurrently(dataset, _process_tool_chain_item, test_name)
 
         avg_tool_coverage = sum(r["scores"]["tool_coverage"] for r in results) / len(results) if results else 0
         avg_order_score = sum(r["scores"]["order_score"] for r in results) / len(results) if results else 0
