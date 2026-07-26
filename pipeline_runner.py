@@ -5645,6 +5645,9 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 num_runs=num_runs,
                 temperature=0.0
             )
+            if consistency_result.get("generation_error"):
+                logger.warning(f"[{test_name}] item {item_id} failed after retries: {consistency_result['generation_error']}")
+                return None
             prompt_alignment_metrics = {
                 f"run_{index + 1}": _build_prompt_alignment_metric(
                     instruction_eval.evaluate(

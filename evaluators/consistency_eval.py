@@ -65,17 +65,25 @@ JSON formatında yanıt verin:
             }
         """
         responses = []
-        
+
         # Generate multiple responses
         messages = [
             {"role": "system", "content": "Sen yardımcı bir asistansın."},
             {"role": "user", "content": question}
         ]
-        
+
         for _ in range(num_runs):
             result = model.generate(messages, temperature=temperature)
+            if result.get("error"):
+                # Drop the failed run rather than counting an infrastructure
+                # error as one more (identical-looking "None") response —
+                # that would corrupt the consistency judge/variance below.
+                continue
             responses.append(result['content'])
-        
+
+        if not responses:
+            return {"generation_error": "all consistency runs failed"}
+
         # Evaluate consistency with judge
         responses_text = "\n\n".join([f"Yanıt {i+1}: {r}" for i, r in enumerate(responses)])
         

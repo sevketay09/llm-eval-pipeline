@@ -227,6 +227,23 @@ class GenerateErrorExclusionTests(unittest.TestCase):
         self.assertNotIn("75%", compressions)
         self.assertIn("50%", compressions)
 
+    def test_consistency_excludes_item_when_all_runs_fail(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {"id": "fail-me", "question": "fail-me: tutarlilik testi sorusu"},
+            {"id": "ok-item", "question": "ok-item: tutarlilik testi sorusu"},
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_consistency_test(
+            ctx, model, dataset, judge=None, test_name="consistency", num_runs=3
+        )
+
+        result_ids = [r["id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
