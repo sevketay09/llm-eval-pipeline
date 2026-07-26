@@ -6753,7 +6753,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
             results = []
 
         if test_name != "humaneval":
-            for item in self._iter_with_progress(dataset, test_name):
+            def _process_benchmark_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
                 if isinstance(item, BenchmarkCase):
                     benchmark_case = item
                 else:
@@ -6764,7 +6764,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                         logger.warning(
                             f"Skipping invalid benchmark item {item_id} in {test_name}: {exc}"
                         )
-                        continue
+                        return None
 
                 prompt = benchmark_case.prompt
                 choices = benchmark_case.resolved_choices
@@ -6786,7 +6786,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 response = model.generate(messages, response_format=response_format)
                 if response['content'] is None:
                     logger.warning(f"Empty response for benchmark item in {test_name}")
-                    continue
+                    return None
 
                 structured = self._parse_structured_output(response['content'], schema)
                 json_correctness_metric = _build_json_correctness_metric(structured)
@@ -6864,7 +6864,9 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     "latency": response['latency'],
                 }
 
-                results.append(result)
+                return result
+
+            results = self._run_items_concurrently(dataset, _process_benchmark_item, test_name)
 
         avg_score = sum(r["scores"]["benchmark_score"] for r in results) / len(results) if results else 0
         json_correctness_values = [
