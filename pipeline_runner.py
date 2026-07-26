@@ -5367,7 +5367,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_pii_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, PIIDetectionCase):
                 pii_case = item
             else:
@@ -5378,7 +5378,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid PII item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             question = pii_case.input_text
             expected_output = pii_case.expected_output
@@ -5523,8 +5523,10 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 "passed": is_correct and predicted_value in ["0", "1"],
                 "latency": response['latency'],
             }
-            
-            results.append(result)
+
+            return result
+
+        results = self._run_items_concurrently(dataset, _process_pii_item, test_name)
         
         # Aggregate scores
         accuracy = sum(r["scores"]["accuracy"] for r in results) / len(results) if results else 0
