@@ -73,7 +73,30 @@ class UnifiedLLMAdapter:
         wait=wait_exponential(multiplier=1, min=2, max=10),
         retry=retry_if_exception_type((Exception,)),
         before_sleep=before_sleep_log(logger, _logging.WARNING),
+        reraise=True,
     )
+    def _dispatch_generate(
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List[Dict]],
+        temperature: float,
+        max_tokens: int,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Actual provider call, retried up to 3x with exponential backoff.
+
+        Must raise on failure (never swallow) so tenacity's retry actually
+        triggers — `reraise=True` re-raises the last real exception once
+        attempts are exhausted, instead of tenacity's own RetryError wrapper,
+        so the caller's error message stays meaningful.
+        """
+        if self.provider == "mock":
+            return self._generate_mock(messages, tools, **kwargs)
+        elif self.provider == "anthropic":
+            return self._generate_anthropic(messages, tools, temperature, max_tokens, **kwargs)
+        else:
+            return self._generate_openai(messages, tools, temperature, max_tokens, **kwargs)
+
     def generate(
         self,
         messages: List[Dict[str, str]],
@@ -83,8 +106,9 @@ class UnifiedLLMAdapter:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Generate completion with unified interface (with retry logic)
-        
+        Generate completion with unified interface (retries transient errors
+        up to 3x with exponential backoff; never raises to the caller).
+
         Returns:
             {
                 'content': str,
@@ -93,9 +117,13 @@ class UnifiedLLMAdapter:
                 'latency': float,
                 'model': str
             }
+            On failure after all retries are exhausted, 'content' is None and
+            an 'error' key is set — callers must check for this and exclude
+            the item from results rather than scoring an empty/error response
+            as if it were a real answer.
         """
         start_time = time.time()
-        
+
         # Set defaults
         temperature = temperature if temperature is not None else self.config.get("temperature", 0.0)
         max_tokens = max_tokens if max_tokens is not None else self.config.get("max_tokens", 4096)
@@ -105,16 +133,11 @@ class UnifiedLLMAdapter:
             temperature = float(self.config["force_temperature"])
         if self.config.get("force_max_tokens") is not None:
             max_tokens = int(self.config["force_max_tokens"])
-        
+
         logger.debug(f"[{self.model_name}] → API call | messages={len(messages)} temperature={temperature} max_tokens={max_tokens}")
 
         try:
-            if self.provider == "mock":
-                result = self._generate_mock(messages, tools, **kwargs)
-            elif self.provider == "anthropic":
-                result = self._generate_anthropic(messages, tools, temperature, max_tokens, **kwargs)
-            else:
-                result = self._generate_openai(messages, tools, temperature, max_tokens, **kwargs)
+            result = self._dispatch_generate(messages, tools, temperature, max_tokens, **kwargs)
 
             latency = time.time() - start_time
             result['latency'] = latency
@@ -135,9 +158,9 @@ class UnifiedLLMAdapter:
                 if is_timeout:
                     self.timeout_count += 1
             if is_timeout:
-                logger.error(f"[{self.model_name}] TIMEOUT after {latency:.2f}s: {type(e).__name__}: {e}")
+                logger.error(f"[{self.model_name}] TIMEOUT after {latency:.2f}s (all retries exhausted): {type(e).__name__}: {e}")
             else:
-                logger.error(f"[{self.model_name}] ERROR after {latency:.2f}s: {type(e).__name__}: {e}")
+                logger.error(f"[{self.model_name}] ERROR after {latency:.2f}s (all retries exhausted): {type(e).__name__}: {e}")
             return {
                 'content': None,
                 'tool_calls': None,

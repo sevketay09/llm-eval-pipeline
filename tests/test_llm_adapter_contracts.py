@@ -3,6 +3,7 @@ import sys
 import types
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 def _load_unified_adapter_module():
@@ -10,10 +11,12 @@ def _load_unified_adapter_module():
 
     class _BaseClient:
         instances = []
+        should_fail_times = 0  # class-level: settable by a test before adapter init
 
         def __init__(self, **kwargs):
             self.init_kwargs = kwargs
             self.create_calls = []
+            self._calls_made = 0
             self.chat = types.SimpleNamespace(
                 completions=types.SimpleNamespace(create=self._create)
             )
@@ -21,6 +24,9 @@ def _load_unified_adapter_module():
 
         def _create(self, **kwargs):
             self.create_calls.append(kwargs)
+            self._calls_made += 1
+            if self._calls_made <= self.__class__.should_fail_times:
+                raise RuntimeError(f"simulated transient error (call {self._calls_made})")
             message = types.SimpleNamespace(content="ok", tool_calls=None)
             choice = types.SimpleNamespace(message=message)
             usage = types.SimpleNamespace(prompt_tokens=11, completion_tokens=5)
@@ -110,6 +116,46 @@ class UnifiedLLMAdapterContractTests(unittest.TestCase):
         self.assertEqual(adapter.provider, "azure")
         self.assertEqual(len(AzureOpenAI.instances), 1)
         self.assertEqual(AzureOpenAI.instances[0].init_kwargs["azure_endpoint"], "https://my-resource.openai.azure.com")
+
+    def test_generate_retries_transient_errors_and_succeeds(self):
+        module, OpenAI, _ = _load_unified_adapter_module()
+        OpenAI.should_fail_times = 2  # fails twice, succeeds on the 3rd (last) attempt
+        adapter = module.UnifiedLLMAdapter(
+            {
+                "provider": "openai",
+                "model_name": "demo-model",
+                "base_url": "http://localhost:8000/v1",
+                "api_key": "dummy",
+            }
+        )
+
+        with patch("time.sleep"):
+            result = adapter.generate([{"role": "user", "content": "hello"}])
+
+        self.assertEqual(len(OpenAI.instances[0].create_calls), 3)
+        self.assertEqual(result["content"], "ok")
+        self.assertNotIn("error", result)
+
+    def test_generate_returns_graceful_error_after_exhausting_retries(self):
+        module, OpenAI, _ = _load_unified_adapter_module()
+        OpenAI.should_fail_times = 999  # always fails
+        adapter = module.UnifiedLLMAdapter(
+            {
+                "provider": "openai",
+                "model_name": "demo-model",
+                "base_url": "http://localhost:8000/v1",
+                "api_key": "dummy",
+            }
+        )
+
+        with patch("time.sleep"):
+            result = adapter.generate([{"role": "user", "content": "hello"}])
+
+        # stop_after_attempt(3): exactly 3 real calls, no more, no crash.
+        self.assertEqual(len(OpenAI.instances[0].create_calls), 3)
+        self.assertIsNone(result["content"])
+        self.assertIn("simulated transient error", result["error"])
+        self.assertEqual(adapter.error_count, 1)
 
 
 if __name__ == "__main__":
