@@ -72,6 +72,17 @@ export default function RunEvaluation() {
       }
     });
     customDatasetsApi.list(24).then(setRecentDatasets);
+    // Reattach to a run already in progress on the backend — without this,
+    // reloading the page (or a dropped connection, e.g. the machine went to
+    // sleep mid-run) loses all visible progress even though the run itself
+    // keeps going server-side; the websocket below only connects once
+    // activeRun is set.
+    evaluationsApi.listRuns(5).then((runs) => {
+      const inProgress = runs.find((r) => r.status === "running");
+      if (inProgress) {
+        setActiveRun(inProgress);
+      }
+    });
   }, []);
 
   const handleStart = async () => {
