@@ -3429,7 +3429,7 @@ class EvaluationPipeline:
         geval_eval = self._initialize_geval_evaluator()
         quality_eval = self._initialize_quality_evaluator()
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_reasoning_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, ReasoningCase):
                 reasoning_case = item
             else:
@@ -3440,7 +3440,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid reasoning item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             system_prompt = "Sen mantıksal düşünme konusunda uzman bir asistansın. Problemleri adım adım çöz ve muhakemeni açıkla."
             system_prompt = self._inject_schema_instruction(system_prompt, schema)
@@ -3455,8 +3455,8 @@ class EvaluationPipeline:
                 logger.warning(
                     f"Empty response for item {reasoning_case.case_id} in {test_name}"
                 )
-                continue
-            
+                return None
+
             structured = self._parse_structured_output(response['content'], schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
             reasoning_text = response['content']
@@ -3580,9 +3580,11 @@ class EvaluationPipeline:
                 },
                 "latency": response['latency'],
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results.extend(self._run_items_concurrently(dataset, _process_reasoning_item, test_name))
+
         avg_scores = {
             "reasoning_quality": sum(r["scores"]["reasoning_quality"] for r in results) / len(results) if results else 0,
             "cot_quality": sum(r["scores"]["cot_quality"] for r in results) / len(results) if results else 0,
