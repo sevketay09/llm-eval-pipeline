@@ -4003,15 +4003,16 @@ class EvaluationPipeline:
             judge_adapter=judge
         )
 
-        # Flatten results into a per-item format consistent with other tests
-        results = []
-        latencies = []
-        for item_result in raw.get("test_results", []):
+        # Flatten results into a per-item format consistent with other tests.
+        # Each item only needs a judge call for prompt-alignment, so run those
+        # concurrently instead of one at a time.
+        raw_test_results = raw.get("test_results", [])
+
+        def _process_recovery_item(item_idx: int, item_result: Any) -> Dict[str, Any]:
             success = item_result.get("success", False)
             score = 1.0 if success else 0.0
             # Capture latency when available (multi-turn calls don't expose raw latency; default 0)
             latency = item_result.get("latency", 0.0)
-            latencies.append(latency)
             scenario = scenario_by_id.get(item_result.get("test_id", "unknown"), {})
             prompt_alignment_eval = instruction_eval.evaluate(
                 _build_prompt_alignment_instruction("", scenario.get("prompt", "")),
@@ -4019,7 +4020,7 @@ class EvaluationPipeline:
             )
             prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
 
-            results.append({
+            return {
                 "id": item_result.get("test_id", "unknown"),
                 "success": success,
                 "retry_attempted": item_result.get("retry_attempted"),
@@ -4039,7 +4040,10 @@ class EvaluationPipeline:
                     **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                 },
                 "latency": latency,
-            })
+            }
+
+        results = self._run_items_concurrently(raw_test_results, _process_recovery_item, test_name)
+        latencies = [r["latency"] for r in results]
 
         summary_raw = raw.get("summary", {})
         overall_score = summary_raw.get("success_rate", 0.0)

@@ -5,6 +5,7 @@ Modellerin tool hatalarını nasıl handle ettiğini test eder.
 - Fallback strategies
 - Error message comprehension
 """
+import concurrent.futures
 import json
 from typing import Dict, Any, List, Optional
 from adapters.unified_adapter import UnifiedLLMAdapter
@@ -414,29 +415,43 @@ def evaluate_tool_error_recovery(
     and error comprehension.
     """
     evaluator = ToolErrorRecoveryEvaluator(judge_adapter)
-    
+
     results = []
     retry_tests = []
     fallback_tests = []
     comprehension_tests = []
-    
-    for i, scenario in enumerate(test_scenarios):
+
+    def _run_scenario(i, scenario):
         print(f"Running error recovery test {i+1}/{len(test_scenarios)}: {scenario.get('id', 'unknown')}")
-        
         test_type = scenario.get("test_type", "retry")
-        
         if test_type == "retry":
-            result = evaluator.evaluate_retry_behavior(adapter, scenario)
+            return test_type, evaluator.evaluate_retry_behavior(adapter, scenario)
+        elif test_type == "fallback":
+            return test_type, evaluator.evaluate_fallback_strategy(adapter, scenario)
+        elif test_type == "comprehension":
+            return test_type, evaluator.evaluate_error_comprehension(adapter, scenario)
+        return None, None
+
+    # Scenarios are independent (each drives its own model/tool-error conversation),
+    # so run them concurrently instead of blocking one at a time on model latency.
+    # Original scenario order is preserved below for `results` and the per-type lists.
+    indexed: Dict[int, Any] = {}
+    if test_scenarios:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(3, len(test_scenarios))) as pool:
+            futures = {pool.submit(_run_scenario, i, scenario): i for i, scenario in enumerate(test_scenarios)}
+            for future in concurrent.futures.as_completed(futures):
+                indexed[futures[future]] = future.result()
+
+    for i in sorted(indexed):
+        test_type, result = indexed[i]
+        if test_type is None:
+            continue
+        if test_type == "retry":
             retry_tests.append(result)
         elif test_type == "fallback":
-            result = evaluator.evaluate_fallback_strategy(adapter, scenario)
             fallback_tests.append(result)
         elif test_type == "comprehension":
-            result = evaluator.evaluate_error_comprehension(adapter, scenario)
             comprehension_tests.append(result)
-        else:
-            continue
-        
         results.append(result)
     
     # Calculate summary
