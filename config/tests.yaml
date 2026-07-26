@@ -14,8 +14,11 @@ metric_weights:
   embedding_clustering: 0.05
   embedding_clustering_regulatory: 0.06
   embedding_consistency: 0.03
+  embedding_long_context: 0.05
   embedding_pair_classification: 0.07
+  embedding_perturbation_stability: 0.05
   embedding_prefix_sensitivity: 0.04
+  embedding_reranking: 0.07
   embedding_retrieval: 0.1
   embedding_retrieval_hardneg: 0.08
   embedding_sts: 0.1
@@ -105,6 +108,9 @@ test_suites:
     - embedding_bitext_mining
     - embedding_prefix_sensitivity
     - embedding_consistency
+    - embedding_long_context
+    - embedding_reranking
+    - embedding_perturbation_stability
   embedding_turkish:
     enabled: true
     max_samples: all
@@ -247,9 +253,12 @@ thresholds:
   embedding_bitext_mining_accuracy_at_1: 0.7
   embedding_clustering_accuracy: 0.8
   embedding_clustering_accuracy_regulatory: 0.82
+  embedding_long_context_position_gap: 0.15
   embedding_ndcg_at_10: 0.75
   embedding_ndcg_at_10_hardneg: 0.8
   embedding_pair_classification_ap: 0.75
+  embedding_perturbation_top_k_overlap: 0.7
+  embedding_reranking_ndcg: 0.75
   embedding_retrieval_mrr: 0.65
   embedding_spearman_correlation: 0.7
   embedding_spearman_correlation_crosslingual: 0.68

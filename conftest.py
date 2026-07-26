@@ -41,9 +41,45 @@ def _pure_ttest_1samp(arr, popmean):
     return (t, p)
 
 
+def _pure_rank_correlation(a, b):
+    """Shared rank/linear-correlation core for the scipy.stats spearmanr/pearsonr mocks."""
+    import numpy as np
+
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    if np.std(a) == 0 or np.std(b) == 0:
+        return 0.0
+    return float(np.corrcoef(a, b)[0, 1])
+
+
+def _pure_rank(x):
+    import numpy as np
+
+    x = np.asarray(x, dtype=float)
+    order = np.argsort(x)
+    ranks = np.empty(len(x))
+    ranks[order] = np.arange(1, len(x) + 1)
+    _, inverse, counts = np.unique(x, return_inverse=True, return_counts=True)
+    sum_ranks = np.zeros(len(counts))
+    np.add.at(sum_ranks, inverse, ranks)
+    return (sum_ranks / counts)[inverse]
+
+
+def _pure_spearmanr(a, b):
+    """Pure-numpy Spearman rank correlation (p-value unused by this codebase's callers)."""
+    return (_pure_rank_correlation(_pure_rank(a), _pure_rank(b)), 1.0)
+
+
+def _pure_pearsonr(a, b):
+    """Pure-numpy Pearson correlation (p-value unused by this codebase's callers)."""
+    return (_pure_rank_correlation(a, b), 1.0)
+
+
 if isinstance(sys.modules["scipy.stats"], MagicMock):
     sys.modules["scipy.stats"].ttest_1samp = _pure_ttest_1samp
     sys.modules["scipy.stats"].wilcoxon = lambda arr, **kw: (0.0, 1.0)
+    sys.modules["scipy.stats"].spearmanr = _pure_spearmanr
+    sys.modules["scipy.stats"].pearsonr = _pure_pearsonr
     if isinstance(sys.modules["scipy"], MagicMock):
         sys.modules["scipy"].stats = sys.modules["scipy.stats"]
 

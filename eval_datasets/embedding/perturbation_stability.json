@@ -1,0 +1,167 @@
+[
+  {
+    "id": "ps_001",
+    "category": "banking",
+    "query_original": "Kredi kartı borcumu nasıl öderim?",
+    "query_perturbed": "Kredi katı borcumu nasl öderim?",
+    "perturbation_type": "typo",
+    "positive_docs": ["Kredi kartı borcunuzu mobil uygulama üzerinden ödeyebilirsiniz.", "Otomatik ödeme talimatı vererek kredi kartı borcunuzu otomatik ödeyebilirsiniz."],
+    "hard_negatives": ["Kredi kartı limitinizi artırmak için başvuru yapabilirsiniz.", "Kredi kartı başvurusu online olarak yapılabilir."],
+    "random_negatives": ["Yarın hava parçalı bulutlu olacak.", "İstanbul'da gezilecek en güzel yerler nelerdir?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_002",
+    "category": "banking",
+    "query_original": "Hesabımdaki para ne zaman yatacak?",
+    "query_perturbed": "Hesabıma para ne zaman yatacak?",
+    "perturbation_type": "word_order",
+    "positive_docs": ["Havale işlemleri genellikle aynı gün içinde hesabınıza yansır.", "Para transferi, işlemin onaylanmasından sonra birkaç dakika içinde hesabınıza geçer."],
+    "hard_negatives": ["Hesabınızdan para çekmek için ATM kullanabilirsiniz.", "Hesap kapatma işlemi şubeden yapılabilir."],
+    "random_negatives": ["Kredi notumu nasıl öğrenebilirim?", "En yakın sinema salonu nerede?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_003",
+    "category": "banking",
+    "query_original": "Şifremi unuttum, ne yapmalıyım?",
+    "query_perturbed": "Parolamı unuttum, ne yapmalıyım?",
+    "perturbation_type": "synonym",
+    "positive_docs": ["Şifrenizi unuttuysanız mobil uygulama üzerinden 'Şifremi Unuttum' seçeneğini kullanabilirsiniz.", "Şifre sıfırlama işlemi için kimlik doğrulama adımlarını tamamlamanız gerekir."],
+    "hard_negatives": ["Kullanıcı adınızı unuttuysanız müşteri hizmetlerini arayabilirsiniz.", "Hesabınız güvenlik nedeniyle geçici olarak kilitlenmiş olabilir."],
+    "random_negatives": ["Bugün ne yesem iyi olur?", "En sevdiğim renk mavidir."],
+    "difficulty": "hard"
+  },
+  {
+    "id": "ps_004",
+    "category": "banking",
+    "query_original": "Yurt dışında kartımı kullanabilir miyim?",
+    "query_perturbed": "Kartımı yurt dışında kullanabilir miyim?",
+    "perturbation_type": "word_order",
+    "positive_docs": ["Kartınız, uluslararası işlemlere açık olduğu sürece yurt dışında kullanılabilir.", "Yurt dışı kullanım için kartınızı önceden aktif hale getirmeniz gerekebilir."],
+    "hard_negatives": ["Kartınızı online alışverişlerde de kullanabilirsiniz.", "Kartınızın günlük harcama limiti bulunmaktadır."],
+    "random_negatives": ["En yakın restoranı nasıl bulurum?", "Yarın toplantım var mı?"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "ps_005",
+    "category": "banking",
+    "query_original": "Fatura ödeme tarihini nasıl değiştirebilirim?",
+    "query_perturbed": "Fatura ödeme gününü nasıl değiştirebilirim?",
+    "perturbation_type": "synonym",
+    "positive_docs": ["Fatura ödeme tarihinizi mobil uygulama üzerinden güncelleyebilirsiniz.", "Ödeme tarihi değişikliği bir sonraki fatura döneminden itibaren geçerli olur."],
+    "hard_negatives": ["Fatura tutarınızda değişiklik olması durumunda bildirim alırsınız.", "Otomatik ödeme talimatınızı istediğiniz zaman iptal edebilirsiniz."],
+    "random_negatives": ["En sevdiğim kitap hangisi?", "Bu hafta sonu ne yapacağım?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_006",
+    "category": "finance",
+    "query_original": "Döviz kurunu nereden takip edebilirim?",
+    "query_perturbed": "Döviz kurlarını nerden takip edebilirim?",
+    "perturbation_type": "typo",
+    "positive_docs": ["Güncel döviz kurlarını mobil uygulamanın ana ekranından takip edebilirsiniz.", "Döviz kurları, uygulama içindeki 'Piyasalar' bölümünde anlık olarak güncellenir."],
+    "hard_negatives": ["Döviz hesabı açmak için ek belge gerekmemektedir.", "Döviz alım satım işlemleri şubeden de yapılabilir."],
+    "random_negatives": ["En yakın eczane nerede?", "Bugün hangi gün?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_007",
+    "category": "finance",
+    "query_original": "Yatırım hesabı açmak için ne yapmam gerekiyor?",
+    "query_perturbed": "Yatırım hesabı açmak için neler yapmalıyım?",
+    "perturbation_type": "paraphrase",
+    "positive_docs": ["Yatırım hesabı açmak için mobil uygulama üzerinden başvuru yapabilirsiniz.", "Yatırım hesabı açılışı için kimlik doğrulama ve risk profili anketi tamamlanmalıdır."],
+    "hard_negatives": ["Yatırım hesabınızı kapatmak için şubeye başvurmanız gerekir.", "Vadeli mevduat hesabı açmak farklı bir süreçtir."],
+    "random_negatives": ["En yakın market nerede?", "Bugün trafik nasıl?"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "ps_008",
+    "category": "finance",
+    "query_original": "Kredi notumu nasıl öğrenebilirim?",
+    "query_perturbed": "Kredi skorumu nasıl öğrenebilirim?",
+    "perturbation_type": "synonym",
+    "positive_docs": ["Kredi notunuzu mobil uygulama üzerinden ücretsiz olarak görüntüleyebilirsiniz.", "Kredi notu, geçmiş ödeme performansınıza göre hesaplanan bir puandır."],
+    "hard_negatives": ["Kredi notunuzu yükseltmek için düzenli ödeme yapmanız önerilir.", "Kredi kartı başvurusu kredi notunuzu etkileyebilir."],
+    "random_negatives": ["Bugün hangi film vizyona girdi?", "En yakın otopark nerede?"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "ps_009",
+    "category": "customer_service",
+    "query_original": "Müşteri hizmetlerine nasıl ulaşabilirim?",
+    "query_perturbed": "Müşteri hizmetlerine ulaşmak için ne yapmalıyım?",
+    "perturbation_type": "paraphrase",
+    "positive_docs": ["Müşteri hizmetlerimize 7/24 çağrı merkezi üzerinden ulaşabilirsiniz.", "Mobil uygulama üzerinden canlı destek hattına bağlanabilirsiniz."],
+    "hard_negatives": ["Şubelerimiz hafta içi belirli saatler arasında hizmet vermektedir.", "Şikayetlerinizi yazılı olarak da iletebilirsiniz."],
+    "random_negatives": ["En yakın kütüphane nerede?", "Bugün hava kaç derece?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_010",
+    "category": "customer_service",
+    "query_original": "Şubeye gitmeden hesap açabilir miyim?",
+    "query_perturbed": "Şubeye uğramadan hesap açabilir miyim?",
+    "perturbation_type": "synonym",
+    "positive_docs": ["Mobil uygulama üzerinden şubeye gitmeden hesap açabilirsiniz.", "Online hesap açılışı video görüşmesiyle tamamlanmaktadır."],
+    "hard_negatives": ["Şubeye giderek de hesap açabilirsiniz.", "Hesap kapatma işlemi için şubeye gitmeniz gerekebilir."],
+    "random_negatives": ["Bu akşam ne izlesem?", "En yakın eczane hangisi?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_011",
+    "category": "banking",
+    "query_original": "Otomatik ödeme talimatı nasıl iptal edilir?",
+    "query_perturbed": "Otomatik ödeme talimatını nasıl iptal ederim?",
+    "perturbation_type": "paraphrase",
+    "positive_docs": ["Otomatik ödeme talimatınızı mobil uygulamadan tek dokunuşla iptal edebilirsiniz.", "Talimat iptali, bir sonraki fatura döneminden itibaren geçerli olur."],
+    "hard_negatives": ["Yeni bir otomatik ödeme talimatı oluşturabilirsiniz.", "Fatura tutarınızı öğrenmek için ekstrenizi kontrol edebilirsiniz."],
+    "random_negatives": ["En sevdiğim spor basketboldur.", "Yarın hava nasıl olacak?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_012",
+    "category": "finance",
+    "query_original": "Emeklilik yatırım fonu getirisi ne kadar?",
+    "query_perturbed": "Emeklilik yatırım fonunun getirisi ne kadar?",
+    "perturbation_type": "word_order",
+    "positive_docs": ["Emeklilik yatırım fonunuzun güncel getirisini mobil uygulamadan görüntüleyebilirsiniz.", "Fon getirisi, seçtiğiniz fon türüne ve piyasa koşullarına göre değişir."],
+    "hard_negatives": ["Emeklilik fonuna aylık katkı payınızı değiştirebilirsiniz.", "Fon yönetim ücretleri fon türüne göre farklılık gösterir."],
+    "random_negatives": ["En yakın spor salonu nerede?", "Bugün hangi maçlar var?"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "ps_013",
+    "category": "regulatory",
+    "query_original": "KVKK kapsamında haklarım nelerdir?",
+    "query_perturbed": "KVKK çerçevesinde haklarım nelerdir?",
+    "perturbation_type": "synonym",
+    "positive_docs": ["KVKK kapsamında verilerinizin işlenip işlenmediğini öğrenme hakkınız bulunmaktadır.", "KVKK kapsamında verilerinizin silinmesini talep edebilirsiniz."],
+    "hard_negatives": ["Şirketimiz verilerinizi yasal süre boyunca saklar.", "Veri paylaşımı için açık rızanız alınmaktadır."],
+    "random_negatives": ["En yakın market kaçta kapanıyor?", "Bugün hangi gündeyiz?"],
+    "difficulty": "hard"
+  },
+  {
+    "id": "ps_014",
+    "category": "banking",
+    "query_original": "Kartımı kaybettim, hemen ne yapmalıyım?",
+    "query_perturbed": "Kartımı kaybettim, ne yapmalıyım acilen?",
+    "perturbation_type": "word_order",
+    "positive_docs": ["Kartınızı kaybettiğinizde derhal çağrı merkezini arayarak bloke ettirmelisiniz.", "Mobil uygulama üzerinden kartınızı anında bloke edebilirsiniz."],
+    "hard_negatives": ["Kart bloke edildikten sonra yeni kart talep edebilirsiniz.", "Yeni kartınız birkaç iş günü içinde adresinize ulaşır."],
+    "random_negatives": ["En yakın postane nerede?", "Bugün hangi haberler var?"],
+    "difficulty": "medium"
+  },
+  {
+    "id": "ps_015",
+    "category": "finance",
+    "query_original": "100 USD kaç TL eder?",
+    "query_perturbed": "100 dolar kaç lira eder?",
+    "perturbation_type": "synonym",
+    "positive_docs": ["Güncel kura göre 100 USD karşılığı TL tutarını mobil uygulamadan hesaplayabilirsiniz.", "Döviz çevirici aracı ile anlık kur üzerinden hesaplama yapabilirsiniz."],
+    "hard_negatives": ["100 EUR karşılığı TL tutarı farklıdır.", "Döviz büfelerinde kur farklı olabilir."],
+    "random_negatives": ["En yakın market nerede?", "Yarın hava nasıl olacak?"],
+    "difficulty": "medium"
+  }
+]

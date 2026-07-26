@@ -1,0 +1,122 @@
+[
+  {
+    "id": "lc_001",
+    "category": "banking",
+    "query": "Hesap açılışı için kimlik belgesi dışında hangi evraklar gerekiyor?",
+    "signal_sentence": "Hesap açılışı için kimlik belgesinin yanı sıra ikametgah belgesi ve vergi kimlik numarası da talep edilmektedir.",
+    "filler_text": "Bankacılık hizmetleri, müşterilerin günlük finansal işlemlerini kolaylaştırmak amacıyla sürekli olarak geliştirilmektedir. Şubeler, çağrı merkezleri ve dijital kanallar üzerinden sunulan hizmetler, müşteri memnuniyetini artırmayı hedeflemektedir. Kredi kartı, mevduat, yatırım ve sigorta ürünleri farklı müşteri segmentlerine göre çeşitlendirilmiştir. Müşteri hizmetleri ekipleri, hafta içi ve hafta sonu belirli saatler arasında hizmet vermektedir. Dijital bankacılık uygulamaları üzerinden para transferi, fatura ödeme ve hesap yönetimi işlemleri kolaylıkla gerçekleştirilebilmektedir. Güvenlik önlemleri kapsamında iki faktörlü kimlik doğrulama sistemleri yaygın olarak kullanılmaktadır. Müşteriler, herhangi bir sorun yaşadıklarında çağrı merkezini arayarak veya mobil uygulama üzerinden canlı destek alarak yardım talep edebilmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_002",
+    "category": "banking",
+    "query": "Kredi kartı yıllık aidatı ne zaman tahsil ediliyor?",
+    "signal_sentence": "Kredi kartı yıllık aidatı, kartın kullanıma açıldığı tarihten itibaren her yıl aynı ayda hesaptan otomatik olarak tahsil edilir.",
+    "filler_text": "Kredi kartları, günümüzde nakit taşıma ihtiyacını azaltan ve alışverişlerde kolaylık sağlayan önemli finansal araçlardan biridir. Farklı kredi kartı türleri, farklı harcama alışkanlıklarına sahip müşteriler için özel avantajlar sunmaktadır. Puan biriktirme, taksitlendirme ve mil kazanma gibi özellikler kart tercihlerinde etkili olmaktadır. Kartların güvenli kullanımı için şifre koruması ve anlık işlem bildirimleri gibi önlemler alınmaktadır. Kayıp veya çalıntı durumunda kart derhal bloke edilerek olası mağduriyetlerin önüne geçilmektedir. Kart limitleri, müşterinin gelir durumu ve kredi geçmişi değerlendirilerek belirlenmektedir. Müşteriler, kart harcamalarını mobil uygulama üzerinden anlık olarak takip edebilmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_003",
+    "category": "banking",
+    "query": "Şüpheli bir işlem gördüğümde kartımı nasıl bloke ederim?",
+    "signal_sentence": "Şüpheli bir işlem fark ettiğinizde kartınızı mobil uygulama üzerinden veya çağrı merkezini arayarak anında bloke edebilirsiniz.",
+    "filler_text": "Dijitalleşme ile birlikte bankacılık sektöründe müşteri deneyimi büyük ölçüde değişmiştir. Şubeye gitmeden gerçekleştirilebilen işlemlerin sayısı her geçen yıl artmaktadır. Mobil ve internet bankacılığı platformları, kullanıcı dostu arayüzleriyle işlemleri hızlandırmaktadır. Yapay zeka destekli sohbet robotları, basit müşteri sorularına anında yanıt vermektedir. Bankalar, siber güvenlik alanında sürekli yatırım yaparak müşteri verilerinin korunmasını sağlamaktadır. Şifreleme teknolojileri ve anormal işlem tespit sistemleri, dolandırıcılık girişimlerine karşı önemli bir savunma hattı oluşturmaktadır. Müşteriler, hesap hareketlerini düzenli olarak kontrol ederek olası usulsüzlükleri erken fark edebilmektedir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "lc_004",
+    "category": "regulatory",
+    "query": "Mevduat sigortası hangi tutara kadar teminat altındadır?",
+    "signal_sentence": "Mevduat sigortası kapsamında, her bir mudi için 650.000 TL'ye kadar olan mevduat tutarı teminat altındadır.",
+    "filler_text": "Finansal düzenlemeler, bankacılık sisteminin istikrarını korumak ve müşteri haklarını güvence altına almak amacıyla düzenli olarak güncellenmektedir. Denetleyici kurumlar, bankaların sermaye yeterliliği ve likidite oranlarını yakından takip etmektedir. Uluslararası standartlarla uyumlu düzenlemeler, sektörün küresel piyasalarla entegrasyonunu kolaylaştırmaktadır. Şeffaflık ilkesi gereği bankalar, finansal tablolarını düzenli aralıklarla kamuoyuyla paylaşmaktadır. Tüketici hakları kapsamında müşterilere sunulan ürün ve hizmetlerin açık ve anlaşılır şekilde tanıtılması zorunludur. Şikayet mekanizmaları, müşterilerin yaşadığı sorunların hızlı ve adil şekilde çözülmesini amaçlamaktadır. Düzenleyici kurumlar, gerektiğinde bankalara yaptırım uygulama yetkisine sahiptir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "lc_005",
+    "category": "regulatory",
+    "query": "KVKK kapsamında verilerimin silinmesini nasıl talep edebilirim?",
+    "signal_sentence": "KVKK kapsamında kişisel verilerinizin silinmesini, bankanın veri sorumlusu birimine yazılı olarak başvurarak talep edebilirsiniz.",
+    "filler_text": "Kişisel verilerin korunması, dijitalleşen dünyada giderek daha fazla önem kazanan bir konudur. Kurumlar, topladıkları verileri yalnızca belirli, açık ve meşru amaçlar doğrultusunda işlemekle yükümlüdür. Veri güvenliği ihlallerinin önlenmesi için teknik ve idari tedbirlerin alınması zorunludur. Kişisel verilerin üçüncü taraflarla paylaşılması durumunda ilgili kişinin açık rızası aranmaktadır. Veri sahiplerinin bilgi edinme, düzeltme ve itiraz etme gibi çeşitli hakları bulunmaktadır. Kurumlar, veri işleme faaliyetlerine ilişkin aydınlatma metinlerini açık ve anlaşılır şekilde sunmakla yükümlüdür. Denetim otoriteleri, veri koruma ihlallerine karşı idari para cezaları uygulayabilmektedir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "lc_006",
+    "category": "regulatory",
+    "query": "Şüpheli işlem bildirimi kaç gün içinde yapılmalıdır?",
+    "signal_sentence": "Şüpheli işlem bildirimi, işlemin tespit edilmesinden itibaren en geç 10 iş günü içinde ilgili birime yapılmalıdır.",
+    "filler_text": "Finansal suçlarla mücadele, uluslararası işbirliği gerektiren karmaşık bir alandır. Kara para aklama ve terörün finansmanı gibi tehditlere karşı çok katmanlı önlemler geliştirilmiştir. Bankalar, müşteri tanıma ilkesi çerçevesinde yeni müşteri kabul süreçlerinde detaylı inceleme yapmaktadır. Risk bazlı yaklaşım, yüksek riskli müşteri ve işlemlerin daha yakından izlenmesini sağlamaktadır. Otomatik izleme sistemleri, olağandışı işlem örüntülerini tespit ederek ilgili birimlere uyarı göndermektedir. Personel eğitimleri, çalışanların şüpheli işlemleri tanıma becerisini geliştirmeyi amaçlamaktadır. Uluslararası kuruluşlar, ülkelerin bu alandaki uyumluluğunu periyodik olarak değerlendirmektedir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "lc_007",
+    "category": "finance",
+    "query": "Yatırım fonunun yönetim ücreti oranı nedir?",
+    "signal_sentence": "Bu yatırım fonunun yıllık yönetim ücreti, fon toplam değerinin binde beşi olarak uygulanmaktadır.",
+    "filler_text": "Yatırım araçları, farklı risk ve getiri profillerine sahip yatırımcılar için geniş bir yelpaze sunmaktadır. Hisse senedi, tahvil, döviz ve kıymetli maden gibi araçlar farklı ekonomik koşullarda farklı performans sergileyebilmektedir. Portföy çeşitlendirmesi, riskin belirli bir varlık sınıfında yoğunlaşmasını önleyerek genel risk seviyesini dengelemeyi amaçlamaktadır. Yatırım danışmanları, müşterilerin risk toleransına uygun portföy önerileri sunmaktadır. Piyasa dalgalanmaları, kısa vadeli yatırım kararlarını doğrudan etkileyebilmektedir. Uzun vadeli yatırım stratejileri, genellikle bileşik getiri avantajından faydalanmayı hedeflemektedir. Yatırımcılar, düzenli olarak portföy performansını gözden geçirerek gerektiğinde stratejilerini güncellemektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_008",
+    "category": "finance",
+    "query": "Emeklilik yatırım fonuna devlet katkısı ne kadar?",
+    "signal_sentence": "Emeklilik yatırım fonuna yapılan katkı paylarına, devlet tarafından yüzde otuz oranında ek katkı sağlanmaktadır.",
+    "filler_text": "Bireysel emeklilik sistemi, çalışanların uzun vadeli tasarruf yapmasını teşvik eden bir mekanizma olarak tasarlanmıştır. Katılımcılar, düzenli katkı payı ödeyerek emeklilik döneminde ek gelir elde etmeyi hedeflemektedir. Sistem, farklı fon seçenekleri sunarak katılımcıların risk tercihlerine göre portföy oluşturmasına imkan tanımaktadır. Katılımcılar, dilediklerinde fon dağılımlarını değiştirebilme esnekliğine sahiptir. Emeklilik şirketleri, katılımcılara düzenli olarak hesap özetleri ve performans raporları sunmaktadır. Erken çıkış durumunda bazı vergi avantajlarının kaybedilebileceği katılımcılara açıkça bildirilmektedir. Sistem, uzun vadede enflasyona karşı koruma sağlamayı amaçlamaktadır.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_009",
+    "category": "finance",
+    "query": "Döviz hesabından TL hesabına anlık transfer mümkün mü?",
+    "signal_sentence": "Döviz hesabından TL hesabına anlık transfer, güncel kur üzerinden mobil uygulama aracılığıyla anında gerçekleştirilebilir.",
+    "filler_text": "Döviz piyasaları, küresel ekonomik gelişmelerden doğrudan etkilenen dinamik yapılara sahiptir. Kur dalgalanmaları, ithalat ve ihracat yapan şirketlerin maliyet yapısını önemli ölçüde etkileyebilmektedir. Bireysel yatırımcılar, döviz hesaplarını genellikle enflasyona karşı koruma amacıyla tercih etmektedir. Merkez bankalarının para politikası kararları, döviz kurlarındaki oynaklığı doğrudan yönlendirmektedir. Uluslararası ticaret işlemlerinde kullanılan döviz cinsleri, ülkeler arası ekonomik ilişkilerin yapısına göre çeşitlenmektedir. Döviz hesaplarına uygulanan faiz oranları, TL hesaplara kıyasla genellikle daha düşük seviyelerde seyretmektedir. Yatırımcılar, döviz sepeti oluşturarak kur riskini dağıtmayı tercih edebilmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_010",
+    "category": "general",
+    "query": "Şirketin merkez ofisi hangi şehirde bulunuyor?",
+    "signal_sentence": "Şirketin merkez ofisi İstanbul'un Levent semtinde bulunmaktadır ve tüm idari operasyonlar buradan yürütülmektedir.",
+    "filler_text": "Kurumsal yapılar, zaman içinde değişen iş ihtiyaçlarına uyum sağlamak amacıyla sürekli olarak yeniden şekillenmektedir. Çalışan memnuniyeti ve verimliliği artırmaya yönelik çeşitli programlar uygulanmaktadır. Uzaktan çalışma modelleri, pandemi sonrası dönemde birçok kurum tarafından kalıcı hale getirilmiştir. İnsan kaynakları politikaları, eşit fırsat ilkesini gözeterek işe alım ve terfi süreçlerini yönetmektedir. Kurumsal sosyal sorumluluk projeleri, toplumsal fayda yaratmayı ve marka itibarını güçlendirmeyi hedeflemektedir. Sürdürülebilirlik raporları, çevresel ve sosyal etkilerin şeffaf şekilde paylaşılmasını amaçlamaktadır. Kurumlar, dijital dönüşüm yatırımlarıyla operasyonel verimliliği artırmaya çalışmaktadır.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "lc_011",
+    "category": "general",
+    "query": "Müşteri şikayetleri en fazla kaç gün içinde yanıtlanır?",
+    "signal_sentence": "Müşteri şikayetleri, başvuru tarihinden itibaren en geç on beş iş günü içinde yanıtlanmaktadır.",
+    "filler_text": "Müşteri memnuniyeti, kurumların uzun vadeli başarısında belirleyici bir faktör olarak öne çıkmaktadır. Geri bildirim mekanizmaları, hizmet kalitesinin sürekli iyileştirilmesine katkı sağlamaktadır. Çağrı merkezi çalışanları, düzenli eğitimlerle iletişim becerilerini geliştirmektedir. Anket çalışmaları, müşterilerin beklentilerini ve memnuniyet düzeylerini ölçmek amacıyla düzenli aralıklarla yapılmaktadır. Sosyal medya platformları, müşterilerin geri bildirimlerini hızlı ve kamuya açık şekilde paylaşabildiği kanallar haline gelmiştir. Şikayet yönetim süreçleri, sorunların kök nedenlerinin analiz edilmesini ve tekrarının önlenmesini amaçlamaktadır. Kurumlar, olumsuz deneyimleri fırsata çevirmek için proaktif çözüm yaklaşımları geliştirmektedir.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "lc_012",
+    "category": "banking",
+    "query": "Otomatik ödeme talimatı verilen fatura tutarı değişirse ne olur?",
+    "signal_sentence": "Otomatik ödeme talimatı verilen faturanın tutarı değişse dahi, güncel tutar hesaptan otomatik olarak tahsil edilmeye devam eder.",
+    "filler_text": "Fatura ödeme süreçleri, dijitalleşme ile birlikte önemli ölçüde kolaylaşmıştır. Elektrik, su, doğalgaz ve telekomünikasyon gibi hizmet sağlayıcılarına yapılan ödemeler artık tek bir platform üzerinden yönetilebilmektedir. Otomatik ödeme talimatları, müşterilerin gecikme faizi ödeme riskini ortadan kaldırmaktadır. Bildirim sistemleri, yaklaşan ödeme tarihleri konusunda müşterileri önceden bilgilendirmektedir. Fatura geçmişine erişim, müşterilerin harcama alışkanlıklarını analiz etmesine olanak tanımaktadır. Bazı hizmet sağlayıcılar, otomatik ödeme tercih eden müşterilere ek indirimler sunmaktadır. Ödeme sistemlerindeki teknik arızalar, nadiren de olsa işlem gecikmelerine yol açabilmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_013",
+    "category": "banking",
+    "query": "Kayıp banka kartı için yeni kart çıkarma ücreti ne kadar?",
+    "signal_sentence": "Kayıp banka kartı yerine yeni kart çıkarılması durumunda 75 TL kart yenileme ücreti tahsil edilmektedir.",
+    "filler_text": "Banka kartları, günlük hayatın vazgeçilmez bir parçası haline gelmiştir ve çeşitli güvenlik özellikleriyle donatılmıştır. Temassız ödeme teknolojisi, küçük tutarlı işlemlerde hızlı ve pratik bir alternatif sunmaktadır. Kartların fiziksel olarak korunması, dolandırıcılık riskini azaltmada önemli bir rol oynamaktadır. Kart bilgileri çalındığında dahi, çip teknolojisi sayesinde kopyalama riski büyük ölçüde azalmaktadır. Bankalar, kart kullanım alışkanlıklarını analiz ederek kişiselleştirilmiş kampanyalar sunmaktadır. Uluslararası kart ağları, farklı ülkelerde geçerlilik sağlayarak seyahat eden müşterilere kolaylık tanımaktadır. Kart iptali ve yenileme süreçleri, mobil uygulama üzerinden birkaç dakika içinde tamamlanabilmektedir.",
+    "difficulty": "medium"
+  },
+  {
+    "id": "lc_014",
+    "category": "finance",
+    "query": "Ticari kredi başvurusunda faiz oranı neye göre belirlenir?",
+    "signal_sentence": "Ticari kredi başvurularında faiz oranı, şirketin kredi notu ve teminat yapısı dikkate alınarak belirlenmektedir.",
+    "filler_text": "Kurumsal finansman ihtiyaçları, şirketlerin büyüme stratejilerinin önemli bir parçasını oluşturmaktadır. İşletme sermayesi kredileri, günlük operasyonların sürdürülebilmesi için kritik bir rol üstlenmektedir. Yatırım kredileri, uzun vadeli sabit kıymet alımlarını finanse etmek amacıyla kullanılmaktadır. Şirketlerin finansal tabloları, kredi değerlendirme sürecinde titizlikle incelenmektedir. Teminat mektupları, taraflar arasındaki güveni artırarak ticari işlemleri kolaylaştırmaktadır. Nakit akış projeksiyonları, kredi geri ödeme kapasitesinin değerlendirilmesinde önemli bir gösterge olarak kullanılmaktadır. Bankalar, sektörel risk analizlerini düzenli olarak güncelleyerek kredi politikalarını buna göre şekillendirmektedir.",
+    "difficulty": "hard"
+  },
+  {
+    "id": "lc_015",
+    "category": "regulatory",
+    "query": "Bu ürün BDDK tarafından hangi lisans kapsamında denetleniyor?",
+    "signal_sentence": "Bu ürün, BDDK tarafından verilen mevduat bankacılığı faaliyet lisansı kapsamında denetlenmektedir.",
+    "filler_text": "Finansal piyasaların düzenli işleyişi, güçlü bir denetim ve gözetim çerçevesi gerektirmektedir. Denetleyici otoriteler, sektördeki tüm oyuncuların belirlenen kurallara uygun hareket etmesini sağlamakla yükümlüdür. Lisanslama süreçleri, yeni kurulan finansal kuruluşların yeterli sermaye ve altyapıya sahip olmasını güvence altına almaktadır. Periyodik denetimler, kuruluşların mali yapısının sağlamlığını doğrulamak amacıyla düzenli aralıklarla yapılmaktadır. Kriz dönemlerinde düzenleyici kurumlar, sistemik riskleri azaltmak için ek önlemler devreye alabilmektedir. Uluslararası düzenleyici işbirlikleri, sınır ötesi finansal işlemlerin güvenliğini artırmayı hedeflemektedir. Şeffaflık ve hesap verebilirlik ilkeleri, denetim sürecinin temel dayanaklarından biridir.",
+    "difficulty": "hard"
+  }
+]

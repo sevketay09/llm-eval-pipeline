@@ -241,3 +241,18 @@ tasks:
     dataset: eval_datasets/embedding/consistency_check.json
     runner: run_embedding_consistency_test
     category: embedding
+
+  embedding_long_context:
+    dataset: eval_datasets/embedding/long_context_robustness.json
+    runner: run_embedding_long_context_test
+    category: embedding
+
+  embedding_reranking:
+    dataset: eval_datasets/embedding/turkish_reranking.json
+    runner: run_embedding_reranking_test
+    category: embedding
+
+  embedding_perturbation_stability:
+    dataset: eval_datasets/embedding/perturbation_stability.json
+    runner: run_embedding_perturbation_stability_test
+    category: embedding

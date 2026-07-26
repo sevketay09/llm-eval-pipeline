@@ -50,6 +50,9 @@ from evaluators.embedding_eval import (
     PairClassificationEvaluator,
     BitextMiningEvaluator,
     BatchConsistencyEvaluator,
+    LongContextRobustnessEvaluator,
+    RerankingEvaluator,
+    PerturbationStabilityEvaluator,
     EmbeddingQualityMetrics
 )
 from evaluators.prompt_compression_eval import PromptCompressionEvaluator
@@ -8066,6 +8069,204 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "avg_latency": total_latency / max(len(results), 1),
                 "overall_score": aggregated["overall_score"],
                 "embedding_health": self._embedding_health_summary(individual_embeddings),
+            },
+            "detailed_metrics": aggregated,
+        }
+
+    def run_embedding_long_context_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Check whether a fact stays findable when buried at the end of a long
+        document, versus the same fact placed at the very start (see
+        LongContextRobustnessEvaluator for why this matters)."""
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        results = []
+        mining_results = []
+        all_doc_embeddings = []
+
+        for item in self._iter_with_progress(dataset, test_name):
+            query = item["query"]
+            signal_sentence = item["signal_sentence"]
+            filler_text = item["filler_text"]
+            doc_signal_first = f"{signal_sentence} {filler_text}"
+            doc_signal_last = f"{filler_text} {signal_sentence}"
+
+            query_emb_result = embedding_model.encode([query], normalize=True)
+            docs_emb_result = embedding_model.encode([doc_signal_first, doc_signal_last], normalize=True)
+
+            query_emb = query_emb_result["embeddings"][0]
+            doc_first_emb, doc_last_emb = docs_emb_result["embeddings"]
+            all_doc_embeddings.extend([doc_first_emb, doc_last_emb])
+
+            evaluation = LongContextRobustnessEvaluator.evaluate_single(query_emb, doc_first_emb, doc_last_emb)
+            mining_results.append(evaluation)
+
+            results.append({
+                "id": item["id"],
+                "category": item["category"],
+                "query": query,
+                "similarity_signal_first": evaluation["similarity_signal_first"],
+                "similarity_signal_last": evaluation["similarity_signal_last"],
+                "position_gap": evaluation["position_gap"],
+                "latency": query_emb_result["latency"] + docs_emb_result["latency"],
+            })
+
+        aggregated = LongContextRobustnessEvaluator.aggregate(mining_results)
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "avg_similarity_signal_first": aggregated["avg_similarity_signal_first"],
+                "avg_similarity_signal_last": aggregated["avg_similarity_signal_last"],
+                "avg_position_gap": aggregated["avg_position_gap"],
+                "max_position_gap": aggregated["max_position_gap"],
+                "robust_rate": aggregated["robust_rate"],
+                "avg_latency": np.mean([r["latency"] for r in results]),
+                # The harder condition (signal buried at the end) is the real signal.
+                "overall_score": aggregated["avg_similarity_signal_last"],
+                "embedding_health": self._embedding_health_summary(all_doc_embeddings),
+            },
+            "detailed_metrics": aggregated,
+        }
+
+    def run_embedding_reranking_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Rerank a small, already-retrieved candidate list with graded relevance —
+        distinct from run_embedding_retrieval_test's binary relevant/not-relevant
+        labels (see RerankingEvaluator)."""
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        results = []
+        reranking_results = []
+        all_candidate_embeddings = []
+
+        for item in self._iter_with_progress(dataset, test_name):
+            query = item["query"]
+            candidates = item["candidates"]
+            candidate_texts = [c["text"] for c in candidates]
+            relevance_scores = [c["relevance"] for c in candidates]
+
+            query_emb_result = embedding_model.encode([query], normalize=True)
+            candidates_emb_result = embedding_model.encode(candidate_texts, normalize=True)
+
+            query_emb = query_emb_result["embeddings"][0]
+            candidate_embs = candidates_emb_result["embeddings"]
+            all_candidate_embeddings.extend(candidate_embs)
+
+            evaluation = RerankingEvaluator.evaluate_single(query_emb, candidate_embs, relevance_scores)
+            reranking_results.append(evaluation)
+
+            results.append({
+                "id": item["id"],
+                "category": item["category"],
+                "query": query,
+                "n_candidates": len(candidates),
+                "ndcg": evaluation["ndcg"],
+                "rank_correlation": evaluation["rank_correlation"],
+                "top1_is_most_relevant": evaluation["top1_is_most_relevant"],
+                "latency": query_emb_result["latency"] + candidates_emb_result["latency"],
+            })
+
+        aggregated = RerankingEvaluator.aggregate(reranking_results)
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "avg_ndcg": aggregated["avg_ndcg"],
+                "avg_rank_correlation": aggregated["avg_rank_correlation"],
+                "top1_accuracy": aggregated["top1_accuracy"],
+                "avg_latency": np.mean([r["latency"] for r in results]),
+                "overall_score": aggregated["avg_ndcg"],
+                "embedding_health": self._embedding_health_summary(all_candidate_embeddings),
+            },
+            "detailed_metrics": aggregated,
+        }
+
+    def run_embedding_perturbation_stability_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Check whether retrieval ranking stays stable under light query perturbation
+        (typo, word reorder, synonym swap) that doesn't change meaning (see
+        PerturbationStabilityEvaluator)."""
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        tick = self._make_progress_ticker(len(dataset))
+        results = []
+        stability_results = []
+        all_doc_embeddings = []
+
+        for item in tqdm(dataset, desc=test_name):
+            query_original = item["query_original"]
+            query_perturbed = item["query_perturbed"]
+            positive_docs = item["positive_docs"]
+            hard_negatives = item.get("hard_negatives", [])
+            random_negatives = item.get("random_negatives", [])
+            all_docs = positive_docs + hard_negatives + random_negatives
+            positive_indices = set(range(len(positive_docs)))
+
+            original_query_result = embedding_model.encode([query_original], normalize=True)
+            perturbed_query_result = embedding_model.encode([query_perturbed], normalize=True)
+            docs_result = embedding_model.encode(all_docs, normalize=True)
+
+            doc_embs = docs_result["embeddings"]
+            all_doc_embeddings.extend(doc_embs)
+            original_similarities = np.dot(doc_embs, original_query_result["embeddings"][0])
+            perturbed_similarities = np.dot(doc_embs, perturbed_query_result["embeddings"][0])
+
+            original_ranked = np.argsort(original_similarities)[::-1]
+            perturbed_ranked = np.argsort(perturbed_similarities)[::-1]
+
+            evaluation = PerturbationStabilityEvaluator.evaluate_single(
+                original_ranked, perturbed_ranked, positive_indices
+            )
+            stability_results.append(evaluation)
+
+            results.append({
+                "id": item["id"],
+                "category": item["category"],
+                "perturbation_type": item.get("perturbation_type", "unknown"),
+                "top1_stable": evaluation["top1_stable"],
+                "top_k_overlap": evaluation["top_k_overlap"],
+                "latency": (
+                    original_query_result["latency"] + perturbed_query_result["latency"] + docs_result["latency"]
+                ),
+            })
+            tick()
+
+        aggregated = PerturbationStabilityEvaluator.aggregate(stability_results)
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "avg_top1_stable": aggregated["avg_top1_stable"],
+                "avg_top_k_overlap": aggregated["avg_top_k_overlap"],
+                "degradation_rate": aggregated["degradation_rate"],
+                "avg_latency": np.mean([r["latency"] for r in results]),
+                "overall_score": aggregated["avg_top_k_overlap"],
+                "embedding_health": self._embedding_health_summary(all_doc_embeddings),
             },
             "detailed_metrics": aggregated,
         }

@@ -80,6 +80,15 @@ class _PipelineStub:
         self.run_embedding_consistency_test = types.MethodType(
             module.EvaluationPipeline.run_embedding_consistency_test, self
         )
+        self.run_embedding_long_context_test = types.MethodType(
+            module.EvaluationPipeline.run_embedding_long_context_test, self
+        )
+        self.run_embedding_reranking_test = types.MethodType(
+            module.EvaluationPipeline.run_embedding_reranking_test, self
+        )
+        self.run_embedding_perturbation_stability_test = types.MethodType(
+            module.EvaluationPipeline.run_embedding_perturbation_stability_test, self
+        )
 
 
 @pytest.fixture(scope="module")
@@ -269,3 +278,132 @@ class TestRunEmbeddingConsistencyTest:
 
         assert result["summary"]["avg_batch_consistency"] == pytest.approx(1.0, abs=1e-6)
         assert result["summary"]["avg_order_consistency"] == pytest.approx(1.0, abs=1e-6)
+
+
+class TestRunEmbeddingLongContextTest:
+    def test_wires_evaluator_output_into_summary(self, pipeline_stub):
+        dataset = [
+            {
+                "id": "lc1",
+                "category": "banking",
+                "query": "Hesap açılışı için hangi belgeler gerekiyor?",
+                "signal_sentence": "Hesap açılışı için kimlik belgesi ve ikametgah belgesi gerekmektedir.",
+                "filler_text": "Bankacılık hizmetleri sürekli gelişmektedir. " * 20,
+            },
+        ]
+
+        result = pipeline_stub.run_embedding_long_context_test(
+            _FakeEmbeddingModel(), dataset, "embedding_long_context"
+        )
+
+        assert result["test_name"] == "embedding_long_context"
+        assert len(result["results"]) == 1
+        summary = result["summary"]
+        assert summary["total_tests"] == 1
+        assert -1.0 <= summary["avg_similarity_signal_first"] <= 1.0
+        assert -1.0 <= summary["avg_similarity_signal_last"] <= 1.0
+        assert summary["overall_score"] == summary["avg_similarity_signal_last"]
+        assert "embedding_health" in summary
+
+
+class TestRunEmbeddingRerankingTest:
+    def test_wires_evaluator_output_into_summary(self, pipeline_stub):
+        dataset = [
+            {
+                "id": "rr1",
+                "category": "banking",
+                "query": "Kredi kartı borcumu nasıl öderim?",
+                "candidates": [
+                    {"text": "Kredi kartı borcumu nasıl öderim?", "relevance": 2},
+                    {"text": "Kredi kartı limitimi nasıl artırırım?", "relevance": 1},
+                    {"text": "Yarın hava nasıl olacak?", "relevance": 0},
+                ],
+            },
+        ]
+
+        result = pipeline_stub.run_embedding_reranking_test(
+            _FakeEmbeddingModel(), dataset, "embedding_reranking"
+        )
+
+        assert result["test_name"] == "embedding_reranking"
+        assert len(result["results"]) == 1
+        summary = result["summary"]
+        assert summary["total_tests"] == 1
+        assert 0.0 <= summary["avg_ndcg"] <= 1.0
+        assert summary["overall_score"] == summary["avg_ndcg"]
+        assert result["results"][0]["n_candidates"] == 3
+        assert "embedding_health" in summary
+
+    def test_identical_text_ranks_as_most_relevant(self, pipeline_stub):
+        # The stub embedder maps identical strings to identical vectors, so the
+        # candidate matching the query verbatim should rank #1.
+        dataset = [
+            {
+                "id": "rr1",
+                "category": "sanity",
+                "query": "test sorgusu",
+                "candidates": [
+                    {"text": "alakasız metin", "relevance": 0},
+                    {"text": "test sorgusu", "relevance": 2},
+                    {"text": "başka alakasız metin", "relevance": 0},
+                ],
+            },
+        ]
+
+        result = pipeline_stub.run_embedding_reranking_test(
+            _FakeEmbeddingModel(), dataset, "embedding_reranking"
+        )
+
+        assert result["results"][0]["top1_is_most_relevant"] is True
+
+
+class TestRunEmbeddingPerturbationStabilityTest:
+    def test_wires_evaluator_output_into_summary(self, pipeline_stub):
+        dataset = [
+            {
+                "id": "ps1",
+                "category": "banking",
+                "query_original": "Kredi kartı borcumu nasıl öderim?",
+                "query_perturbed": "Kredi katı borcumu nasl öderim?",
+                "perturbation_type": "typo",
+                "positive_docs": ["Kredi kartı borcunuzu mobil uygulamadan ödeyebilirsiniz."],
+                "hard_negatives": ["Kredi kartı limitinizi artırabilirsiniz."],
+                "random_negatives": ["Yarın hava güneşli olacak."],
+            },
+        ]
+
+        result = pipeline_stub.run_embedding_perturbation_stability_test(
+            _FakeEmbeddingModel(), dataset, "embedding_perturbation_stability"
+        )
+
+        assert result["test_name"] == "embedding_perturbation_stability"
+        assert len(result["results"]) == 1
+        summary = result["summary"]
+        assert summary["total_tests"] == 1
+        assert 0.0 <= summary["avg_top1_stable"] <= 1.0
+        assert 0.0 <= summary["avg_top_k_overlap"] <= 1.0
+        assert summary["overall_score"] == summary["avg_top_k_overlap"]
+        assert result["results"][0]["perturbation_type"] == "typo"
+        assert "embedding_health" in summary
+
+    def test_identical_query_and_perturbed_query_are_fully_stable(self, pipeline_stub):
+        # Using the exact same string for both "original" and "perturbed" is a
+        # sanity floor: stability must be perfect since nothing actually changed.
+        dataset = [
+            {
+                "id": "ps1",
+                "category": "sanity",
+                "query_original": "aynı sorgu",
+                "query_perturbed": "aynı sorgu",
+                "positive_docs": ["doğru cevap"],
+                "hard_negatives": ["yanlış ama benzer cevap"],
+                "random_negatives": ["alakasız metin"],
+            },
+        ]
+
+        result = pipeline_stub.run_embedding_perturbation_stability_test(
+            _FakeEmbeddingModel(), dataset, "embedding_perturbation_stability"
+        )
+
+        assert result["summary"]["avg_top1_stable"] == 1.0
+        assert result["summary"]["avg_top_k_overlap"] == pytest.approx(1.0)

@@ -1,6 +1,8 @@
 """Contract tests for evaluators/embedding_eval.py — Tier-1 (PairClassificationEvaluator,
-BitextMiningEvaluator) and Tier-2 (BatchConsistencyEvaluator) embedding test types, plus
-the previously-unused EmbeddingQualityMetrics now wired into every embedding test's summary.
+BitextMiningEvaluator), Tier-2 (BatchConsistencyEvaluator), and Tier-3
+(LongContextRobustnessEvaluator, RerankingEvaluator, PerturbationStabilityEvaluator)
+embedding test types, plus the previously-unused EmbeddingQualityMetrics now wired into
+every embedding test's summary.
 """
 import numpy as np
 import pytest
@@ -9,6 +11,9 @@ from evaluators.embedding_eval import (
     PairClassificationEvaluator,
     BitextMiningEvaluator,
     BatchConsistencyEvaluator,
+    LongContextRobustnessEvaluator,
+    RerankingEvaluator,
+    PerturbationStabilityEvaluator,
     EmbeddingQualityMetrics,
 )
 
@@ -133,6 +138,105 @@ class TestBatchConsistencyEvaluator:
         assert aggregated["overall_score"] == pytest.approx(0.85)
         assert aggregated["avg_batch_consistency"] == pytest.approx(0.9995)
         assert aggregated["avg_order_consistency"] == pytest.approx(0.85)
+
+
+class TestLongContextRobustnessEvaluator:
+    def test_no_gap_when_signal_equally_findable_both_positions(self):
+        query = _unit_vector(0)
+        doc_first = _unit_vector(0)  # near-identical -> high similarity
+        doc_last = _unit_vector(0)   # also near-identical -> equally high
+
+        result = LongContextRobustnessEvaluator.evaluate_single(query, doc_first, doc_last)
+
+        assert result["position_gap"] == pytest.approx(0.0, abs=1e-6)
+
+    def test_large_gap_when_signal_buried_at_end_is_lost(self):
+        query = _unit_vector(0)
+        doc_signal_first = _unit_vector(0)   # matches query well
+        doc_signal_last = _unit_vector(99)   # unrelated direction -> simulates truncation
+
+        result = LongContextRobustnessEvaluator.evaluate_single(query, doc_signal_first, doc_signal_last)
+
+        assert result["position_gap"] > 0.3
+        assert result["similarity_signal_first"] > result["similarity_signal_last"]
+
+    def test_aggregate_flags_robust_rate_against_tolerance(self):
+        results = [
+            {"similarity_signal_first": 0.9, "similarity_signal_last": 0.85, "position_gap": 0.05},
+            {"similarity_signal_first": 0.9, "similarity_signal_last": 0.3, "position_gap": 0.6},
+        ]
+
+        aggregated = LongContextRobustnessEvaluator.aggregate(results, robust_tolerance=0.15)
+
+        assert aggregated["robust_rate"] == pytest.approx(0.5)
+        assert aggregated["max_position_gap"] == pytest.approx(0.6)
+
+
+class TestRerankingEvaluator:
+    def test_perfect_ranking_yields_high_ndcg_and_top1_accuracy(self):
+        query = _unit_vector(0)
+        # Construct 3 candidates whose similarity to the query descends in the same
+        # order as their relevance labels.
+        candidates = np.array([_unit_vector(0), _unit_vector(1), _unit_vector(50)])
+        relevance_scores = [2, 1, 0]
+
+        result = RerankingEvaluator.evaluate_single(query, candidates, relevance_scores)
+
+        assert result["top1_is_most_relevant"] is True
+        assert 0.0 <= result["ndcg"] <= 1.0
+
+    def test_single_relevance_value_has_zero_rank_correlation(self):
+        query = _unit_vector(0)
+        candidates = np.array([_unit_vector(1), _unit_vector(2)])
+        relevance_scores = [1, 1]
+
+        result = RerankingEvaluator.evaluate_single(query, candidates, relevance_scores)
+
+        assert result["rank_correlation"] == 0.0
+
+    def test_aggregate_averages_across_items(self):
+        results = [
+            {"ndcg": 1.0, "rank_correlation": 0.8, "top1_is_most_relevant": True},
+            {"ndcg": 0.5, "rank_correlation": 0.2, "top1_is_most_relevant": False},
+        ]
+
+        aggregated = RerankingEvaluator.aggregate(results)
+
+        assert aggregated["avg_ndcg"] == pytest.approx(0.75)
+        assert aggregated["top1_accuracy"] == pytest.approx(0.5)
+
+
+class TestPerturbationStabilityEvaluator:
+    def test_identical_rankings_are_fully_stable(self):
+        ranking = np.array([2, 0, 1])
+        result = PerturbationStabilityEvaluator.evaluate_single(ranking, ranking, positive_indices={2})
+
+        assert result["top1_stable"] is True
+        assert result["top_k_overlap"] == pytest.approx(1.0)
+
+    def test_disjoint_rankings_have_zero_overlap(self):
+        original = np.array([0, 1, 2, 3])
+        perturbed = np.array([3, 2, 1, 0])
+        result = PerturbationStabilityEvaluator.evaluate_single(
+            original, perturbed, positive_indices={0}, top_k=1
+        )
+
+        assert result["top1_stable"] is False
+        assert result["top_k_overlap"] == pytest.approx(0.0)
+
+    def test_aggregate_only_counts_degradation_from_originally_correct_cases(self):
+        results = [
+            # Started correct, stayed correct -> not degraded.
+            {"top1_stable": True, "top_k_overlap": 1.0, "original_top1_positive": True, "perturbed_top1_positive": True},
+            # Started correct, broke under perturbation -> degraded.
+            {"top1_stable": False, "top_k_overlap": 0.33, "original_top1_positive": True, "perturbed_top1_positive": False},
+            # Started wrong already -> not counted as a stability regression.
+            {"top1_stable": True, "top_k_overlap": 1.0, "original_top1_positive": False, "perturbed_top1_positive": False},
+        ]
+
+        aggregated = PerturbationStabilityEvaluator.aggregate(results)
+
+        assert aggregated["degradation_rate"] == pytest.approx(1 / 3)
 
 
 class TestEmbeddingQualityMetricsActivation:
