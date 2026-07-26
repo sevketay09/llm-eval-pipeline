@@ -5887,7 +5887,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         # Take subset for prompt compression testing (expensive)
         test_dataset = dataset[:5] if len(dataset) > 5 else dataset
         
-        for item in self._iter_with_progress(test_dataset, test_name):
+        def _process_compression_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             try:
                 if isinstance(item, PromptCompressionCase):
                     original_prompt = item.original_prompt
@@ -5911,14 +5911,14 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     expected_answer = item.get("expected_answer", "")
 
                 if not original_prompt:
-                    continue
-                
+                    return None
+
                 # Filter out empty compressions
                 compressed_prompts = {k: v for k, v in compressed_prompts.items() if v}
-                
+
                 if not compressed_prompts:
                     logger.warning(f"No compressed prompts for {item_id}")
-                    continue
+                    return None
                 
                 # Run evaluation
                 eval_result = compression_eval.evaluate_prompt_compression(
@@ -5979,14 +5979,14 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     ),
                     "metric_results": [prompt_alignment_metric] if isinstance(prompt_alignment_metric, dict) else [],
                 }
-                
-                results.append(result)
-                
+
+                return result
+
             except Exception as e:
                 item_id = item.case_id if isinstance(item, PromptCompressionCase) else item.get("id")
                 category = item.resolved_category if isinstance(item, PromptCompressionCase) else item.get("category")
                 logger.error(f"Prompt compression test failed for {item_id}: {e}")
-                results.append({
+                return {
                     "test_id": item_id,
                     "category": category,
                     "scores": {
@@ -5996,8 +5996,10 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                         "best_quality_score": 0
                     },
                     "error": str(e)
-                })
-        
+                }
+
+        results = self._run_items_concurrently(test_dataset, _process_compression_item, test_name)
+
         # Calculate aggregate metrics
         if results:
             valid_results = [r for r in results if "error" not in r]
