@@ -4148,6 +4148,11 @@ class EvaluationPipeline:
             }
 
             eval_result = dyn_evaluator.evaluate_tool_chain(model, scenario)
+            if eval_result.get("generation_error"):
+                logger.warning(
+                    f"[{test_name}] item {workflow_case.case_id} failed after retries: {eval_result['generation_error']}"
+                )
+                return None
             prompt_alignment_eval = instruction_eval.evaluate(
                 _build_prompt_alignment_instruction("", workflow_case.input_text),
                 eval_result.get("final_response") or "",
@@ -4326,6 +4331,11 @@ class EvaluationPipeline:
                     available_tools=resolved_mock_tools,
                     expected_outcome=self._build_agentic_expected_outcome(agentic_case),
                 )
+                if tool_trace_result.get("generation_error"):
+                    logger.warning(
+                        f"[{test_name}] item {agentic_case.case_id} failed after retries: {tool_trace_result['generation_error']}"
+                    )
+                    return None
 
             # Evaluate plan quality
             plan_eval = judge.evaluate(

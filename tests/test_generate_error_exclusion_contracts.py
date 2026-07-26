@@ -294,6 +294,50 @@ class GenerateErrorExclusionTests(unittest.TestCase):
         self.assertEqual(raw["summary"]["total_tests"], 0)
         self.assertEqual(raw["summary"]["comprehension_tests"]["total"], 0)
 
+    def test_parallel_tools_excludes_failed_item(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {"id": "fail-me", "prompt": "fail-me: hava durumunu sorgula"},
+            {"id": "ok-item", "prompt": "ok-item: hava durumunu sorgula"},
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_parallel_tools_test(
+            ctx, model, dataset, judge=None, test_name="parallel_tools"
+        )
+
+        result_ids = [r["id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
+    def test_evaluate_tool_chain_passes_through_generation_error(self):
+        # Covers the same fix used by run_agentic_test's tool-trace call,
+        # without needing to stand up run_agentic_test's much larger
+        # dependency graph (agent evaluator, plan judge, trace payload
+        # builders, etc.) just to exercise this one guard.
+        from evaluators.dynamic_function_eval import DynamicFunctionCallingEvaluator
+
+        class _FailingAdapter:
+            def generate(self, messages, **kwargs):
+                return {
+                    "content": None,
+                    "tool_calls": None,
+                    "usage": {"input_tokens": 0, "output_tokens": 0},
+                    "latency": 0.01,
+                    "model": "fake",
+                    "error": "simulated: all retries exhausted (429)",
+                }
+
+        evaluator = DynamicFunctionCallingEvaluator(judge_adapter=None)
+        result = evaluator.evaluate_tool_chain(
+            _FailingAdapter(),
+            {"prompt": "hava durumunu sorgula", "expected_tools": ["get_weather"]},
+        )
+
+        self.assertIn("generation_error", result)
+        self.assertNotIn("tools_match", result)
+
 
 if __name__ == "__main__":
     unittest.main()

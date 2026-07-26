@@ -75,7 +75,25 @@ class DynamicFunctionCallingEvaluator:
             except Exception as e:
                 errors.append(f"Turn {turn+1}: Generation error - {str(e)}")
                 break
-            
+
+            if response.get("error"):
+                # A real infrastructure failure (retries exhausted) — don't
+                # score an empty/absent tool trace as if the model chose not
+                # to call tools. Callers must check `generation_error` and
+                # exclude this item.
+                return {
+                    "generation_error": response["error"],
+                    "success": False,
+                    "turns": turns,
+                    "tool_calls": [],
+                    "execution_results": [],
+                    "final_response": "",
+                    "judge_score": None,
+                    "judge_reasoning": None,
+                    "errors": errors,
+                    "conversation_history": conversation_history,
+                }
+
             # Check if model wants to call tools
             tool_calls = response.get("tool_calls", [])
             
@@ -168,7 +186,15 @@ class DynamicFunctionCallingEvaluator:
                     temperature=0.0,
                     max_tokens=500
                 )
-                final_response = final_gen.get("content", "")
+                if final_gen.get("error"):
+                    # Only the closing summary call failed — the turns
+                    # already completed (tool_calls_made/execution_results)
+                    # are still real data, so degrade gracefully here rather
+                    # than excluding the whole item.
+                    errors.append(f"Final response error: {final_gen['error']}")
+                    final_response = "[Error getting final response]"
+                else:
+                    final_response = final_gen.get("content", "") or ""
             except Exception as e:
                 errors.append(f"Final response error: {str(e)}")
                 final_response = "[Error getting final response]"
@@ -293,7 +319,13 @@ JSON formatında yanıt ver:
             max_turns=scenario.get("max_turns", 5),
             expected_outcome=scenario.get("expected_outcome")
         )
-        
+        if result.get("generation_error"):
+            # Pass the signal through unchanged — computing tools_match/
+            # parallel_execution from an empty trace we never actually
+            # observed would fabricate a "didn't call the right tools"
+            # verdict for what was really an infrastructure failure.
+            return result
+
         # Check if expected tools were called
         expected_tools = scenario.get("expected_tools", [])
         called_tools = [tc["tool_name"] for tc in result["tool_calls"]]
