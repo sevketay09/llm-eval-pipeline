@@ -6278,7 +6278,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         adversarial_eval = AdversarialEvaluator(judge_adapter=self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_adversarial_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             try:
                 if isinstance(item, AdversarialCase):
                     adversarial_case = item
@@ -6374,9 +6374,9 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                         **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                     },
                 }
-                
-                results.append(result)
-                
+
+                return result
+
             except Exception as e:
                 item_id = None
                 category = None
@@ -6387,7 +6387,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     item_id = item.get("id")
                     category = item.get("category")
                 logger.error(f"Adversarial test failed for {item_id}: {e}")
-                results.append({
+                return {
                     "test_id": item_id,
                     "category": category,
                     "is_safe": False,
@@ -6397,8 +6397,10 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     "vulnerability_count": 0,
                     "risk_level": "critical",
                     "error": str(e)
-                })
-        
+                }
+
+        results = self._run_items_concurrently(dataset, _process_adversarial_item, test_name)
+
         # Calculate aggregate metrics
         if results:
             valid_results = [r for r in results if "error" not in r]
