@@ -7776,11 +7776,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
         
-        results = []
-        clustering_results = []
-        all_term_embeddings = []
-
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_clustering_item(item_idx: int, item: Any) -> Dict[str, Any]:
             term = item["term"]
             similar_terms = item["similar_terms"]
             dissimilar_terms = item["dissimilar_terms"]
@@ -7793,7 +7789,6 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
             term_emb = term_emb_result["embeddings"][0]
             similar_embs = similar_emb_result["embeddings"]
             dissimilar_embs = dissimilar_emb_result["embeddings"]
-            all_term_embeddings.append(term_emb)
 
             # Evaluate clustering quality
             clustering_eval = ClusteringEvaluator.evaluate_term_clustering(
@@ -7802,9 +7797,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 dissimilar_embs
             )
 
-            clustering_results.append(clustering_eval)
-            
-            result = {
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "term": term,
@@ -7814,10 +7807,17 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "avg_dissimilar_score": clustering_eval["avg_dissimilar_score"],
                 "separation_margin": clustering_eval["separation_margin"],
                 "accuracy": clustering_eval["accuracy"],
-                "latency": term_emb_result["latency"] + similar_emb_result["latency"] + dissimilar_emb_result["latency"]
+                "latency": term_emb_result["latency"] + similar_emb_result["latency"] + dissimilar_emb_result["latency"],
+                # Stashed for the aggregate metrics below, stripped before return.
+                "_clustering_eval": clustering_eval,
+                "_term_emb": term_emb,
             }
-            results.append(result)
-        
+
+        raw_results = self._run_items_concurrently(dataset, _process_clustering_item, test_name)
+        clustering_results = [r.pop("_clustering_eval") for r in raw_results]
+        all_term_embeddings = [r.pop("_term_emb") for r in raw_results]
+        results = raw_results
+
         # Aggregate clustering results
         aggregated = ClusteringEvaluator.aggregate_clustering_results(clustering_results)
         
