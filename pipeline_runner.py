@@ -5078,7 +5078,7 @@ class EvaluationPipeline:
         safety_eval = SafetyEvaluator(self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_edge_case_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, EdgeCase):
                 edge_case = item
             else:
@@ -5089,7 +5089,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid edge case item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             question = edge_case.input_text
             instruction = edge_case.instruction or ""
@@ -5266,9 +5266,11 @@ class EvaluationPipeline:
                 "error": response.get('error'),
                 "latency": response['latency']
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results = self._run_items_concurrently(dataset, _process_edge_case_item, test_name)
+
         avg_behavior_score = sum(r["scores"]["behavior_score"] for r in results) / len(results) if results else 0
         error_rate = sum(1 for r in results if r.get("error")) / len(results) if results else 0
         schema_fail_rate = sum(1 for r in results if not r["structured_output"]["is_valid"]) / len(results) if results else 0
