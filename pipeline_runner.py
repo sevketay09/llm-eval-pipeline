@@ -7687,46 +7687,37 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
         
-        results = []
-        all_query_embeddings = []
-        all_doc_embeddings = []
-        all_relevance_labels = []
-        
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_retrieval_item(item_idx: int, item: Any) -> Dict[str, Any]:
             query = item["query"]
             positive_docs = item["positive_docs"]
             hard_negatives = item.get("hard_negatives", [])
             random_negatives = item.get("random_negatives", [])
-            
+
             # Combine all documents
             all_docs = positive_docs + hard_negatives + random_negatives
-            
+
             # Create relevance labels (1 for positive, 0 for negative)
             labels = [1] * len(positive_docs) + [0] * (len(hard_negatives) + len(random_negatives))
-            
+
             # Generate embeddings
             query_emb_result = embedding_model.encode([query], normalize=True)
             docs_emb_result = embedding_model.encode(all_docs, normalize=True)
-            
+
             query_emb = query_emb_result["embeddings"][0]
             doc_embs = docs_emb_result["embeddings"]
-            
-            all_query_embeddings.append(query_emb)
-            all_doc_embeddings.append(doc_embs)
-            all_relevance_labels.append(labels)
-            
+
             # Compute similarities for this query
             similarities = np.dot(doc_embs, query_emb)
             ranked_indices = np.argsort(similarities)[::-1]
-            
+
             # Check if any positive doc is in top-k
             top_k_accuracies = {}
             for k in [1, 3, 5, 10]:
                 top_k_indices = ranked_indices[:k]
                 has_positive = any(labels[i] == 1 for i in top_k_indices)
                 top_k_accuracies[k] = 1.0 if has_positive else 0.0
-            
-            result = {
+
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "query": query,
@@ -7734,10 +7725,19 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "n_hard_negatives": len(hard_negatives),
                 "n_random_negatives": len(random_negatives),
                 "top_k_accuracy": top_k_accuracies,
-                "latency": query_emb_result["latency"] + docs_emb_result["latency"]
+                "latency": query_emb_result["latency"] + docs_emb_result["latency"],
+                # Stashed for the retrieval metrics below, stripped before return.
+                "_query_emb": query_emb,
+                "_doc_embs": doc_embs,
+                "_labels": labels,
             }
-            results.append(result)
-        
+
+        raw_results = self._run_items_concurrently(dataset, _process_retrieval_item, test_name)
+        all_query_embeddings = [r.pop("_query_emb") for r in raw_results]
+        all_doc_embeddings = [r.pop("_doc_embs") for r in raw_results]
+        all_relevance_labels = [r.pop("_labels") for r in raw_results]
+        results = raw_results
+
         # Compute overall retrieval metrics
         retrieval_metrics = RetrievalEvaluator.evaluate(
             np.array(all_query_embeddings),
