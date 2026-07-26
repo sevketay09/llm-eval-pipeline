@@ -5959,7 +5959,10 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     expected_answer=expected_answer,
                     question_type=question_type,
                 )
-                
+                if eval_result.get("generation_error"):
+                    logger.warning(f"[{test_name}] item {item_id} failed after retries: {eval_result['generation_error']}")
+                    return None
+
                 # Extract metrics
                 baseline = eval_result.get("baseline", {})
                 metrics_summary = eval_result.get("metrics", {})

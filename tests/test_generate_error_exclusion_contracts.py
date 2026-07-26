@@ -179,6 +179,54 @@ class GenerateErrorExclusionTests(unittest.TestCase):
         self.assertIn("ok-item", result_ids)
         self.assertEqual(len(result["results"]), 1)
 
+    def test_prompt_compression_excludes_whole_item_when_baseline_fails(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="FAIL_BASELINE")
+        dataset = [
+            {
+                "id": "fail-baseline",
+                "original_prompt": "FAIL_BASELINE: uzun soru metni burada",
+                "compressed_75": "kisa soru 75",
+                "compressed_50": "kisa soru 50",
+            },
+            {
+                "id": "ok-item",
+                "original_prompt": "ok-item: uzun soru metni burada",
+                "compressed_75": "kisa soru 75",
+                "compressed_50": "kisa soru 50",
+            },
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_prompt_compression_test(
+            ctx, model, dataset, judge=None, test_name="prompt_compression"
+        )
+
+        result_ids = [r["test_id"] for r in result["results"]]
+        self.assertNotIn("fail-baseline", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
+    def test_prompt_compression_excludes_only_the_failed_level(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="FAIL_75")
+        dataset = [
+            {
+                "id": "partial-fail",
+                "original_prompt": "baseline: uzun soru metni burada",
+                "compressed_75": "FAIL_75: kisa soru 75",
+                "compressed_50": "ok: kisa soru 50",
+            },
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_prompt_compression_test(
+            ctx, model, dataset, judge=None, test_name="prompt_compression"
+        )
+
+        self.assertEqual(len(result["results"]), 1)
+        compressions = result["results"][0]["compressions"]
+        self.assertNotIn("75%", compressions)
+        self.assertIn("50%", compressions)
+
 
 if __name__ == "__main__":
     unittest.main()
