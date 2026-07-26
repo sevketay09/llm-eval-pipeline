@@ -7999,13 +7999,10 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
         tick = self._make_progress_ticker(len(dataset) * 2)
+        workers = int(self.test_config.get("concurrent_items", 3))
 
         def _run_condition(query_prefix: str, passage_prefix: str) -> Dict[str, Any]:
-            all_query_embeddings = []
-            all_doc_embeddings = []
-            all_relevance_labels = []
-
-            for item in tqdm(dataset, desc=test_name):
+            def _process(item: Any):
                 query = query_prefix + item["query"]
                 positive_docs = item["positive_docs"]
                 hard_negatives = item.get("hard_negatives", [])
@@ -8015,11 +8012,17 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
                 query_emb_result = embedding_model.encode([query], normalize=True)
                 docs_emb_result = embedding_model.encode(all_docs, normalize=True)
-
-                all_query_embeddings.append(query_emb_result["embeddings"][0])
-                all_doc_embeddings.append(docs_emb_result["embeddings"])
-                all_relevance_labels.append(labels)
                 tick()
+                return query_emb_result["embeddings"][0], docs_emb_result["embeddings"], labels
+
+            # ThreadPoolExecutor.map preserves input order in its output regardless
+            # of completion order, so no manual re-indexing is needed here.
+            with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+                triples = list(tqdm(pool.map(_process, dataset), total=len(dataset), desc=test_name))
+
+            all_query_embeddings = [t[0] for t in triples]
+            all_doc_embeddings = [t[1] for t in triples]
+            all_relevance_labels = [t[2] for t in triples]
 
             return RetrievalEvaluator.evaluate(
                 np.array(all_query_embeddings),
