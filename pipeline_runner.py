@@ -8078,16 +8078,24 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
-        texts = []
-        individual_embeddings = []
-        total_latency = 0.0
+        texts = [item["text"] for item in dataset]
+        workers = int(self.test_config.get("concurrent_items", 3))
+        tick = self._make_progress_ticker(len(texts))
 
-        for item in self._iter_with_progress(dataset, test_name):
-            text = item["text"]
-            texts.append(text)
-            emb_result = embedding_model.encode([text], normalize=True)
-            individual_embeddings.append(emb_result["embeddings"][0])
-            total_latency += emb_result["latency"]
+        def _encode_individual(text: str):
+            result = embedding_model.encode([text], normalize=True)
+            tick()
+            return result
+
+        # ThreadPoolExecutor.map preserves input order in its output, so
+        # individual_embeddings[idx] still lines up with texts[idx]/dataset[idx]
+        # below, exactly as the sequential loop did.
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+            individual_results = list(
+                tqdm(pool.map(_encode_individual, texts), total=len(texts), desc=test_name)
+            )
+        individual_embeddings = [r["embeddings"][0] for r in individual_results]
+        total_latency = sum(r["latency"] for r in individual_results)
 
         batch_result = embedding_model.encode(texts, normalize=True)
         batch_embeddings = batch_result["embeddings"]
