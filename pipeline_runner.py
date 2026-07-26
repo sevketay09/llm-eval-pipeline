@@ -3103,6 +3103,48 @@ class EvaluationPipeline:
             yield item
             tick()
 
+    def _run_items_concurrently(
+        self,
+        dataset: List[Any],
+        process_item,
+        test_name: str,
+        max_workers: Optional[int] = None,
+    ) -> List[Dict[str, Any]]:
+        """Run `process_item(idx, item)` for every dataset item on a thread pool.
+
+        Item processing here is I/O-bound (model/judge network calls), so threads
+        overlap the waiting instead of blocking one item at a time. Results are
+        returned in original dataset order regardless of completion order; a
+        `None` return from `process_item` (e.g. an unparseable item) is dropped.
+        Progress ticks through `_make_progress_ticker`, same as the sequential
+        `_iter_with_progress` path.
+        """
+        total_items = len(dataset)
+        workers = max_workers or int(self.test_config.get("concurrent_items", 3))
+        progress_lock = threading.Lock()
+        completed = [0]
+
+        def _wrapped(idx, item):
+            try:
+                return process_item(idx, item)
+            finally:
+                with progress_lock:
+                    completed[0] += 1
+                    done = completed[0]
+                if self._run and hasattr(self, '_progress_test_idx') and hasattr(self, '_progress_total_tests'):
+                    t_idx = self._progress_test_idx
+                    t_total = max(self._progress_total_tests, 1)
+                    self._run.progress = (t_idx + done / max(total_items, 1)) / t_total
+
+        indexed_results: Dict[int, Dict[str, Any]] = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = {pool.submit(_wrapped, idx, item): idx for idx, item in enumerate(dataset)}
+            for future in tqdm(concurrent.futures.as_completed(futures), total=total_items, desc=test_name):
+                result = future.result()
+                if result is not None:
+                    indexed_results[futures[future]] = result
+        return [indexed_results[idx] for idx in sorted(indexed_results)]
+
     def run_qa_test(
         self,
         model: UnifiedLLMAdapter,
@@ -3126,10 +3168,6 @@ class EvaluationPipeline:
         nlp_eval = NLPMetricsEvaluator() if nlp_metrics_available() else None
         
         total_items = len(dataset)
-        concurrent_items = int(self.test_config.get("concurrent_items", 3))
-
-        _progress_lock = threading.Lock()
-        _completed = [0]
 
         def _process_qa_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, SingleTurnCase):
@@ -3279,29 +3317,9 @@ class EvaluationPipeline:
                 "tokens": response['usage'],
             }
 
-            with _progress_lock:
-                _completed[0] += 1
-                completed = _completed[0]
-
-            if self._run and hasattr(self, '_progress_test_idx') and hasattr(self, '_progress_total_tests'):
-                t_idx = self._progress_test_idx
-                t_total = max(self._progress_total_tests, 1)
-                self._run.progress = (t_idx + completed / max(total_items, 1)) / t_total
-
             return result
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_items) as _item_pool:
-            futures = {
-                _item_pool.submit(_process_qa_item, idx, item): idx
-                for idx, item in enumerate(dataset)
-            }
-            _indexed_results = {}
-            for future in tqdm(concurrent.futures.as_completed(futures), total=total_items, desc=test_name):
-                result = future.result()
-                if result is not None:
-                    _indexed_results[futures[future]] = result
-            # Report in dataset order regardless of completion order
-            results.extend(_indexed_results[idx] for idx in sorted(_indexed_results))
+        results.extend(self._run_items_concurrently(dataset, _process_qa_item, test_name))
 
         # Build label distribution
         total = len(results)

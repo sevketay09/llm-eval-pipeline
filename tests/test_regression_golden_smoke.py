@@ -122,6 +122,16 @@ class _FakePipelineContext:
             "schema_error": None,
         }
 
+    def _run_items_concurrently(self, dataset, process_item, test_name, max_workers=None):
+        # Mirrors EvaluationPipeline._run_items_concurrently, sequential is enough
+        # here since concurrent_items=1 already pins deterministic ordering.
+        indexed = {}
+        for idx, item in enumerate(dataset):
+            result = process_item(idx, item)
+            if result is not None:
+                indexed[idx] = result
+        return [indexed[idx] for idx in sorted(indexed)]
+
 
 class RegressionGoldenSmokeTests(unittest.TestCase):
     def test_run_qa_test_preserves_golden_cases_and_builds_expected_summary(self):
