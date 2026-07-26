@@ -3,11 +3,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Depends
 
+from api.rate_limit import RateLimiter
 from api.schemas.evaluations import EvalRunRequest, EvalRunStatus
 from api.services.custom_dataset_service import CustomDatasetService
 from api.services.eval_service import EvalService
 
 router = APIRouter(prefix="/evaluations", tags=["evaluations"])
+
+_run_rate_limit = RateLimiter("eval_run", limit=10, window_seconds=60)
 
 # Singleton service (survives across requests)
 _eval_service = EvalService()
@@ -53,7 +56,13 @@ def _validate_requested_tests(request: EvalRunRequest, suites: dict) -> None:
         )
 
 
-@router.post("/run", response_model=EvalRunStatus, status_code=202, responses={400: {"description": "Invalid evaluation request"}})
+@router.post(
+    "/run",
+    response_model=EvalRunStatus,
+    status_code=202,
+    responses={400: {"description": "Invalid evaluation request"}},
+    dependencies=[Depends(_run_rate_limit)],
+)
 async def start_evaluation(
     request: EvalRunRequest,
     svc: Annotated[EvalService, Depends(get_eval_service)],

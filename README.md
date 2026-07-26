@@ -918,7 +918,19 @@ MISTRAL_VLLM_BASE_URL=http://your-mistral-server:8000/v1
 # Local
 OLLAMA_BASE_URL=http://localhost:11434/v1
 LMSTUDIO_MODEL1_BASE_URL=http://localhost:1234/v1
+
+# Optional: API hardening (unset by default — leaves local/single-user usage unchanged)
+EVAL_API_AUTH_TOKEN=your-shared-secret
 ```
+
+`EVAL_API_AUTH_TOKEN` — if set, every `/api/*` route (except `/api/health`) requires
+`Authorization: Bearer <token>`, and the `/ws/progress/{run_id}` / `/ws/runs` WebSocket
+endpoints require a matching `?token=<token>` query param (browsers can't set a custom
+header on a WebSocket handshake). Leave it unset for local/dev use.
+
+POST `/api/evaluations/run` and the LLM-calling Skill Lab endpoints (`/api/skill-eval/fit`,
+`/trigger`, `/full`) are also rate-limited per client IP (in-process, no external service)
+to blunt accidental or malicious request floods against endpoints that trigger paid LLM calls.
 
 ---
 

@@ -10,9 +10,9 @@ from pathlib import Path
 from dotenv import load_dotenv as _load_dotenv
 _load_dotenv(override=True)
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from api.config import get_settings
 from api.routers import (
@@ -114,6 +114,18 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # Optional bearer-token guard on /api/*. Disabled unless EVAL_API_AUTH_TOKEN
+    # is set, so default (single-user/local) behavior is unchanged.
+    if settings.api_auth_token:
+        @app.middleware("http")
+        async def api_auth_guard(request: Request, call_next):
+            path = request.url.path
+            if request.method != "OPTIONS" and path.startswith("/api") and path != "/api/health":
+                expected = f"Bearer {settings.api_auth_token}"
+                if request.headers.get("authorization") != expected:
+                    return JSONResponse({"detail": "Unauthorized"}, status_code=401)
+            return await call_next(request)
 
     # Routers
     app.include_router(models_router, prefix="/api")

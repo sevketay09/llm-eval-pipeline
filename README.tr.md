@@ -918,7 +918,19 @@ MISTRAL_VLLM_BASE_URL=http://your-mistral-server:8000/v1
 # Yerel
 OLLAMA_BASE_URL=http://localhost:11434/v1
 LMSTUDIO_MODEL1_BASE_URL=http://localhost:1234/v1
+
+# Opsiyonel: API sertleştirme (default'ta boş — yerel/tek kullanıcılı kullanımı etkilemez)
+EVAL_API_AUTH_TOKEN=paylasilan-gizli-anahtariniz
 ```
+
+`EVAL_API_AUTH_TOKEN` — ayarlanırsa her `/api/*` rotası (`/api/health` hariç)
+`Authorization: Bearer <token>` ister; `/ws/progress/{run_id}` ve `/ws/runs` WebSocket
+uçları da eşleşen bir `?token=<token>` query param ister (tarayıcı WebSocket handshake'inde
+özel header ayarlayamaz). Yerel/geliştirme kullanımı için boş bırakın.
+
+POST `/api/evaluations/run` ve LLM çağıran Skill Lab uçları (`/api/skill-eval/fit`,
+`/trigger`, `/full`) da client IP başına rate-limit'lidir (process-içi, dış servis yok) —
+ücretli LLM çağrısı tetikleyen uçlara kazara veya kötü niyetli istek selini köreltmek için.
 
 ---
 

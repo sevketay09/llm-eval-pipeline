@@ -1,8 +1,9 @@
 """Skill Quality Lab API — lint / task-fit / combined skill evaluation."""
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
+from api.rate_limit import RateLimiter
 from api.schemas.skill_eval import (
     SkillFitRequest,
     SkillFullRequest,
@@ -15,13 +16,18 @@ router = APIRouter(prefix="/skill-eval", tags=["skill-eval"])
 
 _service = SkillEvalService()
 
+# lint is pure static analysis (no LLM call) and stays unlimited; fit/trigger/full
+# all invoke a judge model and are the endpoints an accidental or malicious
+# request flood would turn into a real provider cost/DoS problem.
+_llm_rate_limit = RateLimiter("skill_eval_llm", limit=20, window_seconds=60)
+
 
 @router.post("/lint")
 def lint_skill(req: SkillLintRequest):
     return _service.lint(req.skill_text)
 
 
-@router.post("/fit")
+@router.post("/fit", dependencies=[Depends(_llm_rate_limit)])
 def fit_skill(req: SkillFitRequest):
     try:
         result = _service.fit(req.skill_text, req.task_description, req.judge_model)
@@ -32,7 +38,7 @@ def fit_skill(req: SkillFitRequest):
     return result
 
 
-@router.post("/trigger")
+@router.post("/trigger", dependencies=[Depends(_llm_rate_limit)])
 def trigger_skill(req: SkillTriggerRequest):
     try:
         return _service.trigger(
@@ -45,7 +51,7 @@ def trigger_skill(req: SkillTriggerRequest):
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.post("/full")
+@router.post("/full", dependencies=[Depends(_llm_rate_limit)])
 def full_skill_eval(req: SkillFullRequest):
     try:
         return _service.full(req.skill_text, req.task_description, req.judge_model, save=req.save)

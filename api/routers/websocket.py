@@ -5,9 +5,21 @@ import json
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
+from api.config import get_settings
 from api.services.eval_service import EvalService
 
 router = APIRouter(tags=["websocket"])
+
+
+def _ws_token_ok(websocket: WebSocket) -> bool:
+    """Same opt-in guard as the HTTP bearer-token middleware, via ?token= query param
+    since browser WebSocket clients cannot set a custom Authorization header. A no-op
+    (always True) unless EVAL_API_AUTH_TOKEN is configured, so default behavior is unchanged.
+    """
+    token = get_settings().api_auth_token
+    if not token:
+        return True
+    return websocket.query_params.get("token") == token
 
 # Same singleton as evaluations router
 _eval_service: EvalService | None = None
@@ -29,6 +41,10 @@ def set_eval_service(svc: EvalService):
 @router.websocket("/ws/progress/{run_id}")
 async def ws_progress(websocket: WebSocket, run_id: str):
     """Stream evaluation progress for a specific run."""
+    if not _ws_token_ok(websocket):
+        await websocket.close(code=4401, reason="Unauthorized")
+        return
+
     svc = get_eval_service()
     run = svc.get_run(run_id)
     if not run:
@@ -68,6 +84,10 @@ async def ws_progress(websocket: WebSocket, run_id: str):
 @router.websocket("/ws/runs")
 async def ws_all_runs(websocket: WebSocket):
     """Stream status updates for all active runs."""
+    if not _ws_token_ok(websocket):
+        await websocket.close(code=4401, reason="Unauthorized")
+        return
+
     svc = get_eval_service()
     await websocket.accept()
 

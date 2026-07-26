@@ -1,4 +1,5 @@
 """Application configuration via environment variables."""
+from typing import Optional
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
@@ -14,6 +15,9 @@ class Settings(BaseSettings):
     reports_dir: str = "reports"
     generated_datasets_dir: str = "eval_datasets/generated"
     state_dir: str = "data/state"
+    # Opt-in: if set, /api/* requires `Authorization: Bearer <token>`.
+    # Unset by default so existing single-user/local usage is unaffected.
+    api_auth_token: Optional[str] = None
 
     model_config = {
         "env_prefix": "EVAL_",
