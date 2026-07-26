@@ -74,7 +74,13 @@ class ToolErrorRecoveryEvaluator:
                 )
             except Exception as e:
                 break
-            
+
+            if response.get("error"):
+                # A real infrastructure failure (retries exhausted), distinct
+                # from the tool errors this test deliberately injects — don't
+                # score it as "the model gave up without retrying."
+                return {"generation_error": response["error"], "test_id": scenario.get("id", "unknown")}
+
             # Check for tool calls
             tool_calls = response.get("tool_calls", [])
             
@@ -214,28 +220,31 @@ class ToolErrorRecoveryEvaluator:
                 )
             except Exception:
                 break
-            
+
+            if response.get("error"):
+                return {"generation_error": response["error"], "test_id": scenario.get("id", "unknown")}
+
             tool_calls = response.get("tool_calls", [])
-            
+
             if not tool_calls:
                 final_response = response.get("content", "")
                 break
-            
+
             assistant_message = {
                 "role": "assistant",
                 "content": response.get("content", ""),
                 "tool_calls": []
             }
-            
+
             for tool_call in tool_calls:
                 tc_tool_name = tool_call.get("function", {}).get("name")
                 tc_args_str = tool_call.get("function", {}).get("arguments", "{}")
-                
+
                 try:
                     tc_args = json.loads(tc_args_str) if isinstance(tc_args_str, str) else tc_args_str
                 except json.JSONDecodeError:
                     tc_args = {}
-                
+
                 # Check if using fallback
                 if tc_tool_name in fallback_tools:
                     used_fallback = True
@@ -333,7 +342,10 @@ class ToolErrorRecoveryEvaluator:
             )
         except Exception as e:
             return {"success": False, "error": str(e), "test_id": scenario.get("id")}
-        
+
+        if response.get("error"):
+            return {"generation_error": response["error"], "test_id": scenario.get("id")}
+
         tool_calls = response.get("tool_calls", [])
         
         if tool_calls:
@@ -375,9 +387,11 @@ class ToolErrorRecoveryEvaluator:
                     temperature=0.0,
                     max_tokens=500
                 )
-                final_response = error_response.get("content", "")
             except Exception as e:
                 return {"success": False, "error": str(e), "test_id": scenario.get("id")}
+            if error_response.get("error"):
+                return {"generation_error": error_response["error"], "test_id": scenario.get("id")}
+            final_response = error_response.get("content", "") or ""
         else:
             final_response = response.get("content", "")
         
@@ -445,6 +459,13 @@ def evaluate_tool_error_recovery(
     for i in sorted(indexed):
         test_type, result = indexed[i]
         if test_type is None:
+            continue
+        if result.get("generation_error"):
+            # Infra failure (retries exhausted), not the model failing the
+            # scenario — exclude rather than counting it as a failed attempt,
+            # which would corrupt success_rate with something we never
+            # actually got to observe.
+            print(f"Skipping error recovery scenario {result.get('test_id', 'unknown')}: {result['generation_error']}")
             continue
         if test_type == "retry":
             retry_tests.append(result)

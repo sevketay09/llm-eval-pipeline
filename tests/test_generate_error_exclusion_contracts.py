@@ -244,6 +244,56 @@ class GenerateErrorExclusionTests(unittest.TestCase):
         self.assertIn("ok-item", result_ids)
         self.assertEqual(len(result["results"]), 1)
 
+    def test_error_comprehension_does_not_crash_on_generation_failure(self):
+        from evaluators.error_recovery_eval import ToolErrorRecoveryEvaluator
+
+        class _FailingAdapter:
+            def generate(self, messages, **kwargs):
+                return {
+                    "content": None,
+                    "tool_calls": None,
+                    "usage": {"input_tokens": 0, "output_tokens": 0},
+                    "latency": 0.01,
+                    "model": "fake",
+                    "error": "simulated: all retries exhausted (429)",
+                }
+
+        evaluator = ToolErrorRecoveryEvaluator(judge_adapter=None)
+        # Before the fix, this crashed with AttributeError: 'NoneType' object
+        # has no attribute 'lower' (final_response = response.get('content', "")
+        # returned None since 'content' is a present-but-None key, not missing).
+        result = evaluator.evaluate_error_comprehension(
+            _FailingAdapter(),
+            {"id": "t1", "prompt": "hava durumu sorgula", "tool_name": "get_weather", "error_config": {}},
+        )
+
+        self.assertIn("generation_error", result)
+        self.assertNotIn("success", result)
+
+    def test_tool_error_recovery_excludes_generation_failures_from_summary(self):
+        from evaluators.error_recovery_eval import evaluate_tool_error_recovery
+
+        class _FailingAdapter:
+            def generate(self, messages, **kwargs):
+                return {
+                    "content": None,
+                    "tool_calls": None,
+                    "usage": {"input_tokens": 0, "output_tokens": 0},
+                    "latency": 0.01,
+                    "model": "fake",
+                    "error": "simulated: all retries exhausted (429)",
+                }
+
+        scenarios = [
+            {"id": "t1", "test_type": "comprehension", "prompt": "x", "tool_name": "get_weather", "error_config": {}},
+        ]
+
+        raw = evaluate_tool_error_recovery(_FailingAdapter(), scenarios, judge_adapter=None)
+
+        self.assertEqual(raw["test_results"], [])
+        self.assertEqual(raw["summary"]["total_tests"], 0)
+        self.assertEqual(raw["summary"]["comprehension_tests"]["total"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()
