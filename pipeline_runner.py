@@ -6082,7 +6082,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         constraints_eval = NegativeConstraintsEvaluator(judge_adapter=self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_negative_constraints_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             try:
                 if isinstance(item, NegativeConstraintCase):
                     constraint_case = item
@@ -6154,14 +6154,14 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     "is_safe": eval_result["compliant"],
                     "compromised": eval_result["violation_detected"],
                 }
-                
-                results.append(result)
-                
+
+                return result
+
             except Exception as e:
                 item_id = item.case_id if isinstance(item, NegativeConstraintCase) else item.get("id")
                 category = item.resolved_category if isinstance(item, NegativeConstraintCase) else item.get("category")
                 logger.error(f"Negative constraints test failed for {item_id}: {e}")
-                results.append({
+                return {
                     "test_id": item_id,
                     "category": category,
                     "compliant": False,
@@ -6170,8 +6170,10 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     "violation_count": 0,
                     "severity": 1.0,
                     "error": str(e)
-                })
-        
+                }
+
+        results = self._run_items_concurrently(dataset, _process_negative_constraints_item, test_name)
+
         # Calculate aggregate metrics
         if results:
             valid_results = [r for r in results if "error" not in r]
