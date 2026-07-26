@@ -155,6 +155,7 @@ test_suites:
     - turkish_paraphrasing
     - turkish_reasoning
     - turkish_nuance
+    - consistency
     - fintech_knowledge
     - fintech_calculations
     - function_calling
@@ -193,6 +194,7 @@ test_suites:
     - turkish_paraphrasing
     - turkish_reasoning
     - turkish_nuance
+    - consistency
     - fintech_knowledge
     - fintech_calculations
     - function_calling
