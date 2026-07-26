@@ -8152,11 +8152,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
-        results = []
-        mining_results = []
-        all_doc_embeddings = []
-
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_long_context_item(item_idx: int, item: Any) -> Dict[str, Any]:
             query = item["query"]
             signal_sentence = item["signal_sentence"]
             filler_text = item["filler_text"]
@@ -8168,12 +8164,10 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
             query_emb = query_emb_result["embeddings"][0]
             doc_first_emb, doc_last_emb = docs_emb_result["embeddings"]
-            all_doc_embeddings.extend([doc_first_emb, doc_last_emb])
 
             evaluation = LongContextRobustnessEvaluator.evaluate_single(query_emb, doc_first_emb, doc_last_emb)
-            mining_results.append(evaluation)
 
-            results.append({
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "query": query,
@@ -8181,7 +8175,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "similarity_signal_last": evaluation["similarity_signal_last"],
                 "position_gap": evaluation["position_gap"],
                 "latency": query_emb_result["latency"] + docs_emb_result["latency"],
-            })
+                "_evaluation": evaluation,
+                "_doc_embs": [doc_first_emb, doc_last_emb],
+            }
+
+        raw_results = self._run_items_concurrently(dataset, _process_long_context_item, test_name)
+        mining_results = [r.pop("_evaluation") for r in raw_results]
+        all_doc_embeddings = [emb for r in raw_results for emb in r.pop("_doc_embs")]
+        results = raw_results
 
         aggregated = LongContextRobustnessEvaluator.aggregate(mining_results)
 
@@ -8216,11 +8217,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
-        results = []
-        reranking_results = []
-        all_candidate_embeddings = []
-
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_reranking_item(item_idx: int, item: Any) -> Dict[str, Any]:
             query = item["query"]
             candidates = item["candidates"]
             candidate_texts = [c["text"] for c in candidates]
@@ -8231,12 +8228,10 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
             query_emb = query_emb_result["embeddings"][0]
             candidate_embs = candidates_emb_result["embeddings"]
-            all_candidate_embeddings.extend(candidate_embs)
 
             evaluation = RerankingEvaluator.evaluate_single(query_emb, candidate_embs, relevance_scores)
-            reranking_results.append(evaluation)
 
-            results.append({
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "query": query,
@@ -8245,7 +8240,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "rank_correlation": evaluation["rank_correlation"],
                 "top1_is_most_relevant": evaluation["top1_is_most_relevant"],
                 "latency": query_emb_result["latency"] + candidates_emb_result["latency"],
-            })
+                "_evaluation": evaluation,
+                "_candidate_embs": candidate_embs,
+            }
+
+        raw_results = self._run_items_concurrently(dataset, _process_reranking_item, test_name)
+        reranking_results = [r.pop("_evaluation") for r in raw_results]
+        all_candidate_embeddings = [emb for r in raw_results for emb in r.pop("_candidate_embs")]
+        results = raw_results
 
         aggregated = RerankingEvaluator.aggregate(reranking_results)
 
