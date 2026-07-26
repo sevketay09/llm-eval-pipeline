@@ -2386,6 +2386,15 @@ class EvaluationPipeline:
         self.config = self._load_config()
         self.test_config = self._load_test_config()
 
+        # Global cap on concurrent model/judge calls across this whole run.
+        # Without this, model-level parallelism (run_full_evaluation_parallel)
+        # and item-level parallelism (_run_items_concurrently) multiply: e.g.
+        # 5 models in parallel x concurrent_items=3 each = up to 15 simultaneous
+        # provider requests instead of the 5 or 3 either mode implies alone,
+        # which risks tripping the LLM provider's own rate limits.
+        max_concurrent = int(self.test_config.get("max_concurrent_requests", 8))
+        self._llm_call_semaphore = threading.Semaphore(max_concurrent)
+
         # Store judge model key override
         self._judge_model_key = judge_model_key
         self.runtime_overrides = {
@@ -3126,7 +3135,10 @@ class EvaluationPipeline:
 
         def _wrapped(idx, item):
             try:
-                return process_item(idx, item)
+                # Global cap, shared across every model/test running concurrently
+                # in this pipeline instance — see __init__ for why this exists.
+                with self._llm_call_semaphore:
+                    return process_item(idx, item)
             finally:
                 with progress_lock:
                     completed[0] += 1
@@ -8012,8 +8024,9 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 all_docs = [passage_prefix + d for d in positive_docs + hard_negatives + random_negatives]
                 labels = [1] * len(positive_docs) + [0] * (len(hard_negatives) + len(random_negatives))
 
-                query_emb_result = embedding_model.encode([query], normalize=True)
-                docs_emb_result = embedding_model.encode(all_docs, normalize=True)
+                with self._llm_call_semaphore:
+                    query_emb_result = embedding_model.encode([query], normalize=True)
+                    docs_emb_result = embedding_model.encode(all_docs, normalize=True)
                 tick()
                 return query_emb_result["embeddings"][0], docs_emb_result["embeddings"], labels
 
@@ -8085,7 +8098,8 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         tick = self._make_progress_ticker(len(texts))
 
         def _encode_individual(text: str):
-            result = embedding_model.encode([text], normalize=True)
+            with self._llm_call_semaphore:
+                result = embedding_model.encode([text], normalize=True)
             tick()
             return result
 

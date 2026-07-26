@@ -6,6 +6,7 @@ summary dict — including the newly-activated `embedding_health` diagnostic.
 """
 import hashlib
 import sys
+import threading
 import types
 
 import numpy as np
@@ -64,6 +65,7 @@ class _PipelineStub:
         self._progress_test_idx = 0
         self._progress_total_tests = 1
         self.test_config = {"concurrent_items": 3}
+        self._llm_call_semaphore = threading.Semaphore(8)
         self._PREFIX_SENSITIVITY_QUERY_PREFIX = module.EvaluationPipeline._PREFIX_SENSITIVITY_QUERY_PREFIX
         self._PREFIX_SENSITIVITY_PASSAGE_PREFIX = module.EvaluationPipeline._PREFIX_SENSITIVITY_PASSAGE_PREFIX
         self._make_progress_ticker = types.MethodType(module.EvaluationPipeline._make_progress_ticker, self)

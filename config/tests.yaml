@@ -1,5 +1,12 @@
 concurrent_items: 3
 
+# Hard cap on simultaneous model/judge calls across an entire run, regardless
+# of how many models are running in parallel (run_full_evaluation_parallel)
+# multiplied by how many items each is processing concurrently
+# (concurrent_items above). Prevents accidentally hammering the provider with
+# e.g. 5 models x 3 items = 15+ simultaneous requests and tripping its rate limit.
+max_concurrent_requests: 8
+
 humaneval_execution:
   disable_network: true
   docker_image: your-registry/minimal-python:3.11
