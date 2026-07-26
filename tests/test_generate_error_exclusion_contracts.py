@@ -1,0 +1,133 @@
+"""Regression tests: when model.generate() returns an error (e.g. after
+exhausting retries on a 429), the affected item must be dropped from the
+test's results rather than silently scored as if it were a real answer —
+and processing must not crash on the None content."""
+import json
+import sys
+import threading
+import types
+import unittest
+
+if "anthropic" not in sys.modules:
+    _fake_anthropic = types.ModuleType("anthropic")
+
+    class _Anthropic:  # pragma: no cover - import stub for tests only
+        pass
+
+    _fake_anthropic.Anthropic = _Anthropic
+    sys.modules["anthropic"] = _fake_anthropic
+
+if "datasets" not in sys.modules:
+    _fake_datasets = types.ModuleType("datasets")
+
+    def _load_dataset(*args, **kwargs):
+        raise RuntimeError("load_dataset should not run in this test")
+
+    _fake_datasets.load_dataset = _load_dataset
+    sys.modules["datasets"] = _fake_datasets
+
+import pipeline_runner
+
+
+class _FakeErroringModel:
+    """Fails on the first item's generate() call, succeeds on the rest."""
+
+    model_name = "fake-model"
+    provider = "fake"
+
+    def __init__(self, fail_case_id):
+        self.fail_case_id = fail_case_id
+
+    def generate(self, messages, **kwargs):
+        # Identify which case is being asked by sniffing the user content,
+        # since these tests build very small, distinct-per-item prompts.
+        last_user = next(
+            (m["content"] for m in reversed(messages) if m.get("role") == "user"), ""
+        )
+        if self.fail_case_id in last_user:
+            return {
+                "content": None,
+                "tool_calls": None,
+                "usage": {"input_tokens": 0, "output_tokens": 0},
+                "latency": 0.01,
+                "model": self.model_name,
+                "error": "simulated: all retries exhausted (429)",
+            }
+        return {
+            "content": "0",
+            "tool_calls": None,
+            "usage": {"input_tokens": 5, "output_tokens": 1},
+            "latency": 0.01,
+            "model": self.model_name,
+        }
+
+
+class _FakeJudgeAdapter:
+    """Only used for InstructionFollowingEvaluator's judge call."""
+
+    def generate(self, messages, **kwargs):
+        return {
+            "content": json.dumps({"score": 8, "reasoning": "ok", "violations": []}),
+        }
+
+
+class _FakePipelineContext:
+    def __init__(self):
+        self._run = None
+        self.judge_adapter = _FakeJudgeAdapter()
+        self.test_config = {"concurrent_items": 3}
+        self._llm_call_semaphore = threading.Semaphore(8)
+        self._run_items_concurrently = pipeline_runner.EvaluationPipeline._run_items_concurrently.__get__(self)
+
+    def _inject_schema_instruction(self, system_prompt, schema):
+        return system_prompt
+
+    _parse_structured_output = pipeline_runner.EvaluationPipeline._parse_structured_output
+
+
+class GenerateErrorExclusionTests(unittest.TestCase):
+    def test_pii_detection_excludes_failed_item_without_crashing(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {
+                "id": "fail-me",
+                "input": "fail-me: Ali Veli 05551234567 numarasindan aranabilir.",
+                "expected_output": "1",
+            },
+            {
+                "id": "ok-item",
+                "input": "ok-item: Bu metinde kisisel veri yoktur.",
+                "expected_output": "0",
+            },
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_pii_detection_test(
+            ctx, model, dataset, judge=None, test_name="pii_detection"
+        )
+
+        result_ids = [r["id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
+    def test_function_calling_excludes_failed_item(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {"id": "fail-me", "prompt": "fail-me: transfer yap", "expected_tool": "transfer"},
+            {"id": "ok-item", "prompt": "ok-item: bakiye sorgula", "expected_tool": "balance"},
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_function_calling_test(
+            ctx, model, dataset, judge=None, test_name="function_calling"
+        )
+
+        result_ids = [r["id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

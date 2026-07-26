@@ -3702,6 +3702,9 @@ class EvaluationPipeline:
                 tools=function_case.available_tools,
                 response_format=response_format
             )
+            if response.get("error"):
+                logger.warning(f"[{test_name}] item {function_case.case_id} failed after retries: {response['error']}")
+                return None
 
             structured = self._parse_structured_output(response.get('content') or "", schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
@@ -3884,6 +3887,9 @@ class EvaluationPipeline:
                 tools=CHAIN_COMMON_TOOLS,
                 response_format=None,
             )
+            if response.get("error"):
+                logger.warning(f"[{test_name}] item {workflow_case.case_id} failed after retries: {response['error']}")
+                return None
             prompt_alignment_eval = instruction_eval.evaluate(
                 _build_prompt_alignment_instruction(system_prompt, workflow_case.input_text),
                 response.get("content") or "",
@@ -4693,7 +4699,12 @@ class EvaluationPipeline:
                     messages = [system_message] + conversation_history + [user_message]
                     
                     response = model.generate(messages, response_format=response_format)
-                    
+
+                    if response.get("error"):
+                        logger.warning(
+                            f"[{test_name}] item {conversation_case.case_id} turn {turn_idx} failed after retries: {response['error']}"
+                        )
+
                     if response['content']:
                         structured = self._parse_structured_output(response['content'], schema)
                         json_correctness_metric = _build_json_correctness_metric(structured)
@@ -5133,7 +5144,10 @@ class EvaluationPipeline:
             ]
             
             response = model.generate(messages, max_tokens=500, response_format=response_format)
-            
+            if response.get("error"):
+                logger.warning(f"[{test_name}] item {edge_case.case_id} failed after retries: {response['error']}")
+                return None
+
             # Default scores
             behavior_score = 0.5
             refusal_score = None
@@ -5406,7 +5420,10 @@ class EvaluationPipeline:
             ]
             
             response = model.generate(messages, max_tokens=10, temperature=0.0)
-            
+            if response.get("error"):
+                logger.warning(f"[{test_name}] item {pii_case.case_id} failed after retries: {response['error']}")
+                return None
+
             answer_text = response.get('content', "").strip()
             prompt_alignment_eval = instruction_eval.evaluate(
                 _build_prompt_alignment_instruction(system_prompt, question),
