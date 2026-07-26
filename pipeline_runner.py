@@ -4104,10 +4104,7 @@ class EvaluationPipeline:
         dyn_evaluator = DynamicFunctionCallingEvaluator(judge_adapter=judge)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
 
-        results = []
-        total_score = 0.0
-
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_parallel_tools_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, ToolWorkflowCase):
                 workflow_case = item
             else:
@@ -4118,7 +4115,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid parallel tool item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             scenario = {
                 "prompt": workflow_case.input_text,
@@ -4166,14 +4163,13 @@ class EvaluationPipeline:
                 score += 0.3   # non-parallel scenario — no penalty
 
             score = min(1.0, score)
-            total_score += score
 
             latency = eval_result.get("latency", 0.0)
             if not latency:
                 # multi-turn: sum individual tool call latencies if tracked
                 latency = 0.0
 
-            results.append({
+            return {
                 "id": workflow_case.case_id,
                 "prompt": workflow_case.input_text,
                 "expected_tools": scenario["expected_tools"],
@@ -4197,9 +4193,12 @@ class EvaluationPipeline:
                     **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                 },
                 "latency": latency,
-            })
+            }
+
+        results = self._run_items_concurrently(dataset, _process_parallel_tools_item, test_name)
 
         n = len(results)
+        total_score = sum(r["scores"]["overall"] for r in results)
         overall_score = total_score / n if n else 0.0
         tools_match_rate = sum(1 for r in results if r["tools_match"]) / n if n else 0.0
         prompt_alignment_values = [
