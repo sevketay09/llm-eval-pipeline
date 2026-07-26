@@ -104,6 +104,52 @@ def _make_sklearn_mock() -> ModuleType:
     text_mod = MagicMock()
     text_mod.TfidfVectorizer = _TfidfVectorizer
 
+    def _cosine_similarity(X, Y=None):
+        X = np.asarray(X, dtype=float)
+        Y = X if Y is None else np.asarray(Y, dtype=float)
+        X_norm = X / (np.linalg.norm(X, axis=1, keepdims=True) + 1e-12)
+        Y_norm = Y / (np.linalg.norm(Y, axis=1, keepdims=True) + 1e-12)
+        return X_norm @ Y_norm.T
+
+    def _average_precision_score(y_true, y_score):
+        y_true = np.asarray(y_true)
+        y_score = np.asarray(y_score, dtype=float)
+        n_pos = int(np.sum(y_true == 1))
+        if n_pos == 0:
+            return 0.0
+        order = np.argsort(-y_score, kind="mergesort")
+        y_true_sorted = y_true[order]
+        tp_cumsum = np.cumsum(y_true_sorted == 1)
+        precision_at_k = tp_cumsum / np.arange(1, len(y_true_sorted) + 1)
+        return float(np.sum(precision_at_k[y_true_sorted == 1]) / n_pos)
+
+    def _silhouette_score(X, labels, metric="euclidean", **kw):
+        X = np.asarray(X, dtype=float)
+        labels = np.asarray(labels)
+        unique_labels = np.unique(labels)
+        if len(unique_labels) < 2:
+            return 0.0
+        if metric == "cosine":
+            dist = 1.0 - _cosine_similarity(X, X)
+        else:
+            dist = np.linalg.norm(X[:, None, :] - X[None, :, :], axis=-1)
+        scores = []
+        for i in range(len(X)):
+            own = labels[i]
+            same_mask = (labels == own)
+            same_mask[i] = False
+            a = dist[i, same_mask].mean() if same_mask.any() else 0.0
+            b_candidates = []
+            for other in unique_labels:
+                if other == own:
+                    continue
+                other_mask = labels == other
+                if other_mask.any():
+                    b_candidates.append(dist[i, other_mask].mean())
+            b = min(b_candidates) if b_candidates else 0.0
+            scores.append(0.0 if max(a, b) == 0 else (b - a) / max(a, b))
+        return float(np.mean(scores))
+
     sklearn_mod = MagicMock()
     sklearn_mod.cluster = cluster_mod
     sklearn_mod.feature_extraction = MagicMock()
@@ -115,9 +161,14 @@ def _make_sklearn_mock() -> ModuleType:
     sys.modules["sklearn.feature_extraction"] = sklearn_mod.feature_extraction
     sys.modules["sklearn.feature_extraction.text"] = text_mod
     metrics_mod = MagicMock()
+    metrics_mod.average_precision_score = _average_precision_score
+    metrics_mod.silhouette_score = _silhouette_score
+    pairwise_mod = MagicMock()
+    pairwise_mod.cosine_similarity = _cosine_similarity
+    metrics_mod.pairwise = pairwise_mod
     sklearn_mod.metrics = metrics_mod
     sys.modules["sklearn.metrics"] = metrics_mod
-    sys.modules["sklearn.metrics.pairwise"] = metrics_mod.pairwise
+    sys.modules["sklearn.metrics.pairwise"] = pairwise_mod
     sys.modules["sklearn.utils"] = MagicMock()
     sys.modules["sklearn.utils.murmurhash"] = MagicMock()
     sys.modules["sklearn.base"] = MagicMock()

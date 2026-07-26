@@ -47,6 +47,8 @@ from evaluators.embedding_eval import (
     SemanticSimilarityEvaluator,
     RetrievalEvaluator,
     ClusteringEvaluator,
+    PairClassificationEvaluator,
+    BitextMiningEvaluator,
     EmbeddingQualityMetrics
 )
 from evaluators.prompt_compression_eval import PromptCompressionEvaluator
@@ -7521,6 +7523,25 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
     # ==================== EMBEDDING MODEL TESTS ====================
     
+    def _embedding_health_summary(self, embeddings: List[Any]) -> Dict[str, Any]:
+        """Lightweight embedding-quality diagnostic shared by every embedding test.
+
+        Not a pass/fail metric — a lens on the vector space itself: are embeddings
+        collapsing toward a narrow region (high intra-list similarity / anisotropy,
+        a known failure mode called out in embedding-robustness literature) or do
+        norms look degenerate. Runs on whatever embeddings the test already computed,
+        no extra model calls.
+        """
+        import numpy as np
+
+        arr = np.array(embeddings)
+        if arr.ndim != 2 or arr.shape[0] < 2:
+            return {}
+
+        stats = EmbeddingQualityMetrics.compute_embedding_statistics(arr)
+        stats["intra_list_similarity"] = EmbeddingQualityMetrics.compute_intra_list_similarity(arr)
+        return stats
+
     def run_embedding_sts_test(
         self,
         embedding_model: UnifiedEmbeddingAdapter,
@@ -7577,7 +7598,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
             embeddings2,
             all_expected_scores
         )
-        
+
         return {
             "test_name": test_name,
             "results": results,
@@ -7589,7 +7610,10 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "rmse": sts_metrics["rmse"],
                 "accuracy_at_threshold": sts_metrics["accuracy_at_threshold"],
                 "avg_latency": np.mean([r["latency"] for r in results]),
-                "overall_score": sts_metrics["spearman_correlation"]  # Use Spearman as primary metric
+                "overall_score": sts_metrics["spearman_correlation"],  # Use Spearman as primary metric
+                "embedding_health": self._embedding_health_summary(
+                    list(all_embeddings1) + list(all_embeddings2)
+                ),
             },
             "detailed_metrics": sts_metrics
         }
@@ -7675,7 +7699,10 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "mrr": retrieval_metrics["mrr"],
                 "map": retrieval_metrics["map"],
                 "avg_latency": np.mean([r["latency"] for r in results]),
-                "overall_score": retrieval_metrics["ndcg"][10]  # Use NDCG@10 as primary metric
+                "overall_score": retrieval_metrics["ndcg"][10],  # Use NDCG@10 as primary metric
+                "embedding_health": self._embedding_health_summary(
+                    [emb for doc_embs in all_doc_embeddings for emb in doc_embs]
+                ),
             },
             "detailed_metrics": retrieval_metrics
         }
@@ -7693,28 +7720,30 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         
         results = []
         clustering_results = []
-        
+        all_term_embeddings = []
+
         for item in self._iter_with_progress(dataset, test_name):
             term = item["term"]
             similar_terms = item["similar_terms"]
             dissimilar_terms = item["dissimilar_terms"]
-            
+
             # Generate embeddings
             term_emb_result = embedding_model.encode([term], normalize=True)
             similar_emb_result = embedding_model.encode(similar_terms, normalize=True)
             dissimilar_emb_result = embedding_model.encode(dissimilar_terms, normalize=True)
-            
+
             term_emb = term_emb_result["embeddings"][0]
             similar_embs = similar_emb_result["embeddings"]
             dissimilar_embs = dissimilar_emb_result["embeddings"]
-            
+            all_term_embeddings.append(term_emb)
+
             # Evaluate clustering quality
             clustering_eval = ClusteringEvaluator.evaluate_term_clustering(
                 term_emb,
                 similar_embs,
                 dissimilar_embs
             )
-            
+
             clustering_results.append(clustering_eval)
             
             result = {
@@ -7745,11 +7774,147 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "avg_accuracy": aggregated["avg_accuracy"],
                 "pass_rate": aggregated["pass_rate"],
                 "avg_latency": np.mean([r["latency"] for r in results]),
-                "overall_score": aggregated["avg_accuracy"]  # Use accuracy as primary metric
+                "overall_score": aggregated["avg_accuracy"],  # Use accuracy as primary metric
+                "embedding_health": self._embedding_health_summary(all_term_embeddings),
             },
             "detailed_metrics": aggregated
         }
-    
+
+    def run_embedding_pair_classification_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Run binary pair classification (duplicate/paraphrase detection) for embedding models."""
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        results = []
+        all_embeddings1 = []
+        all_embeddings2 = []
+        all_labels = []
+
+        for item in self._iter_with_progress(dataset, test_name):
+            sentence1 = item["sentence1"]
+            sentence2 = item["sentence2"]
+            is_duplicate = int(item["is_duplicate"])
+
+            emb_result1 = embedding_model.encode([sentence1], normalize=True)
+            emb_result2 = embedding_model.encode([sentence2], normalize=True)
+
+            emb1 = emb_result1["embeddings"][0]
+            emb2 = emb_result2["embeddings"][0]
+            predicted_score = float(np.dot(emb1, emb2))
+
+            all_embeddings1.append(emb1)
+            all_embeddings2.append(emb2)
+            all_labels.append(is_duplicate)
+
+            results.append({
+                "id": item["id"],
+                "category": item["category"],
+                "sentence1": sentence1,
+                "sentence2": sentence2,
+                "is_duplicate": is_duplicate,
+                "predicted_score": predicted_score,
+                "latency": emb_result1["latency"] + emb_result2["latency"],
+            })
+
+        pair_metrics = PairClassificationEvaluator.evaluate(
+            np.array(all_embeddings1),
+            np.array(all_embeddings2),
+            all_labels,
+        )
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "average_precision": pair_metrics["average_precision"],
+                "best_threshold": pair_metrics["best_threshold"],
+                "accuracy_at_best_threshold": pair_metrics["accuracy_at_best_threshold"],
+                "avg_latency": np.mean([r["latency"] for r in results]),
+                "overall_score": pair_metrics["average_precision"],  # Use AP as primary metric
+                "embedding_health": self._embedding_health_summary(
+                    list(all_embeddings1) + list(all_embeddings2)
+                ),
+            },
+            "detailed_metrics": pair_metrics,
+        }
+
+    def run_embedding_bitext_mining_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Run cross-lingual bitext mining (translation retrieval) for embedding models.
+
+        Each item gives a source-language sentence, its true translation, and a set of
+        distractor sentences in the target language on a similar topic; the model must
+        rank the true translation above every distractor.
+        """
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        results = []
+        mining_results = []
+        all_source_embeddings = []
+
+        for item in self._iter_with_progress(dataset, test_name):
+            source_sentence = item["source_sentence"]
+            correct_translation = item["correct_translation"]
+            distractor_translations = item["distractor_translations"]
+            candidates = [correct_translation] + list(distractor_translations)
+            correct_index = 0
+
+            source_emb_result = embedding_model.encode([source_sentence], normalize=True)
+            candidates_emb_result = embedding_model.encode(candidates, normalize=True)
+
+            source_emb = source_emb_result["embeddings"][0]
+            candidate_embs = candidates_emb_result["embeddings"]
+            all_source_embeddings.append(source_emb)
+
+            mining_eval = BitextMiningEvaluator.evaluate_single(
+                source_emb,
+                candidate_embs,
+                correct_index,
+            )
+            mining_results.append(mining_eval)
+
+            results.append({
+                "id": item["id"],
+                "category": item["category"],
+                "source_sentence": source_sentence,
+                "correct_translation": correct_translation,
+                "n_distractors": len(distractor_translations),
+                "rank": mining_eval["rank"],
+                "correct_at_1": mining_eval["correct_at_1"],
+                "reciprocal_rank": mining_eval["reciprocal_rank"],
+                "latency": source_emb_result["latency"] + candidates_emb_result["latency"],
+            })
+
+        aggregated = BitextMiningEvaluator.aggregate(mining_results)
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "accuracy_at_1": aggregated["accuracy_at_1"],
+                "mrr": aggregated["mrr"],
+                "avg_margin": aggregated["avg_margin"],
+                "avg_latency": np.mean([r["latency"] for r in results]),
+                "overall_score": aggregated["accuracy_at_1"],  # Use top-1 accuracy as primary metric
+                "embedding_health": self._embedding_health_summary(all_source_embeddings),
+            },
+            "detailed_metrics": aggregated,
+        }
+
     # ==================== END EMBEDDING MODEL TESTS ====================
 
     def _update_model_overall_metrics(self, model: Any, model_results: Dict[str, Any]) -> None:

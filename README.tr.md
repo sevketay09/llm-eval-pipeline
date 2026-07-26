@@ -818,6 +818,8 @@ Numeric 1-10 skalası kullanılmaz; verbosity bias'tan kaçınmak için kategori
 | `adversarial_security` | `safety_rate` |
 | `embedding_sts` | `spearman_correlation` |
 | `embedding_retrieval` | `NDCG@10` |
+| `embedding_pair_classification` | `average_precision` |
+| `embedding_bitext_mining` | `accuracy_at_1` |
 | `multi_turn`, `stress_tests` | `avg_context_retention` |
 
 ### Katman 3 — Model Bazında weighted_score
@@ -924,7 +926,7 @@ LMSTUDIO_MODEL1_BASE_URL=http://localhost:1234/v1
 | `benchmark/` | Turkish grammar/reasoning/creativity/paraphrasing, PII, self-consistency, negative constraints |
 | `agentic/` | Multi-adım görev planlama, araç seçimi |
 | `edge_cases/` | Adversarial (jailbreak/injection), edge case senaryoları |
-| `embedding/` | STS, cross-lingual STS, retrieval, hard-negative retrieval, domain clustering |
+| `embedding/` | STS, cross-lingual STS, retrieval, hard-negative retrieval, domain clustering, pair classification (duplicate/paraphrase), TR↔EN bitext mining |
 | `fintech/` | Fintech alan bilgisi, finansal hesaplamalar |
 | `function_calling/` | Temel araç seçimi, paralel araç, tool chain, error recovery |
 | `multi_turn/` | Context retention, long-context stress |

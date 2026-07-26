@@ -221,3 +221,13 @@ tasks:
     dataset: eval_datasets/embedding/turkish_regulatory_domain.json
     runner: run_embedding_clustering_test
     category: embedding
+
+  embedding_pair_classification:
+    dataset: eval_datasets/embedding/turkish_pair_classification.json
+    runner: run_embedding_pair_classification_test
+    category: embedding
+
+  embedding_bitext_mining:
+    dataset: eval_datasets/embedding/turkish_bitext_mining.json
+    runner: run_embedding_bitext_mining_test
+    category: embedding

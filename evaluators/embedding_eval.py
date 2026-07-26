@@ -5,6 +5,7 @@ Metrics for evaluating Turkish embedding models without LLM judges
 import numpy as np
 from typing import List, Dict, Any, Tuple
 from scipy.stats import spearmanr, pearsonr
+from sklearn.metrics import average_precision_score
 from sklearn.metrics.pairwise import cosine_similarity
 from utils.logger import get_logger
 
@@ -278,6 +279,113 @@ class ClusteringEvaluator:
             "avg_separation_margin": float(np.mean([r["separation_margin"] for r in results])),
             "avg_accuracy": float(np.mean([r["accuracy"] for r in results])),
             "pass_rate": float(np.mean([r["separation_margin"] > 0.1 for r in results]))
+        }
+
+
+class PairClassificationEvaluator:
+    """Evaluate embedding model on binary pair classification (duplicate/paraphrase detection).
+
+    Unlike STS (graded similarity), this scores a binary decision: is this pair a
+    duplicate/paraphrase or not? Mirrors MTEB's PairClassification task — cosine
+    similarity is the score, and the best-threshold Average Precision is the metric,
+    so the evaluator doesn't need to guess a similarity cutoff up front.
+    """
+
+    @staticmethod
+    def evaluate(
+        embeddings1: np.ndarray,
+        embeddings2: np.ndarray,
+        labels: List[int],
+    ) -> Dict[str, Any]:
+        """
+        Args:
+            embeddings1: Embeddings for the first item in each pair (n, dim)
+            embeddings2: Embeddings for the second item in each pair (n, dim)
+            labels: 1 if the pair is a duplicate/paraphrase, 0 otherwise (n,)
+
+        Returns:
+            {
+                "average_precision": float,
+                "best_threshold": float,
+                "accuracy_at_best_threshold": float,
+                "predicted_scores": List[float],
+            }
+        """
+        predicted_scores = []
+        for emb1, emb2 in zip(embeddings1, embeddings2):
+            sim = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2) + 1e-8)
+            predicted_scores.append(float(sim))
+
+        predicted_scores = np.array(predicted_scores)
+        labels_arr = np.array(labels)
+
+        if len(set(labels)) < 2:
+            # Average precision is undefined with only one class present.
+            average_precision = 0.0
+        else:
+            average_precision = float(average_precision_score(labels_arr, predicted_scores))
+
+        # Grid search the cosine-similarity threshold that maximizes accuracy —
+        # simple, deterministic, and matches how a real dedup/FAQ-matching
+        # pipeline would pick an operating point.
+        candidate_thresholds = np.unique(np.round(predicted_scores, 3))
+        best_threshold = 0.5
+        best_accuracy = 0.0
+        for threshold in candidate_thresholds:
+            predicted_labels = (predicted_scores >= threshold).astype(int)
+            accuracy = float(np.mean(predicted_labels == labels_arr))
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
+                best_threshold = float(threshold)
+
+        return {
+            "average_precision": average_precision,
+            "best_threshold": best_threshold,
+            "accuracy_at_best_threshold": best_accuracy,
+            "mean_positive_score": float(np.mean(predicted_scores[labels_arr == 1])) if np.any(labels_arr == 1) else None,
+            "mean_negative_score": float(np.mean(predicted_scores[labels_arr == 0])) if np.any(labels_arr == 0) else None,
+        }
+
+
+class BitextMiningEvaluator:
+    """Evaluate embedding model on cross-lingual bitext mining (translation retrieval).
+
+    For each source-language sentence, the model must pick its true translation out of
+    a small candidate pool (the correct translation plus several distractor sentences
+    on a similar topic). This is the task LaBSE-style models are explicitly trained
+    for, and it's a different skill from STS: it tests whether the *correct* match
+    ranks first among close competitors, not just whether similarity scores correlate.
+    """
+
+    @staticmethod
+    def evaluate_single(
+        source_embedding: np.ndarray,
+        candidate_embeddings: np.ndarray,
+        correct_index: int,
+    ) -> Dict[str, Any]:
+        similarities = cosine_similarity([source_embedding], candidate_embeddings)[0]
+        ranked_indices = np.argsort(similarities)[::-1]
+        rank = int(np.where(ranked_indices == correct_index)[0][0]) + 1  # 1-based rank
+        return {
+            "rank": rank,
+            "correct_at_1": rank == 1,
+            "reciprocal_rank": 1.0 / rank,
+            "correct_similarity": float(similarities[correct_index]),
+            "top_distractor_similarity": float(
+                max((s for i, s in enumerate(similarities) if i != correct_index), default=0.0)
+            ),
+        }
+
+    @staticmethod
+    def aggregate(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            "accuracy_at_1": float(np.mean([r["correct_at_1"] for r in results])),
+            "mrr": float(np.mean([r["reciprocal_rank"] for r in results])),
+            "avg_correct_similarity": float(np.mean([r["correct_similarity"] for r in results])),
+            "avg_top_distractor_similarity": float(np.mean([r["top_distractor_similarity"] for r in results])),
+            "avg_margin": float(
+                np.mean([r["correct_similarity"] - r["top_distractor_similarity"] for r in results])
+            ),
         }
 
 
