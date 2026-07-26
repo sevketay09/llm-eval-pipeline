@@ -7612,31 +7612,22 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
         
-        results = []
-        all_embeddings1 = []
-        all_embeddings2 = []
-        all_expected_scores = []
-        
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_sts_item(item_idx: int, item: Any) -> Dict[str, Any]:
             sentence1 = item["sentence1"]
             sentence2 = item["sentence2"]
             expected_score = item["similarity_score"]
-            
+
             # Generate embeddings
             emb_result1 = embedding_model.encode([sentence1], normalize=True)
             emb_result2 = embedding_model.encode([sentence2], normalize=True)
-            
+
             emb1 = emb_result1["embeddings"][0]
             emb2 = emb_result2["embeddings"][0]
-            
+
             # Compute cosine similarity
             predicted_score = float(np.dot(emb1, emb2))
-            
-            all_embeddings1.append(emb1)
-            all_embeddings2.append(emb2)
-            all_expected_scores.append(expected_score)
-            
-            result = {
+
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "sentence1": sentence1,
@@ -7644,10 +7635,18 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "expected_score": expected_score,
                 "predicted_score": predicted_score,
                 "error": abs(expected_score - predicted_score),
-                "latency": emb_result1["latency"] + emb_result2["latency"]
+                "latency": emb_result1["latency"] + emb_result2["latency"],
+                # Stashed for the correlation metrics below, stripped before return.
+                "_emb1": emb1,
+                "_emb2": emb2,
             }
-            results.append(result)
-        
+
+        raw_results = self._run_items_concurrently(dataset, _process_sts_item, test_name)
+        all_embeddings1 = [r.pop("_emb1") for r in raw_results]
+        all_embeddings2 = [r.pop("_emb2") for r in raw_results]
+        all_expected_scores = [r["expected_score"] for r in raw_results]
+        results = raw_results
+
         # Compute overall metrics
         embeddings1 = np.array(all_embeddings1)
         embeddings2 = np.array(all_embeddings2)
