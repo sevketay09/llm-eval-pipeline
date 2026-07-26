@@ -1,5 +1,6 @@
 import importlib
 import sys
+import threading
 import types
 import unittest
 from unittest.mock import patch
@@ -86,6 +87,7 @@ class _FakePipelineContext:
         self.saved_paths = []
         self.final_saved_exports = []
         self._run = None
+        self._tqdm_position_by_thread = threading.local()
 
     def _attach_ai_commentaries(self, model_keys):
         return None

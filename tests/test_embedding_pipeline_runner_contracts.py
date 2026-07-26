@@ -66,9 +66,11 @@ class _PipelineStub:
         self._progress_total_tests = 1
         self.test_config = {"concurrent_items": 3}
         self._llm_call_semaphore = threading.Semaphore(8)
+        self._tqdm_position_by_thread = threading.local()
         self._PREFIX_SENSITIVITY_QUERY_PREFIX = module.EvaluationPipeline._PREFIX_SENSITIVITY_QUERY_PREFIX
         self._PREFIX_SENSITIVITY_PASSAGE_PREFIX = module.EvaluationPipeline._PREFIX_SENSITIVITY_PASSAGE_PREFIX
         self._make_progress_ticker = types.MethodType(module.EvaluationPipeline._make_progress_ticker, self)
+        self._tqdm_position = types.MethodType(module.EvaluationPipeline._tqdm_position, self)
         self._iter_with_progress = types.MethodType(module.EvaluationPipeline._iter_with_progress, self)
         self._run_items_concurrently = types.MethodType(module.EvaluationPipeline._run_items_concurrently, self)
         self._embedding_health_summary = types.MethodType(module.EvaluationPipeline._embedding_health_summary, self)

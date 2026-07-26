@@ -5,6 +5,7 @@ at its test-start percentage for its entire duration.
 """
 import importlib
 import sys
+import threading
 import types
 import unittest
 
@@ -48,11 +49,13 @@ class ProgressTickerTests(unittest.TestCase):
         class _PipelineStub:
             _make_progress_ticker = pipeline_cls._make_progress_ticker
             _iter_with_progress = pipeline_cls._iter_with_progress
+            _tqdm_position = pipeline_cls._tqdm_position
 
             def __init__(self, run, test_idx, total_tests):
                 self._run = run
                 self._progress_test_idx = test_idx
                 self._progress_total_tests = total_tests
+                self._tqdm_position_by_thread = threading.local()
 
         cls.PipelineStub = _PipelineStub
 

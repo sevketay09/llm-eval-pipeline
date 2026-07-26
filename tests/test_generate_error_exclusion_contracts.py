@@ -77,6 +77,8 @@ class _FakePipelineContext:
         self.judge_adapter = _FakeJudgeAdapter()
         self.test_config = {"concurrent_items": 3}
         self._llm_call_semaphore = threading.Semaphore(8)
+        self._tqdm_position_by_thread = threading.local()
+        self._tqdm_position = pipeline_runner.EvaluationPipeline._tqdm_position.__get__(self)
         self._run_items_concurrently = pipeline_runner.EvaluationPipeline._run_items_concurrently.__get__(self)
 
     def _inject_schema_instruction(self, system_prompt, schema):

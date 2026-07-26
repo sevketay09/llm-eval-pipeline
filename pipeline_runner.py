@@ -2395,6 +2395,17 @@ class EvaluationPipeline:
         max_concurrent = int(self.test_config.get("max_concurrent_requests", 8))
         self._llm_call_semaphore = threading.Semaphore(max_concurrent)
 
+        # Each model runs on its own thread in run_full_evaluation_parallel;
+        # every one of those threads independently creates tqdm progress bars
+        # (via _run_items_concurrently / _iter_with_progress) that all write
+        # "\r"-based updates to the same stderr, corrupting each other's
+        # display. Assigning each model thread a distinct tqdm `position` (a
+        # reserved terminal line) fixes this — set once per model thread in
+        # run_full_evaluation_parallel, read via _tqdm_position() everywhere
+        # a progress bar is created. Defaults to 0 (single line) when unset,
+        # which is correct for the sequential (non-parallel) path.
+        self._tqdm_position_by_thread = threading.local()
+
         # Store judge model key override
         self._judge_model_key = judge_model_key
         self.runtime_overrides = {
@@ -2622,6 +2633,10 @@ class EvaluationPipeline:
         self.results["run_metadata"]["test_suite"] = test_suite
         self.results["run_metadata"]["selected_tests"] = list(selected_tests or [])
 
+        # Reserve a distinct tqdm terminal line per model (see __init__ /
+        # _tqdm_position) so their progress bars don't clobber each other.
+        tqdm_position_by_model = {model_key: idx for idx, model_key in enumerate(model_keys)}
+
         # Initialize all models upfront
         models = {}
         for model_key in model_keys:
@@ -2694,6 +2709,7 @@ class EvaluationPipeline:
 
             # Run test for all models in parallel
             def run_test_for_model(model_key: str, test_func_captured, dataset_captured, test_name_captured) -> Tuple[str, Dict[str, Any]]:
+                self._tqdm_position_by_thread.position = tqdm_position_by_model[model_key]
                 try:
                     logger.debug(f"[{model_key}] Starting {test_name_captured}")
                     if isinstance(test_name_captured, str) and test_name_captured.startswith("embedding_"):
@@ -3102,13 +3118,17 @@ class EvaluationPipeline:
 
         return _tick
 
+    def _tqdm_position(self) -> int:
+        """Reserved terminal line for this thread's tqdm bars (see __init__)."""
+        return getattr(self._tqdm_position_by_thread, "position", 0)
+
     def _iter_with_progress(self, dataset: List[Any], desc: str):
         """Drop-in replacement for `tqdm(dataset, desc=desc)` that also ticks run progress
         after each item — including items skipped via `continue` in the caller's loop body,
         since the tick fires on generator resume regardless of how the prior iteration exited.
         """
         tick = self._make_progress_ticker(len(dataset))
-        for item in tqdm(dataset, desc=desc):
+        for item in tqdm(dataset, desc=desc, position=self._tqdm_position(), leave=True):
             yield item
             tick()
 
@@ -3151,7 +3171,7 @@ class EvaluationPipeline:
         indexed_results: Dict[int, Dict[str, Any]] = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
             futures = {pool.submit(_wrapped, idx, item): idx for idx, item in enumerate(dataset)}
-            for future in tqdm(concurrent.futures.as_completed(futures), total=total_items, desc=test_name):
+            for future in tqdm(concurrent.futures.as_completed(futures), total=total_items, desc=test_name, position=self._tqdm_position(), leave=True):
                 result = future.result()
                 if result is not None:
                     indexed_results[futures[future]] = result
@@ -7119,7 +7139,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         results: List[Dict[str, Any]] = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(run_item, item) for item in dataset]
-            for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="humaneval"):
+            for future in tqdm(concurrent.futures.as_completed(futures), total=len(futures), desc="humaneval", position=self._tqdm_position(), leave=True):
                 results.append(future.result())
 
         return results
@@ -8103,7 +8123,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
             # ThreadPoolExecutor.map preserves input order in its output regardless
             # of completion order, so no manual re-indexing is needed here.
             with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
-                triples = list(tqdm(pool.map(_process, dataset), total=len(dataset), desc=test_name))
+                triples = list(tqdm(pool.map(_process, dataset), total=len(dataset), desc=test_name, position=self._tqdm_position(), leave=True))
 
             all_query_embeddings = [t[0] for t in triples]
             all_doc_embeddings = [t[1] for t in triples]
@@ -8178,7 +8198,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         # below, exactly as the sequential loop did.
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
             individual_results = list(
-                tqdm(pool.map(_encode_individual, texts), total=len(texts), desc=test_name)
+                tqdm(pool.map(_encode_individual, texts), total=len(texts), desc=test_name, position=self._tqdm_position(), leave=True)
             )
         individual_embeddings = [r["embeddings"][0] for r in individual_results]
         total_latency = sum(r["latency"] for r in individual_results)
