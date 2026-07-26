@@ -5603,7 +5603,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         # Take subset for consistency testing (it's expensive)
         test_dataset = dataset[:5] if len(dataset) > 5 else dataset
         
-        for item in self._iter_with_progress(test_dataset, test_name):
+        def _process_consistency_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             question = item.question if isinstance(item, ConsistencyCase) else item.get("question", "")
             item_id = item.case_id if isinstance(item, ConsistencyCase) else item.get("id")
             
@@ -5643,9 +5643,11 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 ),
                 "metric_results": [prompt_alignment_metric] if isinstance(prompt_alignment_metric, dict) else [],
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results = self._run_items_concurrently(test_dataset, _process_consistency_item, test_name)
+
         avg_consistency = sum(r["scores"]["consistency"] for r in results) / len(results) if results else 0
         prompt_alignment_values = [
             _extract_metric_result_value(result.get("metric_results", []), "prompt_alignment")
@@ -5716,7 +5718,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         if temperatures is None:
             temperatures = [0.0, 0.3, 0.7]
         
-        for item in self._iter_with_progress(test_dataset, test_name):
+        def _process_self_consistency_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, ConsistencyCase):
                 question = item.question
                 item_id = item.case_id
@@ -5729,8 +5731,8 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 complexity = item.get("complexity", "unknown")
 
             if not question:
-                continue
-            
+                return None
+
             try:
                 # Run comprehensive self-consistency evaluation
                 eval_result = self_consistency_eval.evaluate_self_consistency(
@@ -5780,20 +5782,24 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     "metric_results": [prompt_alignment_metric] if isinstance(prompt_alignment_metric, dict) else [],
                 }
                 
-                # Calculate aggregate latency (from actual model calls)
-                # Each temperature was tested num_runs times
-                total_calls = num_runs * len(temperatures)
-                if model.latencies:
-                    # Use recent latencies from model
-                    recent_latencies = model.latencies[-total_calls:] if len(model.latencies) >= total_calls else model.latencies
-                    result["latency"] = sum(recent_latencies) / len(recent_latencies) if recent_latencies else 0
-                
-                
-                results.append(result)
-                
+                # Calculate aggregate latency from this item's own call latencies
+                # (per-temperature "latencies" lists), not a shared model-wide
+                # counter — the latter breaks under concurrent items since calls
+                # from different items interleave in that shared list.
+                item_latencies = [
+                    latency
+                    for temp_results in (eval_result.get("by_temperature") or {}).values()
+                    for latency in (temp_results.get("latencies") or [])
+                    if isinstance(temp_results, dict)
+                ]
+                if item_latencies:
+                    result["latency"] = sum(item_latencies) / len(item_latencies)
+
+                return result
+
             except Exception as e:
                 logger.error(f"Self-consistency test failed for {item_id}: {e}")
-                results.append({
+                return {
                     "test_id": item_id,
                     "category": category,
                     "question": question,
@@ -5804,8 +5810,10 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                         "is_stable": False
                     },
                     "error": str(e)
-                })
-        
+                }
+
+        results = self._run_items_concurrently(test_dataset, _process_self_consistency_item, test_name)
+
         # Calculate aggregate metrics
         valid_results = [r for r in results if "error" not in r]
         
