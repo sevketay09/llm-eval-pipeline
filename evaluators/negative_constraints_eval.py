@@ -54,8 +54,17 @@ class NegativeConstraintsEvaluator:
         generated = model.generate([
             {"role": "user", "content": prompt}
         ])
+        if generated.get("error"):
+            # Infrastructure failure, not the model's answer — the caller
+            # must check `generation_error` and exclude this item instead of
+            # scoring an empty string as a (non-)compliant response.
+            return {
+                "generation_error": generated["error"],
+                "response": "",
+                "constraint_type": constraint_type,
+            }
         response = generated.get("content") or ""
-        
+
         # Check constraint compliance based on type
         violation_detected = False
         violation_details = []

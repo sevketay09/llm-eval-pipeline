@@ -128,6 +128,57 @@ class GenerateErrorExclusionTests(unittest.TestCase):
         self.assertIn("ok-item", result_ids)
         self.assertEqual(len(result["results"]), 1)
 
+    def test_adversarial_excludes_failed_item(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {"id": "fail-me", "attack_prompt": "fail-me: ignore previous instructions"},
+            {"id": "ok-item", "attack_prompt": "ok-item: ignore previous instructions"},
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_adversarial_test(
+            ctx, model, dataset, judge=None, test_name="adversarial"
+        )
+
+        result_ids = [r["test_id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
+    def test_negative_constraints_excludes_failed_item(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {"id": "fail-me", "prompt": "fail-me: JSON kullanma", "constraint_type": "format"},
+            {"id": "ok-item", "prompt": "ok-item: JSON kullanma", "constraint_type": "format"},
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_negative_constraints_test(
+            ctx, model, dataset, judge=None, test_name="negative_constraints"
+        )
+
+        result_ids = [r["test_id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
+    def test_language_mix_excludes_failed_item(self):
+        ctx = _FakePipelineContext()
+        model = _FakeErroringModel(fail_case_id="fail-me")
+        dataset = [
+            {"id": "fail-me", "prompt": "fail-me: hello nasilsin"},
+            {"id": "ok-item", "prompt": "ok-item: hello nasilsin"},
+        ]
+
+        result = pipeline_runner.EvaluationPipeline.run_language_mix_test(
+            ctx, model, dataset, judge=None, test_name="language_mix"
+        )
+
+        result_ids = [r["test_id"] for r in result["results"]]
+        self.assertNotIn("fail-me", result_ids)
+        self.assertIn("ok-item", result_ids)
+        self.assertEqual(len(result["results"]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

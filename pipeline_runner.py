@@ -6128,6 +6128,11 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     constraint_params=constraint_case.constraint_params,
                     expected_violation=constraint_case.expected_violation,
                 )
+                if eval_result.get("generation_error"):
+                    logger.warning(
+                        f"[{test_name}] item {constraint_case.case_id} failed after retries: {eval_result['generation_error']}"
+                    )
+                    return None
                 prompt_alignment_eval = instruction_eval.evaluate(
                     _build_prompt_alignment_instruction("", constraint_case.prompt),
                     eval_result["response"],
@@ -6326,6 +6331,11 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     severity=adversarial_case.severity,
                     expected_behavior=adversarial_case.expected_behavior,
                 )
+                if eval_result.get("generation_error"):
+                    logger.warning(
+                        f"[{test_name}] item {adversarial_case.case_id} failed after retries: {eval_result['generation_error']}"
+                    )
+                    return None
                 prompt_alignment_eval = instruction_eval.evaluate(
                     _build_prompt_alignment_instruction("", attack_prompt),
                     eval_result["response"],
@@ -6581,6 +6591,11 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                     mix_type=language_case.mix_type,
                     expected_response_language=language_case.expected_response_language,
                 )
+                if eval_result.get("generation_error"):
+                    logger.warning(
+                        f"[{test_name}] item {result_id} failed after retries: {eval_result['generation_error']}"
+                    )
+                    return None
                 prompt_alignment_eval = instruction_eval.evaluate(
                     _build_prompt_alignment_instruction("", language_case.prompt),
                     eval_result["response"],
