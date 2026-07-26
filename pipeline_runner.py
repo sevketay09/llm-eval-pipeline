@@ -4652,7 +4652,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_multi_turn_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, MultiTurnConversationCase):
                 conversation_case = item
             else:
@@ -4663,7 +4663,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid multi-turn item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             conversation_history = []
             turn_results = []
@@ -4791,9 +4791,11 @@ class EvaluationPipeline:
                 "unresolved_intent_summary": unresolved_intent_summary,
                 "avg_turn_latency": sum(t["latency"] for t in turn_results) / len(turn_results) if turn_results else 0
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results = self._run_items_concurrently(dataset, _process_multi_turn_item, test_name)
+
         avg_scores: Dict[str, float] = {}
         for metric_name in (
             "conversation_completeness",
