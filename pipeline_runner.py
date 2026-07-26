@@ -4900,7 +4900,7 @@ class EvaluationPipeline:
             except Exception as e:
                 logger.warning(f"Failed to initialize GroundednessJudgeEvaluator: {e}")
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_rag_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, RAGCase):
                 rag_case = item
             else:
@@ -4911,7 +4911,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid RAG item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             context = rag_case.context
             question = rag_case.input_text
@@ -4927,8 +4927,8 @@ class EvaluationPipeline:
             
             if response['content'] is None:
                 logger.warning(f"Empty response for item {rag_case.case_id} in {test_name}")
-                continue
-            
+                return None
+
             structured = self._parse_structured_output(response['content'], schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
             prompt_alignment_eval = instruction_eval.evaluate(
@@ -4996,9 +4996,11 @@ class EvaluationPipeline:
                 }} if faithfulness_score else {}),
                 "latency": response['latency'],
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results = self._run_items_concurrently(dataset, _process_rag_item, test_name)
+
         avg_scores = {
             "rag_quality": sum(r["scores"]["rag_quality"] for r in results) / len(results) if results else 0,
             "context_adherence": sum(r["scores"]["context_adherence"] for r in results) / len(results) if results else 0,
