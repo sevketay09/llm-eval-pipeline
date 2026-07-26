@@ -4256,7 +4256,7 @@ class EvaluationPipeline:
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         dynamic_agent_eval = DynamicFunctionCallingEvaluator(judge_adapter=judge)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_agentic_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, AgenticCase):
                 agentic_case = item
             else:
@@ -4267,7 +4267,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid agentic item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             system_prompt = "Sen akıllı bir finans asistanısın. Karmaşık görevleri planlayıp adım adım çöz."
             system_prompt = self._inject_schema_instruction(system_prompt, schema)
@@ -4282,8 +4282,8 @@ class EvaluationPipeline:
                 logger.warning(
                     f"Empty response for item {agentic_case.case_id} in {test_name}"
                 )
-                continue
-            
+                return None
+
             structured = self._parse_structured_output(response['content'], schema)
             json_correctness_metric = _build_json_correctness_metric(structured)
             prompt_alignment_eval = instruction_eval.evaluate(
@@ -4454,9 +4454,11 @@ class EvaluationPipeline:
                 },
                 "latency": response['latency'],
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results = self._run_items_concurrently(dataset, _process_agentic_item, test_name)
+
         avg_plan_quality = sum(r["scores"]["plan_quality"] for r in results) / len(results) if results else 0
         summary_avg_scores = {
             "plan_quality": avg_plan_quality
