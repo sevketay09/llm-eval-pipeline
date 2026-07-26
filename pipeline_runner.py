@@ -7849,12 +7849,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
-        results = []
-        all_embeddings1 = []
-        all_embeddings2 = []
-        all_labels = []
-
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_pair_classification_item(item_idx: int, item: Any) -> Dict[str, Any]:
             sentence1 = item["sentence1"]
             sentence2 = item["sentence2"]
             is_duplicate = int(item["is_duplicate"])
@@ -7866,11 +7861,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
             emb2 = emb_result2["embeddings"][0]
             predicted_score = float(np.dot(emb1, emb2))
 
-            all_embeddings1.append(emb1)
-            all_embeddings2.append(emb2)
-            all_labels.append(is_duplicate)
-
-            results.append({
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "sentence1": sentence1,
@@ -7878,7 +7869,16 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "is_duplicate": is_duplicate,
                 "predicted_score": predicted_score,
                 "latency": emb_result1["latency"] + emb_result2["latency"],
-            })
+                "_emb1": emb1,
+                "_emb2": emb2,
+                "_label": is_duplicate,
+            }
+
+        raw_results = self._run_items_concurrently(dataset, _process_pair_classification_item, test_name)
+        all_embeddings1 = [r.pop("_emb1") for r in raw_results]
+        all_embeddings2 = [r.pop("_emb2") for r in raw_results]
+        all_labels = [r.pop("_label") for r in raw_results]
+        results = raw_results
 
         pair_metrics = PairClassificationEvaluator.evaluate(
             np.array(all_embeddings1),
@@ -7919,11 +7919,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
-        results = []
-        mining_results = []
-        all_source_embeddings = []
-
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_bitext_item(item_idx: int, item: Any) -> Dict[str, Any]:
             source_sentence = item["source_sentence"]
             correct_translation = item["correct_translation"]
             distractor_translations = item["distractor_translations"]
@@ -7935,16 +7931,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
             source_emb = source_emb_result["embeddings"][0]
             candidate_embs = candidates_emb_result["embeddings"]
-            all_source_embeddings.append(source_emb)
 
             mining_eval = BitextMiningEvaluator.evaluate_single(
                 source_emb,
                 candidate_embs,
                 correct_index,
             )
-            mining_results.append(mining_eval)
 
-            results.append({
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "source_sentence": source_sentence,
@@ -7954,7 +7948,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "correct_at_1": mining_eval["correct_at_1"],
                 "reciprocal_rank": mining_eval["reciprocal_rank"],
                 "latency": source_emb_result["latency"] + candidates_emb_result["latency"],
-            })
+                "_mining_eval": mining_eval,
+                "_source_emb": source_emb,
+            }
+
+        raw_results = self._run_items_concurrently(dataset, _process_bitext_item, test_name)
+        mining_results = [r.pop("_mining_eval") for r in raw_results]
+        all_source_embeddings = [r.pop("_source_emb") for r in raw_results]
+        results = raw_results
 
         aggregated = BitextMiningEvaluator.aggregate(mining_results)
 
