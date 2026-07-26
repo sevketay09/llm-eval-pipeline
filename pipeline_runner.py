@@ -8279,12 +8279,7 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
 
         logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
 
-        tick = self._make_progress_ticker(len(dataset))
-        results = []
-        stability_results = []
-        all_doc_embeddings = []
-
-        for item in tqdm(dataset, desc=test_name):
+        def _process_perturbation_item(item_idx: int, item: Any) -> Dict[str, Any]:
             query_original = item["query_original"]
             query_perturbed = item["query_perturbed"]
             positive_docs = item["positive_docs"]
@@ -8298,7 +8293,6 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
             docs_result = embedding_model.encode(all_docs, normalize=True)
 
             doc_embs = docs_result["embeddings"]
-            all_doc_embeddings.extend(doc_embs)
             original_similarities = np.dot(doc_embs, original_query_result["embeddings"][0])
             perturbed_similarities = np.dot(doc_embs, perturbed_query_result["embeddings"][0])
 
@@ -8308,9 +8302,8 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
             evaluation = PerturbationStabilityEvaluator.evaluate_single(
                 original_ranked, perturbed_ranked, positive_indices
             )
-            stability_results.append(evaluation)
 
-            results.append({
+            return {
                 "id": item["id"],
                 "category": item["category"],
                 "perturbation_type": item.get("perturbation_type", "unknown"),
@@ -8319,8 +8312,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "latency": (
                     original_query_result["latency"] + perturbed_query_result["latency"] + docs_result["latency"]
                 ),
-            })
-            tick()
+                "_evaluation": evaluation,
+                "_doc_embs": doc_embs,
+            }
+
+        raw_results = self._run_items_concurrently(dataset, _process_perturbation_item, test_name)
+        stability_results = [r.pop("_evaluation") for r in raw_results]
+        all_doc_embeddings = [emb for r in raw_results for emb in r.pop("_doc_embs")]
+        results = raw_results
 
         aggregated = PerturbationStabilityEvaluator.aggregate(stability_results)
 
