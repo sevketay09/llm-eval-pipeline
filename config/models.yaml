@@ -175,6 +175,19 @@ models:
     extra_body:
       reasoning:
         effort: none
+  deepseek-v4-flash:
+    provider: openai
+    model_name: deepseek/deepseek-v4-flash
+    api_key: ${OPENROUTER_API_KEY}
+    base_url: https://openrouter.ai/api/v1
+    max_tokens: 16000
+    temperature: 0.0
+    supports_function_calling: true
+    supports_streaming: true
+    supports_response_format: true
+    extra_body:
+      reasoning:
+        effort: none
 judge_model:
   model_key: demo-model
 
