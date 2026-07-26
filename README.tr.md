@@ -820,6 +820,8 @@ Numeric 1-10 skalası kullanılmaz; verbosity bias'tan kaçınmak için kategori
 | `embedding_retrieval` | `NDCG@10` |
 | `embedding_pair_classification` | `average_precision` |
 | `embedding_bitext_mining` | `accuracy_at_1` |
+| `embedding_prefix_sensitivity` | `ndcg@10` (prefix'siz koşul — aşağıya bakın) |
+| `embedding_consistency` | `min(batch tutarlılığı, sıra tutarlılığı)` |
 | `multi_turn`, `stress_tests` | `avg_context_retention` |
 
 ### Katman 3 — Model Bazında weighted_score
@@ -926,7 +928,7 @@ LMSTUDIO_MODEL1_BASE_URL=http://localhost:1234/v1
 | `benchmark/` | Turkish grammar/reasoning/creativity/paraphrasing, PII, self-consistency, negative constraints |
 | `agentic/` | Multi-adım görev planlama, araç seçimi |
 | `edge_cases/` | Adversarial (jailbreak/injection), edge case senaryoları |
-| `embedding/` | STS, cross-lingual STS, retrieval, hard-negative retrieval, domain clustering, pair classification (duplicate/paraphrase), TR↔EN bitext mining |
+| `embedding/` | STS, cross-lingual STS, retrieval, hard-negative retrieval, domain clustering, pair classification (duplicate/paraphrase), TR↔EN bitext mining, batch/sıra tutarlılık kontrolü |
 | `fintech/` | Fintech alan bilgisi, finansal hesaplamalar |
 | `function_calling/` | Temel araç seçimi, paralel araç, tool chain, error recovery |
 | `multi_turn/` | Context retention, long-context stress |

@@ -1,6 +1,6 @@
-"""Contract tests for evaluators/embedding_eval.py — new Tier-1 embedding test types
-(PairClassificationEvaluator, BitextMiningEvaluator) plus the previously-unused
-EmbeddingQualityMetrics now wired into every embedding test's summary.
+"""Contract tests for evaluators/embedding_eval.py — Tier-1 (PairClassificationEvaluator,
+BitextMiningEvaluator) and Tier-2 (BatchConsistencyEvaluator) embedding test types, plus
+the previously-unused EmbeddingQualityMetrics now wired into every embedding test's summary.
 """
 import numpy as np
 import pytest
@@ -8,6 +8,7 @@ import pytest
 from evaluators.embedding_eval import (
     PairClassificationEvaluator,
     BitextMiningEvaluator,
+    BatchConsistencyEvaluator,
     EmbeddingQualityMetrics,
 )
 
@@ -92,6 +93,46 @@ class TestBitextMiningEvaluator:
         assert aggregated["accuracy_at_1"] == pytest.approx(0.5)
         assert aggregated["mrr"] == pytest.approx(0.75)
         assert aggregated["avg_margin"] == pytest.approx(((0.9 - 0.4) + (0.5 - 0.6)) / 2)
+
+
+class TestBatchConsistencyEvaluator:
+    def test_identical_embeddings_score_perfect_similarity(self):
+        embeddings = np.array([_unit_vector(i) for i in range(5)])
+
+        result = BatchConsistencyEvaluator.compare(embeddings, embeddings)
+
+        assert result["mean_similarity"] == pytest.approx(1.0, abs=1e-6)
+        assert result["min_similarity"] == pytest.approx(1.0, abs=1e-6)
+        assert result["pass_rate"] == 1.0
+
+    def test_divergent_embeddings_fail_tolerance(self):
+        embeddings_a = np.array([_unit_vector(i) for i in range(3)])
+        embeddings_b = np.array([_unit_vector(i + 100) for i in range(3)])
+
+        result = BatchConsistencyEvaluator.compare(embeddings_a, embeddings_b, tolerance=0.999)
+
+        assert result["mean_similarity"] < 0.999
+        assert result["pass_rate"] < 1.0
+
+    def test_small_perturbation_still_passes_loose_tolerance(self):
+        base = _unit_vector(0)
+        embeddings_a = np.array([base, base, base])
+        rng = np.random.RandomState(1)
+        embeddings_b = np.array([base + rng.normal(scale=1e-5, size=8) for _ in range(3)])
+
+        result = BatchConsistencyEvaluator.compare(embeddings_a, embeddings_b, tolerance=0.99)
+
+        assert result["pass_rate"] == 1.0
+
+    def test_aggregate_takes_worst_case_as_overall_score(self):
+        batch_vs_individual = {"mean_similarity": 0.9995, "min_similarity": 0.998, "pass_rate": 1.0}
+        order_vs_reordered = {"mean_similarity": 0.85, "min_similarity": 0.7, "pass_rate": 0.4}
+
+        aggregated = BatchConsistencyEvaluator.aggregate(batch_vs_individual, order_vs_reordered)
+
+        assert aggregated["overall_score"] == pytest.approx(0.85)
+        assert aggregated["avg_batch_consistency"] == pytest.approx(0.9995)
+        assert aggregated["avg_order_consistency"] == pytest.approx(0.85)
 
 
 class TestEmbeddingQualityMetricsActivation:

@@ -13,7 +13,9 @@ metric_weights:
   embedding_bitext_mining: 0.06
   embedding_clustering: 0.05
   embedding_clustering_regulatory: 0.06
+  embedding_consistency: 0.03
   embedding_pair_classification: 0.07
+  embedding_prefix_sensitivity: 0.04
   embedding_retrieval: 0.1
   embedding_retrieval_hardneg: 0.08
   embedding_sts: 0.1
@@ -101,6 +103,8 @@ test_suites:
     - embedding_clustering_regulatory
     - embedding_pair_classification
     - embedding_bitext_mining
+    - embedding_prefix_sensitivity
+    - embedding_consistency
   embedding_turkish:
     enabled: true
     max_samples: all
@@ -239,6 +243,7 @@ thresholds:
   accuracy: 0.75
   adversarial_safety: 0.85
   consistency: 0.75
+  embedding_batch_consistency: 0.999
   embedding_bitext_mining_accuracy_at_1: 0.7
   embedding_clustering_accuracy: 0.8
   embedding_clustering_accuracy_regulatory: 0.82

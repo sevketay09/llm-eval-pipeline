@@ -49,6 +49,7 @@ from evaluators.embedding_eval import (
     ClusteringEvaluator,
     PairClassificationEvaluator,
     BitextMiningEvaluator,
+    BatchConsistencyEvaluator,
     EmbeddingQualityMetrics
 )
 from evaluators.prompt_compression_eval import PromptCompressionEvaluator
@@ -7911,6 +7912,160 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 "avg_latency": np.mean([r["latency"] for r in results]),
                 "overall_score": aggregated["accuracy_at_1"],  # Use top-1 accuracy as primary metric
                 "embedding_health": self._embedding_health_summary(all_source_embeddings),
+            },
+            "detailed_metrics": aggregated,
+        }
+
+    _PREFIX_SENSITIVITY_QUERY_PREFIX = "query: "
+    _PREFIX_SENSITIVITY_PASSAGE_PREFIX = "passage: "
+
+    def run_embedding_prefix_sensitivity_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Compare retrieval quality with vs without E5-style instruction prefixes.
+
+        Many modern embedding models (E5, Qwen3-Embedding, and others in this config)
+        are trained with "query: " / "passage: " prefixes and lose real retrieval
+        quality without them. This reuses the retrieval dataset and runs it twice —
+        once with raw text (what the adapter sends today) and once with the prefixes
+        added — to surface whether this model/adapter configuration is leaving
+        performance on the table by never applying them. `overall_score` reports the
+        raw (no-prefix) condition, since that's what actually happens in production
+        today; the delta fields are the diagnostic signal.
+        """
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        tick = self._make_progress_ticker(len(dataset) * 2)
+
+        def _run_condition(query_prefix: str, passage_prefix: str) -> Dict[str, Any]:
+            all_query_embeddings = []
+            all_doc_embeddings = []
+            all_relevance_labels = []
+
+            for item in tqdm(dataset, desc=test_name):
+                query = query_prefix + item["query"]
+                positive_docs = item["positive_docs"]
+                hard_negatives = item.get("hard_negatives", [])
+                random_negatives = item.get("random_negatives", [])
+                all_docs = [passage_prefix + d for d in positive_docs + hard_negatives + random_negatives]
+                labels = [1] * len(positive_docs) + [0] * (len(hard_negatives) + len(random_negatives))
+
+                query_emb_result = embedding_model.encode([query], normalize=True)
+                docs_emb_result = embedding_model.encode(all_docs, normalize=True)
+
+                all_query_embeddings.append(query_emb_result["embeddings"][0])
+                all_doc_embeddings.append(docs_emb_result["embeddings"])
+                all_relevance_labels.append(labels)
+                tick()
+
+            return RetrievalEvaluator.evaluate(
+                np.array(all_query_embeddings),
+                all_doc_embeddings,
+                all_relevance_labels,
+                k_values=[1, 5, 10],
+            )
+
+        raw_metrics = _run_condition("", "")
+        prefixed_metrics = _run_condition(
+            self._PREFIX_SENSITIVITY_QUERY_PREFIX, self._PREFIX_SENSITIVITY_PASSAGE_PREFIX
+        )
+
+        results = [
+            {"id": item["id"], "category": item["category"], "query": item["query"]}
+            for item in dataset
+        ]
+
+        delta_ndcg = prefixed_metrics["ndcg"][10] - raw_metrics["ndcg"][10]
+        delta_mrr = prefixed_metrics["mrr"] - raw_metrics["mrr"]
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "ndcg_at_10_raw": raw_metrics["ndcg"][10],
+                "ndcg_at_10_prefixed": prefixed_metrics["ndcg"][10],
+                "mrr_raw": raw_metrics["mrr"],
+                "mrr_prefixed": prefixed_metrics["mrr"],
+                "prefix_sensitivity_delta_ndcg": delta_ndcg,
+                "prefix_sensitivity_delta_mrr": delta_mrr,
+                "overall_score": raw_metrics["ndcg"][10],  # Reflects the model's real, no-prefix default
+            },
+            "detailed_metrics": {"raw": raw_metrics, "prefixed": prefixed_metrics},
+        }
+
+    def run_embedding_consistency_test(
+        self,
+        embedding_model: UnifiedEmbeddingAdapter,
+        dataset: List[Dict],
+        test_name: str
+    ) -> Dict[str, Any]:
+        """Check whether encode() is invariant to batch composition and item order.
+
+        Encodes each text alone, then all together as one batch, then again in
+        reverse order — if a model's embeddings depend on batch padding or position
+        (a known failure mode for some quantized/local runtimes), the corresponding
+        vectors won't match even though the input text never changed. This is a
+        determinism/robustness check, not a quality check.
+        """
+        import numpy as np
+
+        logger.info(f"Starting {test_name} on {embedding_model.model_name} with {len(dataset)} items")
+
+        texts = []
+        individual_embeddings = []
+        total_latency = 0.0
+
+        for item in self._iter_with_progress(dataset, test_name):
+            text = item["text"]
+            texts.append(text)
+            emb_result = embedding_model.encode([text], normalize=True)
+            individual_embeddings.append(emb_result["embeddings"][0])
+            total_latency += emb_result["latency"]
+
+        batch_result = embedding_model.encode(texts, normalize=True)
+        batch_embeddings = batch_result["embeddings"]
+
+        reversed_batch_result = embedding_model.encode(list(reversed(texts)), normalize=True)
+        # Realign the reversed batch's output back to original item order.
+        reordered_embeddings = list(reversed(reversed_batch_result["embeddings"]))
+
+        batch_vs_individual = BatchConsistencyEvaluator.compare(
+            np.array(individual_embeddings), np.array(batch_embeddings)
+        )
+        order_vs_reordered = BatchConsistencyEvaluator.compare(
+            np.array(batch_embeddings), np.array(reordered_embeddings)
+        )
+        aggregated = BatchConsistencyEvaluator.aggregate(batch_vs_individual, order_vs_reordered)
+
+        results = [
+            {
+                "id": item["id"],
+                "category": item["category"],
+                "text_preview": item["text"][:80],
+                "batch_vs_individual_similarity": batch_vs_individual["similarities"][idx],
+                "order_vs_reordered_similarity": order_vs_reordered["similarities"][idx],
+            }
+            for idx, item in enumerate(dataset)
+        ]
+
+        return {
+            "test_name": test_name,
+            "results": results,
+            "summary": {
+                "total_tests": len(results),
+                "avg_batch_consistency": aggregated["avg_batch_consistency"],
+                "min_batch_consistency": aggregated["min_batch_consistency"],
+                "avg_order_consistency": aggregated["avg_order_consistency"],
+                "min_order_consistency": aggregated["min_order_consistency"],
+                "avg_latency": total_latency / max(len(results), 1),
+                "overall_score": aggregated["overall_score"],
+                "embedding_health": self._embedding_health_summary(individual_embeddings),
             },
             "detailed_metrics": aggregated,
         }

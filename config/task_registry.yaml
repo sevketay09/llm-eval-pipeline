@@ -231,3 +231,13 @@ tasks:
     dataset: eval_datasets/embedding/turkish_bitext_mining.json
     runner: run_embedding_bitext_mining_test
     category: embedding
+
+  embedding_prefix_sensitivity:
+    dataset: eval_datasets/embedding/turkish_retrieval.json
+    runner: run_embedding_prefix_sensitivity_test
+    category: embedding
+
+  embedding_consistency:
+    dataset: eval_datasets/embedding/consistency_check.json
+    runner: run_embedding_consistency_test
+    category: embedding

@@ -63,6 +63,8 @@ class _PipelineStub:
         self._run = None
         self._progress_test_idx = 0
         self._progress_total_tests = 1
+        self._PREFIX_SENSITIVITY_QUERY_PREFIX = module.EvaluationPipeline._PREFIX_SENSITIVITY_QUERY_PREFIX
+        self._PREFIX_SENSITIVITY_PASSAGE_PREFIX = module.EvaluationPipeline._PREFIX_SENSITIVITY_PASSAGE_PREFIX
         self._make_progress_ticker = types.MethodType(module.EvaluationPipeline._make_progress_ticker, self)
         self._iter_with_progress = types.MethodType(module.EvaluationPipeline._iter_with_progress, self)
         self._embedding_health_summary = types.MethodType(module.EvaluationPipeline._embedding_health_summary, self)
@@ -71,6 +73,12 @@ class _PipelineStub:
         )
         self.run_embedding_bitext_mining_test = types.MethodType(
             module.EvaluationPipeline.run_embedding_bitext_mining_test, self
+        )
+        self.run_embedding_prefix_sensitivity_test = types.MethodType(
+            module.EvaluationPipeline.run_embedding_prefix_sensitivity_test, self
+        )
+        self.run_embedding_consistency_test = types.MethodType(
+            module.EvaluationPipeline.run_embedding_consistency_test, self
         )
 
 
@@ -170,3 +178,94 @@ class TestRunEmbeddingBitextMiningTest:
 
         assert result["summary"]["accuracy_at_1"] == 1.0
         assert result["results"][0]["correct_at_1"] is True
+
+
+class TestRunEmbeddingPrefixSensitivityTest:
+    def test_wires_evaluator_output_into_summary(self, pipeline_stub):
+        dataset = [
+            {
+                "id": "r1",
+                "category": "banking",
+                "query": "Kredi kartı borcumu nasıl öderim?",
+                "positive_docs": ["Kredi kartı borcunuzu mobil uygulamadan ödeyebilirsiniz."],
+                "hard_negatives": ["Kredi kartı limitinizi artırmak için başvuru yapabilirsiniz."],
+                "random_negatives": ["Yarın hava güneşli olacak."],
+            },
+        ]
+
+        result = pipeline_stub.run_embedding_prefix_sensitivity_test(
+            _FakeEmbeddingModel(), dataset, "embedding_prefix_sensitivity"
+        )
+
+        assert result["test_name"] == "embedding_prefix_sensitivity"
+        assert len(result["results"]) == 1
+        summary = result["summary"]
+        assert summary["total_tests"] == 1
+        assert 0.0 <= summary["ndcg_at_10_raw"] <= 1.0
+        assert 0.0 <= summary["ndcg_at_10_prefixed"] <= 1.0
+        assert summary["overall_score"] == summary["ndcg_at_10_raw"]
+        assert "prefix_sensitivity_delta_ndcg" in summary
+        assert "prefix_sensitivity_delta_mrr" in summary
+        assert "raw" in result["detailed_metrics"] and "prefixed" in result["detailed_metrics"]
+
+    def test_progress_ticks_across_both_conditions(self, pipeline_stub):
+        # Regression guard: this test's two full passes over the dataset must not
+        # leave run.progress frozen mid-way through the second pass (the exact bug
+        # class fixed earlier for other multi-pass test runners).
+        dataset = [
+            {"id": f"r{i}", "category": "c", "query": f"soru {i}",
+             "positive_docs": [f"doğru cevap {i}"], "hard_negatives": [], "random_negatives": []}
+            for i in range(3)
+        ]
+
+        class _FakeRun:
+            def __init__(self):
+                self.progress = 0.0
+
+        pipeline_stub._run = _FakeRun()
+        pipeline_stub._progress_test_idx = 0
+        pipeline_stub._progress_total_tests = 1
+
+        pipeline_stub.run_embedding_prefix_sensitivity_test(
+            _FakeEmbeddingModel(), dataset, "embedding_prefix_sensitivity"
+        )
+
+        assert pipeline_stub._run.progress == pytest.approx(1.0)
+        pipeline_stub._run = None
+
+
+class TestRunEmbeddingConsistencyTest:
+    def test_wires_evaluator_output_into_summary(self, pipeline_stub):
+        dataset = [
+            {"id": "c1", "category": "short", "text": "Merhaba dünya"},
+            {"id": "c2", "category": "short", "text": "Test cümlesi bir"},
+            {"id": "c3", "category": "short", "text": "Test cümlesi iki"},
+        ]
+
+        result = pipeline_stub.run_embedding_consistency_test(
+            _FakeEmbeddingModel(), dataset, "embedding_consistency"
+        )
+
+        assert result["test_name"] == "embedding_consistency"
+        assert len(result["results"]) == 3
+        summary = result["summary"]
+        assert summary["total_tests"] == 3
+        assert 0.0 <= summary["avg_batch_consistency"] <= 1.0
+        assert 0.0 <= summary["avg_order_consistency"] <= 1.0
+        assert summary["overall_score"] == min(summary["avg_batch_consistency"], summary["avg_order_consistency"])
+        assert "embedding_health" in summary
+
+    def test_deterministic_model_scores_near_perfect_consistency(self, pipeline_stub):
+        # The stub embedder is a pure function of text content (no real batching/padding
+        # effects), so a well-behaved embedder should score ~1.0 on both consistency axes.
+        dataset = [
+            {"id": f"c{i}", "category": "short", "text": f"cümle numara {i}"}
+            for i in range(5)
+        ]
+
+        result = pipeline_stub.run_embedding_consistency_test(
+            _FakeEmbeddingModel(), dataset, "embedding_consistency"
+        )
+
+        assert result["summary"]["avg_batch_consistency"] == pytest.approx(1.0, abs=1e-6)
+        assert result["summary"]["avg_order_consistency"] == pytest.approx(1.0, abs=1e-6)

@@ -389,6 +389,49 @@ class BitextMiningEvaluator:
         }
 
 
+class BatchConsistencyEvaluator:
+    """Evaluate whether encode() is invariant to batch composition and item order.
+
+    A production pipeline encodes documents in large batches for throughput, but this
+    must not silently change the vector a document gets versus encoding it alone or in
+    a different position — otherwise retrieval/index quality depends on incidental
+    batch composition, a real failure mode for some padding-sensitive or quantized
+    runtimes. This isn't about embedding *quality*, only about *determinism*.
+    """
+
+    @staticmethod
+    def compare(embeddings_a: np.ndarray, embeddings_b: np.ndarray, tolerance: float = 0.999) -> Dict[str, Any]:
+        """Pairwise cosine similarity between two equal-length, index-aligned embedding sets."""
+        similarities = []
+        for a, b in zip(embeddings_a, embeddings_b):
+            sim = float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-8))
+            similarities.append(sim)
+
+        return {
+            "mean_similarity": float(np.mean(similarities)),
+            "min_similarity": float(np.min(similarities)),
+            "pass_rate": float(np.mean([s >= tolerance for s in similarities])),
+            "similarities": similarities,
+        }
+
+    @staticmethod
+    def aggregate(
+        batch_vs_individual: Dict[str, Any],
+        order_vs_reordered: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        return {
+            "avg_batch_consistency": batch_vs_individual["mean_similarity"],
+            "min_batch_consistency": batch_vs_individual["min_similarity"],
+            "batch_consistency_pass_rate": batch_vs_individual["pass_rate"],
+            "avg_order_consistency": order_vs_reordered["mean_similarity"],
+            "min_order_consistency": order_vs_reordered["min_similarity"],
+            "order_consistency_pass_rate": order_vs_reordered["pass_rate"],
+            "overall_score": min(
+                batch_vs_individual["mean_similarity"], order_vs_reordered["mean_similarity"]
+            ),
+        }
+
+
 class EmbeddingQualityMetrics:
     """General embedding quality metrics"""
     

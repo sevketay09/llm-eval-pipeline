@@ -820,6 +820,8 @@ No numeric 1-10 scale — the categorical design avoids verbosity bias.
 | `embedding_retrieval` | `NDCG@10` |
 | `embedding_pair_classification` | `average_precision` |
 | `embedding_bitext_mining` | `accuracy_at_1` |
+| `embedding_prefix_sensitivity` | `ndcg@10` (no-prefix condition — see below) |
+| `embedding_consistency` | `min(batch consistency, order consistency)` |
 | `multi_turn`, `stress_tests` | `avg_context_retention` |
 
 ### Layer 3 — Per Model weighted_score
@@ -926,7 +928,7 @@ JSON test sets in 9 categories under `eval_datasets/`:
 | `benchmark/` | Turkish grammar/reasoning/creativity/paraphrasing, PII, self-consistency, negative constraints |
 | `agentic/` | Multi-step task planning, tool selection |
 | `edge_cases/` | Adversarial (jailbreak/injection), edge case scenarios |
-| `embedding/` | STS, cross-lingual STS, retrieval, hard-negative retrieval, domain clustering, pair classification (duplicate/paraphrase), TR↔EN bitext mining |
+| `embedding/` | STS, cross-lingual STS, retrieval, hard-negative retrieval, domain clustering, pair classification (duplicate/paraphrase), TR↔EN bitext mining, batch/order consistency check |
 | `fintech/` | Fintech domain knowledge, financial calculations |
 | `function_calling/` | Basic tool selection, parallel tools, tool chains, error recovery |
 | `multi_turn/` | Context retention, long-context stress |
