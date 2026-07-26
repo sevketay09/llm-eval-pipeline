@@ -6529,7 +6529,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         lang_eval = LanguageMixEvaluator(judge_adapter=self.judge_adapter)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_language_mix_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             try:
                 if isinstance(item, LanguageMixCase):
                     language_case = item
@@ -6538,7 +6538,9 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
 
                 result_id = language_case.case_id
                 if result_id == "unknown":
-                    result_id = f"{test_name}_{len(results)}"
+                    # Stable id derived from dataset position, not len(results) —
+                    # the latter isn't meaningful once items run concurrently.
+                    result_id = f"{test_name}_{item_idx}"
 
                 # Run evaluation
                 eval_result = lang_eval.evaluate_language_mix(
@@ -6554,7 +6556,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 )
                 prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
                 
-                results.append({
+                return {
                     "test_id": result_id,
                     "prompt": language_case.prompt,
                     "response": eval_result["response"],
@@ -6589,18 +6591,20 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                         "overall_score": eval_result["overall_score"],
                         **({"prompt_alignment": prompt_alignment_metric.get("value")} if isinstance((prompt_alignment_metric or {}).get("value"), (int, float)) else {}),
                     },
-                })
-                
+                }
+
             except Exception as e:
                 prompt = item.prompt if isinstance(item, LanguageMixCase) else item.get("prompt")
                 logger.error(f"Language mix test failed for {prompt}: {e}")
-                results.append({
-                    "test_id": f"{test_name}_{len(results)}",
+                return {
+                    "test_id": f"{test_name}_{item_idx}",
                     "prompt": prompt,
                     "error": str(e),
                     "overall_score": 0,
-                })
-        
+                }
+
+        results = self._run_items_concurrently(dataset, _process_language_mix_item, test_name)
+
         # Calculate aggregate metrics
         successful_results = [r for r in results if "error" not in r]
         
