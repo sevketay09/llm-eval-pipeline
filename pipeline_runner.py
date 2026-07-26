@@ -2551,7 +2551,7 @@ class EvaluationPipeline:
                 )
                 self._update_model_overall_metrics(models[model_key], self.results["models"][model_key])
                 if output_path:
-                    self.save_results(output_path, quiet=True)
+                    self.save_results(output_path, quiet=True, render_reports=False)
 
     def _run_custom_dataset_sequential(
         self,
@@ -2601,7 +2601,7 @@ class EvaluationPipeline:
             self._update_model_overall_metrics(model, model_results)
             self.results["models"][model_key] = model_results
             if output_path:
-                self.save_results(output_path, quiet=True)
+                self.save_results(output_path, quiet=True, render_reports=False)
 
     def run_full_evaluation_parallel(
         self,
@@ -2729,7 +2729,7 @@ class EvaluationPipeline:
 
             # Incremental save after each test
             if output_path:
-                self.save_results(output_path, quiet=True)
+                self.save_results(output_path, quiet=True, render_reports=False)
 
         # Generate summaries
         self.results["summary"] = self._generate_summary()
@@ -7184,7 +7184,7 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 self._update_model_overall_metrics(model, model_results)
                 self.results["models"][model_key] = model_results
                 if output_path:
-                    self.save_results(output_path, quiet=True)
+                    self.save_results(output_path, quiet=True, render_reports=False)
                 if self._run:
                     self._run.progress = (test_idx + 1) / max(total_tests, 1)
             
@@ -7524,8 +7524,17 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
         
         return comparisons
     
-    def save_results(self, output_path: str = DEFAULT_STORE_PATH, quiet: bool = False):
-        """Save results to file"""
+    def save_results(self, output_path: str = DEFAULT_STORE_PATH, quiet: bool = False, render_reports: bool = True):
+        """Save results to file.
+
+        render_reports=False skips the markdown/html sidecar renders — used for
+        the incremental per-test saves during a run (progress/crash-resilience
+        only) where re-rendering the whole growing report after every single
+        test is pure waste: api/services/report_service.py already renders
+        markdown/html from the JSON on demand if the sidecar is missing, so
+        skipping it here doesn't lose anything, it just defers the render to
+        first view instead of redoing it after every test.
+        """
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
         def sanitize_data(obj):
@@ -7576,13 +7585,14 @@ Yorumun tam olarak 4-5 cümle içermeli. Kalite skoru ile altyapı hata oranın�
                 with open(output_path, "w", encoding="utf-8") as report_file:
                     json.dump(sanitized_results, report_file, ensure_ascii=False, indent=2)
 
-            markdown_path = str(Path(output_path).with_suffix(".md"))
-            with open(markdown_path, "w", encoding="utf-8") as markdown_file:
-                markdown_file.write(render_markdown_report(sanitized_results))
+            if render_reports:
+                markdown_path = str(Path(output_path).with_suffix(".md"))
+                with open(markdown_path, "w", encoding="utf-8") as markdown_file:
+                    markdown_file.write(render_markdown_report(sanitized_results))
 
-            html_path = str(Path(output_path).with_suffix(".html"))
-            with open(html_path, "w", encoding="utf-8") as html_file:
-                html_file.write(render_html_report(sanitized_results))
+                html_path = str(Path(output_path).with_suffix(".html"))
+                with open(html_path, "w", encoding="utf-8") as html_file:
+                    html_file.write(render_html_report(sanitized_results))
 
             logger.info(f"Results upserted successfully: {store_path} (run_id={run_id})")
             

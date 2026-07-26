@@ -156,8 +156,8 @@ class _FakePipelineContext:
     def _generate_comparisons(self, model_keys):
         return {"models": list(model_keys)}
 
-    def save_results(self, output_path, quiet=False):
-        self.saved_paths.append({"output_path": output_path, "quiet": quiet})
+    def save_results(self, output_path, quiet=False, render_reports=True):
+        self.saved_paths.append({"output_path": output_path, "quiet": quiet, "render_reports": render_reports})
 
     def _build_custom_model_results(self, model_key, model):
         return _FakeModelRunResult.empty(
@@ -377,7 +377,7 @@ class RegressionSuiteSmokeTests(unittest.TestCase):
         self.assertEqual(fake_context.loaded_datasets[0]["test_func_name"], "run_multi_turn_test")
         self.assertEqual([entry["test_name"] for entry in fake_context.execution_log], ["custom_generated_conversation"])
         self.assertIn("custom_generated_conversation", result["models"]["demo-model"]["tests"])
-        self.assertEqual(fake_context.saved_paths, [{"output_path": "reports/custom-conversation.json", "quiet": True}])
+        self.assertEqual(fake_context.saved_paths, [{"output_path": "reports/custom-conversation.json", "quiet": True, "render_reports": False}])
         self.assertEqual(fake_context.final_saved_exports, ["reports/custom-conversation.json"])
 
     def test_run_custom_dataset_evaluation_parallel_routes_single_turn_dataset_to_qa_runner(self):
@@ -436,8 +436,8 @@ class RegressionSuiteSmokeTests(unittest.TestCase):
         self.assertEqual(
             fake_context.saved_paths,
             [
-                {"output_path": "reports/custom-qa.json", "quiet": True},
-                {"output_path": "reports/custom-qa.json", "quiet": True},
+                {"output_path": "reports/custom-qa.json", "quiet": True, "render_reports": False},
+                {"output_path": "reports/custom-qa.json", "quiet": True, "render_reports": False},
             ],
         )
         self.assertEqual(fake_context.final_saved_exports, ["reports/custom-qa.json"])
