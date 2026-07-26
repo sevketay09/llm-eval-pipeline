@@ -3665,7 +3665,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
-        for item in self._iter_with_progress(dataset, test_name):
+        def _process_function_calling_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
             if isinstance(item, FunctionCallingCase):
                 function_case = item
             else:
@@ -3676,7 +3676,7 @@ class EvaluationPipeline:
                     logger.warning(
                         f"Skipping invalid function calling item {item_id} in {test_name}: {exc}"
                     )
-                    continue
+                    return None
 
             system_prompt = "Sen bir finans asistanısın. Kullanıcının talebini yerine getirmek için uygun araçları kullan."
             system_prompt = self._inject_schema_instruction(system_prompt, schema)
@@ -3755,9 +3755,11 @@ class EvaluationPipeline:
                 },
                 "latency": response['latency'],
             }
-            
-            results.append(result)
-        
+
+            return result
+
+        results.extend(self._run_items_concurrently(dataset, _process_function_calling_item, test_name))
+
         avg_scores = {
             "tool_selection": sum(r["scores"]["tool_selection"] for r in results) / len(results) if results else 0,
             "parameter_extraction_lenient": sum(r["scores"]["parameter_extraction_lenient"] for r in results) / len(results) if results else 0,
