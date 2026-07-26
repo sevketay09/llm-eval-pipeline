@@ -122,6 +122,25 @@ cp .env.example .env             # .env içini doldurun
 docker compose up --build        # http://localhost:8001
 ```
 
+Stack en az bir kez build edildikten sonra günlük kullanım komutları:
+
+```bash
+docker compose up -d              # arka planda başlat
+docker compose down                # container'ı durdur ve kaldır (./reports, ./logs, ./config etkilenmez — bunlar bind-mount, container state değil)
+docker compose build llm-eval-dashboard   # Dockerfile/dependency değişikliğinden sonra image'ı yeniden build et
+docker compose logs -f llm-eval-dashboard # logları takip et
+docker compose restart llm-eval-dashboard # rebuild etmeden yeniden başlat
+docker compose exec llm-eval-dashboard sh # çalışan container'a shell ile bağlan
+```
+
+Container, defense-in-depth için root olmayan bir kullanıcı (`appuser`, uid `10001`) olarak çalışır. `reports/`, `logs/` ve `config/` host'tan bind-mount edilir; bu yüzden bir rapor dosyası farklı bir UID ile oluşturulursa (örn. pipeline Docker yerine doğrudan host'ta çalıştırılırsa), container o dosyaya yazma iznini kaybedebilir ve kaydederken `Permission denied` hatası alabilirsiniz. `docker-entrypoint.sh` bunu her container başlangıcında otomatik düzeltir — kısaca root olarak başlayıp bu üç dizini `appuser`'a `chown` eder, sonra yetkiyi düşürüp uygulamayı başlatır. Bu eklenmeden önceki eski bir `Permission denied` hatasıyla karşılaşırsanız manuel düzeltme:
+
+```bash
+docker compose exec -u root llm-eval-dashboard chown -R appuser:appuser /app/reports
+```
+
+`docker-compose.debug.yml` (aşağıdaki `make start-debug`'a bakın) aynı image'ı sizin host UID'inizle (`user: "${LOCAL_UID}:${LOCAL_GID}"`) çalıştırır, böylece yazdığı dosyalar doğrudan host sahipliğinde olur — entrypoint bunu (root olarak çalışmadığını) tespit edip chown/yetki-düşürme adımını tamamen atlar.
+
 ### 60 Saniyede Demo (API key gerekmez)
 
 ```bash

@@ -16,6 +16,11 @@ from utils.report_renderer import render_html_report, render_markdown_report
 class ReportService:
     """Read-only access to evaluation reports."""
 
+    # A model must clear this absolute quality bar to be eligible for the "best quality
+    # yield" / "leanest model" efficiency badges (see _build_efficiency_summary) — otherwise
+    # a very cheap but low-quality model can win these badges purely on token economy.
+    _MIN_QUALITY_FOR_EFFICIENCY_BADGES = 0.5
+
     def __init__(self):
         settings = get_settings()
         self._dir = Path(settings.reports_dir)
@@ -309,8 +314,17 @@ class ReportService:
         )
 
         frontier_models = [item["model"] for item in leaderboard if item.get("frontier")]
+
+        # A model must clear this absolute quality bar to be eligible as "best quality yield"
+        # or "leanest model" — otherwise a very cheap but low-quality model (e.g. an offline
+        # mock returning instant, non-JSON canned text) wins on pure token economy while being
+        # close to useless, which reads as "efficient" but is misleading.
+        quality_qualified = [
+            item for item in leaderboard if (item.get("overall_score") or 0.0) >= self._MIN_QUALITY_FOR_EFFICIENCY_BADGES
+        ]
+
         leanest_entry = min(
-            (item for item in leaderboard if item.get("avg_tokens_per_eval") is not None),
+            (item for item in quality_qualified if item.get("avg_tokens_per_eval") is not None),
             key=lambda item: item["avg_tokens_per_eval"],
             default=None,
         )
@@ -322,11 +336,14 @@ class ReportService:
             ),
             default=None,
         )
+        # `leaderboard` is already sorted by quality_per_1k_tokens descending, so the first
+        # quality-qualified entry is the best qualifying yield.
+        best_quality_yield_entry = quality_qualified[0] if quality_qualified else None
 
         return {
             "leaderboard": leaderboard,
             "frontier_models": frontier_models,
-            "best_quality_yield_model": leaderboard[0]["model"] if leaderboard else None,
+            "best_quality_yield_model": best_quality_yield_entry["model"] if best_quality_yield_entry else None,
             "leanest_model": leanest_entry["model"] if leanest_entry else None,
             "strongest_frontier_model": strongest_frontier["model"] if strongest_frontier else None,
             "evaluator_breakdown": self._build_evaluator_efficiency_breakdown(models_data),

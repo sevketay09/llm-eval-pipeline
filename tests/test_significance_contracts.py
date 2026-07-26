@@ -128,3 +128,33 @@ def test_three_models_yield_three_pairs():
     rep = _report({"m1": _big("m1"), "m2": _big("m2"), "m3": _big("m3")})
     pairs = pairwise_comparisons(rep)
     assert len(pairs) == 3
+
+
+def test_large_effect_but_underpowered_is_flagged_not_hidden():
+    # 3 shared tests, dz≈0.87 ("large") but p≈0.13 (not significant) — the real
+    # "demo-model vs qwen3-plus" shape: a big, real-looking gap that reads as "not
+    # significant" purely because n is tiny. This must not be indistinguishable from
+    # a genuine null result.
+    rep = _report({"m1": {"a": 0.76, "b": 0.78, "c": 0.65}, "m2": {"a": 0.70, "b": 0.60, "c": 0.65}})
+    p = pairwise_comparisons(rep)[0]
+
+    assert p["n_shared_tests"] == 3
+    assert p["is_significant"] is False
+    assert p["effect_size"] in ("medium", "large")
+    assert p["notable_effect_despite_nonsignificance"] is True
+    assert "small sample can't confirm" in p["verdict"]
+
+    result = compute_significance(rep)
+    assert any("not evidence the models actually perform the same" in w for w in result["warnings"])
+
+
+def test_notable_effect_flag_false_when_actually_no_difference():
+    rep = _report({"m1": _big("m1"), "m2": _big("m1")})
+    p = pairwise_comparisons(rep)[0]
+    assert p["notable_effect_despite_nonsignificance"] is False
+
+
+def test_notable_effect_flag_false_when_insufficient_shared_tests():
+    rep = _report({"m1": {"a": 0.8}, "m2": {"b": 0.7}})
+    p = pairwise_comparisons(rep)[0]
+    assert p["notable_effect_despite_nonsignificance"] is False

@@ -122,6 +122,25 @@ cp .env.example .env             # fill in your keys
 docker compose up --build        # http://localhost:8001
 ```
 
+Everyday commands, once the stack has been built at least once:
+
+```bash
+docker compose up -d              # start in the background
+docker compose down                # stop and remove the container (keeps ./reports, ./logs, ./config — they're bind-mounted, not container state)
+docker compose build llm-eval-dashboard   # rebuild the image after a Dockerfile/dependency change
+docker compose logs -f llm-eval-dashboard # tail logs
+docker compose restart llm-eval-dashboard # restart without rebuilding
+docker compose exec llm-eval-dashboard sh # shell into the running container
+```
+
+The container runs as a non-root user (`appuser`, uid `10001`) for defense-in-depth. `reports/`, `logs/`, and `config/` are bind-mounted from the host, so if a report file ever gets created with a different UID (e.g. the pipeline run directly on the host instead of in Docker), the container can lose write access to it and fail with `Permission denied` on save. `docker-entrypoint.sh` fixes this automatically on every container start — it briefly runs as root just long enough to `chown` those three directories back to `appuser`, then drops privileges before starting the app. If you ever hit a stale `Permission denied` from before this was added, one manual fix is:
+
+```bash
+docker compose exec -u root llm-eval-dashboard chown -R appuser:appuser /app/reports
+```
+
+`docker-compose.debug.yml` (see `make start-debug` below) instead runs the same image as your own host UID (`user: "${LOCAL_UID}:${LOCAL_GID}"`) so files it writes are directly host-owned — the entrypoint detects this (not running as root) and skips the chown/privilege-drop step entirely.
+
 ### 60-Second Demo (no API keys needed)
 
 ```bash

@@ -363,6 +363,7 @@ class ReportServiceContractTests(unittest.TestCase):
             self.assertEqual(provider_a["model_count"], 2)
             self.assertAlmostEqual(provider_a["avg_score"], 0.7666666667)
             self.assertAlmostEqual(provider_a["success_rate"], 1.0)
+
             self.assertAlmostEqual(provider_a["observed_cost"], 0.0045)
             self.assertEqual(provider_a["observed_tokens"], 50)
             self.assertAlmostEqual(provider_a["cost_per_1k_tokens"], 0.09)
@@ -381,6 +382,65 @@ class ReportServiceContractTests(unittest.TestCase):
             self.assertEqual(disagreement["by_model"][1]["model"], "demo")
             self.assertEqual(disagreement["top_cases"][0]["test_id"], "demo-1")
             self.assertEqual(disagreement["top_cases"][1]["test_id"], "lean-1")
+
+    def test_efficiency_badges_exclude_cheap_low_quality_model(self):
+        # A near-instant, near-zero-token model with poor quality (e.g. an offline mock)
+        # must not win "best_quality_yield_model" / "leanest_model" purely because it's
+        # cheap — those badges require clearing an absolute quality bar first.
+        payload = {
+            "version": "2.0",
+            "timestamp": "2026-05-31T13:00:00Z",
+            "run_metadata": {"run_id": "efficiency-badge-guard", "test_suite": "smoke"},
+            "models": {
+                "cheap_but_bad": {
+                    "overall_metrics": {
+                        "total_input_tokens": 10,
+                        "total_output_tokens": 5,
+                        "total_requests": 1,
+                    },
+                    "tests": {
+                        "smoke_case": {
+                            "summary": {"overall_score": 0.2, "total_tests": 1},
+                            "results": [{"id": "cb-1", "question": "q", "scores": {"judge_score": 0.2}}],
+                        }
+                    },
+                },
+                "real_model": {
+                    "overall_metrics": {
+                        "total_input_tokens": 500,
+                        "total_output_tokens": 500,
+                        "total_requests": 5,
+                    },
+                    "tests": {
+                        "smoke_case": {
+                            "summary": {"overall_score": 0.8, "total_tests": 1},
+                            "results": [{"id": "rm-1", "question": "q", "scores": {"judge_score": 0.8}}],
+                        }
+                    },
+                },
+            },
+            "summary": {
+                "model_scores": {"cheap_but_bad": 0.2, "real_model": 0.8},
+            },
+            "trends": {},
+        }
+        with tempfile.TemporaryDirectory() as tmpdir:
+            report_path = Path(tmpdir) / "badge-guard-report.json"
+            report_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            service = ReportService()
+            service._dir = Path(tmpdir)
+
+            report = service.get_report("badge-guard-report.json")
+            efficiency = _as_dict(report.efficiency)
+
+            # cheap_but_bad has far fewer tokens per eval, so without a quality gate it
+            # would win both badges purely on token economy.
+            self.assertEqual(efficiency["leaderboard"][0]["model"], "cheap_but_bad")
+            self.assertNotEqual(efficiency["best_quality_yield_model"], "cheap_but_bad")
+            self.assertNotEqual(efficiency["leanest_model"], "cheap_but_bad")
+            self.assertEqual(efficiency["best_quality_yield_model"], "real_model")
+            self.assertEqual(efficiency["leanest_model"], "real_model")
 
     def test_compare_reports_includes_continuity_summary(self):
         with tempfile.TemporaryDirectory() as tmpdir:

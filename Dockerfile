@@ -23,6 +23,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
@@ -33,10 +34,13 @@ COPY --from=web-builder /build/web/dist /app/web/dist
 
 RUN useradd -m -u 10001 appuser && \
     mkdir -p /app/reports /app/logs /app/config && \
-    chown -R appuser:appuser /app
-
-USER appuser
+    chown -R appuser:appuser /app && \
+    chmod +x /app/docker-entrypoint.sh
 
 EXPOSE 8001
 
+# Stays root at container start so the entrypoint can reconcile ownership of the
+# bind-mounted reports/logs/config volumes (which may have been written to by a
+# different UID) before dropping to appuser to actually run the app.
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["python", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8001"]

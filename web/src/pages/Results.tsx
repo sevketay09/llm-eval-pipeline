@@ -85,18 +85,51 @@ function humanizePolicyDecision(value?: string | null) {
   return value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+const TREND_LABELS: Record<string, string> = {
+  improving: "Improving",
+  declining: "Declining",
+  stable: "Stable",
+  insufficient_history: "Not enough history yet",
+  unknown: "Unknown",
+};
+
+function humanizeTrendLabel(value: string): string {
+  return TREND_LABELS[value] ?? value.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 function average(values: Array<number | null | undefined>) {
   const valid = values.filter((value): value is number => typeof value === "number" && !Number.isNaN(value));
   if (!valid.length) return null;
   return valid.reduce((sum, value) => sum + value, 0) / valid.length;
 }
 
+// A model must clear this absolute quality bar to be eligible for the "Best Quality Yield"
+// and "Leanest Model" efficiency badges — otherwise a very cheap but low-quality model (e.g.
+// an offline mock that returns instant, non-JSON canned text) can win these badges purely
+// because it's cheap, which reads as "efficient" while actually being close to useless.
+const MIN_QUALITY_FOR_EFFICIENCY_BADGES = 0.5;
+
+// Agentic tests (mcp_tool_use, agentic_workflows) score two independent generations per
+// case: a single-shot "plan" (no tool calls, judged as text) and a separate multi-turn
+// simulation where the model actually calls tools. These can diverge sharply — a model
+// can refuse tools in its plan text yet call them correctly once actually run — so a gap
+// this large between the two gets an explicit callout rather than silently blending into
+// one opaque overall_score.
+const PLAN_EXECUTION_DIVERGENCE_THRESHOLD = 0.3;
+
 function getLeanestModel(points: TokenEfficiencyPoint[]) {
   return points.reduce<TokenEfficiencyPoint | null>((leanest, point) => {
     if (point.avg_tokens_per_eval == null) return leanest;
+    if ((point.overall_score ?? 0) < MIN_QUALITY_FOR_EFFICIENCY_BADGES) return leanest;
     if (!leanest || leanest.avg_tokens_per_eval == null) return point;
     return point.avg_tokens_per_eval < leanest.avg_tokens_per_eval ? point : leanest;
   }, null);
+}
+
+function getBestQualityYield(points: TokenEfficiencyPoint[]) {
+  // `points` (the efficiency leaderboard) is already sorted by quality_per_1k_tokens
+  // descending, so the first entry clearing the quality bar is the best qualifying yield.
+  return points.find((point) => (point.overall_score ?? 0) >= MIN_QUALITY_FOR_EFFICIENCY_BADGES) ?? null;
 }
 
 function getStrongestFrontier(points: TokenEfficiencyPoint[]) {
@@ -208,17 +241,6 @@ type DatasetSignature = {
   path: string | null;
   itemCount: number | null;
   labels: string[];
-};
-
-type ProviderCostRow = {
-  provider: string;
-  totalCost: number;
-  totalTokens: number;
-  modelCount: number;
-  modelNames: string[];
-  costShare: number;
-  avgCostPerModel: number;
-  costPer1kTokens: number | null;
 };
 
 type ConversationTurnExplorer = {
@@ -784,50 +806,6 @@ function buildTraceExplorerRows(rawReport: Record<string, unknown> | null | unde
   });
 }
 
-function buildProviderCostRows(
-  modelsValue: unknown,
-  modelComparisons: Record<string, ModelComparisonEntry>
-): ProviderCostRow[] {
-  const grouped = Object.entries(asRecord(modelsValue)).reduce<
-    Record<string, Omit<ProviderCostRow, "costShare" | "avgCostPerModel" | "costPer1kTokens">>
-  >((accumulator, [model, payload]) => {
-    const providerValue = asRecord(payload).provider;
-    const provider = typeof providerValue === "string" && providerValue.trim() ? providerValue : "unknown";
-    const comparison = modelComparisons[model];
-    const totalCost = comparison?.total_cost;
-
-    if (typeof totalCost !== "number" || Number.isNaN(totalCost)) {
-      return accumulator;
-    }
-
-    const current = accumulator[provider] ?? {
-      provider,
-      totalCost: 0,
-      totalTokens: 0,
-      modelCount: 0,
-      modelNames: [],
-    };
-
-    current.totalCost += totalCost;
-    current.totalTokens += typeof comparison?.total_tokens === "number" ? comparison.total_tokens : 0;
-    current.modelCount += 1;
-    current.modelNames.push(model);
-    accumulator[provider] = current;
-    return accumulator;
-  }, {});
-
-  const totalProviderCost = Object.values(grouped).reduce((sum, row) => sum + row.totalCost, 0);
-
-  return Object.values(grouped)
-    .map<ProviderCostRow>((row) => ({
-      ...row,
-      costShare: totalProviderCost > 0 ? row.totalCost / totalProviderCost : 0,
-      avgCostPerModel: row.modelCount > 0 ? row.totalCost / row.modelCount : 0,
-      costPer1kTokens: row.totalTokens > 0 ? (row.totalCost * 1000) / row.totalTokens : null,
-    }))
-    .sort((left, right) => right.totalCost - left.totalCost);
-}
-
 function normalizeTrendRows(value: unknown): ModelTrendRow[] {
   const trends = asRecord(value);
 
@@ -1022,6 +1000,7 @@ export default function Results() {
   const efficiencyLeaderboard = report?.efficiency?.leaderboard ?? [];
   const evaluatorEfficiencyRows: EvaluatorEfficiencyRow[] = report?.efficiency?.evaluator_breakdown ?? [];
   const leanestModel = getLeanestModel(efficiencyLeaderboard);
+  const bestQualityYieldModel = getBestQualityYield(efficiencyLeaderboard);
   const strongestFrontier = getStrongestFrontier(efficiencyLeaderboard);
   const hasEfficiencyData = efficiencyLeaderboard.some(
     (point) => point.total_tokens > 0 && point.avg_tokens_per_eval != null
@@ -1068,16 +1047,11 @@ export default function Results() {
       overallScore: payload?.overall_score ?? null,
       avgLatency: payload?.avg_latency ?? null,
       latencyP95: payload?.latency_p95 ?? null,
-      totalCost: payload?.total_cost ?? null,
       errorRate: payload?.error_rate ?? null,
       qualityLatencyEfficiency: payload?.quality_latency_efficiency ?? null,
-      qualityCostEfficiency:
-        typeof payload?.overall_score === "number" && typeof payload?.total_cost === "number"
-          ? payload.overall_score / Math.max(payload.total_cost, 1e-9)
-          : null,
     }))
     .filter((row) =>
-      [row.avgLatency, row.latencyP95, row.totalCost, row.qualityLatencyEfficiency, row.qualityCostEfficiency].some(
+      [row.avgLatency, row.latencyP95, row.qualityLatencyEfficiency].some(
         (value) => typeof value === "number" && !Number.isNaN(value)
       )
     );
@@ -1097,14 +1071,6 @@ export default function Results() {
     },
     null
   );
-  const costliestModel = modelEfficiencyRows.reduce<(typeof modelEfficiencyRows)[number] | null>(
-    (costliest, row) => {
-      if (row.totalCost == null) return costliest;
-      if (!costliest || costliest.totalCost == null) return row;
-      return row.totalCost > costliest.totalCost ? row : costliest;
-    },
-    null
-  );
   const weakestLatencyYieldModel = modelEfficiencyRows.reduce<(typeof modelEfficiencyRows)[number] | null>(
     (weakest, row) => {
       if (row.qualityLatencyEfficiency == null) return weakest;
@@ -1113,35 +1079,13 @@ export default function Results() {
     },
     null
   );
-  const strongestCostYieldModel = modelEfficiencyRows.reduce<(typeof modelEfficiencyRows)[number] | null>(
-    (strongest, row) => {
-      if (row.qualityCostEfficiency == null) return strongest;
-      if (!strongest || strongest.qualityCostEfficiency == null) return row;
-      return row.qualityCostEfficiency > strongest.qualityCostEfficiency ? row : strongest;
-    },
-    null
-  );
   const topEvaluatorByVolume = evaluatorEfficiencyRows[0] ?? null;
-  const topEvaluatorByObservedCost = evaluatorEfficiencyRows.reduce<EvaluatorEfficiencyRow | null>((best, row) => {
-    if (row.observed_cost == null) return best;
-    if (!best || best.observed_cost == null) return row;
-    return row.observed_cost > best.observed_cost ? row : best;
-  }, null);
   const bestEvaluatorScore = evaluatorEfficiencyRows.reduce<EvaluatorEfficiencyRow | null>((best, row) => {
     if (row.avg_score == null) return best;
     if (!best || best.avg_score == null) return row;
     return row.avg_score > best.avg_score ? row : best;
   }, null);
-  const normalizedProviderCostRows = buildProviderCostRows(report?.models, modelComparisonEntries);
-  const totalProviderCost = normalizedProviderCostRows.reduce((sum, row) => sum + row.totalCost, 0);
-  const dominantProviderCost = normalizedProviderCostRows[0] ?? null;
-  const leanestProviderCost = normalizedProviderCostRows.reduce<ProviderCostRow | null>((best, row) => {
-    if (row.costPer1kTokens == null) return best;
-    if (!best || best.costPer1kTokens == null) return row;
-    return row.costPer1kTokens < best.costPer1kTokens ? row : best;
-  }, null);
-  const hasRunEfficiencySummary =
-    hasEfficiencyData || normalizedProviderCostRows.length > 0 || modelEfficiencyRows.length > 0;
+  const hasRunEfficiencySummary = hasEfficiencyData || modelEfficiencyRows.length > 0;
   const structuredOutputRows = Object.entries(
     modelComparisonEntries
   )
@@ -1291,22 +1235,10 @@ export default function Results() {
             .map((model) => {
               const baselineModel = baselineComparisonModels[model];
               const candidateModel = candidateModels[model];
-              const baselineOverallScore = baselineModel?.overall_score ?? null;
-              const candidateOverallScore = candidateModel?.overall_score ?? null;
               const baselineAvgLatency = baselineModel?.avg_latency ?? null;
               const candidateAvgLatency = candidateModel?.avg_latency ?? null;
-              const baselineCost = baselineModel?.total_cost ?? null;
-              const candidateCost = candidateModel?.total_cost ?? null;
               const baselineQualityLatency = baselineModel?.quality_latency_efficiency ?? null;
               const candidateQualityLatency = candidateModel?.quality_latency_efficiency ?? null;
-              const baselineQualityCost =
-                baselineOverallScore != null && baselineCost != null
-                  ? baselineOverallScore / Math.max(baselineCost, 1e-9)
-                  : null;
-              const candidateQualityCost =
-                candidateOverallScore != null && candidateCost != null
-                  ? candidateOverallScore / Math.max(candidateCost, 1e-9)
-                  : null;
 
               return {
                 model,
@@ -1316,21 +1248,11 @@ export default function Results() {
                   baselineAvgLatency != null && candidateAvgLatency != null
                     ? candidateAvgLatency - baselineAvgLatency
                     : null,
-                baselineCost,
-                candidateCost,
-                costDelta:
-                  baselineCost != null && candidateCost != null ? candidateCost - baselineCost : null,
                 baselineQualityLatency,
                 candidateQualityLatency,
                 qualityLatencyDelta:
                   baselineQualityLatency != null && candidateQualityLatency != null
                     ? candidateQualityLatency - baselineQualityLatency
-                    : null,
-                baselineQualityCost,
-                candidateQualityCost,
-                qualityCostDelta:
-                  baselineQualityCost != null && candidateQualityCost != null
-                    ? candidateQualityCost - baselineQualityCost
                     : null,
               };
             })
@@ -1338,19 +1260,13 @@ export default function Results() {
               [
                 row.baselineAvgLatency,
                 row.candidateAvgLatency,
-                row.baselineCost,
-                row.candidateCost,
                 row.baselineQualityLatency,
                 row.candidateQualityLatency,
-                row.baselineQualityCost,
-                row.candidateQualityCost,
               ].some((value) => typeof value === "number" && !Number.isNaN(value))
             )
             .sort((left, right) => {
-              const leftSeverity =
-                (left.avgLatencyDelta ?? 0) + (left.costDelta ?? 0) + (-(left.qualityLatencyDelta ?? 0)) + (-(left.qualityCostDelta ?? 0));
-              const rightSeverity =
-                (right.avgLatencyDelta ?? 0) + (right.costDelta ?? 0) + (-(right.qualityLatencyDelta ?? 0)) + (-(right.qualityCostDelta ?? 0));
+              const leftSeverity = (left.avgLatencyDelta ?? 0) + (-(left.qualityLatencyDelta ?? 0));
+              const rightSeverity = (right.avgLatencyDelta ?? 0) + (-(right.qualityLatencyDelta ?? 0));
               return rightSeverity - leftSeverity;
             });
 
@@ -1358,90 +1274,7 @@ export default function Results() {
             filename,
             rows,
             slowerCount: rows.filter((row) => (row.avgLatencyDelta ?? 0) > 0).length,
-            costlierCount: rows.filter((row) => (row.costDelta ?? 0) > 0).length,
             weakerYieldCount: rows.filter((row) => (row.qualityLatencyDelta ?? 0) < 0).length,
-            weakerCostYieldCount: rows.filter((row) => (row.qualityCostDelta ?? 0) < 0).length,
-          };
-        })
-        .filter((entry) => entry.rows.length > 0)
-    : [];
-  const baselineProviderCostRows = baselineFilename && compareRawReports && baselineComparisonModels
-    ? buildProviderCostRows(asRecord(compareRawReports[baselineFilename] ?? null).models, baselineComparisonModels)
-    : [];
-  const baselineProviderDriftEntries = baselineFilename && compareRawReports && baselineProviderCostRows.length > 0
-    ? compareSelection
-        .filter((filename) => filename !== baselineFilename)
-        .map((filename) => {
-          const candidateModels =
-            ((compareData?.[filename]?.model_comparison as Record<string, ModelComparisonEntry> | undefined) ?? {});
-          const candidateProviderRows = buildProviderCostRows(
-            asRecord(compareRawReports[filename] ?? null).models,
-            candidateModels
-          );
-          const providerNames = Array.from(
-            new Set([
-              ...baselineProviderCostRows.map((row) => row.provider),
-              ...candidateProviderRows.map((row) => row.provider),
-            ])
-          ).sort();
-
-          const rows = providerNames
-            .map((provider) => {
-              const baselineRow = baselineProviderCostRows.find((row) => row.provider === provider) ?? null;
-              const candidateRow = candidateProviderRows.find((row) => row.provider === provider) ?? null;
-              const baselineTotalCost = baselineRow?.totalCost ?? null;
-              const candidateTotalCost = candidateRow?.totalCost ?? null;
-              const baselineCostShare = baselineRow?.costShare ?? null;
-              const candidateCostShare = candidateRow?.costShare ?? null;
-              const baselineCostPer1kTokens = baselineRow?.costPer1kTokens ?? null;
-              const candidateCostPer1kTokens = candidateRow?.costPer1kTokens ?? null;
-
-              return {
-                provider,
-                baselineModelCount: baselineRow?.modelCount ?? 0,
-                candidateModelCount: candidateRow?.modelCount ?? 0,
-                baselineTotalCost,
-                candidateTotalCost,
-                totalCostDelta:
-                  baselineTotalCost != null && candidateTotalCost != null
-                    ? candidateTotalCost - baselineTotalCost
-                    : null,
-                baselineCostShare,
-                candidateCostShare,
-                costShareDelta:
-                  baselineCostShare != null && candidateCostShare != null
-                    ? candidateCostShare - baselineCostShare
-                    : null,
-                baselineCostPer1kTokens,
-                candidateCostPer1kTokens,
-                costPer1kTokensDelta:
-                  baselineCostPer1kTokens != null && candidateCostPer1kTokens != null
-                    ? candidateCostPer1kTokens - baselineCostPer1kTokens
-                    : null,
-              };
-            })
-            .filter((row) =>
-              [
-                row.baselineTotalCost,
-                row.candidateTotalCost,
-                row.baselineCostShare,
-                row.candidateCostShare,
-                row.baselineCostPer1kTokens,
-                row.candidateCostPer1kTokens,
-              ].some((value) => typeof value === "number" && !Number.isNaN(value))
-            )
-            .sort((left, right) => {
-              const leftSeverity = (left.costShareDelta ?? 0) + (left.totalCostDelta ?? 0) + (left.costPer1kTokensDelta ?? 0);
-              const rightSeverity = (right.costShareDelta ?? 0) + (right.totalCostDelta ?? 0) + (right.costPer1kTokensDelta ?? 0);
-              return rightSeverity - leftSeverity;
-            });
-
-          return {
-            filename,
-            rows,
-            higherShareCount: rows.filter((row) => (row.costShareDelta ?? 0) > 0).length,
-            higherSpendCount: rows.filter((row) => (row.totalCostDelta ?? 0) > 0).length,
-            higherNormalizedCostCount: rows.filter((row) => (row.costPer1kTokensDelta ?? 0) > 0).length,
           };
         })
         .filter((entry) => entry.rows.length > 0)
@@ -1935,9 +1768,9 @@ export default function Results() {
         <section className="motion-rise motion-delay-2 space-y-4">
           <div>
             <p className="section-caption mb-2">Efficiency Drift</p>
-            <h2 className="section-heading">Baseline Latency and Cost Drift</h2>
+            <h2 className="section-heading">Baseline Latency Drift</h2>
             <p className="page-subtitle max-w-3xl text-sm">
-              Quickly review latency, cost, quality-per-latency, and quality-per-cost changes across models against the baseline.
+              Quickly review latency and quality-per-latency changes across models against the baseline.
             </p>
           </div>
 
@@ -1952,9 +1785,7 @@ export default function Results() {
                   <div className="flex flex-wrap gap-2">
                     <span className="provider-chip">baseline: {baselineFilename}</span>
                     <span className="provider-chip">slower {entry.slowerCount}</span>
-                    <span className="provider-chip">costlier {entry.costlierCount}</span>
                     <span className="provider-chip">weaker yield {entry.weakerYieldCount}</span>
-                    <span className="provider-chip">weaker cost yield {entry.weakerCostYieldCount}</span>
                   </div>
                 </div>
 
@@ -1964,8 +1795,6 @@ export default function Results() {
                       <tr>
                         <th>Model</th>
                         <th>Avg Latency</th>
-                        <th>Cost</th>
-                        <th>Quality / Cost</th>
                         <th>Quality / Latency</th>
                       </tr>
                     </thead>
@@ -1978,80 +1807,8 @@ export default function Results() {
                             <span className="ml-2">({row.avgLatencyDelta != null ? formatMetric(row.avgLatencyDelta, 2) : "—"})</span>
                           </td>
                           <td className="micro-copy">
-                            {formatMetric(row.baselineCost, 4)} → {formatMetric(row.candidateCost, 4)}
-                            <span className="ml-2">({row.costDelta != null ? formatMetric(row.costDelta, 4) : "—"})</span>
-                          </td>
-                          <td className="micro-copy">
-                            {formatMetric(row.baselineQualityCost, 4)} → {formatMetric(row.candidateQualityCost, 4)}
-                            <span className="ml-2">({row.qualityCostDelta != null ? formatMetric(row.qualityCostDelta, 4) : "—"})</span>
-                          </td>
-                          <td className="micro-copy">
                             {formatMetric(row.baselineQualityLatency, 4)} → {formatMetric(row.candidateQualityLatency, 4)}
                             <span className="ml-2">({row.qualityLatencyDelta != null ? formatMetric(row.qualityLatencyDelta, 4) : "—"})</span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {baselineProviderDriftEntries.length > 0 && !compareLoading && baselineFilename && (
-        <section className="motion-rise motion-delay-2 space-y-4">
-          <div>
-            <p className="section-caption mb-2">Provider Cost Drift</p>
-            <h2 className="section-heading">Baseline Provider Spend Drift</h2>
-            <p className="page-subtitle max-w-3xl text-sm">
-              Quickly review provider-level spend share and token-normalized cost changes against the baseline.
-            </p>
-          </div>
-
-          <div className="motion-stagger-grid grid grid-cols-1 gap-4 xl:grid-cols-2">
-            {baselineProviderDriftEntries.map((entry) => (
-              <div key={`baseline-provider-cost-${entry.filename}`} className="panel-surface panel-quiet space-y-4">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <p className="section-caption mb-2">Compared To Baseline</p>
-                    <h3 className="section-heading text-lg">{entry.filename}</h3>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="provider-chip">baseline: {baselineFilename}</span>
-                    <span className="provider-chip">higher share {entry.higherShareCount}</span>
-                    <span className="provider-chip">higher spend {entry.higherSpendCount}</span>
-                    <span className="provider-chip">higher normalized cost {entry.higherNormalizedCostCount}</span>
-                  </div>
-                </div>
-
-                <div className="table-shell overflow-x-auto">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Provider</th>
-                        <th>Cost Share</th>
-                        <th>Total Cost</th>
-                        <th>Cost / 1K Tokens</th>
-                        <th>Models</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {entry.rows.map((row) => (
-                        <tr key={`${entry.filename}-provider-${row.provider}`}>
-                          <td className="body-copy">{row.provider}</td>
-                          <td className="micro-copy">
-                            {row.baselineCostShare != null ? `${formatMetric(row.baselineCostShare * 100, 1)}%` : "—"} → {row.candidateCostShare != null ? `${formatMetric(row.candidateCostShare * 100, 1)}%` : "—"}
-                          </td>
-                          <td className="micro-copy">
-                            {formatMetric(row.baselineTotalCost, 4)} → {formatMetric(row.candidateTotalCost, 4)}
-                          </td>
-                          <td className="micro-copy">
-                            {formatMetric(row.baselineCostPer1kTokens, 4)} → {formatMetric(row.candidateCostPer1kTokens, 4)}
-                          </td>
-                          <td className="micro-copy">
-                            {formatCount(row.baselineModelCount)} → {formatCount(row.candidateModelCount)}
                           </td>
                         </tr>
                       ))}
@@ -2213,14 +1970,23 @@ export default function Results() {
               <div>
                 <p className="micro-copy">Prompt Version</p>
                 <p className="body-copy mt-1">{(report.metadata.prompt_version as string) ?? (report.metadata.judge_prompt_version as string) ?? "—"}</p>
+                {((report.metadata.prompt_version as string) ?? (report.metadata.judge_prompt_version as string)) === "legacy" && (
+                  <p className="micro-copy mt-1">No prompt-version tag was set when this run started.</p>
+                )}
               </div>
               <div>
                 <p className="micro-copy">Schema Version</p>
                 <p className="body-copy mt-1">{(report.metadata.schema_version as string) ?? "—"}</p>
+                {report.metadata.schema_version === "legacy" && (
+                  <p className="micro-copy mt-1">This report predates report schema versioning.</p>
+                )}
               </div>
               <div>
                 <p className="micro-copy">Metric Bundle</p>
                 <p className="body-copy mt-1">{(report.metadata.metric_version as string) ?? "—"}</p>
+                {report.metadata.metric_version === "legacy" && (
+                  <p className="micro-copy mt-1">No metric-pack bundle version was recorded for this run.</p>
+                )}
               </div>
               <div>
                 <p className="micro-copy">Models</p>
@@ -2680,21 +2446,11 @@ export default function Results() {
                 <p className="section-caption mb-2">Run Summary</p>
                 <h2 className="section-heading">Efficiency Pulse</h2>
                 <p className="page-subtitle max-w-3xl text-sm">
-                  Quickly read token, spend, and latency signals for the selected run at a high summary level.
+                  Quickly read token and latency signals for the selected run at a high summary level.
                 </p>
               </div>
 
-              <div className="motion-stagger-grid grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-                <div className="panel-surface panel-quiet space-y-2">
-                  <p className="metric-label">Visible Cost</p>
-                  <p className="metric-value text-2xl">{formatMetric(totalProviderCost, 4)}</p>
-                  <p className="micro-copy">
-                    {dominantProviderCost
-                      ? `${dominantProviderCost.provider} holds ${formatMetric(dominantProviderCost.costShare * 100, 1)}% cost share`
-                      : "Cost telemetry not available"}
-                  </p>
-                </div>
-
+              <div className="motion-stagger-grid grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Leanest Model</p>
                   <p className="metric-value text-xl">{leanestModel?.model ?? "—"}</p>
@@ -2702,26 +2458,6 @@ export default function Results() {
                     {leanestModel?.avg_tokens_per_eval != null
                       ? `${formatMetric(leanestModel.avg_tokens_per_eval, 1)} tokens / eval`
                       : "Token efficiency not available"}
-                  </p>
-                </div>
-
-                <div className="panel-surface panel-quiet space-y-2">
-                  <p className="metric-label">Leanest Provider Spend</p>
-                  <p className="metric-value text-xl">{leanestProviderCost?.provider ?? "—"}</p>
-                  <p className="micro-copy">
-                    {leanestProviderCost?.costPer1kTokens != null
-                      ? `${formatMetric(leanestProviderCost.costPer1kTokens, 4)} cost / 1K tokens`
-                      : "Provider-normalized cost not available"}
-                  </p>
-                </div>
-
-                <div className="panel-surface panel-quiet space-y-2">
-                  <p className="metric-label">Best Cost Yield</p>
-                  <p className="metric-value text-xl">{strongestCostYieldModel?.model ?? "—"}</p>
-                  <p className="micro-copy">
-                    {strongestCostYieldModel?.qualityCostEfficiency != null
-                      ? `${formatMetric(strongestCostYieldModel.qualityCostEfficiency, 4)} quality / cost`
-                      : "Quality-per-cost not available"}
                   </p>
                 </div>
 
@@ -2738,7 +2474,7 @@ export default function Results() {
             </section>
           )}
 
-          {disagreement && disagreement.total_panel_cases > 0 && (
+          {disagreement && (
             <section className="motion-rise motion-delay-2 space-y-4">
               <div>
                 <p className="section-caption mb-2">Judge Desk</p>
@@ -2748,6 +2484,16 @@ export default function Results() {
                 </p>
               </div>
 
+              {disagreement.total_panel_cases === 0 ? (
+                <div className="panel-surface panel-quiet flex items-start gap-3 p-4">
+                  <AlertTriangle size={16} className="mt-0.5 opacity-60" />
+                  <p className="micro-copy">
+                    No secondary judge was configured for this run, so there's nothing to compare against the
+                    primary judge — disagreement analysis needs a second judge's scores on the same cases.
+                  </p>
+                </div>
+              ) : (
+                <>
               <div className="motion-stagger-grid grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div className="panel-surface panel-quiet space-y-2">
                   <p className="metric-label">Panel Cases</p>
@@ -2839,6 +2585,8 @@ export default function Results() {
                   </div>
                 </div>
               </div>
+                </>
+              )}
             </section>
           )}
 
@@ -3124,9 +2872,20 @@ export default function Results() {
                               </td>
                               <td className="micro-copy">{pw.p_value.toFixed(4)}</td>
                               <td className="micro-copy">{pw.wilcoxon_p_value.toFixed(4)}</td>
-                              <td className="micro-copy">{pw.effect_size}</td>
                               <td className="micro-copy">
-                                {pw.is_significant ? <span>✅ {pw.verdict}</span> : pw.verdict}
+                                {pw.effect_size}
+                                {pw.notable_effect_despite_nonsignificance && (
+                                  <span className="provider-chip ml-2">⚠ large effect, small n</span>
+                                )}
+                              </td>
+                              <td className="micro-copy">
+                                {pw.is_significant ? (
+                                  <span>✅ {pw.verdict}</span>
+                                ) : pw.notable_effect_despite_nonsignificance ? (
+                                  <span className="callout-warn-icon">⚠ {pw.verdict}</span>
+                                ) : (
+                                  pw.verdict
+                                )}
                               </td>
                             </tr>
                           ))}
@@ -3233,7 +2992,7 @@ export default function Results() {
                         <h3 className="section-heading text-lg">{row.model}</h3>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <span className="provider-chip">trend: {row.trendLabel}</span>
+                        <span className="provider-chip">trend: {humanizeTrendLabel(row.trendLabel)}</span>
                         <span className="provider-chip">history {row.historyRuns}</span>
                         <span className="provider-chip">regressions {row.regressions}</span>
                         {row.changePct != null && (
@@ -3244,6 +3003,14 @@ export default function Results() {
                         )}
                       </div>
                     </div>
+
+                    {row.historyRuns === 0 && (
+                      <p className="micro-copy">
+                        Only this run is recorded for this model so far — the trend line needs at least one
+                        earlier run to show direction. It'll fill in as more runs are saved to{" "}
+                        <code>reports/</code>.
+                      </p>
+                    )}
 
                     <div className="h-64 w-full">
                       <ResponsiveContainer width="100%" height="100%">
@@ -3310,13 +3077,15 @@ export default function Results() {
                       </div>
                       <div>
                         <p className="metric-label">Best Quality Yield</p>
-                        <p className="metric-value text-xl">{efficiencyLeaderboard[0]?.model ?? "—"}</p>
+                        <p className="metric-value text-xl">{bestQualityYieldModel?.model ?? "—"}</p>
                       </div>
                     </div>
                     <p className="micro-copy">
-                      {efficiencyLeaderboard[0]?.quality_per_1k_tokens != null
-                        ? `${formatMetric(efficiencyLeaderboard[0].quality_per_1k_tokens, 2)} quality / 1K tokens`
-                        : "Not enough token telemetry"}
+                      {bestQualityYieldModel?.quality_per_1k_tokens != null
+                        ? `${formatMetric(bestQualityYieldModel.quality_per_1k_tokens, 2)} quality / 1K tokens`
+                        : efficiencyLeaderboard.length > 0
+                          ? `No model clears the quality bar (≥${MIN_QUALITY_FOR_EFFICIENCY_BADGES.toFixed(2)})`
+                          : "Not enough token telemetry"}
                     </p>
                   </div>
 
@@ -3333,7 +3102,9 @@ export default function Results() {
                     <p className="micro-copy">
                       {leanestModel?.avg_tokens_per_eval != null
                         ? `${formatMetric(leanestModel.avg_tokens_per_eval, 1)} tokens / eval`
-                        : "Not enough token telemetry"}
+                        : efficiencyLeaderboard.length > 0
+                          ? `No model clears the quality bar (≥${MIN_QUALITY_FOR_EFFICIENCY_BADGES.toFixed(2)})`
+                          : "Not enough token telemetry"}
                     </p>
                   </div>
 
@@ -3360,8 +3131,8 @@ export default function Results() {
                     <div className="panel-surface panel-quiet space-y-4">
                       <div>
                         <p className="section-caption mb-2">Bottleneck Panel</p>
-                        <h3 className="section-heading">Latency and Cost Hotspots</h3>
-                        <p className="micro-copy mt-2">Quickly identify the slowest, costliest, and lowest quality-per-latency signals in the run.</p>
+                        <h3 className="section-heading">Latency Hotspots</h3>
+                        <p className="micro-copy mt-2">Quickly identify the slowest and lowest quality-per-latency signals in the run.</p>
                       </div>
 
                       <div className="space-y-3">
@@ -3415,23 +3186,6 @@ export default function Results() {
                               : "No quality-per-latency telemetry"}
                           </p>
                         </div>
-
-                        <div className="rounded-[1.2rem] hairline p-4">
-                          <div className="flex items-center gap-3">
-                            <div className="metric-emblem">
-                              <Sparkles size={18} />
-                            </div>
-                            <div>
-                              <p className="metric-label">Highest Total Cost</p>
-                              <p className="metric-value text-xl">{costliestModel?.model ?? "—"}</p>
-                            </div>
-                          </div>
-                          <p className="micro-copy mt-3">
-                            {costliestModel?.totalCost != null
-                              ? `${formatMetric(costliestModel.totalCost, 4)} total cost`
-                              : "No cost telemetry"}
-                          </p>
-                        </div>
                       </div>
                     </div>
 
@@ -3448,8 +3202,6 @@ export default function Results() {
                               <th>Model</th>
                               <th>Avg Latency</th>
                               <th>P95</th>
-                              <th>Cost</th>
-                              <th>Quality / Cost</th>
                               <th>Quality / Latency</th>
                               <th>Error Rate</th>
                             </tr>
@@ -3460,99 +3212,19 @@ export default function Results() {
                               .sort((left, right) => {
                                 const latencyDelta = (right.avgLatency ?? -1) - (left.avgLatency ?? -1);
                                 if (latencyDelta !== 0) return latencyDelta;
-                                const p95Delta = (right.latencyP95 ?? -1) - (left.latencyP95 ?? -1);
-                                if (p95Delta !== 0) return p95Delta;
-                                return (right.totalCost ?? -1) - (left.totalCost ?? -1);
+                                return (right.latencyP95 ?? -1) - (left.latencyP95 ?? -1);
                               })
                               .map((row) => (
                                 <tr key={`efficiency-bottleneck-${row.model}`}>
                                   <td className="body-copy">{row.model}</td>
                                   <td className="micro-copy">{formatMetric(row.avgLatency, 2)}</td>
                                   <td className="micro-copy">{formatMetric(row.latencyP95, 2)}</td>
-                                  <td className="micro-copy">{formatMetric(row.totalCost, 4)}</td>
-                                  <td className="micro-copy">{formatMetric(row.qualityCostEfficiency, 4)}</td>
                                   <td className="micro-copy">{formatMetric(row.qualityLatencyEfficiency, 4)}</td>
                                   <td>
                                     {row.errorRate != null ? <ScoreBadge score={1 - row.errorRate} /> : "—"}
                                   </td>
                                 </tr>
                               ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {normalizedProviderCostRows.length > 0 && (
-                  <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-                    <div className="panel-surface panel-quiet space-y-4">
-                      <div>
-                        <p className="section-caption mb-2">Provider Cost</p>
-                        <h3 className="section-heading">Normalized Provider Spend</h3>
-                        <p className="micro-copy mt-2">Quickly read provider-based cost share and token-normalized spend signals within the selected report.</p>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="rounded-[1.2rem] hairline p-4">
-                          <p className="metric-label">Dominant Spend Provider</p>
-                          <p className="metric-value mt-2 text-xl">{dominantProviderCost?.provider ?? "—"}</p>
-                          <p className="micro-copy mt-2">
-                            {dominantProviderCost
-                              ? `${formatMetric(dominantProviderCost.costShare * 100, 1)}% of visible cost`
-                              : "No cost telemetry"}
-                          </p>
-                        </div>
-
-                        <div className="rounded-[1.2rem] hairline p-4">
-                          <p className="metric-label">Leanest Provider Spend</p>
-                          <p className="metric-value mt-2 text-xl">{leanestProviderCost?.provider ?? "—"}</p>
-                          <p className="micro-copy mt-2">
-                            {leanestProviderCost?.costPer1kTokens != null
-                              ? `${formatMetric(leanestProviderCost.costPer1kTokens, 4)} cost / 1K tokens`
-                              : "No token-normalized cost telemetry"}
-                          </p>
-                        </div>
-
-                        <div className="rounded-[1.2rem] hairline p-4">
-                          <p className="metric-label">Provider Coverage</p>
-                          <p className="metric-value mt-2 text-xl">{formatCount(normalizedProviderCostRows.length)}</p>
-                          <p className="micro-copy mt-2">
-                            {formatMetric(totalProviderCost, 4)} total visible cost across {formatCount(modelEfficiencyRows.length)} models
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="panel-surface panel-quiet space-y-4">
-                      <div>
-                        <p className="section-caption mb-2">Provider Breakdown</p>
-                        <h3 className="section-heading">Cost Share and Token Normalization</h3>
-                      </div>
-
-                      <div className="table-shell overflow-x-auto">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Provider</th>
-                              <th>Cost Share</th>
-                              <th>Total Cost</th>
-                              <th>Avg / Model</th>
-                              <th>Cost / 1K Tokens</th>
-                              <th>Models</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {normalizedProviderCostRows.map((row) => (
-                              <tr key={`provider-cost-${row.provider}`}>
-                                <td className="body-copy">{row.provider}</td>
-                                <td className="micro-copy">{formatMetric(row.costShare * 100, 1)}%</td>
-                                <td className="micro-copy">{formatMetric(row.totalCost, 4)}</td>
-                                <td className="micro-copy">{formatMetric(row.avgCostPerModel, 4)}</td>
-                                <td className="micro-copy">{formatMetric(row.costPer1kTokens, 4)}</td>
-                                <td className="micro-copy">{row.modelNames.join(", ")}</td>
-                              </tr>
-                            ))}
                           </tbody>
                         </table>
                       </div>
@@ -3567,7 +3239,7 @@ export default function Results() {
                         <p className="section-caption mb-2">Evaluator Families</p>
                         <h3 className="section-heading">Metric Execution Footprint</h3>
                         <p className="micro-copy mt-2">
-                          Read metric provider families' coverage, score, and notable cost signals in one place.
+                          Read metric provider families' coverage and score signals in one place.
                         </p>
                       </div>
 
@@ -3579,16 +3251,6 @@ export default function Results() {
                             {topEvaluatorByVolume
                               ? `${formatCount(topEvaluatorByVolume.metric_count)} metrics across ${formatCount(topEvaluatorByVolume.case_count)} cases`
                               : "No evaluator telemetry"}
-                          </p>
-                        </div>
-
-                        <div className="rounded-[1.2rem] hairline p-4">
-                          <p className="metric-label">Highest Observed Evaluator Cost</p>
-                          <p className="metric-value mt-2 text-xl">{topEvaluatorByObservedCost?.provider ?? "—"}</p>
-                          <p className="micro-copy mt-2">
-                            {topEvaluatorByObservedCost?.observed_cost != null
-                              ? `${formatMetric(topEvaluatorByObservedCost.observed_cost, 4)} observed cost`
-                              : "Observed evaluator cost not available"}
                           </p>
                         </div>
 
@@ -3607,7 +3269,7 @@ export default function Results() {
                     <div className="panel-surface panel-quiet space-y-4">
                       <div>
                         <p className="section-caption mb-2">Evaluator Breakdown</p>
-                        <h3 className="section-heading">Coverage and Observed Spend</h3>
+                        <h3 className="section-heading">Coverage and Score</h3>
                       </div>
 
                       <div className="table-shell overflow-x-auto">
@@ -3619,8 +3281,6 @@ export default function Results() {
                               <th>Cases</th>
                               <th>Avg Score</th>
                               <th>Success</th>
-                              <th>Observed Cost</th>
-                              <th>Cost / 1K Tokens</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -3633,8 +3293,6 @@ export default function Results() {
                                 <td className="micro-copy">
                                   {row.success_rate != null ? `${formatMetric(row.success_rate * 100, 1)}%` : "—"}
                                 </td>
-                                <td className="micro-copy">{formatMetric(row.observed_cost, 4)}</td>
-                                <td className="micro-copy">{formatMetric(row.cost_per_1k_tokens, 4)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -3746,6 +3404,7 @@ export default function Results() {
                     <th>Score</th>
                     <th>95% CI</th>
                     <th>Intent</th>
+                    <th>Plan / Execution</th>
                     <th>Items</th>
                   </tr>
                 </thead>
@@ -3791,6 +3450,42 @@ export default function Results() {
                           ) : (
                             "—"
                           )}
+                        </td>
+                        <td>
+                          {(() => {
+                            const planQuality = testResult.summary?.avg_scores?.plan_quality;
+                            const taskAdherence = testResult.summary?.avg_scores?.agent_task_adherence;
+                            if (planQuality == null && taskAdherence == null) return "—";
+                            const gap =
+                              planQuality != null && taskAdherence != null
+                                ? Math.abs(taskAdherence - planQuality)
+                                : null;
+                            return (
+                              <div className="space-y-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  {planQuality != null && (
+                                    <span className="micro-copy whitespace-nowrap">
+                                      plan <ScoreBadge score={planQuality} />
+                                    </span>
+                                  )}
+                                  {taskAdherence != null && (
+                                    <span className="micro-copy whitespace-nowrap">
+                                      exec <ScoreBadge score={taskAdherence} />
+                                    </span>
+                                  )}
+                                </div>
+                                {gap != null && gap >= PLAN_EXECUTION_DIVERGENCE_THRESHOLD && (
+                                  <p className="micro-copy callout-warn-icon">
+                                    ⚠ these score two different generations — a single-shot
+                                    "plan" the judge reads vs. the model actually calling
+                                    tools. A low plan score with high execution usually means
+                                    the model refused/skipped tools in its plan text but used
+                                    them correctly once actually run.
+                                  </p>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td className="micro-copy">{testResult.summary?.total_tests ?? "—"}</td>
                       </tr>

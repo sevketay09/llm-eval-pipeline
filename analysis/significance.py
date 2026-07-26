@@ -151,6 +151,8 @@ def _paired_test(diffs: list[float], alpha: float) -> dict[str, Any]:
         w_p = 1.0
 
     effect_dz = abs(dz) if dz is not None else float("inf")
+    effect_size = _effect_label(effect_dz)
+    is_significant = bool(t_p < alpha)
 
     return {
         "t_statistic": t_stat,
@@ -158,8 +160,12 @@ def _paired_test(diffs: list[float], alpha: float) -> dict[str, Any]:
         "wilcoxon_p_value": w_p,
         "mean_difference": mean_diff,
         "cohens_dz": dz,
-        "effect_size": _effect_label(effect_dz),
-        "is_significant": bool(t_p < alpha),
+        "effect_size": effect_size,
+        "is_significant": is_significant,
+        # A medium/large effect that still isn't "significant" is usually a small-sample
+        # power problem, not proof the difference isn't real — flag it so a p-value alone
+        # doesn't get read as "no real difference".
+        "notable_effect_despite_nonsignificance": (not is_significant) and effect_size in ("medium", "large"),
     }
 
 
@@ -198,6 +204,7 @@ def pairwise_comparisons(
                     "mean_difference": mean_a - mean_b,
                     "cohens_dz": 0.0,
                     "effect_size": "negligible",
+                    "notable_effect_despite_nonsignificance": False,
                     "winner": None,
                     "verdict": "insufficient data (need >= 2 shared tests)",
                 }
@@ -224,6 +231,12 @@ def pairwise_comparisons(
         entry["verdict"] = verdict
         if entry["small_sample"]:
             entry["verdict"] += f" — small sample (n={len(shared)})"
+        if entry["notable_effect_despite_nonsignificance"]:
+            entry["verdict"] += (
+                f"; {test['effect_size']} effect size (d={test['cohens_dz']:.2f}) suggests "
+                "this may be a real gap that the small sample can't confirm — don't read "
+                "'not significant' as 'no difference'"
+            )
         out.append(entry)
 
     return out
@@ -246,6 +259,12 @@ def compute_significance(
     if any(p["small_sample"] for p in pairwise):
         warnings.append(
             f"Some pairs share < {SMALL_SAMPLE_N} tests; significance is underpowered."
+        )
+    if any(p.get("notable_effect_despite_nonsignificance") for p in pairwise):
+        warnings.append(
+            "One or more pairs show a medium/large effect size but aren't statistically "
+            "significant — likely a small-sample power problem, not evidence the models "
+            "actually perform the same."
         )
     return {
         "alpha": alpha,

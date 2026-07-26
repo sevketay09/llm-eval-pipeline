@@ -164,6 +164,7 @@ export interface StatisticalPairwise {
   mean_difference: number;
   cohens_dz: number | null;
   effect_size: "negligible" | "small" | "medium" | "large";
+  notable_effect_despite_nonsignificance: boolean;
   winner: string | null;
   verdict: string;
 }

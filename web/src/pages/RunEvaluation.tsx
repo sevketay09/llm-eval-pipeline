@@ -46,12 +46,21 @@ export default function RunEvaluation() {
 
   const { progress } = useEvalProgress(activeRun?.run_id ?? null);
 
+  // Mock-provider models (e.g. demo-model, used by the offline `make demo` CLI flow)
+  // are excluded here — they return canned, non-JSON responses and have no place
+  // in a real evaluation run or as a judge. They remain selectable via the CLI/config
+  // directly for the demo flow; this only filters the web UI's real-run picker.
+  const evaluableModelIds = models
+    ? Object.keys(models.models).filter((id) => models.models[id]!.provider !== "mock")
+    : [];
+
   useEffect(() => {
     modelsApi.list().then((r) => {
       setModels(r);
-      if (r.total > 0) {
-        setSelectedModels([Object.keys(r.models)[0]!]);
-      }
+      // Deliberately no default selection — auto-checking the first configured
+      // model (often the offline "demo-model" mock, first in models.yaml) let
+      // it silently ride along into real runs whenever a user forgot to
+      // uncheck it before adding their actual models.
     });
     evaluationsApi.listSuites().then((r) => {
       setSuites(r.suites);
@@ -114,8 +123,7 @@ export default function RunEvaluation() {
           <div>
             <label className="label">Models</label>
             <div className="option-list">
-              {models &&
-                Object.keys(models.models).map((id) => (
+              {evaluableModelIds.map((id) => (
                   <label key={id} className="option-row cursor-pointer">
                     <input
                       type="checkbox"
@@ -248,12 +256,11 @@ export default function RunEvaluation() {
               className="control-surface"
             >
               <option value="">— Auto</option>
-              {models &&
-                Object.keys(models.models).map((id) => (
-                  <option key={id} value={id}>
-                    {id}
-                  </option>
-                ))}
+              {evaluableModelIds.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
             </select>
           </div>
 
