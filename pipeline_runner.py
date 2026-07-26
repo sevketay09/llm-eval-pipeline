@@ -7117,7 +7117,15 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
             for test_name in tests_to_run
         )
         judge = self.initialize_judge() if has_non_embedding_tests else None
-        
+
+        # A given test's dataset is identical across every model in this run
+        # (load_dataset/_normalize_dataset_for_test depend only on test_name/
+        # test_func, never on the model), so cache it here instead of
+        # re-reading and re-parsing the same JSON file from disk once per
+        # model. run_full_evaluation_parallel doesn't need this: it already
+        # loads each test's dataset once and fans it out across models.
+        dataset_cache: Dict[str, List[Any]] = {}
+
         # Run evaluation for each model
         for model_key in model_keys:
             logger.info(f"Evaluating model: {model_key}")
@@ -7150,12 +7158,16 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
                 dataset_path, test_func = test_mapping[test_name]
 
                 try:
-                    dataset = self.load_dataset(
-                        dataset_path,
-                        max_samples,
-                        test_name=test_name,
-                        test_func=test_func,
-                    )
+                    if test_name in dataset_cache:
+                        dataset = dataset_cache[test_name]
+                    else:
+                        dataset = self.load_dataset(
+                            dataset_path,
+                            max_samples,
+                            test_name=test_name,
+                            test_func=test_func,
+                        )
+                        dataset_cache[test_name] = dataset
                     if isinstance(test_name, str) and test_name.startswith("embedding_"):
                         test_result = test_func(model, dataset, test_name)
                     else:
