@@ -6,8 +6,8 @@ from typing import Any, Callable, Dict, List, Optional
 
 import yaml
 
-from api.schemas.rag_eval import RagContext, RagEvalResponse
-from analysis.rag_eval import evaluate_rag_case
+from api.schemas.rag_eval import RagContext, RagEvalResponse, RagReportEvalResponse
+from analysis.rag_eval import evaluate_rag_case, evaluate_rag_report
 
 
 def _default_embedding_adapter_factory(model_key: str, config_path: str) -> Any:
@@ -50,6 +50,16 @@ class RagEvalService:
             self._embedding_adapters[model_key] = self.embedding_adapter_factory(model_key, self.config_path)
         return self._embedding_adapters[model_key]
 
+    def _build_embed_fn(self, embedding_model: Optional[str]):
+        if not embedding_model:
+            return None
+        adapter = self._get_embedding_adapter(embedding_model)
+
+        def embed_fn(texts: List[str]):
+            return adapter.encode(texts, normalize=True)["embeddings"]
+
+        return embed_fn
+
     def evaluate(
         self,
         question: str,
@@ -66,13 +76,7 @@ class RagEvalService:
             "expected_answer": expected_answer,
         }
 
-        embed_fn = None
-        if embedding_model:
-            adapter = self._get_embedding_adapter(embedding_model)
-
-            def embed_fn(texts: List[str]):
-                return adapter.encode(texts, normalize=True)["embeddings"]
-
+        embed_fn = self._build_embed_fn(embedding_model)
         result = evaluate_rag_case(case, embed_fn=embed_fn)
 
         # evaluate_rag_case() returns metrics at the top level (context_precision,
@@ -105,4 +109,23 @@ class RagEvalService:
             scoring_mode="embedding" if embedding_model else "token_overlap",
             embedding_model=embedding_model,
             details=result,
+        )
+
+    def evaluate_report(
+        self,
+        report: Dict[str, Any],
+        embedding_model: Optional[str] = None,
+    ) -> RagReportEvalResponse:
+        """Batch-score every RAG-shaped case already recorded in a saved eval
+        report (any test result carrying a contexts/context/retrieved_chunks
+        field), aggregated per model. Wraps analysis.rag_eval.evaluate_rag_report."""
+        embed_fn = self._build_embed_fn(embedding_model)
+        result = evaluate_rag_report(report, embed_fn=embed_fn)
+
+        return RagReportEvalResponse(
+            total_rag_cases=result.get("total_rag_cases", 0),
+            models=result.get("models", {}),
+            overall_fault_distribution=result.get("overall_fault_distribution", {}),
+            scoring_mode="embedding" if embedding_model else "token_overlap",
+            embedding_model=embedding_model,
         )

@@ -39,3 +39,26 @@ class RagEvalResponse(BaseModel):
     scoring_mode: str = "token_overlap"
     embedding_model: Optional[str] = None
     details: Dict[str, Any] = {}
+
+
+class RagModelAggregate(BaseModel):
+    avg_context_precision: float
+    # None when no case in this model's results had an expected_answer to
+    # compare context against — same "not applicable, not a real zero"
+    # distinction as RagEvalResponse.context_recall_applicable, but here
+    # it's cheaper to just let the aggregate itself be optional since there's
+    # no pre-existing float-typed field to keep non-breaking.
+    avg_context_recall: Optional[float] = None
+    avg_faithfulness: float
+    avg_answer_relevance: float
+    avg_overall_rag_score: float
+    fault_distribution: Dict[str, int]
+    rag_case_count: int
+
+
+class RagReportEvalResponse(BaseModel):
+    total_rag_cases: int
+    models: Dict[str, RagModelAggregate]
+    overall_fault_distribution: Dict[str, int]
+    scoring_mode: str = "token_overlap"
+    embedding_model: Optional[str] = None

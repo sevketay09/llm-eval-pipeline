@@ -135,12 +135,46 @@ class _FakeReportService:
         }
 
 
-def _build_client(service):
+def _build_client(service, rag_eval_service=None):
     results_router_module = _load_results_router_module()
     app = FastAPI()
     app.include_router(results_router_module.router, prefix="/api")
     app.dependency_overrides[results_router_module.get_report_service] = lambda: service
+    if rag_eval_service is not None:
+        app.dependency_overrides[results_router_module.get_rag_eval_service] = lambda: rag_eval_service
     return TestClient(app)
+
+
+class _RagFakeReportService(_FakeReportService):
+    """get_report_raw() returns a report shaped like a real eval_*.json file,
+    with one RAG-eligible case (has a "contexts" field) and one plain
+    (non-RAG) case that evaluate_rag_report must skip."""
+
+    def get_report_raw(self, filename):
+        if filename == "missing.json":
+            return None
+        return {
+            "models": {
+                "demo-model": {
+                    "tests": {
+                        "rag_test": {
+                            "results": [
+                                {
+                                    "question": "What is the capital of France?",
+                                    "contexts": ["Paris is the capital of France."],
+                                    "answer": "Paris.",
+                                },
+                            ]
+                        },
+                        "turkish_grammar": {
+                            "results": [
+                                {"question": "not a rag case", "answer": "no contexts field here"},
+                            ]
+                        },
+                    }
+                }
+            }
+        }
 
 
 class ResultsRouterContractTests(unittest.TestCase):
@@ -222,6 +256,46 @@ class ResultsRouterContractTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["detail"], "Need at least 2 reports to compare")
+
+
+class ResultsRagEvalEndpointTests(unittest.TestCase):
+    def test_aggregates_rag_cases_and_skips_non_rag_results(self):
+        from api.services.rag_eval_service import RagEvalService
+
+        client = _build_client(_RagFakeReportService(), rag_eval_service=RagEvalService())
+
+        response = client.get("/api/results/reports/baseline.json/rag-eval")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["total_rag_cases"], 1)  # the turkish_grammar case has no "contexts" field
+        self.assertIn("demo-model", body["models"])
+        self.assertEqual(body["models"]["demo-model"]["rag_case_count"], 1)
+        self.assertGreater(body["models"]["demo-model"]["avg_faithfulness"], 0.0)
+
+    def test_missing_report_returns_404(self):
+        from api.services.rag_eval_service import RagEvalService
+
+        client = _build_client(_RagFakeReportService(), rag_eval_service=RagEvalService())
+
+        response = client.get("/api/results/reports/missing.json/rag-eval")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_unknown_embedding_model_returns_404(self):
+        from api.services.rag_eval_service import RagEvalService
+
+        def failing_factory(model_key, config_path):
+            raise ValueError(f"Embedding model '{model_key}' not found in config")
+
+        client = _build_client(
+            _RagFakeReportService(),
+            rag_eval_service=RagEvalService(embedding_adapter_factory=failing_factory),
+        )
+
+        response = client.get("/api/results/reports/baseline.json/rag-eval?embedding_model=does-not-exist")
+
+        self.assertEqual(response.status_code, 404)
 
 
 if __name__ == "__main__":
