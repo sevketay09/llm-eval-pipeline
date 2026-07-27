@@ -313,6 +313,21 @@ class CosineNumpyContractTests(unittest.TestCase):
         v2 = np.array([0.0, 1.0])
         self.assertAlmostEqual(_cosine(v1, v2), 0.0, places=6)
 
+    def test_cosine_returns_a_plain_python_float_not_a_numpy_scalar(self):
+        # Regression: dot stayed a numpy.float32/64 even after norm1/norm2
+        # were coerced to Python floats via math.sqrt, and that numpy scalar
+        # ended up inside RagEvalResponse.details — Pydantic's JSON
+        # serializer rejects numpy types outright
+        # (PydanticSerializationError: Unable to serialize unknown type:
+        # <class 'numpy.float32'>), so any real (embedding-mode) RAG Eval
+        # call 500'd at the response-serialization stage, after the route
+        # handler's own try/except had already returned successfully.
+        v1 = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+        v2 = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+        result = _cosine(v1, v2)
+        self.assertIsInstance(result, float)
+        self.assertNotIsInstance(result, np.floating)
+
     def test_embed_fn_returning_numpy_rows_does_not_crash_compute_faithfulness(self):
         def fake_embed_fn(texts):
             # Shape (n, dim) numpy array, like UnifiedEmbeddingAdapter.encode()

@@ -118,3 +118,28 @@ class TestRagEvalEmbeddingMode:
             assert body["embedding_model"] == "fake-embed"
         finally:
             rag_eval_module._service = original
+
+    def test_embedding_mode_with_real_numpy_shaped_adapter_serializes_cleanly(self, client):
+        # Regression, reproduced end-to-end: a fake adapter returning plain
+        # Python lists (test above) doesn't exercise the actual failure —
+        # UnifiedEmbeddingAdapter.encode() returns a numpy array, and numpy
+        # scalar dtypes propagating through _cosine's arithmetic 500'd at
+        # Pydantic's response-serialization stage (after the route handler's
+        # own try/except had already returned "successfully"), independent
+        # of the earlier `if not v1` truthiness crash. This fake mirrors the
+        # real adapter's return shape (numpy array, not a list of lists).
+        import numpy as np
+
+        class _NumpyShapedAdapter:
+            def encode(self, texts, normalize=True):
+                return {"embeddings": np.array([[1.0, 0.5] for _ in texts], dtype=np.float32)}
+
+        original = rag_eval_module._service
+        rag_eval_module._service = RagEvalService(embedding_adapter_factory=lambda k, p: _NumpyShapedAdapter())
+        try:
+            r = client.post("/api/rag-eval", json=_payload(embedding_model="fake-embed"))
+            assert r.status_code == 200
+            body = r.json()
+            assert isinstance(body["overall_score"], float)
+        finally:
+            rag_eval_module._service = original

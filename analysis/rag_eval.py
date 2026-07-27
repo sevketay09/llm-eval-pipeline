@@ -71,7 +71,13 @@ def _cosine(v1: list, v2: list) -> float:
     norm2 = math.sqrt(sum(b * b for b in v2))
     if norm1 == 0 or norm2 == 0:
         return 0.0
-    return dot / (norm1 * norm2)
+    # v1/v2 elements are numpy.float32/64 for a real embedding adapter's
+    # output, and numpy scalar dtypes propagate through the arithmetic above
+    # (dot stays a numpy scalar even though norm1/norm2 are plain Python
+    # floats via math.sqrt) — cast back so this always returns a plain
+    # Python float. Pydantic can't JSON-serialize numpy scalar types, and
+    # this value ends up embedded in RagEvalResponse.details.
+    return float(dot / (norm1 * norm2))
 
 
 def compute_context_precision(question: str, contexts: list, *, embed_fn=None) -> dict:
