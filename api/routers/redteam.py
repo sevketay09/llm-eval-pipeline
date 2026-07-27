@@ -22,7 +22,7 @@ def create_session(
     req: CreateSessionRequest,
     svc: Annotated[RedTeamService, Depends(get_service)],
 ):
-    session = svc.create(system_prompt=req.system_prompt, categories=req.categories)
+    session = svc.create(system_prompt=req.system_prompt, categories=req.categories, model_key=req.model_key)
     return svc.to_summary(session)
 
 

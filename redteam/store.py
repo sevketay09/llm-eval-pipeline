@@ -92,6 +92,7 @@ class RedTeamSession:
     session_id: str
     system_prompt: str
     categories: List[str]
+    model_key: str = ""
     attacks: List[Attack] = field(default_factory=list)
     results: List[AttackResult] = field(default_factory=list)
     status: str = "pending"   # pending | running | done | error
@@ -104,6 +105,7 @@ class RedTeamSession:
             "session_id": self.session_id,
             "system_prompt": self.system_prompt,
             "categories": self.categories,
+            "model_key": self.model_key,
             "attacks": [a.to_dict() for a in self.attacks],
             "results": [r.to_dict() for r in self.results],
             "status": self.status,
@@ -118,6 +120,7 @@ class RedTeamSession:
             session_id=data["session_id"],
             system_prompt=data["system_prompt"],
             categories=data.get("categories", []),
+            model_key=data.get("model_key", ""),
             attacks=[Attack.from_dict(a) for a in data.get("attacks", [])],
             results=[AttackResult.from_dict(r) for r in data.get("results", [])],
             status=data.get("status", "pending"),
@@ -179,10 +182,12 @@ class RedTeamStore:
 def make_session(
     system_prompt: str,
     categories: List[str],
+    model_key: str = "",
     session_id: Optional[str] = None,
 ) -> RedTeamSession:
     return RedTeamSession(
         session_id=session_id or uuid.uuid4().hex,
         system_prompt=system_prompt,
         categories=categories,
+        model_key=model_key,
     )

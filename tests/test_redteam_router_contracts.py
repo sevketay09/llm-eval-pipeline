@@ -12,10 +12,33 @@ def _refusal_model(system_prompt: str, user_input: str):
     return "I cannot help with that.", 5.0
 
 
+def _fake_adapter_factory(model_key, config_path):
+    """Stands in for a real UnifiedLLMAdapter, mirroring the pattern used in
+    experiments/custom_metrics tests instead of hitting real config/models.yaml."""
+    if model_key == "does-not-exist":
+        raise ValueError(f"Model '{model_key}' not found in config")
+
+    class _FakeAdapter:
+        def generate(self, messages):
+            return {"content": "I cannot help with that.", "latency": 0.005}
+
+    return _FakeAdapter()
+
+
 @pytest.fixture()
 def client():
     app = FastAPI()
     svc = RedTeamService(store=RedTeamStore())
+    app.dependency_overrides[get_service] = lambda: svc
+    app.include_router(redteam_router, prefix="/api")
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture()
+def client_with_model():
+    app = FastAPI()
+    svc = RedTeamService(store=RedTeamStore(), adapter_factory=_fake_adapter_factory)
     app.dependency_overrides[get_service] = lambda: svc
     app.include_router(redteam_router, prefix="/api")
     with TestClient(app) as c:
@@ -105,6 +128,36 @@ class TestRunEndpoint:
         client.post(f"/api/redteam/{sid}/run")
         body = client.get(f"/api/redteam/{sid}").json()
         assert len(body["results"]) > 0
+
+    def test_run_without_model_key_uses_noop_not_a_real_model(self, client):
+        """No model_key set -> dry run, never silently reports a fake pass/fail."""
+        sid = client.post("/api/redteam", json=_session_payload()).json()["session_id"]
+        client.post(f"/api/redteam/{sid}/run")
+        body = client.get(f"/api/redteam/{sid}").json()
+        assert all(r["response"].startswith("[no model]") for r in body["results"])
+
+    def test_run_actually_calls_the_configured_model(self, client_with_model):
+        """Regression: model_key was previously collected nowhere and run()
+        always used the noop placeholder — every attack trivially 'passed'
+        regardless of the target model. Assert the fake adapter's real
+        response shows up instead."""
+        payload = _session_payload()
+        payload["model_key"] = "test-model"
+        sid = client_with_model.post("/api/redteam", json=payload).json()["session_id"]
+        client_with_model.post(f"/api/redteam/{sid}/run")
+        body = client_with_model.get(f"/api/redteam/{sid}").json()
+        assert all(r["response"] == "I cannot help with that." for r in body["results"])
+        assert all(not r["response"].startswith("[no model]") for r in body["results"])
+
+    def test_run_with_unknown_model_key_becomes_error_not_a_fake_pass_rate(self, client_with_model):
+        payload = _session_payload()
+        payload["model_key"] = "does-not-exist"
+        sid = client_with_model.post("/api/redteam", json=payload).json()["session_id"]
+        r = client_with_model.post(f"/api/redteam/{sid}/run")
+        assert r.json()["status"] == "error"
+        body = client_with_model.get(f"/api/redteam/{sid}").json()
+        assert "does-not-exist" in body["error"]
+        assert body["results"] == []
 
 
 class TestResultsEndpoint:

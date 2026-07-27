@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Play, CheckCircle, XCircle, AlertCircle, ChevronDown, ChevronRight } from "lucide-react";
-import { PageHeader, Card, Button, Badge, Field, Textarea, useToast } from "@/components";
+import { PageHeader, Card, Button, Badge, Field, Select, Textarea, useToast } from "@/components";
+import { modelsApi } from "@/api/client";
 
 const BASE = "/api";
 
@@ -35,6 +36,7 @@ interface SessionSummary {
 }
 
 interface SessionDetail extends SessionSummary {
+  error: string;
   results: AttackResult[];
 }
 
@@ -44,13 +46,19 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(typeof err.detail === "string" ? err.detail : `${r.status} ${r.statusText}`);
+  }
   return r.json();
 }
 
 async function apiGet<T>(path: string): Promise<T> {
   const r = await fetch(`${BASE}${path}`);
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(typeof err.detail === "string" ? err.detail : `${r.status} ${r.statusText}`);
+  }
   return r.json();
 }
 
@@ -104,9 +112,22 @@ function ResultRow({ r }: { r: AttackResult }) {
 export default function RedTeam() {
   const [systemPrompt, setSystemPrompt] = useState("");
   const [categories, setCategories] = useState<string[]>([...ALL_CATEGORIES]);
+  const [models, setModels] = useState<string[]>([]);
+  const [modelKey, setModelKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<SessionDetail | null>(null);
   const toast = useToast();
+
+  useEffect(() => {
+    modelsApi
+      .list()
+      .then(r => {
+        const keys = Object.keys(r.models);
+        setModels(keys);
+        setModelKey(prev => prev || keys[0] || "");
+      })
+      .catch(() => setModels([]));
+  }, []);
 
   function toggleCategory(cat: string) {
     setCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
@@ -118,9 +139,16 @@ export default function RedTeam() {
     setDetail(null);
     setLoading(true);
     try {
-      const summary = await apiPost<SessionSummary>("/redteam", { system_prompt: systemPrompt.trim(), categories });
-      await apiPost(`/redteam/${summary.session_id}/run`, {});
+      const summary = await apiPost<SessionSummary>("/redteam", {
+        system_prompt: systemPrompt.trim(), categories, model_key: modelKey,
+      });
+      const ran = await apiPost<{ status: string }>(`/redteam/${summary.session_id}/run`, {});
       const d = await apiGet<SessionDetail>(`/redteam/${summary.session_id}/results`);
+      if (ran.status === "error") {
+        setDetail(d);
+        toast.error(d.error || "Red-team run failed.");
+        return;
+      }
       setDetail(d);
       toast.success(`Ran ${d.attack_count} attacks · ${d.failed} got through.`);
     } catch (e: unknown) {
@@ -163,6 +191,13 @@ export default function RedTeam() {
           />
         </Field>
 
+        <Field label="Target model">
+          <Select value={modelKey} onChange={e => setModelKey(e.target.value)}>
+            {models.length === 0 && <option value="">No models configured — dry run only</option>}
+            {models.map(m => <option key={m} value={m}>{m}</option>)}
+          </Select>
+        </Field>
+
         <span className="ds-field-mini" style={{ marginTop: "1rem" }}>Attack categories</span>
         <div className="flex flex-wrap gap-2">
           {ALL_CATEGORIES.map(cat => (
@@ -181,7 +216,12 @@ export default function RedTeam() {
       </Card>
 
       {/* Results */}
-      {detail && (
+      {detail && detail.status === "error" && (
+        <div className="alert-box alert-danger">
+          Run failed before any attack could complete: {detail.error || "unknown error"}
+        </div>
+      )}
+      {detail && detail.status !== "error" && (
         <Card style={{ padding: 0 }}>
           <div style={{ display: "flex", gap: "1.5rem", padding: "0.9rem 1.1rem", borderBottom: "1px solid var(--line)", alignItems: "center", flexWrap: "wrap" }}>
             <span className="body-copy"><strong>{detail.attack_count}</strong> attacks</span>

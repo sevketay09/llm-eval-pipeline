@@ -10,6 +10,7 @@ from redteam.store import CATEGORIES
 class CreateSessionRequest(BaseModel):
     system_prompt: str = Field(..., min_length=1)
     categories: List[str] = Field(default_factory=lambda: list(CATEGORIES))
+    model_key: str = ""
 
 
 class AttackSchema(BaseModel):
@@ -35,6 +36,7 @@ class SessionSummary(BaseModel):
     session_id: str
     system_prompt: str
     categories: List[str]
+    model_key: str = ""
     attack_count: int
     status: str
     passed: int = 0
@@ -47,6 +49,7 @@ class SessionDetail(BaseModel):
     session_id: str
     system_prompt: str
     categories: List[str]
+    model_key: str = ""
     attacks: List[AttackSchema]
     results: List[AttackResultSchema]
     status: str
