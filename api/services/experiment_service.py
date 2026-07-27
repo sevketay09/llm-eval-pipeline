@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import time
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import yaml
 
 from api.schemas.experiments import (
     CompareResponse,
@@ -24,14 +27,67 @@ from experiments.store import (
 
 
 def _noop_model_fn(system_prompt: str, user_input: str) -> Tuple[str, float]:
-    """Placeholder — real calls go through UnifiedLLMAdapter injection."""
+    """Placeholder — used only when the experiment has no model_key set."""
     return f"[no model configured] prompt={system_prompt[:30]!r} input={user_input[:30]!r}", 0.0
 
 
+def _default_adapter_factory(model_key: str, config_path: str) -> Any:
+    """Build a UnifiedLLMAdapter for `model_key` with ${ENV_VAR} expansion.
+
+    Mirrors SkillEvalService/CustomMetricService's factory — ConfigService's
+    loader does not expand ${ENV_VAR} placeholders, so reading straight from
+    it would hand the adapter a literal "${OPENROUTER_API_KEY}" string.
+    """
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    config_str = yaml.dump(config)
+    for key, value in os.environ.items():
+        config_str = config_str.replace(f"${{{key}}}", value)
+    config = yaml.safe_load(config_str)
+    if model_key not in config.get("models", {}):
+        raise ValueError(f"Model '{model_key}' not found in config")
+    from adapters.unified_adapter import UnifiedLLMAdapter  # heavy import kept lazy
+
+    return UnifiedLLMAdapter(dict(config["models"][model_key]), model_key=model_key)
+
+
 class ExperimentService:
-    def __init__(self, store: Optional[ExperimentStore] = None):
+    def __init__(
+        self,
+        store: Optional[ExperimentStore] = None,
+        config_path: str = "config/models.yaml",
+        adapter_factory: Optional[Callable[[str, str], Any]] = None,
+    ):
         self._store = store or ExperimentStore()
         self._lock = asyncio.Lock()
+        self.config_path = config_path
+        self.adapter_factory = adapter_factory or _default_adapter_factory
+        self._adapters: Dict[str, Any] = {}
+
+    def _get_adapter(self, model_key: str) -> Any:
+        if model_key not in self._adapters:
+            self._adapters[model_key] = self.adapter_factory(model_key, self.config_path)
+        return self._adapters[model_key]
+
+    def _build_model_fn(self, model_key: str):
+        """Wrap UnifiedLLMAdapter.generate() into the (system_prompt, user_input)
+        -> (output, latency_ms) shape ExperimentRunner expects. Raises on a
+        failed generation instead of returning empty text, so the runner's
+        existing per-case except-block turns it into an `error`-carrying
+        VariantResult rather than a fabricated score."""
+        adapter = self._get_adapter(model_key)
+
+        def model_fn(system_prompt: str, user_input: str) -> Tuple[str, float]:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_input},
+            ]
+            result = adapter.generate(messages)
+            if result.get("error") or result.get("content") is None:
+                raise RuntimeError(result.get("error") or "Model returned no content")
+            return result["content"], round(result.get("latency", 0.0) * 1000, 2)
+
+        return model_fn
 
     def create(
         self,
@@ -70,9 +126,9 @@ class ExperimentService:
             exp.status = "running"
             self._store.update(exp)
 
-        fn = model_fn or _noop_model_fn
-        runner = ExperimentRunner(model_fn=fn)
         try:
+            fn = model_fn or (self._build_model_fn(exp.model_key) if exp.model_key else _noop_model_fn)
+            runner = ExperimentRunner(model_fn=fn)
             results: List[VariantResult] = await asyncio.get_event_loop().run_in_executor(
                 None, runner.run, exp
             )
