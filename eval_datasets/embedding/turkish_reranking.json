@@ -1,0 +1,242 @@
+[
+  {
+    "id": "rr_001",
+    "category": "banking",
+    "query": "Kredi kartı borcumu nasıl öderim?",
+    "candidates": [
+      {"text": "Kredi kartı borcunuzu mobil uygulama, internet bankacılığı veya otomatik ödeme talimatı ile ödeyebilirsiniz.", "relevance": 2},
+      {"text": "Kredi kartı borcunun asgari tutarı, toplam borcun belirli bir yüzdesi olarak hesaplanır.", "relevance": 1},
+      {"text": "Kredi kartı başvurusu için gelir belgesi ve kimlik fotokopisi gerekmektedir.", "relevance": 0},
+      {"text": "Bugün hava İstanbul'da parçalı bulutlu olacak.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_002",
+    "category": "banking",
+    "query": "Hesap ekstresini nasıl alabilirim?",
+    "candidates": [
+      {"text": "Hesap ekstrenizi mobil uygulama üzerinden e-posta olarak alabilirsiniz.", "relevance": 2},
+      {"text": "Hesap ekstresi, son üç ayın işlem geçmişini özetleyen bir belgedir.", "relevance": 1},
+      {"text": "Hesap bakiyenizi anlık olarak mobil uygulamadan görüntüleyebilirsiniz.", "relevance": 1},
+      {"text": "Şubelerimiz hafta içi 09:00-17:00 saatleri arasında hizmet vermektedir.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_003",
+    "category": "finance",
+    "query": "Yatırım fonu getirisi nasıl hesaplanır?",
+    "candidates": [
+      {"text": "Yatırım fonu getirisi, fon birim pay değerindeki değişim üzerinden hesaplanır.", "relevance": 2},
+      {"text": "Yatırım fonlarında yönetim ücreti günlük olarak fon değerinden düşülür.", "relevance": 1},
+      {"text": "Yatırım fonu almak için minimum tutar 100 TL'dir.", "relevance": 1},
+      {"text": "En yakın şubemize kimlik belgenizle başvurabilirsiniz.", "relevance": 0}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_004",
+    "category": "finance",
+    "query": "Döviz kuru günlük olarak nasıl belirlenir?",
+    "candidates": [
+      {"text": "Döviz kurları, uluslararası piyasa arz ve talebine göre günlük olarak belirlenir.", "relevance": 2},
+      {"text": "Merkez bankası, gösterge niteliğinde günlük döviz kurları yayınlar.", "relevance": 2},
+      {"text": "Döviz hesabı açmak için ek bir belge gerekmemektedir.", "relevance": 0},
+      {"text": "Kredi kartı ile döviz alışverişi yapılabilir.", "relevance": 1}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_005",
+    "category": "regulatory",
+    "query": "Mevduat sigortası neyi kapsar?",
+    "candidates": [
+      {"text": "Mevduat sigortası, banka iflası durumunda belirli bir tutara kadar mevduatı güvence altına alır.", "relevance": 2},
+      {"text": "Mevduat sigortası kapsamındaki tutar, mudi başına ve banka başına ayrı ayrı hesaplanır.", "relevance": 2},
+      {"text": "Yatırım fonları mevduat sigortası kapsamında değildir.", "relevance": 1},
+      {"text": "Bankamızın müşteri hizmetleri 7/24 hizmet vermektedir.", "relevance": 0}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_006",
+    "category": "regulatory",
+    "query": "KVKK kapsamında hangi haklara sahibim?",
+    "candidates": [
+      {"text": "KVKK kapsamında kişisel verilerinizin işlenip işlenmediğini öğrenme hakkına sahipsiniz.", "relevance": 2},
+      {"text": "KVKK kapsamında verilerinizin düzeltilmesini veya silinmesini talep edebilirsiniz.", "relevance": 2},
+      {"text": "Şirketimiz kişisel verileri yasal saklama süresi boyunca muhafaza eder.", "relevance": 1},
+      {"text": "Yeni ürünlerimiz hakkında bilgi almak için bültenimize abone olabilirsiniz.", "relevance": 0}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_007",
+    "category": "function_calling",
+    "query": "İstanbul'un hava durumunu öğren",
+    "candidates": [
+      {"text": "get_weather fonksiyonu, belirtilen şehir için güncel hava durumu bilgisini döndürür.", "relevance": 2},
+      {"text": "get_weather fonksiyonu şehir parametresi olarak İstanbul, Ankara gibi değerler kabul eder.", "relevance": 1},
+      {"text": "get_stock_price fonksiyonu, hisse senedi sembolü için güncel fiyatı döndürür.", "relevance": 0},
+      {"text": "send_reminder fonksiyonu, belirtilen saatte hatırlatma bildirimi gönderir.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_008",
+    "category": "function_calling",
+    "query": "AAPL hissesinin fiyatını al",
+    "candidates": [
+      {"text": "get_stock_price fonksiyonu, belirtilen hisse senedi sembolü için güncel fiyatı döndürür.", "relevance": 2},
+      {"text": "get_stock_price fonksiyonu, sembol parametresi olarak AAPL, TSLA gibi değerler kabul eder.", "relevance": 1},
+      {"text": "convert_currency fonksiyonu, iki para birimi arasında dönüşüm yapar.", "relevance": 0},
+      {"text": "get_weather fonksiyonu, belirtilen şehir için hava durumu döndürür.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_009",
+    "category": "general",
+    "query": "Python'da bir liste nasıl sıralanır?",
+    "candidates": [
+      {"text": "Python'da bir listeyi sıralamak için sorted() fonksiyonu veya .sort() metodu kullanılır.", "relevance": 2},
+      {"text": ".sort() metodu listeyi yerinde (in-place) sıralarken, sorted() yeni bir liste döndürür.", "relevance": 2},
+      {"text": "Python'da bir sözlük (dictionary) anahtar-değer çiftlerinden oluşur.", "relevance": 0},
+      {"text": "Python listeleri, farklı veri tiplerini bir arada tutabilir.", "relevance": 1}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_010",
+    "category": "general",
+    "query": "İstanbul'da gezilecek tarihi yerler nelerdir?",
+    "candidates": [
+      {"text": "Ayasofya, Topkapı Sarayı ve Sultanahmet Camii, İstanbul'un en önemli tarihi yerleridir.", "relevance": 2},
+      {"text": "Kapalıçarşı, yüzyıllardır süregelen ticari faaliyetiyle İstanbul'un simgelerinden biridir.", "relevance": 1},
+      {"text": "İstanbul'da toplu taşıma için İstanbulkart kullanılmaktadır.", "relevance": 0},
+      {"text": "En yakın restoranlar için harita uygulamasını kullanabilirsiniz.", "relevance": 0}
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rr_011",
+    "category": "banking",
+    "query": "Otomatik ödeme talimatı nasıl iptal edilir?",
+    "candidates": [
+      {"text": "Otomatik ödeme talimatı, mobil uygulama üzerinden 'Talimatlarım' bölümünden iptal edilebilir.", "relevance": 2},
+      {"text": "Otomatik ödeme talimatı iptal edildiğinde, bir sonraki fatura döneminden itibaren geçerli olur.", "relevance": 1},
+      {"text": "Yeni bir otomatik ödeme talimatı oluşturmak için fatura numarası gereklidir.", "relevance": 1},
+      {"text": "Şubemizde döviz bozdurma işlemi yapılabilmektedir.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_012",
+    "category": "banking",
+    "query": "Yurt dışında kartımı kullanırken nelere dikkat etmeliyim?",
+    "candidates": [
+      {"text": "Yurt dışı kullanım için kartınızın uluslararası işlemlere açık olduğundan emin olun.", "relevance": 2},
+      {"text": "Yurt dışında yapılan işlemlerde güncel döviz kuru ve işlem ücreti uygulanır.", "relevance": 2},
+      {"text": "Kartınızı kaybederseniz derhal müşteri hizmetlerini arayarak bloke ettirin.", "relevance": 1},
+      {"text": "Şubemizde yeni hesap açılışı için randevu alabilirsiniz.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_013",
+    "category": "finance",
+    "query": "Vadeli mevduat hesabı erken kapatılırsa ne olur?",
+    "candidates": [
+      {"text": "Vadeli mevduat hesabı vadesinden önce kapatılırsa, uygulanan faiz oranı düşürülür.", "relevance": 2},
+      {"text": "Erken kapama durumunda genellikle vadesiz hesap faiz oranı uygulanır.", "relevance": 2},
+      {"text": "Vadeli mevduat açmak için minimum tutar bankadan bankaya değişir.", "relevance": 1},
+      {"text": "Kredi kartı başvurusu online olarak yapılabilir.", "relevance": 0}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_014",
+    "category": "finance",
+    "query": "Emeklilik fonumu değiştirmek istiyorum, nasıl yapabilirim?",
+    "candidates": [
+      {"text": "Emeklilik fon dağılımınızı mobil uygulama veya çağrı merkezi üzerinden değiştirebilirsiniz.", "relevance": 2},
+      {"text": "Fon değişikliği talebiniz, talimatı verdiğiniz günün fiyatı üzerinden işleme alınır.", "relevance": 1},
+      {"text": "Bir yıl içinde sınırlı sayıda ücretsiz fon değişikliği hakkınız bulunmaktadır.", "relevance": 1},
+      {"text": "Şirketimizin merkez ofisi İstanbul'dadır.", "relevance": 0}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_015",
+    "category": "regulatory",
+    "query": "Şüpheli işlem nasıl bildirilir?",
+    "candidates": [
+      {"text": "Şüpheli bir işlem tespit ettiğinizde bankanın müşteri hizmetlerine veya ilgili birime bildirimde bulunmalısınız.", "relevance": 2},
+      {"text": "Şüpheli işlem bildirimleri, ilgili mevzuat gereği yasal süreler içinde değerlendirilir.", "relevance": 1},
+      {"text": "Şüpheli işlem bildirimi yapan müşterinin kimliği gizli tutulur.", "relevance": 1},
+      {"text": "Yeni kredi kartı başvuruları online olarak yapılabilir.", "relevance": 0}
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "rr_016",
+    "category": "customer_service",
+    "query": "Şikayetimi nereye iletebilirim?",
+    "candidates": [
+      {"text": "Şikayetlerinizi mobil uygulama, çağrı merkezi veya şube üzerinden iletebilirsiniz.", "relevance": 2},
+      {"text": "Şikayetler ortalama on beş iş günü içinde sonuçlandırılmaktadır.", "relevance": 1},
+      {"text": "Şikayetinizin sonucunu SMS veya e-posta yoluyla öğrenebilirsiniz.", "relevance": 1},
+      {"text": "Yeni hesap açılışı için gerekli belgeler kimlik ve ikametgahtır.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_017",
+    "category": "customer_service",
+    "query": "Şubeye gitmeden hesap açabilir miyim?",
+    "candidates": [
+      {"text": "Mobil uygulama üzerinden şubeye gitmeden video görüşmesiyle hesap açabilirsiniz.", "relevance": 2},
+      {"text": "Online hesap açılışı için kimlik doğrulama adımlarını tamamlamanız gerekir.", "relevance": 2},
+      {"text": "Şubelerimiz belirli saatler arasında hizmet vermektedir.", "relevance": 0},
+      {"text": "Kredi kartı limit artışı için gelir belgesi istenebilir.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_018",
+    "category": "function_calling",
+    "query": "100 USD'yi TRY'ye çevir",
+    "candidates": [
+      {"text": "convert_currency fonksiyonu, belirtilen tutarı bir para biriminden diğerine günceI kur üzerinden çevirir.", "relevance": 2},
+      {"text": "convert_currency fonksiyonu amount, from_currency ve to_currency parametrelerini alır.", "relevance": 1},
+      {"text": "get_exchange_rate fonksiyonu yalnızca güncel kuru döndürür, çevrim yapmaz.", "relevance": 1},
+      {"text": "send_reminder fonksiyonu belirli bir saatte hatırlatma gönderir.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "rr_019",
+    "category": "general",
+    "query": "En sevdiğim yemek mantı, benzer yemekler neler?",
+    "candidates": [
+      {"text": "Mantıya benzer hamur işi yemekler arasında ravioli ve pelmeni sayılabilir.", "relevance": 2},
+      {"text": "Mantı, Türk mutfağının geleneksel hamur işi yemeklerinden biridir.", "relevance": 1},
+      {"text": "Kredi kartı borcunuzu mobil uygulamadan ödeyebilirsiniz.", "relevance": 0},
+      {"text": "Yarın hava parçalı bulutlu olacak.", "relevance": 0}
+    ],
+    "difficulty": "easy"
+  },
+  {
+    "id": "rr_020",
+    "category": "banking",
+    "query": "Kartımı kaybettim, hemen ne yapmalıyım?",
+    "candidates": [
+      {"text": "Kartınızı kaybettiğinizde derhal mobil uygulama veya çağrı merkezi üzerinden bloke ettirmelisiniz.", "relevance": 2},
+      {"text": "Kart bloke edildikten sonra yeni kart talebinde bulunabilirsiniz.", "relevance": 1},
+      {"text": "Yeni kartınız genellikle beş iş günü içinde adresinize teslim edilir.", "relevance": 1},
+      {"text": "Şubemizde döviz işlemleri yapılabilmektedir.", "relevance": 0}
+    ],
+    "difficulty": "medium"
+  }
+]

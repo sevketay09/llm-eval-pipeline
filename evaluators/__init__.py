@@ -16,6 +16,10 @@ from .prompt_compression_eval import PromptCompressionEvaluator
 from .negative_constraints_eval import NegativeConstraintsEvaluator
 from .adversarial_eval import AdversarialEvaluator
 from .language_mix_eval import LanguageMixEvaluator
+from .quality_judge import QualityJudgeEvaluator, is_quality_available
+from .geval import GEvalEvaluator, BUILTIN_CRITERIA as GEVAL_CRITERIA
+from .agent_judge import AgentJudgeEvaluator, is_agent_eval_available
+from .groundedness_judge import GroundednessJudgeEvaluator, is_faithfulness_available
 
 __all__ = [
     'LLMJudgeEvaluator',
@@ -45,5 +49,13 @@ __all__ = [
     'PromptCompressionEvaluator',
     'NegativeConstraintsEvaluator',
     'AdversarialEvaluator',
-    'LanguageMixEvaluator'
+    'LanguageMixEvaluator',
+    'QualityJudgeEvaluator',
+    'is_quality_available',
+    'GEvalEvaluator',
+    'GEVAL_CRITERIA',
+    'AgentJudgeEvaluator',
+    'is_agent_eval_available',
+    'GroundednessJudgeEvaluator',
+    'is_faithfulness_available'
 ]

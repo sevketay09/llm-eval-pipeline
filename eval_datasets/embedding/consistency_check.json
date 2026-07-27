@@ -1,0 +1,22 @@
+[
+  { "id": "cc_001", "category": "short", "text": "Merhaba, nasılsınız?" },
+  { "id": "cc_002", "category": "short", "text": "Kredi kartı borcum ne kadar?" },
+  { "id": "cc_003", "category": "short", "text": "Bugün hava çok güzel." },
+  { "id": "cc_004", "category": "short", "text": "Teşekkür ederim, iyi günler." },
+  { "id": "cc_005", "category": "short", "text": "Hesap bakiyemi öğrenmek istiyorum." },
+  { "id": "cc_006", "category": "medium", "text": "Kredi kartı başvurumun onaylanıp onaylanmadığını mobil uygulama üzerinden nasıl kontrol edebilirim?" },
+  { "id": "cc_007", "category": "medium", "text": "Yurt dışı seyahatim öncesinde kartımı kullanıma açmam gerekiyor mu, yoksa otomatik olarak aktif mi kalıyor?" },
+  { "id": "cc_008", "category": "medium", "text": "Vadeli mevduat hesabımın vadesi dolduğunda otomatik olarak yenileniyor mu yoksa şubeye gitmem mi gerekiyor?" },
+  { "id": "cc_009", "category": "medium", "text": "Fatura ödeme talimatımı iptal etmek istiyorum ama hangi adımları izlemem gerektiğini bilmiyorum." },
+  { "id": "cc_010", "category": "medium", "text": "Yatırım fonlarımın son bir yıllık getiri performansını nereden detaylı olarak inceleyebilirim?" },
+  { "id": "cc_011", "category": "long", "text": "Geçtiğimiz ay yaptığım bir alışverişte kartımdan iki kez çekim yapıldığını fark ettim ve bu durumu düzelttirmek için müşteri hizmetlerini aradım, ancak henüz bir geri dönüş alamadım; bu konuda bana yardımcı olabilir misiniz?" },
+  { "id": "cc_012", "category": "long", "text": "Emeklilik yatırım fonuma her ay düzenli olarak katkı payı yatırıyorum, ancak son üç aydır fon getirisinin beklediğimden düşük olduğunu görüyorum ve bu durumun sebebini merak ediyorum, ayrıca fon dağılımımı değiştirmek mümkün mü?" },
+  { "id": "cc_013", "category": "long", "text": "Şirketimiz için bir ticari kredi başvurusunda bulunmayı düşünüyoruz ve bu kapsamda gerekli olan evrakların neler olduğunu, başvuru sürecinin ne kadar süreceğini ve onay sonrası kredinin ne zaman hesabımıza geçeceğini öğrenmek istiyoruz." },
+  { "id": "cc_014", "category": "long", "text": "Geçen hafta yurt dışından yaptığım bir para transferi işlemi hâlâ hesabıma yansımadı, işlem numarasını da elimde bulunduruyorum, bu gecikmenin sebebini araştırıp bana en kısa sürede dönüş yapabilir misiniz?" },
+  { "id": "cc_015", "category": "punctuation_heavy", "text": "Merhaba! Kartım... çalışmıyor mu? Ne yapmalıyım??" },
+  { "id": "cc_016", "category": "numeric_heavy", "text": "12345.67 TL tutarındaki 987654321 numaralı işlemim ne zaman onaylanacak?" },
+  { "id": "cc_017", "category": "mixed_case", "text": "KREDİ KARTI Borcumu Nasıl ÖDERİM?" },
+  { "id": "cc_018", "category": "domain_fintech", "text": "BIST 100 endeksindeki günlük işlem hacmi nasıl hesaplanır ve bu veriye nereden ulaşabilirim?" },
+  { "id": "cc_019", "category": "domain_regulatory", "text": "KVKK kapsamında kişisel verilerimin silinmesini talep etme hakkım var mı, varsa bu talebi nasıl iletebilirim?" },
+  { "id": "cc_020", "category": "general", "text": "Python programlama dilinde bir sözlük (dictionary) yapısı nasıl oluşturulur ve elemanlarına nasıl erişilir?" }
+]

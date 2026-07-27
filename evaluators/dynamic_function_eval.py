@@ -75,7 +75,25 @@ class DynamicFunctionCallingEvaluator:
             except Exception as e:
                 errors.append(f"Turn {turn+1}: Generation error - {str(e)}")
                 break
-            
+
+            if response.get("error"):
+                # A real infrastructure failure (retries exhausted) — don't
+                # score an empty/absent tool trace as if the model chose not
+                # to call tools. Callers must check `generation_error` and
+                # exclude this item.
+                return {
+                    "generation_error": response["error"],
+                    "success": False,
+                    "turns": turns,
+                    "tool_calls": [],
+                    "execution_results": [],
+                    "final_response": "",
+                    "judge_score": None,
+                    "judge_reasoning": None,
+                    "errors": errors,
+                    "conversation_history": conversation_history,
+                }
+
             # Check if model wants to call tools
             tool_calls = response.get("tool_calls", [])
             
@@ -94,47 +112,69 @@ class DynamicFunctionCallingEvaluator:
                 "content": response.get("content", ""),
                 "tool_calls": []
             }
-            
+
+            tool_results_to_append = []
+
             for tool_call in tool_calls:
-                tool_name = tool_call.get("function", {}).get("name")
-                tool_args_str = tool_call.get("function", {}).get("arguments", "{}")
-                
+                # Adapter normalizes to flat {id, name, arguments}; also accept
+                # raw OpenAI {id, type, function: {name, arguments}} format.
+                tool_name = (
+                    tool_call.get("name")
+                    or tool_call.get("function", {}).get("name")
+                )
+                raw_args = (
+                    tool_call.get("arguments")
+                    or tool_call.get("function", {}).get("arguments", "{}")
+                )
+
+                # Skip malformed tool calls (name is required by vLLM)
+                if not tool_name:
+                    errors.append(f"Turn {turn+1}: Skipping tool call with no name")
+                    continue
+
                 # Parse arguments
                 try:
-                    tool_args = json.loads(tool_args_str) if isinstance(tool_args_str, str) else tool_args_str
+                    tool_args = json.loads(raw_args) if isinstance(raw_args, str) else (raw_args or {})
                 except json.JSONDecodeError:
                     errors.append(f"Turn {turn+1}: Invalid JSON in tool arguments for {tool_name}")
                     tool_args = {}
-                
+
+                tool_call_id = tool_call.get("id") or f"call_{turn}_{tool_name}"
+
                 # Record tool call
                 tool_calls_made.append({
                     "turn": turn + 1,
                     "tool_name": tool_name,
                     "arguments": tool_args
                 })
-                
+
                 # Execute tool
                 execution_result = self.mock_env.execute_tool(tool_name, tool_args)
                 execution_results.append(execution_result)
-                
-                # Add tool call to assistant message
+
+                # Accumulate into assistant message (OpenAI wire format)
                 assistant_message["tool_calls"].append({
-                    "id": tool_call.get("id", f"call_{turn}_{tool_name}"),
+                    "id": tool_call_id,
                     "type": "function",
                     "function": {
                         "name": tool_name,
                         "arguments": json.dumps(tool_args)
                     }
                 })
-                
-                # Add tool result to conversation
-                conversation_history.append(assistant_message)
-                conversation_history.append({
+
+                # Collect tool result messages – append after assistant message
+                tool_results_to_append.append({
                     "role": "tool",
-                    "tool_call_id": tool_call.get("id", f"call_{turn}_{tool_name}"),
+                    "tool_call_id": tool_call_id,
                     "name": tool_name,
                     "content": json.dumps(execution_result)
                 })
+
+            # Append assistant message once (outside tool_call loop)
+            if assistant_message["tool_calls"]:
+                conversation_history.append(assistant_message)
+                for tool_result_msg in tool_results_to_append:
+                    conversation_history.append(tool_result_msg)
         
         # Get final response if not already obtained
         final_response = ""
@@ -146,7 +186,15 @@ class DynamicFunctionCallingEvaluator:
                     temperature=0.0,
                     max_tokens=500
                 )
-                final_response = final_gen.get("content", "")
+                if final_gen.get("error"):
+                    # Only the closing summary call failed — the turns
+                    # already completed (tool_calls_made/execution_results)
+                    # are still real data, so degrade gracefully here rather
+                    # than excluding the whole item.
+                    errors.append(f"Final response error: {final_gen['error']}")
+                    final_response = "[Error getting final response]"
+                else:
+                    final_response = final_gen.get("content", "") or ""
             except Exception as e:
                 errors.append(f"Final response error: {str(e)}")
                 final_response = "[Error getting final response]"
@@ -271,7 +319,13 @@ JSON formatında yanıt ver:
             max_turns=scenario.get("max_turns", 5),
             expected_outcome=scenario.get("expected_outcome")
         )
-        
+        if result.get("generation_error"):
+            # Pass the signal through unchanged — computing tools_match/
+            # parallel_execution from an empty trace we never actually
+            # observed would fabricate a "didn't call the right tools"
+            # verdict for what was really an infrastructure failure.
+            return result
+
         # Check if expected tools were called
         expected_tools = scenario.get("expected_tools", [])
         called_tools = [tc["tool_name"] for tc in result["tool_calls"]]

@@ -1,0 +1,322 @@
+[
+  {
+    "id": "pc_001",
+    "category": "exact_paraphrase",
+    "sentence1": "Kredi kartı borcumu nasıl öderim?",
+    "sentence2": "Kredi kartı borcumu ödeme yöntemleri nelerdir?",
+    "is_duplicate": 1,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_002",
+    "category": "exact_paraphrase",
+    "sentence1": "Hesabımdaki para ne zaman yatacak?",
+    "sentence2": "Paramın hesabıma geçmesi ne kadar sürer?",
+    "is_duplicate": 1,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_003",
+    "category": "exact_paraphrase",
+    "sentence1": "Şifremi unuttum, ne yapmalıyım?",
+    "sentence2": "Parolamı hatırlamıyorum, sıfırlama işlemi nasıl yapılır?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_004",
+    "category": "exact_paraphrase",
+    "sentence1": "Mobil uygulamadan para transferi yapabilir miyim?",
+    "sentence2": "Telefon uygulaması üzerinden havale gönderebilir miyim?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_005",
+    "category": "exact_paraphrase",
+    "sentence1": "Kredi başvurumun sonucunu nereden öğrenebilirim?",
+    "sentence2": "Kredi talebimin onaylanıp onaylanmadığını nasıl kontrol ederim?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_006",
+    "category": "exact_paraphrase",
+    "sentence1": "Yurt dışında kartımı kullanabilir miyim?",
+    "sentence2": "Kartım yurt dışında geçerli mi?",
+    "is_duplicate": 1,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_007",
+    "category": "exact_paraphrase",
+    "sentence1": "Fatura ödeme tarihini nasıl değiştirebilirim?",
+    "sentence2": "Fatura son ödeme gününü değiştirmek mümkün mü?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_008",
+    "category": "exact_paraphrase",
+    "sentence1": "Hesap ekstresini e-posta ile alabilir miyim?",
+    "sentence2": "Ekstremi mail yoluyla göndermeniz mümkün mü?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_009",
+    "category": "exact_paraphrase",
+    "sentence1": "Döviz kurunu nereden takip edebilirim?",
+    "sentence2": "Güncel döviz kurlarını nasıl görebilirim?",
+    "is_duplicate": 1,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_010",
+    "category": "exact_paraphrase",
+    "sentence1": "Yatırım hesabı açmak için ne yapmam gerekiyor?",
+    "sentence2": "Yatırım hesabı açma işlemleri nasıl başlatılır?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_011",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Kredi kartı borcumu nasıl öderim?",
+    "sentence2": "Kredi kartı limitimi nasıl artırırım?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_012",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Hesabımdaki para ne zaman yatacak?",
+    "sentence2": "Hesabımdan para nasıl çekerim?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_013",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Kredi başvurumun sonucunu nereden öğrenebilirim?",
+    "sentence2": "Kredi başvurusu nasıl yapılır?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_014",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Mobil uygulamadan para transferi yapabilir miyim?",
+    "sentence2": "Mobil uygulamamı nasıl güncellerim?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_015",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Yurt dışında kartımı kullanabilir miyim?",
+    "sentence2": "Kartımı yurt dışında kaybettim, ne yapmalıyım?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_016",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Fatura ödeme tarihini nasıl değiştirebilirim?",
+    "sentence2": "Fatura tutarımda neden artış oldu?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_017",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Yatırım hesabı açmak için ne yapmam gerekiyor?",
+    "sentence2": "Yatırım hesabımı nasıl kapatabilirim?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_018",
+    "category": "negation_flip",
+    "sentence1": "Kredi kartı aidatı bu yıl alınmayacak.",
+    "sentence2": "Kredi kartı aidatı bu yıl alınacak.",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_019",
+    "category": "negation_flip",
+    "sentence1": "Başvurunuz onaylandı, işlem tamamlandı.",
+    "sentence2": "Başvurunuz reddedildi, işlem tamamlanmadı.",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_020",
+    "category": "negation_flip",
+    "sentence1": "Hesabınızda yeterli bakiye bulunmaktadır.",
+    "sentence2": "Hesabınızda yeterli bakiye bulunmamaktadır.",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_021",
+    "category": "negation_flip",
+    "sentence1": "Ödeme işlemi başarıyla gerçekleşti.",
+    "sentence2": "Ödeme işlemi gerçekleşmedi, tekrar deneyin.",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_022",
+    "category": "entity_swap",
+    "sentence1": "AAPL hissesinin bugünkü kapanış fiyatı nedir?",
+    "sentence2": "TSLA hissesinin bugünkü kapanış fiyatı nedir?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_023",
+    "category": "entity_swap",
+    "sentence1": "İstanbul şubesinin çalışma saatleri nedir?",
+    "sentence2": "Ankara şubesinin çalışma saatleri nedir?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_024",
+    "category": "entity_swap",
+    "sentence1": "100 USD kaç TL eder?",
+    "sentence2": "100 EUR kaç TL eder?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_025",
+    "category": "entity_swap",
+    "sentence1": "Ahmet Bey'in hesap bakiyesi ne kadar?",
+    "sentence2": "Mehmet Bey'in hesap bakiyesi ne kadar?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_026",
+    "category": "unrelated",
+    "sentence1": "Kredi kartı borcumu nasıl öderim?",
+    "sentence2": "En sevdiğim yemek mantıdır.",
+    "is_duplicate": 0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_027",
+    "category": "unrelated",
+    "sentence1": "Yatırım hesabı açmak için ne yapmam gerekiyor?",
+    "sentence2": "Yarın hava nasıl olacak?",
+    "is_duplicate": 0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_028",
+    "category": "unrelated",
+    "sentence1": "Döviz kurunu nereden takip edebilirim?",
+    "sentence2": "İstanbul'da gezilecek en güzel yerler nerede?",
+    "is_duplicate": 0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_029",
+    "category": "unrelated",
+    "sentence1": "Mobil uygulamadan para transferi yapabilir miyim?",
+    "sentence2": "Köpeğim hiç yemek yemiyor, ne yapmalıyım?",
+    "is_duplicate": 0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_030",
+    "category": "unrelated",
+    "sentence1": "Fatura ödeme tarihini nasıl değiştirebilirim?",
+    "sentence2": "En yakın sinema salonu nerede?",
+    "is_duplicate": 0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_031",
+    "category": "exact_paraphrase",
+    "sentence1": "Otomatik ödeme talimatı nasıl iptal edilir?",
+    "sentence2": "Otomatik fatura ödeme talimatımı durdurmak istiyorum, nasıl yaparım?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_032",
+    "category": "exact_paraphrase",
+    "sentence1": "Kredi notumu nasıl öğrenebilirim?",
+    "sentence2": "Kredi skorumu görüntülemek için ne yapmalıyım?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_033",
+    "category": "exact_paraphrase",
+    "sentence1": "Vadeli mevduat faiz oranları nedir?",
+    "sentence2": "Vadeli hesap için faiz oranlarınız ne kadar?",
+    "is_duplicate": 1,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_034",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Vadeli mevduat faiz oranları nedir?",
+    "sentence2": "Vadesiz hesabımı vadeliye nasıl çeviririm?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_035",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Kredi notumu nasıl öğrenebilirim?",
+    "sentence2": "Kredi notumu nasıl yükseltebilirim?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_036",
+    "category": "negation_flip",
+    "sentence1": "Bu kampanyaya tüm müşteriler katılabilir.",
+    "sentence2": "Bu kampanyaya sadece bazı müşteriler katılamaz.",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  },
+  {
+    "id": "pc_037",
+    "category": "entity_swap",
+    "sentence1": "BIST 100 endeksi bugün nasıl kapandı?",
+    "sentence2": "NASDAQ endeksi bugün nasıl kapandı?",
+    "is_duplicate": 0,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_038",
+    "category": "unrelated",
+    "sentence1": "Otomatik ödeme talimatı nasıl iptal edilir?",
+    "sentence2": "Bu akşam ne izlesem iyi olur?",
+    "is_duplicate": 0,
+    "difficulty": "easy"
+  },
+  {
+    "id": "pc_039",
+    "category": "exact_paraphrase",
+    "sentence1": "Şubeye gitmeden hesap açabilir miyim?",
+    "sentence2": "Şubeye uğramadan online hesap açma işlemi mümkün mü?",
+    "is_duplicate": 1,
+    "difficulty": "medium"
+  },
+  {
+    "id": "pc_040",
+    "category": "lexical_overlap_different_meaning",
+    "sentence1": "Şubeye gitmeden hesap açabilir miyim?",
+    "sentence2": "Şubeye gitmeden hesabımı nasıl kapatırım?",
+    "is_duplicate": 0,
+    "difficulty": "hard"
+  }
+]

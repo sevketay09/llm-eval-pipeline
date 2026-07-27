@@ -9,6 +9,7 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 import numpy as np
 from utils.evaluation_store import get_runs, DEFAULT_STORE_PATH
+from utils.result_models import ModelRunResult, TestResult
 
 
 class TrendAnalyzer:
@@ -16,6 +17,20 @@ class TrendAnalyzer:
     
     def __init__(self, reports_dir: str = "reports"):
         self.reports_dir = Path(reports_dir)
+
+    def _model_result_view(self, model_key: str, payload: Any) -> ModelRunResult:
+        if isinstance(payload, dict):
+            return ModelRunResult.from_payload(payload, model_key)
+        return ModelRunResult.empty(
+            model_key=model_key,
+            model_name=model_key,
+            provider="unknown",
+        )
+
+    def _test_result_view(self, test_name: str, payload: Any) -> TestResult:
+        if isinstance(payload, dict):
+            return TestResult.from_payload(payload, test_name)
+        return TestResult(test_name=test_name)
     
     def load_historical_results(
         self,
@@ -153,6 +168,34 @@ class TrendAnalyzer:
             "recent_avg": float(recent_avg),
             "older_avg": float(older_avg)
         }
+
+    def build_metric_trend(
+        self,
+        historical: List[Dict[str, Any]],
+        current_results: Dict[str, Any],
+        current_timestamp: Optional[str],
+        metric_path: str,
+    ) -> Optional[Dict[str, Any]]:
+        """Build a trend payload for a metric including the current run when available."""
+        trend_input = list(historical)
+        trend_input.append({
+            "timestamp": current_timestamp,
+            "file": "<current>",
+            "results": current_results,
+        })
+
+        trend_data = self.calculate_trend(trend_input, metric_path)
+        if not trend_data.get("values"):
+            return None
+
+        if len(trend_data["values"]) < 2:
+            trend_data["trend"] = "insufficient_history"
+            trend_data["change_pct"] = 0.0
+            trend_data["history_runs"] = 0
+        else:
+            trend_data["history_runs"] = len(trend_data["values"]) - 1
+
+        return trend_data
     
     def detect_regressions(
         self,
@@ -175,15 +218,23 @@ class TrendAnalyzer:
             return []
         
         regressions = []
+        current_model = self._model_result_view(
+            current_results.get("model_key", "unknown"),
+            current_results,
+        )
         
         # Get baseline (average of last 3 runs)
         baseline_scores = []
         for item in historical[:3]:
-            score = item["results"]["overall_metrics"].get("weighted_score", 0)
+            hist_model = self._model_result_view(
+                item.get("results", {}).get("model_key", "unknown"),
+                item.get("results", {}),
+            )
+            score = hist_model.overall_metrics.get("weighted_score", 0)
             baseline_scores.append(score)
         
         baseline = np.mean(baseline_scores) if baseline_scores else 0
-        current_score = current_results["overall_metrics"].get("weighted_score", 0)
+        current_score = current_model.overall_metrics.get("weighted_score", 0)
         
         # Check for regression
         if baseline > 0:
@@ -198,20 +249,19 @@ class TrendAnalyzer:
                 })
         
         # Check per-test regressions
-        for test_name, test_data in current_results.get("tests", {}).items():
-            if "summary" not in test_data:
-                continue
-            
-            current_test_score = test_data["summary"].get("overall_score", 0)
+        for test_name, test_data in current_model.tests.items():
+            current_test = self._test_result_view(test_name, test_data)
+            current_test_score = current_test.summary.get("overall_score", 0)
             
             historical_test_scores = []
             for item in historical[:3]:
-                if test_name in item["results"].get("tests", {}):
-                    hist_test_data = item["results"]["tests"][test_name]
-                    # Skip if historical test has no summary (e.g., had error)
-                    if "summary" not in hist_test_data:
-                        continue
-                    hist_score = hist_test_data["summary"].get("overall_score", 0)
+                hist_model = self._model_result_view(
+                    item.get("results", {}).get("model_key", "unknown"),
+                    item.get("results", {}),
+                )
+                if test_name in hist_model.tests:
+                    hist_test = self._test_result_view(test_name, hist_model.tests[test_name])
+                    hist_score = hist_test.summary.get("overall_score", 0)
                     historical_test_scores.append(hist_score)
             
             if historical_test_scores:
@@ -254,13 +304,13 @@ class TrendAnalyzer:
             if model_key not in current_results["models"]:
                 continue
             
-            model_data = current_results["models"][model_key]
-            overall_score = model_data["overall_metrics"].get("weighted_score", 0)
+            model_data = self._model_result_view(model_key, current_results["models"][model_key])
+            overall_score = model_data.overall_metrics.get("weighted_score", 0)
             
             model_rankings.append({
                 "model": model_key,
                 "overall_score": overall_score,
-                "avg_latency": model_data["overall_metrics"].get("latency_avg", 0)
+                "avg_latency": model_data.overall_metrics.get("latency_avg", 0)
             })
         
         # Sort by score
@@ -280,7 +330,7 @@ class TrendAnalyzer:
                 )
                 
                 regressions[model_key] = self.detect_regressions(
-                    current_results["models"][model_key],
+                    model_data.to_payload(),
                     historical
                 )
         

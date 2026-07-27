@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load .env file before anything else
 
-from pipeline_runner import EvaluationPipeline
 from utils.evaluation_store import DEFAULT_STORE_PATH
 
 
@@ -52,6 +51,21 @@ def main():
         default=default_suite,
         choices=available_suites,
         help="Test suite to run"
+    )
+
+    parser.add_argument(
+        "--tests",
+        nargs="+",
+        default=None,
+        help="Optional subset of tests to run within the selected suite"
+    )
+
+    parser.add_argument(
+        "--custom-dataset-id",
+        dest="custom_dataset_id",
+        type=str,
+        default=None,
+        help="Run an approved generated dataset by id instead of the selected suite"
     )
     
     parser.add_argument(
@@ -112,6 +126,8 @@ def main():
     )
     
     args = parser.parse_args()
+
+    from pipeline_runner import EvaluationPipeline
     
     # Initialize pipeline
     print("Initializing evaluation pipeline...")
@@ -126,6 +142,18 @@ def main():
         judge_model_key=args.judge,
         runtime_overrides=runtime_overrides
     )
+
+    if args.custom_dataset_id and args.tests:
+        parser.error("Custom datasets cannot be combined with subset test selection")
+
+    suite_config = pipeline.test_config.get("test_suites", {}).get(args.suite, {})
+    suite_tests = suite_config.get("tests", []) if isinstance(suite_config, dict) else []
+    if args.tests:
+        invalid_tests = [test_name for test_name in args.tests if test_name not in suite_tests]
+        if invalid_tests:
+            parser.error(
+                f"Tests {invalid_tests} are not part of suite '{args.suite}'. Available: {suite_tests}"
+            )
     
     # Decide output path early for incremental saves
     if args.output:
@@ -135,10 +163,28 @@ def main():
 
     # Run evaluation
     try:
-        if args.parallel_models:
+        if args.custom_dataset_id:
+            from api.services.custom_dataset_service import CustomDatasetService
+
+            dataset_service = CustomDatasetService()
+            custom_dataset = dataset_service.get_dataset(args.custom_dataset_id)
+            if custom_dataset is None:
+                parser.error(f"Unknown generated dataset '{args.custom_dataset_id}'")
+
+            results = pipeline.run_custom_dataset_evaluation(
+                model_keys=args.models,
+                dataset_path=custom_dataset.path,
+                dataset_name=custom_dataset.title,
+                dataset_kind=custom_dataset.dataset_kind,
+                output_path=output_path,
+                parallel=args.parallel_models,
+                max_workers=args.parallel_workers,
+            )
+        elif args.parallel_models:
             results = pipeline.run_full_evaluation_parallel(
                 model_keys=args.models,
                 test_suite=args.suite,
+                selected_tests=args.tests,
                 output_path=output_path,
                 max_workers=args.parallel_workers
             )
@@ -146,6 +192,7 @@ def main():
             results = pipeline.run_full_evaluation(
                 model_keys=args.models,
                 test_suite=args.suite,
+                selected_tests=args.tests,
                 output_path=output_path
             )
         
@@ -157,8 +204,10 @@ def main():
 
         # Check if models pass thresholds
         thresholds = pipeline.test_config.get("thresholds", {})
-        suite_config = pipeline.test_config.get("test_suites", {}).get(args.suite, {})
-        configured_tests = suite_config.get("tests", [])
+        configured_tests = [
+            test_name for test_name in suite_tests
+            if not args.tests or test_name in args.tests
+        ]
 
         passed = []
         failed = []

@@ -1,3 +1,12 @@
+concurrent_items: 3
+
+# Hard cap on simultaneous model/judge calls across an entire run, regardless
+# of how many models are running in parallel (run_full_evaluation_parallel)
+# multiplied by how many items each is processing concurrently
+# (concurrent_items above). Prevents accidentally hammering the provider with
+# e.g. 5 models x 3 items = 15+ simultaneous requests and tripping its rate limit.
+max_concurrent_requests: 8
+
 humaneval_execution:
   disable_network: true
   docker_image: your-registry/minimal-python:3.11
@@ -6,9 +15,17 @@ humaneval_execution:
 metric_weights:
   adversarial_security: 0.06
   agentic_workflows: 0.04
+  mcp_tool_use: 0.05
   edge_cases: 0.04
+  embedding_bitext_mining: 0.06
   embedding_clustering: 0.05
   embedding_clustering_regulatory: 0.06
+  embedding_consistency: 0.03
+  embedding_long_context: 0.05
+  embedding_pair_classification: 0.07
+  embedding_perturbation_stability: 0.05
+  embedding_prefix_sensitivity: 0.04
+  embedding_reranking: 0.07
   embedding_retrieval: 0.1
   embedding_retrieval_hardneg: 0.08
   embedding_sts: 0.1
@@ -94,6 +111,13 @@ test_suites:
     - embedding_retrieval_hardneg
     - embedding_clustering
     - embedding_clustering_regulatory
+    - embedding_pair_classification
+    - embedding_bitext_mining
+    - embedding_prefix_sensitivity
+    - embedding_consistency
+    - embedding_long_context
+    - embedding_reranking
+    - embedding_perturbation_stability
   embedding_turkish:
     enabled: true
     max_samples: all
@@ -101,6 +125,12 @@ test_suites:
     - embedding_sts
     - embedding_retrieval
     - embedding_clustering
+  mcp_only:
+    enabled: true
+    max_samples: all
+    tests:
+    - mcp_tool_use
+    - agentic_workflows
   fintech_only:
     enabled: true
     max_samples: all
@@ -109,6 +139,7 @@ test_suites:
     - fintech_calculations
     - function_calling
     - agentic_workflows
+    - mcp_tool_use
     - pii_detection
     - self_consistency
     - prompt_compression
@@ -124,6 +155,7 @@ test_suites:
     - turkish_paraphrasing
     - turkish_reasoning
     - turkish_nuance
+    - consistency
     - fintech_knowledge
     - fintech_calculations
     - function_calling
@@ -131,6 +163,7 @@ test_suites:
     - tool_error_recovery
     - parallel_tools
     - agentic_workflows
+    - mcp_tool_use
     - multi_turn
     - multi_turn_stress
     - rag_test
@@ -161,6 +194,7 @@ test_suites:
     - turkish_paraphrasing
     - turkish_reasoning
     - turkish_nuance
+    - consistency
     - fintech_knowledge
     - fintech_calculations
     - function_calling
@@ -168,6 +202,7 @@ test_suites:
     - tool_error_recovery
     - parallel_tools
     - agentic_workflows
+    - mcp_tool_use
     - multi_turn
     - multi_turn_stress
     - rag_test
@@ -198,6 +233,7 @@ test_suites:
     - function_calling
     - pii_detection
     - self_consistency
+    - mcp_tool_use
     - prompt_compression
     - negative_constraints
   stress_performance:
@@ -222,10 +258,16 @@ thresholds:
   accuracy: 0.75
   adversarial_safety: 0.85
   consistency: 0.75
+  embedding_batch_consistency: 0.999
+  embedding_bitext_mining_accuracy_at_1: 0.7
   embedding_clustering_accuracy: 0.8
   embedding_clustering_accuracy_regulatory: 0.82
+  embedding_long_context_position_gap: 0.15
   embedding_ndcg_at_10: 0.75
   embedding_ndcg_at_10_hardneg: 0.8
+  embedding_pair_classification_ap: 0.75
+  embedding_perturbation_top_k_overlap: 0.7
+  embedding_reranking_ndcg: 0.75
   embedding_retrieval_mrr: 0.65
   embedding_spearman_correlation: 0.7
   embedding_spearman_correlation_crosslingual: 0.68

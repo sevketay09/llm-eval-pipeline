@@ -1,0 +1,258 @@
+# Task Registry - Single source of truth for test-to-runner mappings
+# Eliminates duplicate test_mapping dicts in pipeline_runner.py
+#
+# Each task defines:
+#   dataset: path to JSON file or HuggingFace URI (hf://...)
+#   runner: method name on EvaluationPipeline class
+#   category: grouping for reporting (turkish, fintech, function_calling, etc.)
+
+tasks:
+  # --- Turkish Language Tests ---
+  turkish_grammar:
+    dataset: eval_datasets/benchmark/turkish_grammar.json
+    runner: run_qa_test
+    category: turkish
+
+  turkish_expression_errors:
+    dataset: eval_datasets/benchmark/turkish_expression_errors.json
+    runner: run_qa_test
+    category: turkish
+
+  turkish_creativity:
+    dataset: eval_datasets/benchmark/turkish_creativity.json
+    runner: run_qa_test
+    category: turkish
+
+  turkish_paraphrasing:
+    dataset: eval_datasets/benchmark/turkish_paraphrasing.json
+    runner: run_qa_test
+    category: turkish
+
+  turkish_nuance:
+    dataset: eval_datasets/benchmark/turkish_nuance.json
+    runner: run_qa_test
+    category: turkish
+
+  turkish_reasoning:
+    dataset: eval_datasets/benchmark/turkish_reasoning.json
+    runner: run_reasoning_test
+    category: turkish
+
+  consistency:
+    dataset: eval_datasets/benchmark/turkish_grammar.json
+    runner: run_consistency_test
+    category: turkish
+
+  # --- Fintech Tests ---
+  fintech_knowledge:
+    dataset: eval_datasets/fintech/fintech_knowledge.json
+    runner: run_qa_test
+    category: fintech
+
+  fintech_calculations:
+    dataset: eval_datasets/fintech/fintech_calculations.json
+    runner: run_reasoning_test
+    category: fintech
+
+  # --- Function Calling Tests ---
+  function_calling:
+    dataset: eval_datasets/function_calling/function_calling_tests.json
+    runner: run_function_calling_test
+    category: function_calling
+
+  function_calling_chain:
+    dataset: eval_datasets/function_calling/tool_chain_tests.json
+    runner: run_function_calling_chain_test
+    category: function_calling
+
+  tool_error_recovery:
+    dataset: eval_datasets/function_calling/tool_error_recovery_tests.json
+    runner: run_tool_error_recovery_test
+    category: function_calling
+
+  parallel_tools:
+    dataset: eval_datasets/function_calling/parallel_tool_tests.json
+    runner: run_parallel_tools_test
+    category: function_calling
+
+  # --- Agentic & Multi-Turn Tests ---
+  agentic_workflows:
+    dataset: eval_datasets/agentic/agentic_workflows.json
+    runner: run_agentic_test
+    category: agentic
+
+  mcp_tool_use:
+    dataset: eval_datasets/agentic/mcp_tool_use.json
+    runner: run_agentic_test
+    category: agentic
+
+  multi_turn:
+    dataset: eval_datasets/multi_turn/conversations.json
+    runner: run_multi_turn_test
+    category: multi_turn
+
+  multi_turn_stress:
+    dataset: eval_datasets/multi_turn/stress_tests.json
+    runner: run_multi_turn_test
+    category: multi_turn
+
+  # --- RAG Tests ---
+  rag_test:
+    dataset: eval_datasets/rag/rag_tests.json
+    runner: run_rag_test
+    category: rag
+
+  needle_haystack:
+    dataset: eval_datasets/rag/needle_in_haystack.json
+    runner: run_rag_test
+    category: rag
+
+  # --- Safety & Security Tests ---
+  pii_detection:
+    dataset: eval_datasets/benchmark/turkish_pii_detection.json
+    runner: run_pii_detection_test
+    category: safety
+
+  adversarial_security:
+    dataset: eval_datasets/edge_cases/adversarial_tests.json
+    runner: run_adversarial_test
+    category: safety
+
+  security_tests:
+    dataset: eval_datasets/security/security_tests.json
+    runner: run_edge_case_test
+    category: safety
+
+  # --- Robustness Tests ---
+  self_consistency:
+    dataset: eval_datasets/benchmark/turkish_self_consistency.json
+    runner: run_self_consistency_test
+    category: robustness
+
+  prompt_compression:
+    dataset: eval_datasets/benchmark/prompt_compression_tests.json
+    runner: run_prompt_compression_test
+    category: robustness
+
+  negative_constraints:
+    dataset: eval_datasets/benchmark/negative_constraints_tests.json
+    runner: run_negative_constraints_test
+    category: robustness
+
+  language_mix:
+    dataset: eval_datasets/benchmark/language_mix_tests.json
+    runner: run_language_mix_test
+    category: robustness
+
+  edge_cases:
+    dataset: eval_datasets/edge_cases/edge_tests.json
+    runner: run_edge_case_test
+    category: robustness
+
+  stress_tests:
+    dataset: eval_datasets/security/stress_tests.json
+    runner: run_edge_case_test
+    category: robustness
+
+  # --- Standard Benchmarks (HuggingFace) ---
+  mmlu:
+    dataset: "hf://cais/mmlu?split=test&config=all&sample=100"
+    runner: run_benchmark_test
+    category: benchmark
+
+  hellaswag:
+    dataset: "hf://hellaswag?split=validation&sample=100"
+    runner: run_benchmark_test
+    category: benchmark
+
+  truthfulqa:
+    dataset: "hf://truthful_qa?split=validation&config=multiple_choice&sample=100"
+    runner: run_benchmark_test
+    category: benchmark
+
+  humaneval:
+    dataset: "hf://openai_humaneval?split=test&sample=100"
+    runner: run_benchmark_test
+    category: benchmark
+
+  gsm8k:
+    dataset: "hf://gsm8k?split=test&config=main&sample=100"
+    runner: run_benchmark_test
+    category: benchmark
+
+  # --- Regression Tests ---
+  regression_golden:
+    dataset: eval_datasets/regression/golden.json
+    runner: run_qa_test
+    category: regression
+
+  regression_recent:
+    dataset: eval_datasets/regression/recent_issues.json
+    runner: run_qa_test
+    category: regression
+
+  # --- Embedding Tests ---
+  embedding_sts:
+    dataset: eval_datasets/embedding/turkish_sts.json
+    runner: run_embedding_sts_test
+    category: embedding
+
+  embedding_retrieval:
+    dataset: eval_datasets/embedding/turkish_retrieval.json
+    runner: run_embedding_retrieval_test
+    category: embedding
+
+  embedding_clustering:
+    dataset: eval_datasets/embedding/fintech_domain.json
+    runner: run_embedding_clustering_test
+    category: embedding
+
+  embedding_sts_crosslingual:
+    dataset: eval_datasets/embedding/tr_crosslingual_sts.json
+    runner: run_embedding_sts_test
+    category: embedding
+
+  embedding_retrieval_hardneg:
+    dataset: eval_datasets/embedding/tr_hardneg_retrieval.json
+    runner: run_embedding_retrieval_test
+    category: embedding
+
+  embedding_clustering_regulatory:
+    dataset: eval_datasets/embedding/turkish_regulatory_domain.json
+    runner: run_embedding_clustering_test
+    category: embedding
+
+  embedding_pair_classification:
+    dataset: eval_datasets/embedding/turkish_pair_classification.json
+    runner: run_embedding_pair_classification_test
+    category: embedding
+
+  embedding_bitext_mining:
+    dataset: eval_datasets/embedding/turkish_bitext_mining.json
+    runner: run_embedding_bitext_mining_test
+    category: embedding
+
+  embedding_prefix_sensitivity:
+    dataset: eval_datasets/embedding/turkish_retrieval.json
+    runner: run_embedding_prefix_sensitivity_test
+    category: embedding
+
+  embedding_consistency:
+    dataset: eval_datasets/embedding/consistency_check.json
+    runner: run_embedding_consistency_test
+    category: embedding
+
+  embedding_long_context:
+    dataset: eval_datasets/embedding/long_context_robustness.json
+    runner: run_embedding_long_context_test
+    category: embedding
+
+  embedding_reranking:
+    dataset: eval_datasets/embedding/turkish_reranking.json
+    runner: run_embedding_reranking_test
+    category: embedding
+
+  embedding_perturbation_stability:
+    dataset: eval_datasets/embedding/perturbation_stability.json
+    runner: run_embedding_perturbation_stability_test
+    category: embedding

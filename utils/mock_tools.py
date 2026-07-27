@@ -3,10 +3,48 @@ Mock Tool Execution Environment
 Modellerin function calling yeteneklerini dinamik olarak test etmek için
 gerçek tool fonksiyonlarını simüle eden mock environment.
 """
+import ast
 import json
+import operator
 import random
 from typing import Dict, Any, List, Callable, Optional
 from datetime import datetime, timedelta
+
+_SAFE_CALC_OPERATORS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+    ast.Pow: operator.pow,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+
+def _safe_calc_eval(node):
+    """Evaluate a numeric-only AST node. Raises ValueError/TypeError on anything
+    that isn't a number, a unary +/-, or one of the arithmetic operators above —
+    no names, calls, attributes, subscripts, comparisons, or string literals,
+    so this can't be used as an eval()-based sandbox-escape or code-exec gadget.
+    """
+    if isinstance(node, ast.Expression):
+        return _safe_calc_eval(node.body)
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return node.value
+    if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_CALC_OPERATORS:
+        return _SAFE_CALC_OPERATORS[type(node.op)](_safe_calc_eval(node.left), _safe_calc_eval(node.right))
+    if isinstance(node, ast.UnaryOp) and type(node.op) in _SAFE_CALC_OPERATORS:
+        return _SAFE_CALC_OPERATORS[type(node.op)](_safe_calc_eval(node.operand))
+    raise ValueError(f"Unsupported expression element: {ast.dump(node)}")
+
+
+def safe_calculate(expression: str):
+    """Parse and evaluate a plain arithmetic expression (+ - * / // % ** and parens)
+    without falling back to eval()/exec() on untrusted input."""
+    parsed = ast.parse(expression, mode="eval")
+    return _safe_calc_eval(parsed)
 
 
 class MockToolEnvironment:
@@ -489,8 +527,7 @@ class MockToolEnvironment:
     def _mock_calculate(self, expression: str, precision: int = 2) -> Dict[str, Any]:
         """Mock calculator"""
         try:
-            # Safe eval with limited scope
-            result = eval(expression, {"__builtins__": {}}, {})
+            result = safe_calculate(expression)
             return {
                 "expression": expression,
                 "result": round(result, precision),

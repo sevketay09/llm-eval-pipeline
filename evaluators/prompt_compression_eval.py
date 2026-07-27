@@ -50,22 +50,29 @@ class PromptCompressionEvaluator:
             Detailed comparison metrics
         """
         results = {}
-        
-        # Baseline: Original prompt
+
+        # Baseline: Original prompt. If this fails there's nothing to compare
+        # compressed levels against, so exclude the whole item rather than
+        # comparing compressed responses to an empty baseline.
         baseline_result = self._run_with_prompt(
             model,
             original_prompt,
             label="original"
         )
+        if baseline_result.get("error"):
+            return {"generation_error": baseline_result["error"]}
         results["original"] = baseline_result
-        
-        # Compressed versions
+
+        # Compressed versions. A single failed level is excluded on its own —
+        # the other levels can still be compared against the (successful) baseline.
         for compression_level, compressed_prompt in compressed_prompts.items():
             compressed_result = self._run_with_prompt(
                 model,
                 compressed_prompt,
                 label=compression_level
             )
+            if compressed_result.get("error"):
+                continue
             results[compression_level] = compressed_result
         
         # Compare results
@@ -91,13 +98,15 @@ class PromptCompressionEvaluator:
         ]
         
         result = model.generate(messages, temperature=0.0)
-        
+        if result.get("error"):
+            return {"label": label, "error": result["error"]}
+
         response = result.get('content', '')
-        
+
         # Calculate token counts
         input_tokens = len(prompt.split())  # Rough estimate
         output_tokens = len(response.split()) if response else 0
-        
+
         return {
             "label": label,
             "prompt": prompt,

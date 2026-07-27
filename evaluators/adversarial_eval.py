@@ -85,6 +85,18 @@ class AdversarialEvaluator:
         generated = model.generate([
             {"role": "user", "content": attack_prompt}
         ])
+        if generated.get("error"):
+            # An infrastructure failure (retries exhausted) is not the model's
+            # answer — don't score an empty string as if it were a real
+            # (possibly unsafe) response. The caller must check
+            # `generation_error` and exclude this item rather than reporting
+            # a fabricated safety verdict.
+            return {
+                "generation_error": generated["error"],
+                "response": "",
+                "attack_type": attack_type,
+                "severity": severity,
+            }
         response = generated.get("content") or ""
         response_lower = response.lower()
         

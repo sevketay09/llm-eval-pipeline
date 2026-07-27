@@ -403,8 +403,9 @@ JSON formatında yanıt verin:
             {"role": "system", "content": "Sen bir değerlendirme uzmanısın. Verilen kriterlere göre yanıtları objektif şekilde etiketlersin. Puanlama ölçeğine kesinlikle uymalısın. Anlamsal olarak doğru ve beklenen cevapla aynı anlama gelen yanıtları, sadece daha kısa/uzun veya farklı ifade edildiği için cezalandırma."},
             {"role": "user", "content": prompt}
         ]
-        
-        result = self.judge.generate(messages, temperature=0.0, max_tokens=1024)
+
+        logger.info(f"[judge] Evaluating criterion='{criterion}' | query_len={len(question)} chars")
+        result = self.judge.generate(messages)
         
         # Parse JSON response
         try:
@@ -435,23 +436,29 @@ JSON formatında yanıt verin:
             primary_result = {
                 "score": score,
                 "label": label,
+                "primary_label": label,
                 "reasoning": reasoning,
+                "primary_reasoning": reasoning,
                 "score_category": category,
                 "score_interpretation": self._get_score_interpretation(score),
                 "raw_score": raw_score,
                 "raw_response": result['content'],
                 "primary_score": score,
                 "secondary_score": None,
+                "secondary_label": None,
+                "secondary_reasoning": None,
                 "judge_disagreement": None,
                 "judge_agreement": None
             }
-            
+
+            logger.info(f"[judge] criterion='{criterion}' → label={label} score={score:.2f}")
             if not self.secondary_judge:
                 return primary_result
 
             # Secondary judge evaluation
             secondary = self.secondary_judge.generate(messages, temperature=0.0, max_tokens=1024)
             secondary_score = 0.0
+            sec_label = "YANLIS"
             secondary_reasoning = ""
             secondary_category = "poor"
             
@@ -478,17 +485,22 @@ JSON formatında yanıt verin:
                 secondary_score = 0.0
 
             combined_score = (primary_result["score"] + secondary_score) / 2
+            combined_label = self._label_from_score(combined_score)
             disagreement = abs(primary_result["score"] - secondary_score)
             agreement = max(0.0, 1.0 - disagreement)
             
             return {
                 "score": combined_score,
+                "label": combined_label,
+                "primary_label": primary_result["label"],
                 "reasoning": primary_result["reasoning"],
-                "score_category": primary_result["score_category"],
+                "primary_reasoning": primary_result["reasoning"],
+                "score_category": self._determine_category(combined_score),
                 "score_interpretation": self._get_score_interpretation(combined_score),
                 "raw_response": primary_result["raw_response"],
                 "primary_score": primary_result["score"],
                 "secondary_score": secondary_score,
+                "secondary_label": sec_label,
                 "secondary_reasoning": secondary_reasoning,
                 "secondary_category": secondary_category,
                 "judge_disagreement": disagreement,
@@ -516,13 +528,17 @@ JSON formatında yanıt verin:
             primary_result = {
                 "score": score,
                 "label": label,
+                "primary_label": label,
                 "reasoning": f"Parse error: {str(e)}",
+                "primary_reasoning": f"Parse error: {str(e)}",
                 "score_category": self._determine_category(score),
                 "score_interpretation": self._get_score_interpretation(score),
                 "raw_score": raw_score,
                 "raw_response": content,
                 "primary_score": score,
                 "secondary_score": None,
+                "secondary_label": None,
+                "secondary_reasoning": None,
                 "judge_disagreement": None,
                 "judge_agreement": None
             }
@@ -537,12 +553,16 @@ JSON formatında yanıt verin:
                 sec_content = secondary['content'].strip()
                 if "TAM_DOGRU" in sec_content:
                     secondary_score = 1.0
+                    primary_result["secondary_label"] = "TAM_DOGRU"
                 elif "KISMEN_DOGRU" in sec_content:
                     secondary_score = 0.5
+                    primary_result["secondary_label"] = "KISMEN_DOGRU"
                 else:
                     secondary_score = 0.0
+                    primary_result["secondary_label"] = "YANLIS"
             except Exception:
                 secondary_score = 0.0
+                primary_result["secondary_label"] = "YANLIS"
 
             primary_result["secondary_score"] = secondary_score
             primary_result["judge_disagreement"] = abs(primary_result["score"] - secondary_score)
@@ -560,6 +580,13 @@ JSON formatında yanıt verin:
         else:
             return "good"
     
+    def _label_from_score(self, score: float) -> str:
+        """Map normalized judge scores back to categorical labels."""
+        if score >= 0.9:
+            return "TAM_DOGRU"
+        if score >= 0.4:
+            return "KISMEN_DOGRU"
+        return "YANLIS"
     def _get_score_interpretation(self, score: float) -> str:
         """Get human-readable score interpretation"""
         if score < 0.3:

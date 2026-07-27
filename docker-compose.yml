@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: llm-eval-dashboard
     ports:
-      - "8501:8501"
+      - "8001:8001"
     env_file:
       - .env
     extra_hosts:

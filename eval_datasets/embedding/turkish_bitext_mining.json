@@ -1,0 +1,457 @@
+[
+  {
+    "id": "bt_001",
+    "category": "banking",
+    "source_sentence": "Kredi kartı borcumu nasıl öderim?",
+    "correct_translation": "How do I pay off my credit card debt?",
+    "distractor_translations": [
+      "How do I increase my credit card limit?",
+      "How do I apply for a new credit card?",
+      "How do I check my credit card balance?",
+      "How do I cancel my credit card?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_002",
+    "category": "banking",
+    "source_sentence": "Hesabımdaki para ne zaman yatacak?",
+    "correct_translation": "When will the money be deposited into my account?",
+    "distractor_translations": [
+      "When can I withdraw money from my account?",
+      "When will my account be closed?",
+      "When does my account statement arrive?",
+      "When was my account opened?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_003",
+    "category": "banking",
+    "source_sentence": "Şifremi unuttum, ne yapmalıyım?",
+    "correct_translation": "I forgot my password, what should I do?",
+    "distractor_translations": [
+      "I lost my card, what should I do?",
+      "I want to change my password, how do I do that?",
+      "My account is locked, what should I do?",
+      "I forgot my username, what should I do?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_004",
+    "category": "banking",
+    "source_sentence": "Mobil uygulamadan para transferi yapabilir miyim?",
+    "correct_translation": "Can I transfer money through the mobile app?",
+    "distractor_translations": [
+      "Can I pay my bills through the mobile app?",
+      "Can I download the mobile app for free?",
+      "Can I open a new account through the mobile app?",
+      "Can I check my balance through the mobile app?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_005",
+    "category": "banking",
+    "source_sentence": "Yurt dışında kartımı kullanabilir miyim?",
+    "correct_translation": "Can I use my card abroad?",
+    "distractor_translations": [
+      "Can I use my card online?",
+      "Can I use my card at any ATM?",
+      "Is my card valid for one year?",
+      "Can I get a second card for my spouse?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_006",
+    "category": "banking",
+    "source_sentence": "Fatura ödeme tarihini nasıl değiştirebilirim?",
+    "correct_translation": "How can I change my bill payment date?",
+    "distractor_translations": [
+      "How can I view my past bills?",
+      "How can I dispute a bill charge?",
+      "How can I set up automatic bill payment?",
+      "How can I change my billing address?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_007",
+    "category": "banking",
+    "source_sentence": "Hesap ekstresini e-posta ile alabilir miyim?",
+    "correct_translation": "Can I receive my account statement by email?",
+    "distractor_translations": [
+      "Can I receive my account statement by mail?",
+      "Can I print my account statement at a branch?",
+      "Can I get a statement for the last five years?",
+      "Can I close my account by email request?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_008",
+    "category": "finance",
+    "source_sentence": "Döviz kurunu nereden takip edebilirim?",
+    "correct_translation": "Where can I track the exchange rate?",
+    "distractor_translations": [
+      "Where can I exchange foreign currency?",
+      "Where can I open a foreign currency account?",
+      "Where can I track my investment portfolio?",
+      "Where can I find the interest rates?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_009",
+    "category": "finance",
+    "source_sentence": "Yatırım hesabı açmak için ne yapmam gerekiyor?",
+    "correct_translation": "What do I need to do to open an investment account?",
+    "distractor_translations": [
+      "What do I need to do to close an investment account?",
+      "What do I need to do to open a savings account?",
+      "What documents are required for a loan application?",
+      "What is the minimum deposit for an investment account?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_010",
+    "category": "finance",
+    "source_sentence": "Vadeli mevduat faiz oranları nedir?",
+    "correct_translation": "What are the interest rates for term deposits?",
+    "distractor_translations": [
+      "What are the interest rates for personal loans?",
+      "How do I open a term deposit account?",
+      "What is the minimum amount for a term deposit?",
+      "What are the interest rates for credit cards?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_011",
+    "category": "finance",
+    "source_sentence": "Kredi notumu nasıl öğrenebilirim?",
+    "correct_translation": "How can I find out my credit score?",
+    "distractor_translations": [
+      "How can I improve my credit score?",
+      "How can I dispute an error on my credit report?",
+      "How can I apply for a personal loan?",
+      "How can I find out my account balance?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_012",
+    "category": "finance",
+    "source_sentence": "AAPL hissesinin bugünkü kapanış fiyatı nedir?",
+    "correct_translation": "What is today's closing price for AAPL stock?",
+    "distractor_translations": [
+      "What is today's closing price for TSLA stock?",
+      "What was yesterday's opening price for AAPL stock?",
+      "What is the average trading volume for AAPL stock?",
+      "What is the dividend yield for AAPL stock?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_013",
+    "category": "finance",
+    "source_sentence": "100 USD kaç TL eder?",
+    "correct_translation": "How much is 100 USD in Turkish lira?",
+    "distractor_translations": [
+      "How much is 100 EUR in Turkish lira?",
+      "How much is 100 GBP in Turkish lira?",
+      "How much is 1000 USD in Turkish lira?",
+      "How much is 100 Turkish lira in USD?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_014",
+    "category": "customer_service",
+    "source_sentence": "İstanbul şubesinin çalışma saatleri nedir?",
+    "correct_translation": "What are the working hours of the Istanbul branch?",
+    "distractor_translations": [
+      "What are the working hours of the Ankara branch?",
+      "Where is the nearest Istanbul branch located?",
+      "Is the Istanbul branch open on weekends?",
+      "What services does the Istanbul branch offer?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_015",
+    "category": "customer_service",
+    "source_sentence": "Müşteri hizmetlerine nasıl ulaşabilirim?",
+    "correct_translation": "How can I reach customer service?",
+    "distractor_translations": [
+      "How can I file a complaint with customer service?",
+      "What are customer service working hours?",
+      "How can I reach the nearest branch?",
+      "How can I speak to a manager?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_016",
+    "category": "customer_service",
+    "source_sentence": "Şubeye gitmeden hesap açabilir miyim?",
+    "correct_translation": "Can I open an account without visiting a branch?",
+    "distractor_translations": [
+      "Can I close an account without visiting a branch?",
+      "Can I open an account with just my ID card?",
+      "Can I visit any branch to open an account?",
+      "Can I open a joint account with my spouse?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_017",
+    "category": "customer_service",
+    "source_sentence": "Şikayetimi nasıl iletebilirim?",
+    "correct_translation": "How can I submit my complaint?",
+    "distractor_translations": [
+      "How can I check the status of my complaint?",
+      "How can I withdraw my complaint?",
+      "How can I submit a compliment instead?",
+      "How can I submit a loan application?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_018",
+    "category": "general",
+    "source_sentence": "Yarın hava nasıl olacak?",
+    "correct_translation": "What will the weather be like tomorrow?",
+    "distractor_translations": [
+      "What was the weather like yesterday?",
+      "What will the weather be like this weekend?",
+      "Is it going to rain today?",
+      "What is the temperature right now?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_019",
+    "category": "general",
+    "source_sentence": "En sevdiğim yemek mantıdır.",
+    "correct_translation": "My favorite food is manti.",
+    "distractor_translations": [
+      "My favorite food is baklava.",
+      "My favorite drink is Turkish tea.",
+      "I don't like manti at all.",
+      "My favorite dessert is manti."
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_020",
+    "category": "general",
+    "source_sentence": "İstanbul'da gezilecek en güzel yerler nerede?",
+    "correct_translation": "Where are the most beautiful places to visit in Istanbul?",
+    "distractor_translations": [
+      "Where are the most beautiful places to visit in Ankara?",
+      "Where can I find the best restaurants in Istanbul?",
+      "Where are the least crowded places to visit in Istanbul?",
+      "What is the best time of year to visit Istanbul?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_021",
+    "category": "general",
+    "source_sentence": "Köpeğim hiç yemek yemiyor, ne yapmalıyım?",
+    "correct_translation": "My dog isn't eating at all, what should I do?",
+    "distractor_translations": [
+      "My cat isn't eating at all, what should I do?",
+      "My dog is eating too much, what should I do?",
+      "My dog isn't sleeping at all, what should I do?",
+      "My dog seems sick, what should I do?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_022",
+    "category": "general",
+    "source_sentence": "Bu akşam ne izlesem iyi olur?",
+    "correct_translation": "What should I watch tonight?",
+    "distractor_translations": [
+      "What should I cook tonight?",
+      "What did I watch last night?",
+      "What should I watch this weekend?",
+      "What should I read tonight?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_023",
+    "category": "general",
+    "source_sentence": "En yakın sinema salonu nerede?",
+    "correct_translation": "Where is the nearest movie theater?",
+    "distractor_translations": [
+      "Where is the nearest shopping mall?",
+      "What time does the nearest movie theater open?",
+      "Where is the nearest restaurant?",
+      "Is there a movie theater within walking distance?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_024",
+    "category": "regulatory",
+    "source_sentence": "Kişisel verilerim nasıl korunuyor?",
+    "correct_translation": "How is my personal data protected?",
+    "distractor_translations": [
+      "How can I request deletion of my personal data?",
+      "How is my personal data shared with third parties?",
+      "How is my financial data protected?",
+      "What personal data do you collect from me?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_025",
+    "category": "regulatory",
+    "source_sentence": "Bu ürün BDDK tarafından denetleniyor mu?",
+    "correct_translation": "Is this product regulated by the BRSA?",
+    "distractor_translations": [
+      "Is this product regulated by the SPK?",
+      "Is this product insured by the deposit insurance fund?",
+      "Is this product available to foreign customers?",
+      "Is this product's interest rate regulated by the BRSA?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_026",
+    "category": "regulatory",
+    "source_sentence": "KVKK kapsamında haklarım nelerdir?",
+    "correct_translation": "What are my rights under the Turkish data protection law (KVKK)?",
+    "distractor_translations": [
+      "What are my obligations under the Turkish data protection law (KVKK)?",
+      "What are my rights under the consumer protection law?",
+      "How do I file a KVKK complaint?",
+      "What is the scope of the Turkish data protection law (KVKK)?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_027",
+    "category": "regulatory",
+    "source_sentence": "Mevduat sigortası kapsamı ne kadar?",
+    "correct_translation": "What is the coverage limit of deposit insurance?",
+    "distractor_translations": [
+      "What is the coverage limit of loan insurance?",
+      "How do I apply for deposit insurance?",
+      "What is the coverage limit for foreign currency deposits?",
+      "Which banks are covered by deposit insurance?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_028",
+    "category": "banking",
+    "source_sentence": "Otomatik ödeme talimatı nasıl iptal edilir?",
+    "correct_translation": "How is an automatic payment instruction cancelled?",
+    "distractor_translations": [
+      "How is an automatic payment instruction created?",
+      "How is a wire transfer instruction cancelled?",
+      "How long does it take to cancel a payment instruction?",
+      "How is a standing order modified?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_029",
+    "category": "banking",
+    "source_sentence": "Kredi başvurumun sonucunu nereden öğrenebilirim?",
+    "correct_translation": "Where can I find out the result of my loan application?",
+    "distractor_translations": [
+      "Where can I submit a new loan application?",
+      "Where can I find out the interest rate for my loan?",
+      "Where can I find out the result of my credit card application?",
+      "How long does a loan application take to process?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_030",
+    "category": "finance",
+    "source_sentence": "BIST 100 endeksi bugün nasıl kapandı?",
+    "correct_translation": "How did the BIST 100 index close today?",
+    "distractor_translations": [
+      "How did the NASDAQ index close today?",
+      "How did the BIST 100 index open today?",
+      "How did the BIST 100 index close yesterday?",
+      "What companies are included in the BIST 100 index?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_031",
+    "category": "customer_service",
+    "source_sentence": "Kart aidatımı iade alabilir miyim?",
+    "correct_translation": "Can I get a refund for my card annual fee?",
+    "distractor_translations": [
+      "Can I get a refund for a failed transaction?",
+      "Can I avoid paying the card annual fee next year?",
+      "How much is the card annual fee?",
+      "Can I get a refund for a duplicate charge?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_032",
+    "category": "banking",
+    "source_sentence": "Kartımı kaybettim, hemen ne yapmalıyım?",
+    "correct_translation": "I lost my card, what should I do immediately?",
+    "distractor_translations": [
+      "My card was stolen, what should I do immediately?",
+      "I lost my ID, what should I do immediately?",
+      "I lost my card, how do I get a replacement?",
+      "I found a lost card, what should I do?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_033",
+    "category": "finance",
+    "source_sentence": "Emeklilik yatırım fonu getirisi ne kadar?",
+    "correct_translation": "What is the return on the pension investment fund?",
+    "distractor_translations": [
+      "What is the return on the equity investment fund?",
+      "How do I contribute to a pension investment fund?",
+      "What is the risk level of the pension investment fund?",
+      "What is the management fee for the pension investment fund?"
+    ],
+    "difficulty": "hard"
+  },
+  {
+    "id": "bt_034",
+    "category": "general",
+    "source_sentence": "Python'da bir liste nasıl oluşturulur?",
+    "correct_translation": "How do you create a list in Python?",
+    "distractor_translations": [
+      "How do you create a dictionary in Python?",
+      "How do you sort a list in Python?",
+      "How do you create a list in JavaScript?",
+      "How do you create an empty list in Python?"
+    ],
+    "difficulty": "medium"
+  },
+  {
+    "id": "bt_035",
+    "category": "regulatory",
+    "source_sentence": "Şüpheli işlem bildirimi nasıl yapılır?",
+    "correct_translation": "How do you report a suspicious transaction?",
+    "distractor_translations": [
+      "How do you dispute a suspicious transaction?",
+      "How do you block a suspicious transaction?",
+      "How do you report a lost card?",
+      "Who reviews suspicious transaction reports?"
+    ],
+    "difficulty": "hard"
+  }
+]

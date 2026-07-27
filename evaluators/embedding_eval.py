@@ -5,6 +5,7 @@ Metrics for evaluating Turkish embedding models without LLM judges
 import numpy as np
 from typing import List, Dict, Any, Tuple
 from scipy.stats import spearmanr, pearsonr
+from sklearn.metrics import average_precision_score
 from sklearn.metrics.pairwise import cosine_similarity
 from utils.logger import get_logger
 
@@ -278,6 +279,285 @@ class ClusteringEvaluator:
             "avg_separation_margin": float(np.mean([r["separation_margin"] for r in results])),
             "avg_accuracy": float(np.mean([r["accuracy"] for r in results])),
             "pass_rate": float(np.mean([r["separation_margin"] > 0.1 for r in results]))
+        }
+
+
+class PairClassificationEvaluator:
+    """Evaluate embedding model on binary pair classification (duplicate/paraphrase detection).
+
+    Unlike STS (graded similarity), this scores a binary decision: is this pair a
+    duplicate/paraphrase or not? Mirrors MTEB's PairClassification task — cosine
+    similarity is the score, and the best-threshold Average Precision is the metric,
+    so the evaluator doesn't need to guess a similarity cutoff up front.
+    """
+
+    @staticmethod
+    def evaluate(
+        embeddings1: np.ndarray,
+        embeddings2: np.ndarray,
+        labels: List[int],
+    ) -> Dict[str, Any]:
+        """
+        Args:
+            embeddings1: Embeddings for the first item in each pair (n, dim)
+            embeddings2: Embeddings for the second item in each pair (n, dim)
+            labels: 1 if the pair is a duplicate/paraphrase, 0 otherwise (n,)
+
+        Returns:
+            {
+                "average_precision": float,
+                "best_threshold": float,
+                "accuracy_at_best_threshold": float,
+                "predicted_scores": List[float],
+            }
+        """
+        predicted_scores = []
+        for emb1, emb2 in zip(embeddings1, embeddings2):
+            sim = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2) + 1e-8)
+            predicted_scores.append(float(sim))
+
+        predicted_scores = np.array(predicted_scores)
+        labels_arr = np.array(labels)
+
+        if len(set(labels)) < 2:
+            # Average precision is undefined with only one class present.
+            average_precision = 0.0
+        else:
+            average_precision = float(average_precision_score(labels_arr, predicted_scores))
+
+        # Grid search the cosine-similarity threshold that maximizes accuracy —
+        # simple, deterministic, and matches how a real dedup/FAQ-matching
+        # pipeline would pick an operating point.
+        candidate_thresholds = np.unique(np.round(predicted_scores, 3))
+        best_threshold = 0.5
+        best_accuracy = 0.0
+        for threshold in candidate_thresholds:
+            predicted_labels = (predicted_scores >= threshold).astype(int)
+            accuracy = float(np.mean(predicted_labels == labels_arr))
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
+                best_threshold = float(threshold)
+
+        return {
+            "average_precision": average_precision,
+            "best_threshold": best_threshold,
+            "accuracy_at_best_threshold": best_accuracy,
+            "mean_positive_score": float(np.mean(predicted_scores[labels_arr == 1])) if np.any(labels_arr == 1) else None,
+            "mean_negative_score": float(np.mean(predicted_scores[labels_arr == 0])) if np.any(labels_arr == 0) else None,
+        }
+
+
+class BitextMiningEvaluator:
+    """Evaluate embedding model on cross-lingual bitext mining (translation retrieval).
+
+    For each source-language sentence, the model must pick its true translation out of
+    a small candidate pool (the correct translation plus several distractor sentences
+    on a similar topic). This is the task LaBSE-style models are explicitly trained
+    for, and it's a different skill from STS: it tests whether the *correct* match
+    ranks first among close competitors, not just whether similarity scores correlate.
+    """
+
+    @staticmethod
+    def evaluate_single(
+        source_embedding: np.ndarray,
+        candidate_embeddings: np.ndarray,
+        correct_index: int,
+    ) -> Dict[str, Any]:
+        similarities = cosine_similarity([source_embedding], candidate_embeddings)[0]
+        ranked_indices = np.argsort(similarities)[::-1]
+        rank = int(np.where(ranked_indices == correct_index)[0][0]) + 1  # 1-based rank
+        return {
+            "rank": rank,
+            "correct_at_1": rank == 1,
+            "reciprocal_rank": 1.0 / rank,
+            "correct_similarity": float(similarities[correct_index]),
+            "top_distractor_similarity": float(
+                max((s for i, s in enumerate(similarities) if i != correct_index), default=0.0)
+            ),
+        }
+
+    @staticmethod
+    def aggregate(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            "accuracy_at_1": float(np.mean([r["correct_at_1"] for r in results])),
+            "mrr": float(np.mean([r["reciprocal_rank"] for r in results])),
+            "avg_correct_similarity": float(np.mean([r["correct_similarity"] for r in results])),
+            "avg_top_distractor_similarity": float(np.mean([r["top_distractor_similarity"] for r in results])),
+            "avg_margin": float(
+                np.mean([r["correct_similarity"] - r["top_distractor_similarity"] for r in results])
+            ),
+        }
+
+
+class BatchConsistencyEvaluator:
+    """Evaluate whether encode() is invariant to batch composition and item order.
+
+    A production pipeline encodes documents in large batches for throughput, but this
+    must not silently change the vector a document gets versus encoding it alone or in
+    a different position — otherwise retrieval/index quality depends on incidental
+    batch composition, a real failure mode for some padding-sensitive or quantized
+    runtimes. This isn't about embedding *quality*, only about *determinism*.
+    """
+
+    @staticmethod
+    def compare(embeddings_a: np.ndarray, embeddings_b: np.ndarray, tolerance: float = 0.999) -> Dict[str, Any]:
+        """Pairwise cosine similarity between two equal-length, index-aligned embedding sets."""
+        similarities = []
+        for a, b in zip(embeddings_a, embeddings_b):
+            sim = float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-8))
+            similarities.append(sim)
+
+        return {
+            "mean_similarity": float(np.mean(similarities)),
+            "min_similarity": float(np.min(similarities)),
+            "pass_rate": float(np.mean([s >= tolerance for s in similarities])),
+            "similarities": similarities,
+        }
+
+    @staticmethod
+    def aggregate(
+        batch_vs_individual: Dict[str, Any],
+        order_vs_reordered: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        return {
+            "avg_batch_consistency": batch_vs_individual["mean_similarity"],
+            "min_batch_consistency": batch_vs_individual["min_similarity"],
+            "batch_consistency_pass_rate": batch_vs_individual["pass_rate"],
+            "avg_order_consistency": order_vs_reordered["mean_similarity"],
+            "min_order_consistency": order_vs_reordered["min_similarity"],
+            "order_consistency_pass_rate": order_vs_reordered["pass_rate"],
+            "overall_score": min(
+                batch_vs_individual["mean_similarity"], order_vs_reordered["mean_similarity"]
+            ),
+        }
+
+
+class LongContextRobustnessEvaluator:
+    """Evaluate whether a fact buried near the end of a long document is still
+    findable, versus the same fact placed at the very start.
+
+    Many embedding models silently truncate input beyond their configured
+    max_sequence_length (or simply down-weight later tokens even without hard
+    truncation). A model that handles long context well should embed a document
+    such that a query about its content matches similarly well regardless of where
+    in the document that content sits; a model that doesn't will show a large gap.
+    """
+
+    @staticmethod
+    def evaluate_single(
+        query_embedding: np.ndarray,
+        doc_signal_first_embedding: np.ndarray,
+        doc_signal_last_embedding: np.ndarray,
+    ) -> Dict[str, Any]:
+        def _cosine(a: np.ndarray, b: np.ndarray) -> float:
+            return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-8))
+
+        similarity_signal_first = _cosine(query_embedding, doc_signal_first_embedding)
+        similarity_signal_last = _cosine(query_embedding, doc_signal_last_embedding)
+
+        return {
+            "similarity_signal_first": similarity_signal_first,
+            "similarity_signal_last": similarity_signal_last,
+            "position_gap": similarity_signal_first - similarity_signal_last,
+        }
+
+    @staticmethod
+    def aggregate(results: List[Dict[str, Any]], robust_tolerance: float = 0.15) -> Dict[str, Any]:
+        gaps = [r["position_gap"] for r in results]
+        return {
+            "avg_similarity_signal_first": float(np.mean([r["similarity_signal_first"] for r in results])),
+            "avg_similarity_signal_last": float(np.mean([r["similarity_signal_last"] for r in results])),
+            "avg_position_gap": float(np.mean(gaps)),
+            "max_position_gap": float(np.max(gaps)),
+            "robust_rate": float(np.mean([g <= robust_tolerance for g in gaps])),
+        }
+
+
+class RerankingEvaluator:
+    """Evaluate reranking of a small, already-retrieved candidate list with graded
+    relevance (0/1/2 …), rather than the binary relevant/not-relevant labels used by
+    the Retrieval task. This is the MTEB "Reranking" distinction: given a short list a
+    first-stage retriever already produced, can the embedding model order it well by
+    *degree* of relevance, not just separate relevant from irrelevant.
+    """
+
+    @staticmethod
+    def evaluate_single(
+        query_embedding: np.ndarray,
+        candidate_embeddings: np.ndarray,
+        relevance_scores: List[float],
+    ) -> Dict[str, Any]:
+        similarities = cosine_similarity([query_embedding], candidate_embeddings)[0]
+        ranked_indices = np.argsort(similarities)[::-1]
+        ranked_relevance = [relevance_scores[i] for i in ranked_indices]
+
+        # NDCG naturally supports graded (non-binary) relevance — see RetrievalEvaluator.
+        ndcg = RetrievalEvaluator.compute_ndcg_at_k(ranked_relevance, k=len(ranked_relevance))
+
+        rank_correlation = 0.0
+        if len(set(relevance_scores)) > 1:
+            predicted_rank = np.argsort(np.argsort(-similarities))
+            rho, _ = spearmanr(relevance_scores, -predicted_rank)
+            rank_correlation = float(rho) if not np.isnan(rho) else 0.0
+
+        top1_is_most_relevant = ranked_relevance[0] == max(relevance_scores)
+
+        return {
+            "ndcg": ndcg,
+            "rank_correlation": rank_correlation,
+            "top1_is_most_relevant": bool(top1_is_most_relevant),
+        }
+
+    @staticmethod
+    def aggregate(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        return {
+            "avg_ndcg": float(np.mean([r["ndcg"] for r in results])),
+            "avg_rank_correlation": float(np.mean([r["rank_correlation"] for r in results])),
+            "top1_accuracy": float(np.mean([r["top1_is_most_relevant"] for r in results])),
+        }
+
+
+class PerturbationStabilityEvaluator:
+    """Evaluate whether retrieval ranking stays stable when a query is lightly
+    perturbed (typo, word reorder, synonym swap) but its meaning is unchanged.
+
+    A brittle embedding model can rank documents very differently for "kredi kartı
+    borcum" vs "kredi kartım borcu" even though a human reads them identically —
+    this directly measures that kind of instability, distinct from raw retrieval
+    quality (which only checks whether *a* correctly-worded query finds the answer).
+    """
+
+    @staticmethod
+    def evaluate_single(
+        original_ranked_indices: np.ndarray,
+        perturbed_ranked_indices: np.ndarray,
+        positive_indices: set,
+        top_k: int = 3,
+    ) -> Dict[str, Any]:
+        original_top_k = list(original_ranked_indices[:top_k])
+        perturbed_top_k = list(perturbed_ranked_indices[:top_k])
+        overlap = len(set(original_top_k) & set(perturbed_top_k)) / top_k
+
+        return {
+            "top1_stable": bool(original_ranked_indices[0] == perturbed_ranked_indices[0]),
+            "top_k_overlap": overlap,
+            "original_top1_positive": bool(original_ranked_indices[0] in positive_indices),
+            "perturbed_top1_positive": bool(perturbed_ranked_indices[0] in positive_indices),
+        }
+
+    @staticmethod
+    def aggregate(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        # Cases where the original query already failed to find a positive doc aren't
+        # informative about *stability* — only count degradation among cases that
+        # started from a correct result.
+        degraded = [
+            r for r in results
+            if r["original_top1_positive"] and not r["perturbed_top1_positive"]
+        ]
+        return {
+            "avg_top1_stable": float(np.mean([r["top1_stable"] for r in results])),
+            "avg_top_k_overlap": float(np.mean([r["top_k_overlap"] for r in results])),
+            "degradation_rate": float(len(degraded) / max(len(results), 1)),
         }
 
 

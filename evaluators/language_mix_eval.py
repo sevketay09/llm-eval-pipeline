@@ -78,6 +78,14 @@ class LanguageMixEvaluator:
         generated = model.generate([
             {"role": "user", "content": prompt}
         ])
+        if generated.get("error"):
+            # Infrastructure failure, not the model's answer — the caller
+            # must check `generation_error` and exclude this item instead of
+            # scoring an empty string as a language-mix response.
+            return {
+                "generation_error": generated["error"],
+                "response": "",
+            }
         response = generated.get("content") or ""
         usage = generated.get("usage", {})
         

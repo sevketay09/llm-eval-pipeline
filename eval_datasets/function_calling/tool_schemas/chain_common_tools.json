@@ -1,0 +1,1138 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_weather",
+      "description": "Hava durumu bilgisi getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_exchange_rate",
+      "description": "Döviz kurunu getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "from_currency": {
+            "type": "string"
+          },
+          "to_currency": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_currency",
+          "to_currency"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "calculate",
+      "description": "Matematiksel hesaplama yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "expression": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expression"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_stock_price",
+      "description": "Hisse senedi fiyatını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_flight_info",
+      "description": "Uçuş bilgilerini getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "origin",
+          "destination",
+          "date"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "book_hotel",
+      "description": "Otel rezervasyonu yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "check_in": {
+            "type": "string"
+          },
+          "check_out": {
+            "type": "string"
+          },
+          "guests": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "city",
+          "check_in",
+          "check_out"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_restaurant_recommendations",
+      "description": "Restoran önerileri getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "price_range": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "send_email",
+      "description": "E-posta gönderir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "to",
+          "subject",
+          "body"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "check_balance",
+      "description": "Hesap bakiyesini kontrol eder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "account_type": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "transfer_funds",
+      "description": "Hesaplar arası para transferi yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to_account": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "to_account",
+          "amount"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "transfer_to_savings",
+      "description": "Vadeli hesaba para aktarır",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "term_months": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "pay_bill",
+      "description": "Fatura öder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "bill_type": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "bill_type"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "pay_credit_card",
+      "description": "Kredi kartı ödemesi yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "card_id": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_credit_card_debt",
+      "description": "Kredi kartı borcunu öğrenir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "card_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_credit_card_due_date",
+      "description": "Kredi kartı son ödeme tarihini getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "card_id": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_credit_card_statement",
+      "description": "Kredi kartı ekstresi getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "check_credit_score",
+      "description": "Kredi skorunu kontrol eder",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "apply_loan",
+      "description": "Kredi başvurusu yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "term_months": {
+            "type": "integer"
+          },
+          "purpose": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_transactions",
+      "description": "Hesap geçmişini getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_interest_rate",
+      "description": "Faiz oranını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "loan_type": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_inflation_rate",
+      "description": "Enflasyon oranını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_gold_price",
+      "description": "Altın fiyatını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "buy_gold",
+      "description": "Altın satın alır",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_crypto_price",
+      "description": "Kripto para fiyatını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "place_stock_order",
+      "description": "Hisse senedi siparişi verir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "symbol",
+          "action",
+          "quantity"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_fund_performance",
+      "description": "Fon performansını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "fund_name": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_commodity_price",
+      "description": "Emtia fiyatını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "commodity": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "commodity"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "sell_asset",
+      "description": "Varlık satar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "asset_type": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "asset_type"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_price_alert",
+      "description": "Fiyat alarmı oluşturur",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "asset": {
+            "type": "string"
+          },
+          "target_price": {
+            "type": "number"
+          },
+          "direction": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset",
+          "target_price"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_autopay_instruction",
+      "description": "Otomatik ödeme talimatı oluşturur",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "bill_type": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "bill_type"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "update_transfer",
+      "description": "Transfer günceller veya iptal eder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "transfer_id": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "transfer_id",
+          "action"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "query_bill",
+      "description": "Fatura sorgular",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "bill_type": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "add_calendar_event",
+      "description": "Takvime etkinlik ekler",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "date"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "check_calendar",
+      "description": "Takvim etkinliklerini kontrol eder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_meeting",
+      "description": "Toplantı oluşturur",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "date"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_reminder",
+      "description": "Hatırlatıcı oluşturur",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "datetime": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_alarm",
+      "description": "Alarm kurar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "time"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "send_message",
+      "description": "Mesaj gönderir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "to",
+          "text"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_events",
+      "description": "Etkinlikleri getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "book_restaurant",
+      "description": "Restoran rezervasyonu yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "restaurant": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "guests": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "book_tour",
+      "description": "Tur rezervasyonu yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tour_name": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "persons": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tour_name",
+          "date"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_tour_price",
+      "description": "Tur fiyatını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tour_name": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "rent_car",
+      "description": "Araç kiralama yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "start_date": {
+            "type": "string"
+          },
+          "end_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "city"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_ticket_price",
+      "description": "Bilet fiyatını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "buy_ticket",
+      "description": "Bilet satın alır",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "event"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "book_lesson",
+      "description": "Ders rezervasyonu yapar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "order_groceries",
+      "description": "Market siparişi verir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "order_flowers",
+      "description": "Çiçek siparişi verir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "address"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "check_inventory",
+      "description": "Envanter durumunu kontrol eder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_prices",
+      "description": "Ürün fiyatlarını getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "product": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "play_music",
+      "description": "Müzik çalar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "song": {
+            "type": "string"
+          },
+          "artist": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_volume",
+      "description": "Ses seviyesini ayarlar",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "level"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "control_smart_home",
+      "description": "Akıllı ev cihazlarını kontrol eder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "device": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "device",
+          "action"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_time",
+      "description": "Mevcut saat ve tarih bilgisini getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "timezone": {
+            "type": "string"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "check_flight_status",
+      "description": "Uçuş durumunu kontrol eder",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "flight_number": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "flight_number"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_flight_distance",
+      "description": "İki şehir arasındaki uçuş mesafesini getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "origin",
+          "destination"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_snow_depth",
+      "description": "Kar derinliği bilgisini getirir",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ]
+      }
+    }
+  }
+]

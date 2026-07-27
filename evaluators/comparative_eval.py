@@ -106,6 +106,56 @@ JSON formatında yanıt verin:
                 "raw_response": result['content']
             }
     
+    def compare_with_swap(
+        self,
+        question: str,
+        response_a: str,
+        response_b: str,
+        model_a_name: str = "Model A",
+        model_b_name: str = "Model B"
+    ) -> Dict[str, Any]:
+        """Position-bias-mitigated comparison: judge twice with A/B swapped.
+
+        LLM judges favor whichever answer appears first. The verdict only
+        stands if it survives swapping the presentation order; otherwise the
+        match is scored as a Tie and flagged position_consistent=False.
+
+        Returns the same schema as compare() plus:
+            position_consistent: bool
+            first_pass_winner / second_pass_winner: str (both in original A/B frame)
+        """
+        first = self.compare(question, response_a, response_b, model_a_name, model_b_name)
+        swapped = self.compare(question, response_b, response_a, model_b_name, model_a_name)
+
+        # Map the swapped verdict back into the original A/B frame
+        swap_map = {"A": "B", "B": "A", "Tie": "Tie"}
+        second_winner = swap_map.get(swapped["winner"], "Tie")
+
+        consistent = first["winner"] == second_winner
+        if consistent:
+            winner = first["winner"]
+            reasoning = first["reasoning"]
+            score_difference = (first["score_difference"] + swapped["score_difference"]) / 2.0
+        else:
+            winner = "Tie"
+            reasoning = (
+                f"Pozisyon tutarsızlığı: sunum sırası değişince judge kararı değişti "
+                f"({first['winner']} → {second_winner}); Tie sayıldı."
+            )
+            score_difference = 0.0
+
+        return {
+            "winner": winner,
+            "reasoning": reasoning,
+            "score_difference": score_difference,
+            "model_a_name": model_a_name,
+            "model_b_name": model_b_name,
+            "position_consistent": consistent,
+            "first_pass_winner": first["winner"],
+            "second_pass_winner": second_winner,
+            "raw_response": first.get("raw_response"),
+        }
+
     def batch_compare(
         self,
         comparisons: List[Tuple[str, str, str]]

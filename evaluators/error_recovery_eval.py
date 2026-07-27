@@ -5,6 +5,7 @@ Modellerin tool hatalarını nasıl handle ettiğini test eder.
 - Fallback strategies
 - Error message comprehension
 """
+import concurrent.futures
 import json
 from typing import Dict, Any, List, Optional
 from adapters.unified_adapter import UnifiedLLMAdapter
@@ -73,7 +74,13 @@ class ToolErrorRecoveryEvaluator:
                 )
             except Exception as e:
                 break
-            
+
+            if response.get("error"):
+                # A real infrastructure failure (retries exhausted), distinct
+                # from the tool errors this test deliberately injects — don't
+                # score it as "the model gave up without retrying."
+                return {"generation_error": response["error"], "test_id": scenario.get("id", "unknown")}
+
             # Check for tool calls
             tool_calls = response.get("tool_calls", [])
             
@@ -213,28 +220,31 @@ class ToolErrorRecoveryEvaluator:
                 )
             except Exception:
                 break
-            
+
+            if response.get("error"):
+                return {"generation_error": response["error"], "test_id": scenario.get("id", "unknown")}
+
             tool_calls = response.get("tool_calls", [])
-            
+
             if not tool_calls:
                 final_response = response.get("content", "")
                 break
-            
+
             assistant_message = {
                 "role": "assistant",
                 "content": response.get("content", ""),
                 "tool_calls": []
             }
-            
+
             for tool_call in tool_calls:
                 tc_tool_name = tool_call.get("function", {}).get("name")
                 tc_args_str = tool_call.get("function", {}).get("arguments", "{}")
-                
+
                 try:
                     tc_args = json.loads(tc_args_str) if isinstance(tc_args_str, str) else tc_args_str
                 except json.JSONDecodeError:
                     tc_args = {}
-                
+
                 # Check if using fallback
                 if tc_tool_name in fallback_tools:
                     used_fallback = True
@@ -332,7 +342,10 @@ class ToolErrorRecoveryEvaluator:
             )
         except Exception as e:
             return {"success": False, "error": str(e), "test_id": scenario.get("id")}
-        
+
+        if response.get("error"):
+            return {"generation_error": response["error"], "test_id": scenario.get("id")}
+
         tool_calls = response.get("tool_calls", [])
         
         if tool_calls:
@@ -374,9 +387,11 @@ class ToolErrorRecoveryEvaluator:
                     temperature=0.0,
                     max_tokens=500
                 )
-                final_response = error_response.get("content", "")
             except Exception as e:
                 return {"success": False, "error": str(e), "test_id": scenario.get("id")}
+            if error_response.get("error"):
+                return {"generation_error": error_response["error"], "test_id": scenario.get("id")}
+            final_response = error_response.get("content", "") or ""
         else:
             final_response = response.get("content", "")
         
@@ -414,29 +429,50 @@ def evaluate_tool_error_recovery(
     and error comprehension.
     """
     evaluator = ToolErrorRecoveryEvaluator(judge_adapter)
-    
+
     results = []
     retry_tests = []
     fallback_tests = []
     comprehension_tests = []
-    
-    for i, scenario in enumerate(test_scenarios):
+
+    def _run_scenario(i, scenario):
         print(f"Running error recovery test {i+1}/{len(test_scenarios)}: {scenario.get('id', 'unknown')}")
-        
         test_type = scenario.get("test_type", "retry")
-        
         if test_type == "retry":
-            result = evaluator.evaluate_retry_behavior(adapter, scenario)
+            return test_type, evaluator.evaluate_retry_behavior(adapter, scenario)
+        elif test_type == "fallback":
+            return test_type, evaluator.evaluate_fallback_strategy(adapter, scenario)
+        elif test_type == "comprehension":
+            return test_type, evaluator.evaluate_error_comprehension(adapter, scenario)
+        return None, None
+
+    # Scenarios are independent (each drives its own model/tool-error conversation),
+    # so run them concurrently instead of blocking one at a time on model latency.
+    # Original scenario order is preserved below for `results` and the per-type lists.
+    indexed: Dict[int, Any] = {}
+    if test_scenarios:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(3, len(test_scenarios))) as pool:
+            futures = {pool.submit(_run_scenario, i, scenario): i for i, scenario in enumerate(test_scenarios)}
+            for future in concurrent.futures.as_completed(futures):
+                indexed[futures[future]] = future.result()
+
+    for i in sorted(indexed):
+        test_type, result = indexed[i]
+        if test_type is None:
+            continue
+        if result.get("generation_error"):
+            # Infra failure (retries exhausted), not the model failing the
+            # scenario — exclude rather than counting it as a failed attempt,
+            # which would corrupt success_rate with something we never
+            # actually got to observe.
+            print(f"Skipping error recovery scenario {result.get('test_id', 'unknown')}: {result['generation_error']}")
+            continue
+        if test_type == "retry":
             retry_tests.append(result)
         elif test_type == "fallback":
-            result = evaluator.evaluate_fallback_strategy(adapter, scenario)
             fallback_tests.append(result)
         elif test_type == "comprehension":
-            result = evaluator.evaluate_error_comprehension(adapter, scenario)
             comprehension_tests.append(result)
-        else:
-            continue
-        
         results.append(result)
     
     # Calculate summary

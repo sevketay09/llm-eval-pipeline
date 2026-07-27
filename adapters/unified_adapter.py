@@ -2,16 +2,19 @@
 Unified LLM Adapter
 Supports: OpenAI API, Azure OpenAI, vLLM, Ollama, LM Studio (OpenAI compatible), Anthropic Claude
 """
+import re
 import time
 import json
 import asyncio
 import ssl
 import certifi
+import threading
 from typing import List, Dict, Any, Optional, Union
 from openai import OpenAI, AzureOpenAI
 from anthropic import Anthropic
 import tiktoken
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+import logging as _logging
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type, before_sleep_log
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -32,7 +35,10 @@ class UnifiedLLMAdapter:
         logger.debug(f"Initializing adapter for {self.model_name} (provider: {self.provider})")
         
         # Initialize appropriate client
-        if self.provider == "anthropic":
+        if self.provider == "mock":
+            # Offline demo provider: deterministic canned responses, no network.
+            self.client = None
+        elif self.provider == "anthropic":
             self.client = Anthropic(api_key=config["api_key"])
         elif self.provider == "azure" or "azure" in config.get("base_url", "").lower() or "api_version" in config:
             # Azure OpenAI
@@ -45,26 +51,52 @@ class UnifiedLLMAdapter:
             self.provider = "azure"  # Normalize provider name
         else:
             # OpenAI or OpenAI-compatible (vLLM, Ollama, LM Studio)
-            self.client = OpenAI(
-                base_url=config["base_url"],
-                api_key=config.get("api_key", "dummy"),
-                timeout=120.0
-            )
+            kwargs = {"api_key": config.get("api_key", "dummy"), "timeout": 120.0}
+            if config.get("base_url"):
+                kwargs["base_url"] = config["base_url"]
+            self.client = OpenAI(**kwargs)
         
         # Cost tracking
         self.total_input_tokens = 0
         self.total_output_tokens = 0
-        
+
         # Performance tracking
         self.latencies = []
         self.error_count = 0
         self.timeout_count = 0
+
+        # Lock for stats mutation (concurrent item processing)
+        self._stats_lock = threading.Lock()
     
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=retry_if_exception_type((Exception,))
+        retry=retry_if_exception_type((Exception,)),
+        before_sleep=before_sleep_log(logger, _logging.WARNING),
+        reraise=True,
     )
+    def _dispatch_generate(
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List[Dict]],
+        temperature: float,
+        max_tokens: int,
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Actual provider call, retried up to 3x with exponential backoff.
+
+        Must raise on failure (never swallow) so tenacity's retry actually
+        triggers — `reraise=True` re-raises the last real exception once
+        attempts are exhausted, instead of tenacity's own RetryError wrapper,
+        so the caller's error message stays meaningful.
+        """
+        if self.provider == "mock":
+            return self._generate_mock(messages, tools, **kwargs)
+        elif self.provider == "anthropic":
+            return self._generate_anthropic(messages, tools, temperature, max_tokens, **kwargs)
+        else:
+            return self._generate_openai(messages, tools, temperature, max_tokens, **kwargs)
+
     def generate(
         self,
         messages: List[Dict[str, str]],
@@ -74,8 +106,9 @@ class UnifiedLLMAdapter:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Generate completion with unified interface (with retry logic)
-        
+        Generate completion with unified interface (retries transient errors
+        up to 3x with exponential backoff; never raises to the caller).
+
         Returns:
             {
                 'content': str,
@@ -84,9 +117,13 @@ class UnifiedLLMAdapter:
                 'latency': float,
                 'model': str
             }
+            On failure after all retries are exhausted, 'content' is None and
+            an 'error' key is set — callers must check for this and exclude
+            the item from results rather than scoring an empty/error response
+            as if it were a real answer.
         """
         start_time = time.time()
-        
+
         # Set defaults
         temperature = temperature if temperature is not None else self.config.get("temperature", 0.0)
         max_tokens = max_tokens if max_tokens is not None else self.config.get("max_tokens", 4096)
@@ -96,32 +133,34 @@ class UnifiedLLMAdapter:
             temperature = float(self.config["force_temperature"])
         if self.config.get("force_max_tokens") is not None:
             max_tokens = int(self.config["force_max_tokens"])
-        
+
+        logger.debug(f"[{self.model_name}] → API call | messages={len(messages)} temperature={temperature} max_tokens={max_tokens}")
+
         try:
-            if self.provider == "anthropic":
-                result = self._generate_anthropic(messages, tools, temperature, max_tokens, **kwargs)
-            else:
-                result = self._generate_openai(messages, tools, temperature, max_tokens, **kwargs)
-            
+            result = self._dispatch_generate(messages, tools, temperature, max_tokens, **kwargs)
+
             latency = time.time() - start_time
             result['latency'] = latency
-            self.latencies.append(latency)
-            
-            # Update tracking
-            self.total_input_tokens += result['usage']['input_tokens']
-            self.total_output_tokens += result['usage']['output_tokens']
-            
+            with self._stats_lock:
+                self.latencies.append(latency)
+                self.total_input_tokens += result['usage']['input_tokens']
+                self.total_output_tokens += result['usage']['output_tokens']
+
+            logger.debug(f"[{self.model_name}] ← response | {result['usage']['output_tokens']} tokens in {latency:.2f}s")
             return result
-            
+
         except Exception as e:
             latency = time.time() - start_time
-            self.latencies.append(latency)
-            self.error_count += 1
-            if "timeout" in str(e).lower():
-                self.timeout_count += 1
-                logger.warning(f"Timeout on {self.model_name}: {e}")
+            is_timeout = "timeout" in str(e).lower() or "timed out" in str(e).lower()
+            with self._stats_lock:
+                self.latencies.append(latency)
+                self.error_count += 1
+                if is_timeout:
+                    self.timeout_count += 1
+            if is_timeout:
+                logger.error(f"[{self.model_name}] TIMEOUT after {latency:.2f}s (all retries exhausted): {type(e).__name__}: {e}")
             else:
-                logger.error(f"Generation error on {self.model_name}: {e}")
+                logger.error(f"[{self.model_name}] ERROR after {latency:.2f}s (all retries exhausted): {type(e).__name__}: {e}")
             return {
                 'content': None,
                 'tool_calls': None,
@@ -173,7 +212,8 @@ class UnifiedLLMAdapter:
         
         # Parse response
         message = response.choices[0].message
-        content = message.content or ""
+        raw = message.content or ""
+        content = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL).strip()
         tool_calls = None
         
         if hasattr(message, 'tool_calls') and message.tool_calls:
@@ -271,6 +311,68 @@ class UnifiedLLMAdapter:
             'model': self.model_name
         }
     
+    def _generate_mock(
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List[Dict]],
+        **kwargs
+    ) -> Dict[str, Any]:
+        """Deterministic offline responses for demo runs (provider: mock).
+
+        - Judge-style prompts (mention JSON output) get a fixed positive verdict
+          covering every judge schema in the pipeline (label / score / result).
+        - Tool-enabled calls answer with a call to the first available tool.
+        - Everything else gets a short canned answer echoing the question.
+        """
+        prompt_text = " ".join(str(m.get("content") or "") for m in messages)
+        content = None
+        tool_calls = None
+
+        if "JSON" in prompt_text or "json" in prompt_text:
+            content = json.dumps({
+                "label": "TAM_DOGRU",
+                "score": 4,
+                "reasoning": "Demo mock judge: sabit olumlu karar (gerçek bir değerlendirme değildir).",
+                "result": "pass",
+            }, ensure_ascii=False)
+        elif tools:
+            tool = tools[0].get("function", tools[0])
+            required = (tool.get("parameters") or {}).get("required", [])
+            props = (tool.get("parameters") or {}).get("properties", {})
+            arguments = {}
+            for param in required:
+                param_type = (props.get(param) or {}).get("type", "string")
+                arguments[param] = 1 if param_type in ("integer", "number") else "demo"
+            tool_calls = [{
+                "id": "mock-call-1",
+                "name": tool.get("name", "unknown_tool"),
+                "arguments": arguments,
+            }]
+            content = ""
+        else:
+            last_user = next(
+                (m.get("content") or "" for m in reversed(messages) if m.get("role") == "user"),
+                "",
+            )
+            content = (
+                "Bu bir demo yanıtıdır (mock model). Soru özeti: "
+                + last_user[:160]
+            )
+
+        input_tokens = max(1, len(prompt_text) // 4)
+        output_tokens = max(1, len(content or "") // 4)
+        time.sleep(0.01)  # tiny non-zero latency so throughput metrics stay sane
+
+        return {
+            'content': content,
+            'tool_calls': tool_calls,
+            'usage': {
+                'input_tokens': input_tokens,
+                'output_tokens': output_tokens
+            },
+            'model': self.model_name
+        }
+
     def _convert_tools_to_anthropic(self, openai_tools: List[Dict]) -> List[Dict]:
         """Convert OpenAI tool format to Anthropic format"""
         anthropic_tools = []

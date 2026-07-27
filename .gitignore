@@ -13,6 +13,13 @@ venv/
 *.crt
 secrets.yaml
 secrets.yml
+key.txt
+
+# Local backups
+*.backup
+
+# Frontend deps
+node_modules/
 
 # Build/cache
 .cache/
@@ -24,6 +31,7 @@ build/
 # Runtime outputs
 reports/
 logs/
+data/state/
 
 # HITL annotations (may contain real user data)
 annotations/completed/
@@ -37,3 +45,7 @@ annotations/training_data/
 *.swo
 
 .github/
+
+# Internal session docs and Claude memory
+docs/
+.claude/
