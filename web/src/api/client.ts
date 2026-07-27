@@ -478,6 +478,24 @@ export interface WorkspaceSourceFile {
   size_kb: number;
 }
 
+export interface RagModelAggregate {
+  avg_context_precision: number;
+  avg_context_recall: number | null;
+  avg_faithfulness: number;
+  avg_answer_relevance: number;
+  avg_overall_rag_score: number;
+  fault_distribution: Record<string, number>;
+  rag_case_count: number;
+}
+
+export interface RagReportEvalResponse {
+  total_rag_cases: number;
+  models: Record<string, RagModelAggregate>;
+  overall_fault_distribution: Record<string, number>;
+  scoring_mode: string;
+  embedding_model: string | null;
+}
+
 export const resultsApi = {
   listReports: (limit = 50) =>
     request<ReportListItem[]>(`/results/reports?limit=${limit}`),
@@ -486,6 +504,12 @@ export const resultsApi = {
   getRaw: (filename: string) =>
     request<Record<string, unknown>>(
       `/results/reports/${encodeURIComponent(filename)}/raw`
+    ),
+  getRagEval: (filename: string, embeddingModel?: string) =>
+    request<RagReportEvalResponse>(
+      `/results/reports/${encodeURIComponent(filename)}/rag-eval${
+        embeddingModel ? `?embedding_model=${encodeURIComponent(embeddingModel)}` : ""
+      }`
     ),
   compare: (filenames: string[]) =>
     request<Record<string, ReportCompareSummary>>('/results/compare', {

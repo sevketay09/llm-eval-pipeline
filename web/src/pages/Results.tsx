@@ -16,6 +16,7 @@ import {
 import {
   resultsApi,
   type EvaluatorEfficiencyRow,
+  type RagReportEvalResponse,
   type ReportCompareSummary,
   type ReportListItem,
   type ReportSummary,
@@ -881,6 +882,7 @@ export default function Results() {
   const [selected, setSelected] = useState<string | null>(null);
   const [report, setReport] = useState<ReportSummary | null>(null);
   const [selectedRawReport, setSelectedRawReport] = useState<Record<string, unknown> | null>(null);
+  const [ragEval, setRagEval] = useState<RagReportEvalResponse | null>(null);
   const [selectedConversationKey, setSelectedConversationKey] = useState("");
   const [selectedTraceKey, setSelectedTraceKey] = useState("");
   const [compareSelection, setCompareSelection] = useState<string[]>([]);
@@ -931,6 +933,29 @@ export default function Results() {
         if (!cancelled) {
           setSelectedRawReport(null);
         }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selected]);
+
+  useEffect(() => {
+    if (!selected) {
+      setRagEval(null);
+      return;
+    }
+
+    let cancelled = false;
+    resultsApi
+      .getRagEval(selected)
+      .then((data) => {
+        if (!cancelled) setRagEval(data);
+      })
+      .catch(() => {
+        // Not every report has RAG-shaped cases; a fetch error here is
+        // non-fatal, the panel below just stays hidden.
+        if (!cancelled) setRagEval(null);
       });
 
     return () => {
@@ -2587,6 +2612,81 @@ export default function Results() {
               </div>
                 </>
               )}
+            </section>
+          )}
+
+          {ragEval && ragEval.total_rag_cases > 0 && (
+            <section className="motion-rise motion-delay-2 space-y-4">
+              <div>
+                <p className="section-caption mb-2">RAG Desk</p>
+                <h2 className="section-heading">RAG Component Scores</h2>
+                <p className="page-subtitle max-w-3xl text-sm">
+                  Every RAG-shaped case in this run ({formatCount(ragEval.total_rag_cases)} total), scored via{" "}
+                  {ragEval.scoring_mode === "embedding"
+                    ? `embedding similarity (${ragEval.embedding_model})`
+                    : "token overlap"}{" "}
+                  and broken down by retriever vs. generator fault.
+                </p>
+              </div>
+
+              <div className="motion-stagger-grid grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {Object.entries(ragEval.overall_fault_distribution).map(([fault, count]) => (
+                  <div key={fault} className="panel-surface panel-quiet space-y-2">
+                    <p className="metric-label">{fault === "none" ? "No fault" : fault}</p>
+                    <p className="metric-value text-2xl">{formatCount(count)}</p>
+                    <p className="micro-copy">
+                      {fault === "retriever"
+                        ? "Bad context reached the generator"
+                        : fault === "generator"
+                          ? "Good context, bad answer"
+                          : fault === "mixed"
+                            ? "Unclear which component failed"
+                            : "Precision, faithfulness and relevance all cleared threshold"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {Object.entries(ragEval.models).map(([modelKey, agg]) => (
+                  <div key={modelKey} className="panel-surface panel-quiet space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="body-copy font-semibold">{modelKey}</p>
+                        <p className="micro-copy mt-1">{formatCount(agg.rag_case_count)} RAG cases</p>
+                      </div>
+                      <ScoreBadge score={agg.avg_overall_rag_score} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
+                      <div>
+                        <p className="micro-copy">Context Precision</p>
+                        <p className="body-copy mt-1">{formatMetric(agg.avg_context_precision)}</p>
+                      </div>
+                      <div>
+                        <p className="micro-copy">Context Recall</p>
+                        <p className="body-copy mt-1">
+                          {agg.avg_context_recall == null ? "N/A" : formatMetric(agg.avg_context_recall)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="micro-copy">Faithfulness</p>
+                        <p className="body-copy mt-1">{formatMetric(agg.avg_faithfulness)}</p>
+                      </div>
+                      <div>
+                        <p className="micro-copy">Answer Relevance</p>
+                        <p className="body-copy mt-1">{formatMetric(agg.avg_answer_relevance)}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(agg.fault_distribution).map(([fault, count]) => (
+                        <span key={fault} className="provider-chip">
+                          {fault === "none" ? "no fault" : fault}: {count}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </section>
           )}
 
