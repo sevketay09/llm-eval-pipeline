@@ -12,10 +12,25 @@ def fake_model(system_prompt: str, user_input: str):
     return f"ok: {user_input[:20]}", 10.0
 
 
+def _fake_adapter_factory(model_key, config_path):
+    """Stands in for a real UnifiedLLMAdapter — "test-model" always resolves,
+    mirroring how rag_eval/custom_metrics tests inject a fake adapter factory
+    instead of hitting real config/models.yaml + a live provider."""
+    if model_key == "does-not-exist":
+        raise ValueError(f"Model '{model_key}' not found in config")
+
+    class _FakeAdapter:
+        def generate(self, messages):
+            user_content = messages[-1]["content"]
+            return {"content": f"ok: {user_content[:20]}", "latency": 0.01}
+
+    return _FakeAdapter()
+
+
 @pytest.fixture()
 def client():
     app = FastAPI()
-    svc = ExperimentService(store=ExperimentStore())
+    svc = ExperimentService(store=ExperimentStore(), adapter_factory=_fake_adapter_factory)
     app.dependency_overrides[get_service] = lambda: svc
     app.include_router(experiments_router, prefix="/api")
     with TestClient(app) as c:
@@ -113,6 +128,39 @@ class TestRunEndpoint:
         eid = cr.json()["experiment_id"]
         r = client.post(f"/api/experiments/{eid}/run", json={})
         assert r.json()["status"] == "done"
+
+    def test_run_actually_calls_the_configured_model_not_a_noop(self, client):
+        """Regression: model_key was previously stored but never wired to a
+        real adapter — run() always used the noop placeholder regardless of
+        model_key. Assert the fake adapter's real output shows up."""
+        cr = client.post("/api/experiments", json=_create_payload())
+        eid = cr.json()["experiment_id"]
+        client.post(f"/api/experiments/{eid}/run", json={})
+        detail = client.get(f"/api/experiments/{eid}").json()
+        outputs = [r["output"] for r in detail["results"]]
+        assert all(o.startswith("ok: ") for o in outputs)
+        assert not any("no model configured" in o for o in outputs)
+
+    def test_run_with_unknown_model_key_becomes_error_status_not_a_crash(self, client):
+        payload = _create_payload()
+        payload["model_key"] = "does-not-exist"
+        cr = client.post("/api/experiments", json=payload)
+        eid = cr.json()["experiment_id"]
+        r = client.post(f"/api/experiments/{eid}/run", json={})
+        assert r.status_code == 202
+        assert r.json()["status"] == "error"
+        detail = client.get(f"/api/experiments/{eid}").json()
+        assert "does-not-exist" in detail["error"]
+
+    def test_run_with_empty_model_key_still_dry_runs(self, client):
+        payload = _create_payload()
+        payload["model_key"] = ""
+        cr = client.post("/api/experiments", json=payload)
+        eid = cr.json()["experiment_id"]
+        client.post(f"/api/experiments/{eid}/run", json={})
+        detail = client.get(f"/api/experiments/{eid}").json()
+        assert detail["status"] == "done"
+        assert "no model configured" in detail["results"][0]["output"]
 
 
 class TestCompareEndpoint:

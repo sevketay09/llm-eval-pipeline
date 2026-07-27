@@ -60,13 +60,19 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(typeof err.detail === "string" ? err.detail : `${r.status} ${r.statusText}`);
+  }
   return r.json();
 }
 
 async function apiGet<T>(path: string): Promise<T> {
   const r = await fetch(`${BASE}${path}`);
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: r.statusText }));
+    throw new Error(typeof err.detail === "string" ? err.detail : `${r.status} ${r.statusText}`);
+  }
   return r.json();
 }
 
@@ -183,7 +189,11 @@ export default function Playground() {
       const created = await apiPost<{ experiment_id: string }>("/experiments", {
         name, model_key: modelKey, variants, dataset: cases,
       });
-      await apiPost(`/experiments/${created.experiment_id}/run`, {});
+      const ran = await apiPost<{ status: string }>(`/experiments/${created.experiment_id}/run`, {});
+      if (ran.status === "error") {
+        const detail = await apiGet<{ error: string }>(`/experiments/${created.experiment_id}`);
+        throw new Error(detail.error || "Experiment run failed.");
+      }
       const result = await apiGet<CompareResponse>(`/experiments/${created.experiment_id}/compare`);
       setCompareResult(result);
       toast.success("Experiment complete — compare the variants below.");
