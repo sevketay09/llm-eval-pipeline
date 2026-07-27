@@ -93,10 +93,17 @@ def generate_judge_prompt(description: str, *, llm_fn=None) -> str:
         A complete judge prompt string with {question}/{answer}/{expected_answer} placeholders
     """
 
+    # Escape any literal { or } the user typed into description so the later
+    # format_map() render step (see _render_prompt) doesn't treat them as
+    # format fields — otherwise text like "the desired {tone}" silently
+    # vanishes (format_map swallows unknown keys via defaultdict) instead of
+    # surviving into the prompt sent to the judge.
+    safe_description = description.replace("{", "{{").replace("}", "}}")
+
     # Base template - double-braces for literal placeholders
     base_prompt = f"""Sen bir değerlendirme uzmanısın. Aşağıdaki kritere göre yanıtı değerlendir.
 
-KRİTER: {description}
+KRİTER: {safe_description}
 
 SORU: {{question}}
 BEKLENEN CEVAP: {{expected_answer}}
@@ -108,7 +115,7 @@ Yanıtı 0.0 ile 1.0 arasında bir puanla değerlendir.
 1.0 = kritere tam uyan yanıt
 
 Sadece JSON formatında yanıt ver:
-{{"score": <0.0-1.0 arası ondalıklı sayı>, "reasoning": "<Türkçe kısa açıklama>"}}"""
+{{{{"score": <0.0-1.0 arası ondalıklı sayı>, "reasoning": "<Türkçe kısa açıklama>"}}}}"""
 
     if llm_fn is None:
         return base_prompt

@@ -78,6 +78,31 @@ class RenderPromptContractTests(unittest.TestCase):
         self.assertEqual(result, "Q: test")
 
 
+class GenerateThenRenderRoundTripContractTests(unittest.TestCase):
+    """generate_judge_prompt()'s real output must survive _render_prompt() —
+    prior bug: the literal {"score": ...} JSON example in the generated
+    template collided with str.format_map()'s field-parsing and crashed
+    every real evaluation with 'Invalid format specifier'."""
+
+    def test_real_generated_prompt_renders_without_raising(self):
+        prompt = generate_judge_prompt("Rate helpfulness from 0 to 1")
+        case = {"question": "q", "answer": "a", "expected_answer": "e"}
+        rendered = _render_prompt(prompt, case)
+        self.assertIn("q", rendered)
+        self.assertIn("a", rendered)
+        # The JSON example must survive as single braces, not vanish or double.
+        self.assertIn('{"score":', rendered)
+
+    def test_description_with_braces_is_preserved_not_swallowed(self):
+        """Curly braces typed by the user into the description must show up
+        verbatim in the rendered prompt, not be silently eaten by the later
+        format_map() render step."""
+        prompt = generate_judge_prompt("Match the desired {tone} exactly")
+        case = {"question": "q", "answer": "a", "expected_answer": "e"}
+        rendered = _render_prompt(prompt, case)
+        self.assertIn("{tone}", rendered)
+
+
 class ParseJudgeResponseContractTests(unittest.TestCase):
     """Test _parse_judge_response function."""
 
