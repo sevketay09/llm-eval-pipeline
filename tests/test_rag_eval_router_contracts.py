@@ -61,11 +61,20 @@ class TestRagEvalEndpoint:
         assert "fault_component" in body
         assert body["fault_component"] in ("retriever", "generator", "both", "none")
 
-    def test_overall_is_average_of_components(self, client):
+    def test_overall_score_is_the_underlying_weighted_score(self, client):
+        # Not a flat average of the 4 components — analysis.rag_eval.evaluate_rag_case
+        # weights faithfulness highest (hallucination is the worst failure mode) and
+        # renormalizes when context_recall is absent (no expected_answer given).
+        # A prior version of this test asserted a flat-average relationship that only
+        # held because a service-layer bug zeroed every component (see
+        # api/services/rag_eval_service.py + tests/test_rag_eval_service_contracts.py).
         body = client.post("/api/rag-eval", json=_payload()).json()
-        expected = round((body["context_precision"] + body["context_recall"] +
-                         body["faithfulness"] + body["answer_relevance"]) / 4, 4)
-        assert abs(body["overall_score"] - expected) < 0.001
+        assert abs(body["overall_score"] - body["details"]["overall_rag_score"]) < 0.001
+        # This fixture's answer is faithful to and relevant for its context, so the
+        # pipeline must not be universally zeroed out — the regression this bug caused.
+        assert body["faithfulness"] > 0.0
+        assert body["answer_relevance"] > 0.0
+        assert body["overall_score"] > 0.0
 
     def test_without_expected_answer(self, client):
         payload = {k: v for k, v in _payload().items() if k != "expected_answer"}
