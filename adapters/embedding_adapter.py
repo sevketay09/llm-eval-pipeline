@@ -65,7 +65,17 @@ class UnifiedEmbeddingAdapter:
     
     def _init_api_client(self):
         """Initialize API client for LiteLLM/vLLM/OpenAI"""
-        self.api_url = self.config.get("base_url", "").rstrip("/") + "/v1/embeddings"
+        base_url = self.config.get("base_url", "").rstrip("/")
+        # Unconditionally appending "/v1/embeddings" duplicates the path
+        # segment for any base_url that already ends in "/v1" — the same
+        # convention this codebase's chat adapter (UnifiedLLMAdapter) uses
+        # for OpenAI-compatible providers, e.g. OpenRouter's
+        # "https://openrouter.ai/api/v1". That produced
+        # ".../api/v1/v1/embeddings" -> a 404 from the provider.
+        if base_url.lower().endswith("/v1"):
+            self.api_url = base_url + "/embeddings"
+        else:
+            self.api_url = base_url + "/v1/embeddings"
         self.api_key = self.config.get("api_key", "")
         self.timeout = self.config.get("timeout", 60.0)
         
@@ -74,7 +84,8 @@ class UnifiedEmbeddingAdapter:
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        retry=retry_if_exception_type((Exception,))
+        retry=retry_if_exception_type((Exception,)),
+        reraise=True,
     )
     def encode(
         self,

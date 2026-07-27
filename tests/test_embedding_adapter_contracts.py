@@ -56,6 +56,30 @@ class EmbeddingAdapterContractTests(unittest.TestCase):
 
         self.assertIn("Unsupported embedding provider", str(context.exception))
 
+    def test_api_url_does_not_duplicate_v1_when_base_url_already_has_it(self):
+        # Regression: unconditionally appending "/v1/embeddings" produced
+        # ".../v1/v1/embeddings" for any OpenAI-compatible base_url already
+        # ending in "/v1" (the convention UnifiedLLMAdapter/config/models.yaml
+        # use for OpenRouter etc.) -> a 404 from the provider.
+        UnifiedEmbeddingAdapter = _load_embedding_adapter_class()
+        adapter = UnifiedEmbeddingAdapter({
+            "provider": "openai",
+            "model_name": "qwen/qwen3-embedding-4b",
+            "base_url": "https://openrouter.ai/api/v1",
+            "api_key": "dummy",
+        })
+        self.assertEqual(adapter.api_url, "https://openrouter.ai/api/v1/embeddings")
+
+    def test_api_url_appends_v1_when_base_url_lacks_it(self):
+        UnifiedEmbeddingAdapter = _load_embedding_adapter_class()
+        adapter = UnifiedEmbeddingAdapter({
+            "provider": "openai",
+            "model_name": "text-embedding-3-small",
+            "base_url": "http://localhost:8000",
+            "api_key": "dummy",
+        })
+        self.assertEqual(adapter.api_url, "http://localhost:8000/v1/embeddings")
+
 
 if __name__ == "__main__":
     unittest.main()
