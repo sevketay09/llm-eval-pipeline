@@ -29,8 +29,16 @@ _STOPWORDS = {
 
 def _tokenize(text: str) -> list:
     """Tokenize text: lowercase, split, filter stopwords and length < 2."""
-    text = text.lower()
-    tokens = re.findall(r'\b[a-z0-9]+\b', text)
+    # Python's str.lower() turns Turkish "İ" (dotted capital I) into "i" plus a
+    # combining dot-above (U+0307), a separate character — that combining mark
+    # then breaks the regex match mid-word (e.g. "İade" -> "i" + "̇" + "ade",
+    # tokenized as two fragments "i"/"ade" instead of one "iade"). Normalize it
+    # to plain "i" before lowering to avoid that.
+    text = text.replace("İ", "i").lower()
+    # a-z0-9 alone silently drops every Turkish-specific letter (ç ğ ı ö ş ü),
+    # treating them as word boundaries and fragmenting/losing Turkish words —
+    # a serious defect in a Turkish-focused eval tool. Included explicitly.
+    tokens = re.findall(r'\b[a-zçğıöşü0-9]+\b', text)
     return [t for t in tokens if t not in _STOPWORDS and len(t) >= 2]
 
 

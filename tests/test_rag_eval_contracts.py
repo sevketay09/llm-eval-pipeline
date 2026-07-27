@@ -3,6 +3,7 @@ import math
 import unittest
 
 from analysis.rag_eval import (
+    _tokenize,
     compute_context_precision,
     compute_context_recall,
     compute_faithfulness,
@@ -11,6 +12,26 @@ from analysis.rag_eval import (
     evaluate_rag_case,
     evaluate_rag_report,
 )
+
+
+class TokenizeContractTests(unittest.TestCase):
+    """Turkish-specific tokenization: a-z0-9 alone drops every Turkish letter
+    (ç ğ ı ö ş ü) and Python's default .lower() mangles the Turkish dotted
+    capital İ, both of which used to fragment/lose Turkish words entirely."""
+
+    def test_turkish_letters_are_kept_not_dropped(self):
+        self.assertEqual(_tokenize("gündür"), ["gündür"])
+        self.assertEqual(_tokenize("kaç"), ["kaç"])
+
+    def test_turkish_dotted_capital_i_does_not_fragment_the_word(self):
+        # Before the fix: "İade" -> "i" + combining-dot-above + "ade", which
+        # the [a-z...] regex split into two separate tokens ("i", "ade")
+        # instead of one ("iade").
+        self.assertEqual(_tokenize("İade süresi"), ["iade", "süresi"])
+
+    def test_realistic_turkish_question_is_fully_tokenized(self):
+        tokens = _tokenize("İade süresi kaç gündür?")
+        self.assertEqual(tokens, ["iade", "süresi", "kaç", "gündür"])
 
 
 class ContextPrecisionContractTests(unittest.TestCase):
@@ -204,6 +225,22 @@ class EvaluateRagCaseContractTests(unittest.TestCase):
         result = evaluate_rag_case(case)
 
         self.assertIsNotNone(result["context_recall"]["recall"])
+
+    def test_turkish_question_shares_the_key_topic_word_with_its_context(self):
+        # Regression for the a-z0-9-only tokenizer bug: before the fix, "İade"
+        # (return/refund — the one word this question and context are both
+        # actually about) got mangled into "ade" for the question while the
+        # context correctly kept "iade", so they shared zero tokens even
+        # though the context is an exact-topic match. compute_context_precision's
+        # 0.5 relevance threshold still isn't cleared here (Turkish suffixes
+        # like gün/gündür aren't stemmed, a separate, deeper limitation this
+        # fix doesn't address) — this test only locks in the concrete,
+        # demonstrable fix: the shared word is recovered at all.
+        tokens_q = set(_tokenize("İade süresi kaç gündür?"))
+        tokens_c = set(_tokenize(
+            "Ürünler satın alma tarihinden itibaren otuz gün içinde iade edilebilir."
+        ))
+        self.assertIn("iade", tokens_q & tokens_c)
 
 
 class EvaluateRagReportContractTests(unittest.TestCase):
