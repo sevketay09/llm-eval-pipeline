@@ -2,7 +2,10 @@
 import math
 import unittest
 
+import numpy as np
+
 from analysis.rag_eval import (
+    _cosine,
     _tokenize,
     compute_context_precision,
     compute_context_recall,
@@ -292,6 +295,32 @@ class EvaluateRagReportContractTests(unittest.TestCase):
 
         self.assertIn("gpt-4o", result["models"])
         self.assertGreater(result["models"]["gpt-4o"]["rag_case_count"], 0)
+
+
+class CosineNumpyContractTests(unittest.TestCase):
+    """Regression: real embedding adapters return numpy arrays (multi-element),
+    not plain Python lists — `if not v1` raises "truth value of an array with
+    more than one element is ambiguous" for those, discovered wiring the RAG
+    Eval embedding-scoring mode up to a real (non-mocked) embedding adapter."""
+
+    def test_cosine_accepts_numpy_arrays(self):
+        v1 = np.array([1.0, 0.0, 0.0])
+        v2 = np.array([1.0, 0.0, 0.0])
+        self.assertAlmostEqual(_cosine(v1, v2), 1.0, places=6)
+
+    def test_cosine_with_orthogonal_numpy_arrays_is_zero(self):
+        v1 = np.array([1.0, 0.0])
+        v2 = np.array([0.0, 1.0])
+        self.assertAlmostEqual(_cosine(v1, v2), 0.0, places=6)
+
+    def test_embed_fn_returning_numpy_rows_does_not_crash_compute_faithfulness(self):
+        def fake_embed_fn(texts):
+            # Shape (n, dim) numpy array, like UnifiedEmbeddingAdapter.encode()
+            # returns — not a list of lists.
+            return np.array([[1.0, 0.0] for _ in texts])
+
+        result = compute_faithfulness("some answer", ["some context"], embed_fn=fake_embed_fn)
+        self.assertAlmostEqual(result["faithfulness"], 1.0, places=6)
 
 
 if __name__ == "__main__":

@@ -60,7 +60,11 @@ def _jaccard(tokens_a: set, tokens_b: set) -> float:
 
 def _cosine(v1: list, v2: list) -> float:
     """Cosine similarity between two vectors."""
-    if not v1 or not v2:
+    # `not v1` raises "truth value of an array... is ambiguous" for a numpy
+    # array with more than one element (real embedding adapters return numpy
+    # arrays, not plain lists) — len() is the boolean-ambiguity-free way to
+    # check emptiness for both lists and 1-D numpy arrays.
+    if len(v1) == 0 or len(v2) == 0:
         return 0.0
     dot = sum(a * b for a, b in zip(v1, v2))
     norm1 = math.sqrt(sum(a * a for a in v1))
