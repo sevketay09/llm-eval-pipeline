@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookOpen, Play, Plus, Trash2 } from "lucide-react";
 import {
   PageHeader,
@@ -9,10 +9,12 @@ import {
   EmptyState,
   Field,
   Input,
+  Select,
   Textarea,
   useToast,
 } from "@/components";
 import type { BadgeTone } from "@/components";
+import { modelsApi, type EmbeddingModelConfig } from "@/api/client";
 
 const BASE = "/api";
 
@@ -24,6 +26,8 @@ interface RagEvalResponse {
   answer_relevance: number;
   fault_component: string;
   overall_score: number;
+  scoring_mode: string;
+  embedding_model: string | null;
 }
 
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
@@ -62,9 +66,17 @@ export default function RagEval() {
   const [contexts, setContexts] = useState([""]);
   const [answer, setAnswer] = useState("");
   const [expected, setExpected] = useState("");
+  const [embeddingModels, setEmbeddingModels] = useState<Record<string, EmbeddingModelConfig>>({});
+  const [embeddingModel, setEmbeddingModel] = useState("");
   const [result, setResult] = useState<RagEvalResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    modelsApi.listEmbeddings().then((r) => setEmbeddingModels(r.models)).catch(() => {
+      // Non-fatal: the page still works in token-overlap mode without this.
+    });
+  }, []);
 
   async function evaluate() {
     if (!question.trim() || !answer.trim()) { toast.error("Question and answer are required."); return; }
@@ -77,6 +89,7 @@ export default function RagEval() {
         contexts: validCtx.map(t => ({ text: t })),
         answer: answer.trim(),
         expected_answer: expected.trim(),
+        embedding_model: embeddingModel || undefined,
       });
       setResult(r);
       toast.success(`Scored — fault component: ${r.fault_component}.`);
@@ -156,6 +169,23 @@ export default function RagEval() {
             </Field>
           </Card>
 
+          <Card>
+            <Field label="Scoring model">
+              <Select value={embeddingModel} onChange={e => setEmbeddingModel(e.target.value)}>
+                <option value="">Token overlap (no embedding model)</option>
+                {Object.keys(embeddingModels).map((id) => (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <p className="micro-copy mt-2">
+              Token overlap (default) compares shared words only — a correct answer phrased
+              differently can score low. Pick an embedding model to score by meaning instead.
+            </p>
+          </Card>
+
           <Button icon={<Play size={14} />} loading={loading} onClick={evaluate}>
             {loading ? "Evaluating…" : "Evaluate RAG"}
           </Button>
@@ -177,6 +207,13 @@ export default function RagEval() {
               <MetricRow label="Context Recall" score={result.context_recall} desc="Answer covered by context" />
               <MetricRow label="Faithfulness" score={result.faithfulness} desc="Answer grounded in context" />
               <MetricRow label="Answer Relevance" score={result.answer_relevance} desc="Answer addresses question" />
+              <p className="micro-copy" style={{ marginTop: "0.75rem" }}>
+                Scored via{" "}
+                {result.scoring_mode === "embedding"
+                  ? `embedding similarity (${result.embedding_model})`
+                  : "token overlap"}
+                .
+              </p>
             </Card>
           ) : (
             <Card style={{ height: "100%", minHeight: 300, display: "flex", alignItems: "center", justifyContent: "center" }}>

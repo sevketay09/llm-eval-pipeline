@@ -64,8 +64,22 @@ export interface ModelListResponse {
   total: number;
 }
 
+export interface EmbeddingModelConfig {
+  provider: string;
+  model_name: string;
+  embedding_dim?: number;
+  max_sequence_length?: number;
+  [key: string]: unknown;
+}
+
+export interface EmbeddingModelListResponse {
+  models: Record<string, EmbeddingModelConfig>;
+  total: number;
+}
+
 export const modelsApi = {
   list: () => request<ModelListResponse>("/models"),
+  listEmbeddings: () => request<EmbeddingModelListResponse>("/models/embeddings"),
   get: (id: string) => request<ModelConfig & { id: string }>(`/models/${id}`),
   create: (id: string, config: Partial<ModelConfig>) =>
     request(`/models/${id}`, { method: "POST", body: JSON.stringify(config) }),

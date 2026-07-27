@@ -20,7 +20,12 @@ def _make_client(tmp_path, monkeypatch):
         "    api_key: ${OPENAI_API_KEY}\n"
         "  no-key-model:\n"
         "    provider: ollama\n"
-        "    model_name: llama3\n",
+        "    model_name: llama3\n"
+        "embedding_models:\n"
+        "  secret-embed:\n"
+        "    provider: openai\n"
+        "    model_name: qwen/qwen3-embedding-4b\n"
+        "    api_key: sk-embed-secret-literal-key\n",
         encoding="utf-8",
     )
 
@@ -59,6 +64,29 @@ def test_no_key_model_stays_unset(tmp_path, monkeypatch):
     resp = client.get("/api/models/no-key-model")
     assert resp.status_code == 200
     assert not resp.json().get("api_key")
+    next(gen, None)
+
+
+def test_list_embedding_models_is_not_swallowed_by_model_id_route(tmp_path, monkeypatch):
+    # /models/embeddings must resolve to the dedicated listing endpoint, not
+    # fall through to GET /models/{model_id} with model_id="embeddings".
+    gen = _make_client(tmp_path, monkeypatch)
+    client = next(gen)
+    resp = client.get("/api/models/embeddings")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "secret-embed" in body["models"]
+    assert body["total"] == 1
+    next(gen, None)
+
+
+def test_list_embedding_models_masks_literal_api_key(tmp_path, monkeypatch):
+    gen = _make_client(tmp_path, monkeypatch)
+    client = next(gen)
+    resp = client.get("/api/models/embeddings")
+    assert resp.status_code == 200
+    assert resp.json()["models"]["secret-embed"]["api_key"] == "***"
+    assert "sk-embed-secret-literal-key" not in resp.text
     next(gen, None)
 
 

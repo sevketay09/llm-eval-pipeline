@@ -30,6 +30,19 @@ def list_models(svc: ConfigService = Depends(get_config_service)):
     return ModelListResponse(models=masked, total=len(masked))
 
 
+@router.get("/embeddings")
+def list_embedding_models(svc: ConfigService = Depends(get_config_service)):
+    """Distinct from list_models: embedding_models.yaml entries have their own
+    shape (embedding_dim, max_sequence_length, ...) that doesn't fit
+    ModelConfig, and callers (e.g. the RAG Eval model picker) need to tell the
+    two families apart. Registered before /{model_id} so "embeddings" isn't
+    swallowed by that path parameter.
+    """
+    models = svc.get_embedding_models()
+    masked = {model_id: _mask_api_key(cfg) for model_id, cfg in models.items()}
+    return {"models": masked, "total": len(masked)}
+
+
 @router.get("/{model_id}")
 def get_model(model_id: str, svc: ConfigService = Depends(get_config_service)):
     model = svc.get_model(model_id)

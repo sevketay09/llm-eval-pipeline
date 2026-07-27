@@ -3,7 +3,10 @@ from __future__ import annotations
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+
+import api.routers.rag_eval as rag_eval_module
 from api.routers.rag_eval import router as rag_eval_router
+from api.services.rag_eval_service import RagEvalService
 
 
 @pytest.fixture()
@@ -84,3 +87,34 @@ class TestRagEvalEndpoint:
     def test_returns_question_in_response(self, client):
         body = client.post("/api/rag-eval", json=_payload()).json()
         assert body["question"] == _payload()["question"]
+
+
+class TestRagEvalEmbeddingMode:
+    """embedding_model wiring at the router level — swaps the module-level
+    singleton's factory, same pattern as test_skill_eval_router_contracts.py."""
+
+    def test_unknown_embedding_model_returns_404(self, client):
+        def failing_factory(model_key, config_path):
+            raise ValueError(f"Embedding model '{model_key}' not found in config")
+
+        original = rag_eval_module._service
+        rag_eval_module._service = RagEvalService(embedding_adapter_factory=failing_factory)
+        try:
+            r = client.post("/api/rag-eval", json=_payload(embedding_model="does-not-exist"))
+            assert r.status_code == 404
+        finally:
+            rag_eval_module._service = original
+
+    def test_embedding_model_wires_through_to_response(self, client):
+        class _FakeAdapter:
+            def encode(self, texts, normalize=True):
+                return {"embeddings": [[1.0, 0.0] for _ in texts]}
+
+        original = rag_eval_module._service
+        rag_eval_module._service = RagEvalService(embedding_adapter_factory=lambda k, p: _FakeAdapter())
+        try:
+            body = client.post("/api/rag-eval", json=_payload(embedding_model="fake-embed")).json()
+            assert body["scoring_mode"] == "embedding"
+            assert body["embedding_model"] == "fake-embed"
+        finally:
+            rag_eval_module._service = original
