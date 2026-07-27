@@ -65,6 +65,30 @@ class RagEvalServiceContractTests(unittest.TestCase):
         self.assertEqual(response.context_recall, 0.0)
         self.assertGreater(response.faithfulness, 0.0)
 
+    def test_no_expected_answer_marks_recall_not_applicable(self):
+        response = self.service.evaluate(
+            question="What is the capital of France?",
+            contexts=[RagContext(text="Paris is the capital of France.", source="doc1")],
+            answer="Paris.",
+            expected_answer="",
+        )
+
+        self.assertFalse(response.context_recall_applicable)
+
+    def test_with_expected_answer_marks_recall_applicable_even_when_zero(self):
+        # A genuinely bad recall (context doesn't cover the expected answer)
+        # must stay distinguishable from "not applicable" — both currently
+        # render as context_recall == 0.0.
+        response = self.service.evaluate(
+            question="What is the capital of France?",
+            contexts=[RagContext(text="Paris is the capital of France.", source="doc1")],
+            answer="Paris.",
+            expected_answer="Completely unrelated ground truth text.",
+        )
+
+        self.assertTrue(response.context_recall_applicable)
+        self.assertEqual(response.context_recall, 0.0)
+
     def test_overall_score_matches_underlying_weighted_score(self):
         response = self.service.evaluate(
             question="What is the capital of France?",

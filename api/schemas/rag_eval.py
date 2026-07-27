@@ -26,6 +26,12 @@ class RagEvalResponse(BaseModel):
     question: str
     context_precision: float
     context_recall: float
+    # False when no expected_answer was given — context_recall is then a
+    # meaningless 0.0 placeholder (not a real "this failed" score), since
+    # analysis.rag_eval.compute_context_recall has nothing to compare
+    # against. Additive field so existing consumers reading context_recall
+    # as a plain float are unaffected.
+    context_recall_applicable: bool = True
     faithfulness: float
     answer_relevance: float
     fault_component: str

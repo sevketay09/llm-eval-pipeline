@@ -80,11 +80,14 @@ class RagEvalService:
         # nested under a "scores" key — reading via result.get("scores", {})
         # always got an empty dict, so every field below silently fell back to
         # its 0.0/"none" default regardless of the real computed values (which
-        # were still correct, just discarded). context_recall's "recall" is
-        # None (not 0.0) when no expected_answer was given — `or 0.0` handles
-        # both that and a genuine 0.0 score identically.
+        # were still correct, just discarded).
         cp = result.get("context_precision", {}).get("precision") or 0.0
-        cr = result.get("context_recall", {}).get("recall") or 0.0
+        cr_raw = result.get("context_recall", {}).get("recall")
+        # None (not 0.0) specifically means no expected_answer was given, so
+        # there was nothing to compare context against — distinct from a
+        # real, computed 0.0 (context genuinely doesn't cover the answer).
+        cr_applicable = cr_raw is not None
+        cr = cr_raw or 0.0
         fa = result.get("faithfulness", {}).get("faithfulness") or 0.0
         ar = result.get("answer_relevance", {}).get("answer_relevance") or 0.0
         fault = result.get("fault_isolation", {}).get("fault", "none")
@@ -94,6 +97,7 @@ class RagEvalService:
             question=question,
             context_precision=round(cp, 4),
             context_recall=round(cr, 4),
+            context_recall_applicable=cr_applicable,
             faithfulness=round(fa, 4),
             answer_relevance=round(ar, 4),
             fault_component=fault,

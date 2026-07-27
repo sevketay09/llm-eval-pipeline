@@ -22,13 +22,19 @@ interface RagEvalResponse {
   question: string;
   context_precision: number;
   context_recall: number;
+  context_recall_applicable: boolean;
   faithfulness: number;
   answer_relevance: number;
   fault_component: string;
   overall_score: number;
   scoring_mode: string;
   embedding_model: string | null;
+  details: {
+    context_precision?: { chunk_scores?: number[] };
+  };
 }
+
+const CHUNK_RELEVANCE_THRESHOLD = 0.5; // mirrors analysis/rag_eval.py's compute_context_precision
 
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const r = await fetch(`${BASE}${path}`, {
@@ -40,16 +46,65 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return r.json();
 }
 
-function MetricRow({ label, score, desc }: { label: string; score: number; desc: string }) {
+function MetricRow({
+  label,
+  score,
+  desc,
+  applicable = true,
+}: {
+  label: string;
+  score: number;
+  desc: string;
+  applicable?: boolean;
+}) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.9rem", padding: "0.6rem 0" }}>
       <div style={{ minWidth: 160 }}>
         <div className="body-copy" style={{ fontSize: "0.82rem", fontWeight: 600 }}>{label}</div>
-        <div className="micro-copy">{desc}</div>
+        <div className="micro-copy">
+          {applicable ? desc : "No expected answer was given — nothing to compare context against."}
+        </div>
       </div>
       <div style={{ flex: 1 }}>
-        <ScoreBar score={score} />
+        {applicable ? (
+          <ScoreBar score={score} />
+        ) : (
+          <Badge tone="neutral" mono>N/A</Badge>
+        )}
       </div>
+    </div>
+  );
+}
+
+function ChunkPrecisionBreakdown({ contexts, scores }: { contexts: string[]; scores: number[] }) {
+  if (contexts.length === 0 || scores.length === 0) return null;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+      {contexts.map((text, i) => {
+        const score = scores[i];
+        if (score === undefined) return null;
+        const relevant = score >= CHUNK_RELEVANCE_THRESHOLD;
+        return (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.7rem",
+              padding: "0.5rem 0.7rem",
+              borderRadius: 8,
+              background: "var(--panel-2, rgba(127,127,127,0.08))",
+            }}
+          >
+            <Badge tone={relevant ? "success" : "warning"} mono>
+              {score.toFixed(2)}
+            </Badge>
+            <span className="micro-copy" style={{ flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {text}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -69,6 +124,7 @@ export default function RagEval() {
   const [embeddingModels, setEmbeddingModels] = useState<Record<string, EmbeddingModelConfig>>({});
   const [embeddingModel, setEmbeddingModel] = useState("");
   const [result, setResult] = useState<RagEvalResponse | null>(null);
+  const [evaluatedContexts, setEvaluatedContexts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -92,6 +148,7 @@ export default function RagEval() {
         embedding_model: embeddingModel || undefined,
       });
       setResult(r);
+      setEvaluatedContexts(validCtx);
       toast.success(`Scored — fault component: ${r.fault_component}.`);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : String(e));
@@ -204,7 +261,12 @@ export default function RagEval() {
                 </span>
               </div>
               <MetricRow label="Context Precision" score={result.context_precision} desc="Relevant chunks in context" />
-              <MetricRow label="Context Recall" score={result.context_recall} desc="Answer covered by context" />
+              <MetricRow
+                label="Context Recall"
+                score={result.context_recall}
+                desc="Answer covered by context"
+                applicable={result.context_recall_applicable}
+              />
               <MetricRow label="Faithfulness" score={result.faithfulness} desc="Answer grounded in context" />
               <MetricRow label="Answer Relevance" score={result.answer_relevance} desc="Answer addresses question" />
               <p className="micro-copy" style={{ marginTop: "0.75rem" }}>
@@ -215,7 +277,21 @@ export default function RagEval() {
                 .
               </p>
             </Card>
-          ) : (
+          ) : null}
+          {result && result.details.context_precision?.chunk_scores && (
+            <Card style={{ marginTop: "1rem" }}>
+              <span className="ds-field-mini">Per-chunk precision</span>
+              <p className="micro-copy" style={{ marginBottom: "0.6rem" }}>
+                Which retrieved chunks the retriever should be credited or blamed for
+                (relevant at {CHUNK_RELEVANCE_THRESHOLD.toFixed(1)}+).
+              </p>
+              <ChunkPrecisionBreakdown
+                contexts={evaluatedContexts}
+                scores={result.details.context_precision.chunk_scores}
+              />
+            </Card>
+          )}
+          {!result && (
             <Card style={{ height: "100%", minHeight: 300, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <EmptyState
                 icon={BookOpen}
