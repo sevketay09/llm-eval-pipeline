@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 import uuid
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
+
+import yaml
 
 from api.schemas.custom_metrics import (
     CaseEvalResult,
@@ -21,6 +24,26 @@ from evaluators.custom_metric import (
 )
 
 _MAX_METRICS = 200
+
+
+def _default_adapter_factory(model_key: str, config_path: str) -> Any:
+    """Build a UnifiedLLMAdapter for `model_key` with ${ENV_VAR} expansion.
+
+    Mirrors SkillEvalService's _default_adapter_factory — ConfigService's
+    loader does not expand ${ENV_VAR} placeholders, so reading straight from
+    it would hand the adapter a literal "${OPENROUTER_API_KEY}" string.
+    """
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    config_str = yaml.dump(config)
+    for key, value in os.environ.items():
+        config_str = config_str.replace(f"${{{key}}}", value)
+    config = yaml.safe_load(config_str)
+    if model_key not in config.get("models", {}):
+        raise ValueError(f"Model '{model_key}' not found in config")
+    from adapters.unified_adapter import UnifiedLLMAdapter  # heavy import kept lazy
+
+    return UnifiedLLMAdapter(dict(config["models"][model_key]), model_key=model_key)
 
 
 class _MetricRecord:
@@ -56,9 +79,37 @@ class _MetricRecord:
 
 
 class CustomMetricService:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        config_path: str = "config/models.yaml",
+        adapter_factory: Optional[Callable[[str, str], Any]] = None,
+    ) -> None:
         self._store: Dict[str, _MetricRecord] = {}
         self._order: List[str] = []
+        self.config_path = config_path
+        self.adapter_factory = adapter_factory or _default_adapter_factory
+        # Adapters hold an HTTP client and are cheap to build compared to the
+        # embedding adapters (no model weights to load), but this service is
+        # still a process-lifetime singleton, so cache by model_key anyway.
+        self._adapters: Dict[str, Any] = {}
+
+    def _get_adapter(self, judge_model: str) -> Any:
+        if judge_model not in self._adapters:
+            self._adapters[judge_model] = self.adapter_factory(judge_model, self.config_path)
+        return self._adapters[judge_model]
+
+    def _build_llm_fn(self, judge_model: Optional[str]):
+        if not judge_model:
+            return None
+        adapter = self._get_adapter(judge_model)
+
+        def llm_fn(messages):
+            result = adapter.generate(messages)
+            if result.get("error") or result.get("content") is None:
+                raise RuntimeError(result.get("error") or "Judge model returned no content")
+            return result["content"]
+
+        return llm_fn
 
     def create(self, name: str, description: str) -> _MetricRecord:
         prompt = generate_judge_prompt(description)
@@ -104,6 +155,7 @@ class CustomMetricService:
         self,
         metric_id: str,
         cases: List[EvaluateCaseRequest],
+        judge_model: Optional[str] = None,
         llm_fn=None,
     ) -> EvaluateMetricResponse:
         rec = self._store[metric_id]
@@ -111,7 +163,7 @@ class CustomMetricService:
         def _noop_llm(messages):
             return '{"score": null, "reasoning": "No model configured."}'
 
-        fn = llm_fn or _noop_llm
+        fn = llm_fn or self._build_llm_fn(judge_model) or _noop_llm
 
         results: List[CaseEvalResult] = []
         for c in cases:

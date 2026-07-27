@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sparkles, Play, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import {
   PageHeader,
@@ -7,9 +7,11 @@ import {
   ScoreBar,
   Field,
   Input,
+  Select,
   Textarea,
   useToast,
 } from "@/components";
+import { modelsApi } from "@/api/client";
 
 const BASE = "/api";
 
@@ -36,6 +38,11 @@ interface EvalResponse {
   name: string;
   results: CaseEvalResult[];
   avg_score: number | null;
+}
+
+interface EvaluateMetricRequest {
+  cases: EvalCase[];
+  judge_model?: string;
 }
 
 interface EvalCase {
@@ -100,7 +107,20 @@ export default function CustomMetrics() {
   const [evalResult, setEvalResult] = useState<EvalResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [models, setModels] = useState<string[]>([]);
+  const [judgeModel, setJudgeModel] = useState("");
   const toast = useToast();
+
+  useEffect(() => {
+    modelsApi
+      .list()
+      .then(r => {
+        const keys = Object.keys(r.models);
+        setModels(keys);
+        setJudgeModel(prev => prev || keys[0] || "");
+      })
+      .catch(() => setModels([]));
+  }, []);
 
   async function generate() {
     if (!name.trim() || !description.trim()) { toast.error("Name and description required."); return; }
@@ -123,7 +143,9 @@ export default function CustomMetrics() {
     if (validCases.length === 0) { toast.error("Add at least one case with question and answer."); return; }
     setLoading(true);
     try {
-      const r = await apiPost<EvalResponse>(`/custom-metrics/${metric.metric_id}/evaluate`, { cases: validCases });
+      const body: EvaluateMetricRequest = { cases: validCases };
+      if (judgeModel) body.judge_model = judgeModel;
+      const r = await apiPost<EvalResponse>(`/custom-metrics/${metric.metric_id}/evaluate`, body);
       setEvalResult(r);
       toast.success(`Evaluated ${r.results.length} cases.`);
     } catch (e: unknown) {
@@ -206,7 +228,13 @@ export default function CustomMetrics() {
       {metric && (
         <Card>
           <p className="section-caption" style={{ marginBottom: "0.9rem" }}>2 · Test cases</p>
-          <div className="flex flex-col gap-3">
+          <Field label="Judge model">
+            <Select value={judgeModel} onChange={e => setJudgeModel(e.target.value)}>
+              {models.length === 0 && <option value="">No models configured — dry run only</option>}
+              {models.map(m => <option key={m} value={m}>{m}</option>)}
+            </Select>
+          </Field>
+          <div className="flex flex-col gap-3" style={{ marginTop: "0.9rem" }}>
             {cases.map((c, i) => (
               <div key={i} className="panel-quiet" style={{ position: "relative", borderRadius: 18, border: "1px solid var(--line)", padding: "0.85rem" }}>
                 <div className="flex flex-col gap-2">

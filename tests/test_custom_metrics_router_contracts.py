@@ -108,6 +108,77 @@ class TestEvaluateEndpoint:
         assert r.status_code == 422
 
 
+class TestEvaluateWithJudgeModel:
+    """judge_model wiring — real adapter factory injection, mirroring how
+    RagEvalService's embedding_adapter_factory is tested."""
+
+    def _fake_adapter_factory(self, model_key, config_path):
+        if model_key == "does-not-exist":
+            raise ValueError(f"Model '{model_key}' not found in config")
+
+        class _FakeAdapter:
+            def generate(self, messages):
+                return {"content": '{"score": 0.9, "reasoning": "matches criteria"}'}
+
+        return _FakeAdapter()
+
+    def _failing_adapter_factory(self, model_key, config_path):
+        class _FailingAdapter:
+            def generate(self, messages):
+                return {"content": None, "error": "upstream 500"}
+
+        return _FailingAdapter()
+
+    def _client_with(self, adapter_factory):
+        app = FastAPI()
+        svc = CustomMetricService(adapter_factory=adapter_factory)
+        app.dependency_overrides[get_service] = lambda: svc
+        app.include_router(custom_metrics_router, prefix="/api")
+        return TestClient(app)
+
+    def test_real_judge_model_produces_score(self):
+        client = self._client_with(self._fake_adapter_factory)
+        mid = client.post("/api/custom-metrics", json=_create_payload()).json()["metric_id"]
+        r = client.post(f"/api/custom-metrics/{mid}/evaluate", json={
+            "cases": [{"question": "Q", "answer": "A"}],
+            "judge_model": "deepseek-v4-flash",
+        })
+        assert r.status_code == 200
+        body = r.json()
+        assert body["results"][0]["score"] == 0.9
+        assert body["avg_score"] == 0.9
+
+    def test_unknown_judge_model_returns_404(self):
+        client = self._client_with(self._fake_adapter_factory)
+        mid = client.post("/api/custom-metrics", json=_create_payload()).json()["metric_id"]
+        r = client.post(f"/api/custom-metrics/{mid}/evaluate", json={
+            "cases": [{"question": "Q", "answer": "A"}],
+            "judge_model": "does-not-exist",
+        })
+        assert r.status_code == 404
+
+    def test_judge_model_generation_failure_becomes_per_case_error_not_a_fake_score(self):
+        client = self._client_with(self._failing_adapter_factory)
+        mid = client.post("/api/custom-metrics", json=_create_payload()).json()["metric_id"]
+        r = client.post(f"/api/custom-metrics/{mid}/evaluate", json={
+            "cases": [{"question": "Q", "answer": "A"}],
+            "judge_model": "deepseek-v4-flash",
+        })
+        assert r.status_code == 200
+        result = r.json()["results"][0]
+        assert result["score"] is None
+        assert "upstream 500" in result["error"]
+
+    def test_no_judge_model_still_dry_runs(self):
+        client = self._client_with(self._fake_adapter_factory)
+        mid = client.post("/api/custom-metrics", json=_create_payload()).json()["metric_id"]
+        r = client.post(f"/api/custom-metrics/{mid}/evaluate", json={
+            "cases": [{"question": "Q", "answer": "A"}],
+        })
+        body = r.json()
+        assert body["results"][0]["reasoning"] == "No model configured."
+
+
 class TestCustomMetricServicePersistence:
     def test_save_and_load_from_round_trips(self, tmp_path):
         path = tmp_path / "custom_metrics.json"

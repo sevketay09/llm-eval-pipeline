@@ -18,6 +18,7 @@ class EvaluateCaseRequest(BaseModel):
 
 class EvaluateMetricRequest(BaseModel):
     cases: List[EvaluateCaseRequest] = Field(..., min_length=1)
+    judge_model: Optional[str] = None
 
 
 class CaseEvalResult(BaseModel):

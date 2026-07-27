@@ -57,4 +57,9 @@ def evaluate_metric(
     rec = svc.get(metric_id)
     if rec is None:
         raise HTTPException(404, f"Metric '{metric_id}' not found")
-    return svc.evaluate(metric_id=metric_id, cases=req.cases)
+    try:
+        return svc.evaluate(metric_id=metric_id, cases=req.cases, judge_model=req.judge_model)
+    except ValueError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(502, f"Judge model call failed: {exc}") from exc
