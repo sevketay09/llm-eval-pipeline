@@ -41,3 +41,5 @@ jinja2>=3.1
 sqlalchemy>=2.0
 tenacity>=9.1
 scipy>=1.18
+
+# Optional: Jev decision model support -> pip install -r requirements-jev.txt

@@ -4,7 +4,10 @@ from typing import Optional
 
 
 class ModelConfig(BaseModel):
-    provider: str = Field(..., description="Provider: openai, anthropic, ollama, lmstudio, vllm")
+    provider: str = Field(
+        ...,
+        description="Provider: openai, anthropic, ollama, lmstudio, vllm, typesafe, typesafe-mock",
+    )
     model_name: str = Field(..., description="Model name or deployment name")
     api_key: Optional[str] = Field(None, description="API key or ${ENV_VAR} reference")
     base_url: Optional[str] = Field(None, description="Base URL for the model endpoint")
@@ -15,6 +18,9 @@ class ModelConfig(BaseModel):
     supports_streaming: bool = True
     supports_response_format: bool = True
     quirks: Optional[list[str]] = None
+    timeout_s: Optional[float] = Field(None, gt=0, le=120, description="Decision model request timeout")
+    cost_per_mtok_input: Optional[float] = Field(None, ge=0, description="Decision model input cost, $/MTok")
+    cost_per_mtok_output: Optional[float] = Field(None, ge=0, description="Decision model output cost, $/MTok")
 
 
 class ModelConfigUpdate(BaseModel):
@@ -29,6 +35,9 @@ class ModelConfigUpdate(BaseModel):
     supports_streaming: Optional[bool] = None
     supports_response_format: Optional[bool] = None
     quirks: Optional[list[str]] = None
+    timeout_s: Optional[float] = Field(None, gt=0, le=120)
+    cost_per_mtok_input: Optional[float] = Field(None, ge=0)
+    cost_per_mtok_output: Optional[float] = Field(None, ge=0)
 
 
 class ModelListResponse(BaseModel):

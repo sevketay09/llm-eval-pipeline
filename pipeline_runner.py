@@ -2859,6 +2859,12 @@ class EvaluationPipeline:
 
         model_config = dict(model_config)
 
+        if not is_embedding and model_config.get("provider") in ("typesafe", "typesafe-mock"):
+            raise ValueError(
+                f"'{model_key}' is a decision (Jev) model; it cannot generate text. "
+                "Use it via --decision-model / judge_mode instead."
+            )
+
         # Apply global runtime overrides for generation models only.
         # Embedding providers do not use these generation params.
         if (not is_embedding) and apply_runtime_overrides and self.runtime_overrides:

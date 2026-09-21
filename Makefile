@@ -1,6 +1,6 @@
 TAG ?= 1.0.0
 IMAGE_NAME ?= llm-eval-app
-BASE_IMAGE ?= python:3.12-slim
+BASE_IMAGE ?= python:3.14-slim
 COMPOSE_FILE ?= docker-compose.yml
 DEBUG_COMPOSE_FILE ?= docker-compose.debug.yml
 SERVICE_NAME ?= llm-eval-dashboard

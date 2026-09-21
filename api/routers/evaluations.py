@@ -7,6 +7,7 @@ from api.rate_limit import RateLimiter
 from api.schemas.evaluations import EvalRunRequest, EvalRunStatus
 from api.services.custom_dataset_service import CustomDatasetService
 from api.services.eval_service import EvalService
+from decisions.config import is_decision_provider
 
 router = APIRouter(prefix="/evaluations", tags=["evaluations"])
 
@@ -74,6 +75,16 @@ async def start_evaluation(
     missing = [m for m in request.models if m not in available_models]
     if missing:
         _raise_eval_error(400, "unknown_models", f"Unknown models: {missing}")
+
+    decision_models = [
+        m for m in request.models if is_decision_provider(available_models[m].get("provider"))
+    ]
+    if decision_models:
+        _raise_eval_error(
+            400,
+            "decision_model_not_evaluable",
+            f"Decision (Jev) models cannot be evaluated as a target model: {decision_models}",
+        )
 
     # Validate suite exists
     suites = config_svc.get_test_suites()
