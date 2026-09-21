@@ -217,8 +217,9 @@ if "sklearn" not in sys.modules:
 
 
 # ── event-loop guard ──────────────────────────────────────────────────────────
-# Python 3.9: asyncio.Lock() at service __init__ needs a current event loop.
-# Tests that call asyncio.run() leave none behind, breaking later router tests.
+# Services create asyncio.Lock()/asyncio.Queue() at __init__ time. Providing a
+# fresh, explicitly-set loop per test keeps that construction well-defined and
+# avoids asyncio's implicit event-loop-creation deprecation path.
 import asyncio
 
 import pytest
@@ -226,10 +227,8 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def _ensure_event_loop():
-    try:
-        loop = asyncio.get_event_loop_policy().get_event_loop()
-        if loop.is_closed():
-            raise RuntimeError
-    except RuntimeError:
-        asyncio.set_event_loop(asyncio.new_event_loop())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     yield
+    asyncio.set_event_loop(None)
+    loop.close()

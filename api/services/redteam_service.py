@@ -113,7 +113,7 @@ class RedTeamService:
         try:
             fn = model_fn or (self._build_model_fn(session.model_key) if session.model_key else _noop_model_fn)
             runner = RedTeamRunner(model_fn=fn)
-            results: List[AttackResult] = await asyncio.get_event_loop().run_in_executor(
+            results: List[AttackResult] = await asyncio.get_running_loop().run_in_executor(
                 None, runner.run_session, session
             )
             session.results = results

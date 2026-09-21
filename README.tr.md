@@ -4,7 +4,7 @@
 
 **Production-grade LLM evaluation, observability ve red-team platformu**
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
 [![Tests](https://img.shields.io/badge/tests-633%20passed-brightgreen.svg)](#testler)
@@ -90,7 +90,7 @@ LLM Evaluation Pipeline; batch model karşılaştırması, canlı trace ingestio
 
 ```bash
 # Python bağımlılıkları
-pip install -r requirements.txt
+pip install -r requirements.lock
 
 # Frontend bağımlılıkları
 cd web && npm install && cd ..
@@ -98,6 +98,8 @@ cd web && npm install && cd ..
 # Backend + frontend birlikte
 make dev
 ```
+
+`requirements.txt` her bağımlılığın desteklenen en düşük sürümünü belirtir; `requirements.lock` bu projenin test edildiği kesin sürümleri sabitler ve `pip install` ile Docker fiilen bunu kullanır.
 
 | Adres | Servis |
 |-------|--------|

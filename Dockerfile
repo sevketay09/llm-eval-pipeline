@@ -1,6 +1,6 @@
-ARG BASE_IMAGE=python:3.12-slim
+ARG BASE_IMAGE=python:3.14-slim
 
-FROM node:22-alpine AS web-builder
+FROM node:24-alpine AS web-builder
 
 WORKDIR /build/web
 
@@ -26,8 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gosu \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+COPY requirements.lock ./
+RUN pip install --upgrade pip && pip install -r requirements.lock
 
 COPY . .
 COPY --from=web-builder /build/web/dist /app/web/dist

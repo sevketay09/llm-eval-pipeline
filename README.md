@@ -4,7 +4,7 @@
 
 **Production-grade LLM evaluation, observability & red-teaming platform**
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-61DAFB.svg)](https://react.dev/)
 [![Tests](https://img.shields.io/badge/tests-633%20passed-brightgreen.svg)](#tests)
@@ -90,7 +90,7 @@ LLM Evaluation Pipeline is a comprehensive evaluation framework that combines ba
 
 ```bash
 # Python dependencies
-pip install -r requirements.txt
+pip install -r requirements.lock
 
 # Frontend dependencies
 cd web && npm install && cd ..
@@ -98,6 +98,8 @@ cd web && npm install && cd ..
 # Backend + frontend together
 make dev
 ```
+
+`requirements.txt` declares the minimum supported version of each dependency; `requirements.lock` pins the exact versions this project is tested against and is what `pip install` and Docker actually use.
 
 | Address | Service |
 |---------|---------|

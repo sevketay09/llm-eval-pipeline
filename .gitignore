@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *.so
 venv/
+.venv/
+.venv*/
 
 # Environment & secrets
 .env
