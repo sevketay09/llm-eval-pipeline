@@ -9,6 +9,7 @@ export { default as ScoreBar } from "./ScoreBar";
 export { default as EmptyState } from "./EmptyState";
 export { Field, Input, Textarea, Select } from "./Field";
 export { default as HelpHint } from "./HelpHint";
+export { default as DecisionModelSelect } from "./DecisionModelSelect";
 export { default as CommandPalette } from "./CommandPalette";
 export { ToastProvider, useToast } from "./Toast";
 export type { ToastTone } from "./Toast";

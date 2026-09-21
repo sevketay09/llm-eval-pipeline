@@ -57,11 +57,26 @@ export interface ModelConfig {
   supports_streaming: boolean;
   supports_response_format?: boolean;
   quirks?: string[];
+  timeout_s?: number;
+  cost_per_mtok_input?: number;
+  cost_per_mtok_output?: number;
 }
 
 export interface ModelListResponse {
   models: Record<string, ModelConfig>;
   total: number;
+}
+
+export interface ModelCapabilities {
+  decision_available: boolean;
+  decision_models: string[];
+  llm_models: string[];
+}
+
+export interface ModelTestResult {
+  ok: boolean;
+  latency_ms: number;
+  error: string | null;
 }
 
 export interface EmbeddingModelConfig {
@@ -80,6 +95,8 @@ export interface EmbeddingModelListResponse {
 export const modelsApi = {
   list: () => request<ModelListResponse>("/models"),
   listEmbeddings: () => request<EmbeddingModelListResponse>("/models/embeddings"),
+  capabilities: () => request<ModelCapabilities>("/models/capabilities"),
+  test: (id: string) => request<ModelTestResult>(`/models/${id}/test`, { method: "POST" }),
   get: (id: string) => request<ModelConfig & { id: string }>(`/models/${id}`),
   create: (id: string, config: Partial<ModelConfig>) =>
     request(`/models/${id}`, { method: "POST", body: JSON.stringify(config) }),
