@@ -1744,6 +1744,35 @@ def _extract_turn_retrieval_context(turn_payload: Dict[str, Any]) -> Optional[st
     return None
 
 
+def _collect_judge_meta(*evaluator_outputs: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Roll several Decision*Evaluator dict outputs into one judge_meta summary.
+
+    Returns None (key omitted from the result) when none of the given dicts
+    came from a decision backend — keeps llm-mode reports byte-identical.
+    """
+    backends: List[str] = []
+    confidences: List[float] = []
+    escalated = False
+    decision_calls = 0
+    for out in evaluator_outputs:
+        if not isinstance(out, dict) or "judge_backend" not in out:
+            continue
+        backends.append(out["judge_backend"])
+        if isinstance(out.get("judge_confidence"), (int, float)):
+            confidences.append(out["judge_confidence"])
+        if out.get("escalated"):
+            escalated = True
+        decision_calls += 1
+    if not backends:
+        return None
+    return {
+        "backend": "cascade" if escalated else backends[0],
+        "min_confidence": min(confidences) if confidences else None,
+        "escalated": escalated,
+        "decision_calls": decision_calls,
+    }
+
+
 def _evaluate_multi_turn_groundedness(
     turn_results: List[Dict[str, Any]],
     judge_adapter=None,
@@ -2788,6 +2817,10 @@ class EvaluationPipeline:
             "judge_model_key": self._judge_model_key or self.config.get("judge_model", {}).get("model_key"),
             "judge_mode": self._judge_mode,
             "decision_model_key": self._decision_model_key,
+            "judge_cascade": {
+                "accept_confidence": self._cascade_policy.accept_confidence,
+                "hitl_below": self._cascade_policy.hitl_below,
+            },
             "prompt_version": self.config.get("judge_model", {}).get("prompt_version"),
             "judge_prompt_version": self.config.get("judge_model", {}).get("prompt_version"),
             "metric_version": METRIC_VERSION,
@@ -3356,6 +3389,7 @@ class EvaluationPipeline:
                 prompt_alignment_eval = _f_inst.result()
 
             prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
+            _qa_judge_meta = _collect_judge_meta(hallucination_score)
 
             nlp_scores = {}
             if nlp_eval and _has_expected:
@@ -3405,6 +3439,7 @@ class EvaluationPipeline:
                 },
                 "latency": response['latency'],
                 "tokens": response['usage'],
+                **({"judge_meta": _qa_judge_meta} if _qa_judge_meta else {}),
             }
 
             return result
@@ -5080,6 +5115,8 @@ class EvaluationPipeline:
                 except Exception as e:
                     logger.debug(f"Faithfulness eval failed for item {rag_case.case_id}: {e}")
             
+            _rag_judge_meta = _collect_judge_meta(faithfulness_score)
+
             result = {
                 "id": rag_case.case_id,
                 "category": rag_case.resolved_category,
@@ -5116,6 +5153,7 @@ class EvaluationPipeline:
                     "reasoning": faithfulness_score.get("reasoning", "")
                 }} if faithfulness_score else {}),
                 "latency": response['latency'],
+                **({"judge_meta": _rag_judge_meta} if _rag_judge_meta else {}),
             }
 
             return result
@@ -5329,6 +5367,8 @@ class EvaluationPipeline:
                     has_violations=violation_detected,
                 )
             
+            _edge_case_judge_meta = _collect_judge_meta(safety_result, refusal_result)
+
             result = {
                 "id": edge_case.case_id,
                 "category": edge_case.resolved_category,
@@ -5388,7 +5428,8 @@ class EvaluationPipeline:
                 "violation_detected": violation_detected,
                 "injection_detected": injection_detected,
                 "error": response.get('error'),
-                "latency": response['latency']
+                "latency": response['latency'],
+                **({"judge_meta": _edge_case_judge_meta} if _edge_case_judge_meta else {}),
             }
 
             return result

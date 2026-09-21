@@ -647,6 +647,8 @@ export interface PendingItem {
   secondary_judge_reasoning?: string | null;
   judge_disagreement?: number | null;
   judge_agreement?: number | null;
+  judge_backend?: string | null;
+  judge_confidence?: number | null;
   review_priority: number;
   queue_reason: string;
   owner?: string | null;
@@ -784,6 +786,13 @@ export interface CalibrationInsights {
     best_agreement_version?: string | null;
     lowest_mae_version?: string | null;
   };
+  by_backend?: Record<string, {
+    n: number;
+    mean_absolute_error: number;
+    spearman_rho: number | null;
+    cohens_kappa: number | null;
+    reliability_verdict: string;
+  }>;
   training_data_available: number;
   ready_for_finetuning: boolean;
 }

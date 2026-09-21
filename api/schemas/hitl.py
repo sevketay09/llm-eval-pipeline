@@ -21,6 +21,8 @@ class PendingItem(BaseModel):
     secondary_judge_reasoning: Optional[str] = None
     judge_disagreement: Optional[float] = None
     judge_agreement: Optional[float] = None
+    judge_backend: Optional[str] = None
+    judge_confidence: Optional[float] = None
     review_priority: float = 0.0
     queue_reason: str = ""
     owner: Optional[str] = None
@@ -113,6 +115,7 @@ class CalibrationInsights(BaseModel):
     recommendations: list[CalibrationRecommendation] = Field(default_factory=list)
     disagreement_taxonomy: dict = Field(default_factory=dict)
     prompt_version_comparison: dict = Field(default_factory=dict)
+    by_backend: dict = Field(default_factory=dict)
     training_data_available: int = 0
     ready_for_finetuning: bool = False
 
@@ -181,6 +184,7 @@ class GeneratePendingRequest(BaseModel):
     report_filename: str
     sample_per_test: int = Field(default=5, ge=1, le=50)
     run_id: Optional[str] = None
+    low_confidence_only: bool = False
 
 
 class ExportTrainingResponse(BaseModel):
