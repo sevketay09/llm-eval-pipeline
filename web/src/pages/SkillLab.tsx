@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, ShieldAlert, Upload } from "lucide-react";
+import { Play, Plus, ShieldAlert, Trash2, Upload } from "lucide-react";
 import {
   PageHeader,
   Card,
   Button,
   Badge,
   Field,
+  Input,
   Select,
   Textarea,
+  ScoreBar,
   useToast,
+  DecisionModelSelect,
 } from "@/components";
 import { scoreTone } from "@/components";
 import { modelsApi } from "@/api/client";
+import { splitModels } from "@/lib/decision";
 
 const BASE = "/api";
 
@@ -70,6 +74,15 @@ interface TriggerPromptResult {
   trigger_rate: number | null;
   trials: number;
   correct: boolean | null;
+  probability?: number | null;
+}
+
+interface ThresholdCurvePoint {
+  threshold: number;
+  precision: number | null;
+  recall: number | null;
+  f1: number | null;
+  false_positive_rate: number | null;
 }
 
 interface TriggerSummary {
@@ -83,12 +96,42 @@ interface TriggerSummary {
   ambiguous_count: number;
   ambiguous_trigger_rate: number | null;
   verdict: "reliable" | "over_triggering" | "under_triggering" | "unreliable" | "insufficient_data";
+  mode?: "decision";
+  threshold_curve?: ThresholdCurvePoint[];
 }
 
 interface TriggerReport {
   skill: { name: string; description: string };
   summary: TriggerSummary;
   results: TriggerPromptResult[];
+}
+
+interface RoutingSkillEntry {
+  name: string;
+  skill_text: string;
+}
+
+interface RoutingResult {
+  text: string;
+  expected: string;
+  predicted: string;
+  confidence: number;
+  ranked: [string, number][];
+}
+
+interface RoutingMetrics {
+  total: number;
+  accuracy?: number | null;
+  none_rate?: number | null;
+  per_skill?: Record<string, { precision: number | null; recall: number | null }>;
+  confusion?: Record<string, Record<string, number>>;
+}
+
+interface RoutingReport {
+  skills: string[];
+  metrics: RoutingMetrics;
+  results: RoutingResult[];
+  none_label: string;
 }
 
 interface ReportSummary {
@@ -178,6 +221,26 @@ function parseTriggerPrompts(raw: string): ParsedTriggerPrompt[] {
     const upper = match[1].toUpperCase();
     const expected: boolean | "ambiguous" = upper === "TRUE" ? true : upper === "FALSE" ? false : "ambiguous";
     prompts.push({ text: match[2].trim(), expected });
+  }
+  return prompts;
+}
+
+interface ParsedRoutingPrompt {
+  text: string;
+  expected: string;
+}
+
+function parseRoutingPrompts(raw: string): ParsedRoutingPrompt[] {
+  const prompts: ParsedRoutingPrompt[] = [];
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const idx = trimmed.indexOf(":");
+    if (idx <= 0) continue;
+    const expected = trimmed.slice(0, idx).trim();
+    const text = trimmed.slice(idx + 1).trim();
+    if (!expected || !text) continue;
+    prompts.push({ text, expected });
   }
   return prompts;
 }
@@ -276,11 +339,13 @@ function FitPanel({ fit }: { fit: FitReport }) {
 
 function TriggerPanel({ report }: { report: TriggerReport }) {
   const { summary } = report;
-  const pct = (v: number | null) => (v == null ? "—" : `${Math.round(v * 100)}%`);
+  const pct = (v: number | null | undefined) => (v == null ? "—" : `${Math.round(v * 100)}%`);
+  const decisionMode = summary.mode === "decision";
   return (
     <Card>
       <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", marginBottom: "0.8rem" }}>
         <p className="section-caption" style={{ margin: 0, flex: 1 }}>Trigger simulation</p>
+        {decisionMode && <Badge tone="violet">Jev</Badge>}
         <Badge tone={TRIGGER_VERDICT_TONE[summary.verdict] ?? "neutral"}>
           {summary.verdict.replace("_", " ")}
         </Badge>
@@ -310,7 +375,11 @@ function TriggerPanel({ report }: { report: TriggerReport }) {
       <div className="table-shell" style={{ border: "none", boxShadow: "none", borderRadius: 0 }}>
         <table>
           <thead>
-            <tr>{["Prompt", "Expected", "Predicted", "Trials", "Result"].map((h) => <th key={h}>{h}</th>)}</tr>
+            <tr>
+              {["Prompt", "Expected", "Predicted", decisionMode ? "p(trigger)" : "Trials", "Result"].map((h) => (
+                <th key={h}>{h}</th>
+              ))}
+            </tr>
           </thead>
           <tbody>
             {report.results.map((r, i) => (
@@ -318,7 +387,7 @@ function TriggerPanel({ report }: { report: TriggerReport }) {
                 <td style={{ fontSize: "0.82rem" }}>{r.text}</td>
                 <td>{r.expected === "ambiguous" ? "ambiguous" : r.expected ? "true" : "false"}</td>
                 <td>{r.predicted == null ? "—" : r.predicted ? "true" : "false"}</td>
-                <td>{r.trials}</td>
+                <td>{decisionMode ? <ScoreBar score={r.probability ?? null} /> : r.trials}</td>
                 <td>
                   {r.correct == null ? (
                     <Badge tone="neutral">n/a</Badge>
@@ -333,6 +402,98 @@ function TriggerPanel({ report }: { report: TriggerReport }) {
           </tbody>
         </table>
       </div>
+
+      {decisionMode && summary.threshold_curve && (
+        <>
+          <p className="section-caption" style={{ margin: "1rem 0 0.5rem" }}>Threshold curve</p>
+          <div className="table-shell" style={{ border: "none", boxShadow: "none", borderRadius: 0 }}>
+            <table>
+              <thead>
+                <tr>{["Threshold", "Precision", "Recall", "F1", "FP rate"].map((h) => <th key={h}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {summary.threshold_curve.map((p) => (
+                  <tr key={p.threshold}>
+                    <td>{p.threshold}</td>
+                    <td>{pct(p.precision)}</td>
+                    <td>{pct(p.recall)}</td>
+                    <td>{pct(p.f1)}</td>
+                    <td>{pct(p.false_positive_rate)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </Card>
+  );
+}
+
+function RoutingPanel({ report }: { report: RoutingReport }) {
+  const { metrics } = report;
+  const pct = (v: number | null | undefined) => (v == null ? "—" : `${Math.round(v * 100)}%`);
+  return (
+    <Card>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", marginBottom: "0.8rem" }}>
+        <p className="section-caption" style={{ margin: 0, flex: 1 }}>Multi-skill routing</p>
+        <span className="micro-copy">{metrics.total} prompts</span>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2" style={{ marginBottom: "0.9rem" }}>
+        <Card className="stat-card" style={{ textAlign: "center" }}>
+          <div className="stat-value" style={{ fontSize: "1.5rem" }}>{pct(metrics.accuracy)}</div>
+          <p className="stat-label">accuracy</p>
+        </Card>
+        <Card className="stat-card" style={{ textAlign: "center" }}>
+          <div className="stat-value" style={{ fontSize: "1.5rem" }}>{pct(metrics.none_rate)}</div>
+          <p className="stat-label">"none" rate</p>
+        </Card>
+      </div>
+
+      {metrics.per_skill && (
+        <>
+          <p className="section-caption" style={{ margin: "0 0 0.5rem" }}>Per-skill</p>
+          <div className="table-shell" style={{ border: "none", boxShadow: "none", borderRadius: 0, marginBottom: "0.9rem" }}>
+            <table>
+              <thead>
+                <tr>{["Skill", "Precision", "Recall"].map((h) => <th key={h}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {Object.entries(metrics.per_skill).map(([name, s]) => (
+                  <tr key={name}>
+                    <td className="table-code">{name}</td>
+                    <td>{pct(s.precision)}</td>
+                    <td>{pct(s.recall)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
+      <div className="table-shell" style={{ border: "none", boxShadow: "none", borderRadius: 0 }}>
+        <table>
+          <thead>
+            <tr>{["Prompt", "Expected", "Predicted", "Confidence"].map((h) => <th key={h}>{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {report.results.map((r, i) => (
+              <tr key={i}>
+                <td style={{ fontSize: "0.82rem" }}>{r.text}</td>
+                <td className="table-code">{r.expected}</td>
+                <td className="table-code">{r.predicted}</td>
+                <td>
+                  <Badge tone={r.predicted === r.expected ? "success" : "danger"}>
+                    {Math.round(r.confidence * 100)}%
+                  </Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Card>
   );
 }
@@ -340,8 +501,10 @@ function TriggerPanel({ report }: { report: TriggerReport }) {
 export default function SkillLab() {
   const [skillText, setSkillText] = useState("");
   const [task, setTask] = useState("");
-  const [models, setModels] = useState<string[]>([]);
-  const [judgeModel, setJudgeModel] = useState("");
+  const [fitModels, setFitModels] = useState<string[]>([]);
+  const [fitJudgeModel, setFitJudgeModel] = useState("");
+  const [triggerModels, setTriggerModels] = useState<string[]>([]);
+  const [triggerJudgeModel, setTriggerJudgeModel] = useState("");
   const [lintOnly, setLintOnly] = useState<LintReport | null>(null);
   const [full, setFull] = useState<FullReport | null>(null);
   const [history, setHistory] = useState<ReportSummary[]>([]);
@@ -350,6 +513,16 @@ export default function SkillLab() {
   const [repeats, setRepeats] = useState(1);
   const [triggerReport, setTriggerReport] = useState<TriggerReport | null>(null);
   const [triggerLoading, setTriggerLoading] = useState(false);
+
+  const [routingSkills, setRoutingSkills] = useState<RoutingSkillEntry[]>([
+    { name: "", skill_text: "" },
+    { name: "", skill_text: "" },
+  ]);
+  const [routingPromptsText, setRoutingPromptsText] = useState("");
+  const [routingDecisionModel, setRoutingDecisionModel] = useState("");
+  const [routingReport, setRoutingReport] = useState<RoutingReport | null>(null);
+  const [routingLoading, setRoutingLoading] = useState(false);
+
   const fileRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
 
@@ -357,11 +530,17 @@ export default function SkillLab() {
     modelsApi
       .list()
       .then((r) => {
-        const keys = Object.keys(r.models);
-        setModels(keys);
-        setJudgeModel((prev) => prev || keys[0] || "");
+        const { llm, decision } = splitModels(r.models);
+        setFitModels(llm);
+        setFitJudgeModel((prev) => prev || llm[0] || "");
+        const all = [...llm, ...decision];
+        setTriggerModels(all);
+        setTriggerJudgeModel((prev) => prev || all[0] || "");
       })
-      .catch(() => setModels([]));
+      .catch(() => {
+        setFitModels([]);
+        setTriggerModels([]);
+      });
     void refreshHistory();
   }, []);
 
@@ -406,7 +585,7 @@ export default function SkillLab() {
       toast.error("Describe the task you want the skill to handle.");
       return;
     }
-    if (!judgeModel) {
+    if (!fitJudgeModel) {
       toast.error("Pick a judge model.");
       return;
     }
@@ -416,7 +595,7 @@ export default function SkillLab() {
       const r = await apiPost<FullReport>("/skill-eval/full", {
         skill_text: skillText,
         task_description: task,
-        judge_model: judgeModel,
+        judge_model: fitJudgeModel,
       });
       setFull(r);
       toast.success(`Combined score ${Math.round(r.combined_score * 100)}% (${r.combined_basis}).`);
@@ -433,7 +612,7 @@ export default function SkillLab() {
       toast.error("Paste or upload a SKILL.md first.");
       return;
     }
-    if (!judgeModel) {
+    if (!triggerJudgeModel) {
       toast.error("Pick a judge model.");
       return;
     }
@@ -446,7 +625,7 @@ export default function SkillLab() {
     try {
       const r = await apiPost<TriggerReport>("/skill-eval/trigger", {
         skill_text: skillText,
-        judge_model: judgeModel,
+        judge_model: triggerJudgeModel,
         prompts,
         repeats,
       });
@@ -456,6 +635,52 @@ export default function SkillLab() {
       toast.error(e instanceof Error ? e.message : String(e));
     } finally {
       setTriggerLoading(false);
+    }
+  }
+
+  function updateRoutingSkill(index: number, patch: Partial<RoutingSkillEntry>) {
+    setRoutingSkills((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
+  }
+
+  function addRoutingSkill() {
+    setRoutingSkills((prev) => [...prev, { name: "", skill_text: "" }]);
+  }
+
+  function removeRoutingSkill(index: number) {
+    setRoutingSkills((prev) => (prev.length > 2 ? prev.filter((_, i) => i !== index) : prev));
+  }
+
+  async function runRouting() {
+    const skills = routingSkills.filter((s) => s.name.trim() && s.skill_text.trim());
+    if (skills.length < 2) {
+      toast.error("Add at least two named skills with content.");
+      return;
+    }
+    if (!routingDecisionModel) {
+      toast.error("Pick a decision model.");
+      return;
+    }
+    const skillNames = new Set(skills.map((s) => s.name.trim()));
+    const prompts = parseRoutingPrompts(routingPromptsText).filter(
+      (p) => p.expected === "none" || skillNames.has(p.expected),
+    );
+    if (prompts.length === 0) {
+      toast.error('Add at least one prompt (e.g. "skill-name: prompt text" or "none: prompt text").');
+      return;
+    }
+    setRoutingLoading(true);
+    try {
+      const r = await apiPost<RoutingReport>("/skill-eval/route", {
+        skills: skills.map((s) => ({ name: s.name.trim(), skill_text: s.skill_text })),
+        prompts,
+        decision_model: routingDecisionModel,
+      });
+      setRoutingReport(r);
+      toast.success(`Routing sim done — ${Math.round((r.metrics.accuracy ?? 0) * 100)}% accuracy.`);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    } finally {
+      setRoutingLoading(false);
     }
   }
 
@@ -527,9 +752,9 @@ export default function SkillLab() {
             />
           </Field>
           <Field label="Judge model">
-            <Select value={judgeModel} onChange={(e) => setJudgeModel(e.target.value)}>
-              {models.length === 0 && <option value="">No models configured</option>}
-              {models.map((m) => (
+            <Select value={fitJudgeModel} onChange={(e) => setFitJudgeModel(e.target.value)}>
+              {fitModels.length === 0 && <option value="">No models configured</option>}
+              {fitModels.map((m) => (
                 <option key={m} value={m}>{m}</option>
               ))}
             </Select>
@@ -599,7 +824,15 @@ export default function SkillLab() {
           />
         </Field>
         <div className="grid gap-3 sm:grid-cols-2" style={{ marginTop: "0.6rem" }}>
-          <Field label="Repeats per prompt (majority vote)">
+          <Field label="Judge model">
+            <Select value={triggerJudgeModel} onChange={(e) => setTriggerJudgeModel(e.target.value)}>
+              {triggerModels.length === 0 && <option value="">No models configured</option>}
+              {triggerModels.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Repeats per prompt (majority vote — ignored for Jev)">
             <Select value={String(repeats)} onChange={(e) => setRepeats(Number(e.target.value))}>
               {[1, 2, 3, 5].map((n) => (
                 <option key={n} value={n}>{n}</option>
@@ -615,6 +848,80 @@ export default function SkillLab() {
       </Card>
 
       {triggerReport && <TriggerPanel report={triggerReport} />}
+
+      {/* Multi-skill routing */}
+      <Card>
+        <p className="section-caption" style={{ marginBottom: "0.3rem" }}>Multi-skill routing</p>
+        <p className="micro-copy" style={{ margin: "0 0 0.7rem" }}>
+          Given several candidate skills, which one (if any) should handle each prompt? Requires a
+          Jev decision model — this is a single-shot choice among all listed skills, not a per-skill
+          yes/no probe.
+        </p>
+
+        {routingSkills.map((skill, i) => (
+          <div key={i} className="panel-surface panel-quiet" style={{ marginBottom: "0.7rem" }}>
+            <div style={{ display: "flex", gap: "0.6rem", alignItems: "flex-end", marginBottom: "0.5rem" }}>
+              <Field label={`Skill ${i + 1} name`}>
+                <Input
+                  value={skill.name}
+                  onChange={(e) => updateRoutingSkill(i, { name: e.target.value })}
+                  placeholder="csv-report"
+                />
+              </Field>
+              {routingSkills.length > 2 && (
+                <button
+                  type="button"
+                  className="ds-icon-button"
+                  aria-label={`Remove skill ${i + 1}`}
+                  onClick={() => removeRoutingSkill(i)}
+                >
+                  <Trash2 size={14} />
+                </button>
+              )}
+            </div>
+            <Textarea
+              value={skill.skill_text}
+              onChange={(e) => updateRoutingSkill(i, { skill_text: e.target.value })}
+              rows={4}
+              className="font-mono"
+              style={{ fontSize: "0.76rem" }}
+              placeholder={"---\nname: csv-report\ndescription: …\n---\n# Instructions…"}
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          className="ds-icon-button"
+          style={{ width: "auto", padding: "0.3rem 0.6rem", fontSize: "0.75rem", marginBottom: "0.9rem" }}
+          onClick={addRoutingSkill}
+        >
+          <Plus size={12} style={{ marginRight: 4 }} />
+          Add skill
+        </button>
+
+        <Field label='Labeled prompts — one per line: "skill-name: prompt text" or "none: prompt text"'>
+          <Textarea
+            value={routingPromptsText}
+            onChange={(e) => setRoutingPromptsText(e.target.value)}
+            rows={5}
+            className="font-mono"
+            style={{ fontSize: "0.76rem" }}
+            placeholder={"csv-report: Generate the weekly sales CSV report\nnone: What is the weather in Ankara?"}
+          />
+        </Field>
+
+        <div style={{ marginTop: "0.6rem" }}>
+          <DecisionModelSelect value={routingDecisionModel} onChange={setRoutingDecisionModel} label="Decision model" />
+        </div>
+
+        <div className="button-row" style={{ marginTop: "0.9rem" }}>
+          <Button icon={<Play size={14} />} loading={routingLoading} onClick={runRouting}>
+            Run routing simulation
+          </Button>
+        </div>
+      </Card>
+
+      {routingReport && <RoutingPanel report={routingReport} />}
 
       {/* History */}
       {history.length > 0 && (
