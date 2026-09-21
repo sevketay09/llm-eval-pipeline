@@ -1,6 +1,6 @@
 """Pydantic schemas for evaluation runs and results."""
 from pydantic import BaseModel, Field
-from typing import Optional, Any, List, Union
+from typing import Optional, Any, List, Literal, Union
 from datetime import datetime
 
 
@@ -8,6 +8,8 @@ class EvalRunRequest(BaseModel):
     models: list[str] = Field(..., min_length=1, description="Model keys to evaluate")
     suite: str = Field("smoke", description="Test suite name")
     judge_model: Optional[str] = Field(None, description="Judge model override")
+    judge_mode: Optional[Literal["llm", "decision", "cascade"]] = Field(None, description="Judge backend")
+    decision_model: Optional[str] = Field(None, description="Decision (Jev) model key, required for judge_mode decision/cascade")
     tests: Optional[list[str]] = Field(None, description="Subset of tests to run within the suite")
     output_path: Optional[str] = Field(None, description="Optional output path override for exported report artifacts")
     parallel: bool = False

@@ -16,13 +16,14 @@ WEB_PORT ?= 5173
 
 .PHONY: help install-requirements clean docker-build docker-run docker-push \
 	build-debug up-debug down-debug tail-logs restart-debug start-debug clear-results \
-	dev dev-backend dev-frontend build-frontend preview-frontend check-api demo demo-docker
+	dev dev-backend dev-frontend build-frontend preview-frontend check-api demo demo-docker demo-jev
 
 help:
 	@echo "Available targets:"
 	@echo "  install-requirements - Install Python dependencies"
 	@echo "  demo                 - Offline demo eval with the mock model (no API keys)"
 	@echo "  demo-docker          - Same demo eval inside the Docker image"
+	@echo "  demo-jev             - Offline demo eval with the mock Jev decision model (no API keys)"
 	@echo "  dev                  - Run FastAPI backend and Vite frontend together"
 	@echo "  dev-backend          - Run FastAPI backend with reload"
 	@echo "  dev-frontend         - Run Vite frontend dev server"
@@ -45,6 +46,9 @@ install-requirements:
 
 demo:
 	python main.py --models demo-model --suite smoke --judge demo-model
+
+demo-jev:
+	python main.py --models demo-model --suite smoke --judge demo-model --judge-mode cascade --decision-model demo-jev
 
 demo-docker:
 	docker compose build llm-eval-dashboard

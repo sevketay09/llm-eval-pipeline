@@ -1,7 +1,7 @@
 """Pydantic schemas for custom metric endpoints."""
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
@@ -19,6 +19,7 @@ class EvaluateCaseRequest(BaseModel):
 class EvaluateMetricRequest(BaseModel):
     cases: List[EvaluateCaseRequest] = Field(..., min_length=1)
     judge_model: Optional[str] = None
+    decision_type: Literal["score", "noul"] = "score"
 
 
 class CaseEvalResult(BaseModel):

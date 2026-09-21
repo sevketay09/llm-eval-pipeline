@@ -12,6 +12,8 @@ import {
   type EvalRunStatus,
 } from "@/api/client";
 import { useEvalProgress } from "@/hooks/useWebSocket";
+import { isDecisionProvider } from "@/lib/decision";
+import { DecisionModelSelect, HelpHint } from "@/components";
 
 function formatRunLaunchError(error: unknown): string {
   if (error instanceof ApiError) {
@@ -32,6 +34,8 @@ export default function RunEvaluation() {
   const [selectedSuite, setSuite] = useState("smoke");
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [judgeModel, setJudgeModel] = useState("");
+  const [judgeMode, setJudgeMode] = useState<"llm" | "decision" | "cascade">("llm");
+  const [decisionModel, setDecisionModel] = useState("");
   const [parallel, setParallel] = useState(false);
   const [temperature, setTemperature] = useState(0);
   const [topP, setTopP] = useState("");
@@ -51,7 +55,9 @@ export default function RunEvaluation() {
   // in a real evaluation run or as a judge. They remain selectable via the CLI/config
   // directly for the demo flow; this only filters the web UI's real-run picker.
   const evaluableModelIds = models
-    ? Object.keys(models.models).filter((id) => models.models[id]!.provider !== "mock")
+    ? Object.keys(models.models).filter(
+        (id) => models.models[id]!.provider !== "mock" && !isDecisionProvider(models.models[id]!.provider),
+      )
     : [];
 
   useEffect(() => {
@@ -98,6 +104,8 @@ export default function RunEvaluation() {
         max_workers: parallel && maxWorkers.trim() ? Number(maxWorkers) : undefined,
         max_tokens: maxTokens,
         judge_model: judgeModel || undefined,
+        judge_mode: judgeMode !== "llm" ? judgeMode : undefined,
+        decision_model: judgeMode !== "llm" ? decisionModel || undefined : undefined,
         tests:
           !useCustomDataset &&
           selectedTests.length > 0 &&
@@ -274,6 +282,27 @@ export default function RunEvaluation() {
               ))}
             </select>
           </div>
+
+          <div className="control-group">
+            <label className="label">
+              Judge Mode <HelpHint>Decision (karar) tipindeki judge'lar (kalite, agent, groundedness,
+              hallucination, safety) Jev ile skorlanır. Gerekçe isteyen judge'lar (accuracy, G-Eval)
+              her zaman LLM'de kalır.</HelpHint>
+            </label>
+            <select
+              value={judgeMode}
+              onChange={(e) => setJudgeMode(e.target.value as "llm" | "decision" | "cascade")}
+              className="control-surface"
+            >
+              <option value="llm">LLM (default)</option>
+              <option value="decision">Jev (decision only)</option>
+              <option value="cascade">Cascade (Jev, fallback to LLM)</option>
+            </select>
+          </div>
+
+          {judgeMode !== "llm" && (
+            <DecisionModelSelect value={decisionModel} onChange={setDecisionModel} />
+          )}
 
           <label className="toggle-card cursor-pointer">
             <input

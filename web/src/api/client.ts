@@ -118,6 +118,8 @@ export interface EvalRunRequest {
   models: string[];
   suite: string;
   judge_model?: string;
+  judge_mode?: "llm" | "decision" | "cascade";
+  decision_model?: string;
   tests?: string[];
   output_path?: string;
   parallel?: boolean;

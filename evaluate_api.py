@@ -38,6 +38,8 @@ def evaluate(
     tests: Optional[List[str]] = None,
     config_path: str = "config/models.yaml",
     judge_model: Optional[str] = None,
+    judge_mode: Optional[str] = None,
+    decision_model: Optional[str] = None,
     output_path: Optional[str] = None,
     parallel: bool = False,
     max_workers: Optional[int] = None,
@@ -57,6 +59,8 @@ def evaluate(
         tests: Optional subset of test names to run within the suite.
         config_path: Path to models.yaml config.
         judge_model: Optional judge model override.
+        judge_mode: Optional judge backend: "llm" (default), "decision", or "cascade".
+        decision_model: Decision (Jev) model key, required for judge_mode decision/cascade.
         output_path: Optional file path to save results.
         parallel: Whether to run models in parallel.
         max_workers: Max parallel workers (only if parallel=True).
@@ -76,6 +80,8 @@ def evaluate(
     pipeline = EvaluationPipeline(
         config_path=config_path,
         judge_model_key=judge_model,
+        judge_mode=judge_mode,
+        decision_model_key=decision_model,
         runtime_overrides=runtime_overrides,
         run=run,
     )
