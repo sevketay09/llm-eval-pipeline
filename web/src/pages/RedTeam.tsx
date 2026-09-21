@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Play, CheckCircle, XCircle, AlertCircle, ChevronDown, ChevronRight } from "lucide-react";
-import { PageHeader, Card, Button, Badge, Field, Select, Textarea, useToast } from "@/components";
+import { PageHeader, Card, Button, Badge, Field, Select, Textarea, ScoreBar, useToast, DecisionModelSelect } from "@/components";
 import { modelsApi } from "@/api/client";
+import { splitModels } from "@/lib/decision";
 
 const BASE = "/api";
 
@@ -25,6 +26,9 @@ interface AttackResult {
   reason: string;
   latency_ms: number;
   error: string;
+  signals: Record<string, number>;
+  needs_review: boolean;
+  scorer: string;
 }
 
 interface SessionSummary {
@@ -33,6 +37,8 @@ interface SessionSummary {
   status: string;
   passed: number;
   failed: number;
+  scorer: string;
+  needs_review: number;
 }
 
 interface SessionDetail extends SessionSummary {
@@ -62,14 +68,16 @@ async function apiGet<T>(path: string): Promise<T> {
   return r.json();
 }
 
-function VerdictBadge({ passed, error }: { passed: boolean; error: string }) {
+function VerdictBadge({ passed, error, needsReview }: { passed: boolean; error: string; needsReview: boolean }) {
   if (error) return <Badge tone="warning"><AlertCircle size={11} /> error</Badge>;
+  if (needsReview) return <Badge tone="warning"><AlertCircle size={11} /> review</Badge>;
   if (passed) return <Badge tone="success"><CheckCircle size={11} /> passed</Badge>;
   return <Badge tone="danger"><XCircle size={11} /> failed</Badge>;
 }
 
 function ResultRow({ r }: { r: AttackResult }) {
   const [open, setOpen] = useState(false);
+  const signalEntries = Object.entries(r.signals);
   return (
     <>
       <tr
@@ -83,7 +91,7 @@ function ResultRow({ r }: { r: AttackResult }) {
       >
         <td><Badge tone="neutral" mono>{r.category}</Badge></td>
         <td className="body-copy">{r.name}</td>
-        <td><VerdictBadge passed={r.passed} error={r.error} /></td>
+        <td><VerdictBadge passed={r.passed} error={r.error} needsReview={r.needs_review} /></td>
         <td className="micro-copy">{r.latency_ms.toFixed(1)} ms</td>
         <td style={{ width: 28 }}>{open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</td>
       </tr>
@@ -98,10 +106,23 @@ function ResultRow({ r }: { r: AttackResult }) {
               <span className="ds-field-mini">Response</span>
               <pre className="ds-codeblock">{r.response || r.error || "—"}</pre>
             </div>
-            <div>
+            <div style={{ marginBottom: signalEntries.length ? "0.6rem" : 0 }}>
               <span className="ds-field-mini">Reason</span>
               <p className="muted-copy" style={{ margin: 0, fontSize: "0.85rem" }}>{r.reason || "—"}</p>
             </div>
+            {signalEntries.length > 0 && (
+              <div>
+                <span className="ds-field-mini">Jev signals</span>
+                <div className="space-y-1" style={{ marginTop: "0.35rem" }}>
+                  {signalEntries.map(([name, value]) => (
+                    <div key={name} className="flex items-center gap-3">
+                      <span className="micro-copy font-mono" style={{ width: "11rem" }}>{name}</span>
+                      <ScoreBar score={value} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </td>
         </tr>
       )}
@@ -114,6 +135,8 @@ export default function RedTeam() {
   const [categories, setCategories] = useState<string[]>([...ALL_CATEGORIES]);
   const [models, setModels] = useState<string[]>([]);
   const [modelKey, setModelKey] = useState("");
+  const [scorer, setScorer] = useState<"heuristic" | "decision">("heuristic");
+  const [scorerModel, setScorerModel] = useState("");
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<SessionDetail | null>(null);
   const toast = useToast();
@@ -122,9 +145,9 @@ export default function RedTeam() {
     modelsApi
       .list()
       .then(r => {
-        const keys = Object.keys(r.models);
-        setModels(keys);
-        setModelKey(prev => prev || keys[0] || "");
+        const { llm } = splitModels(r.models);
+        setModels(llm);
+        setModelKey(prev => prev || llm[0] || "");
       })
       .catch(() => setModels([]));
   }, []);
@@ -136,11 +159,13 @@ export default function RedTeam() {
   async function run() {
     if (!systemPrompt.trim()) { toast.error("System prompt is required."); return; }
     if (categories.length === 0) { toast.error("Select at least one category."); return; }
+    if (scorer === "decision" && !scorerModel) { toast.error("Select a decision model for the Jev scorer."); return; }
     setDetail(null);
     setLoading(true);
     try {
       const summary = await apiPost<SessionSummary>("/redteam", {
         system_prompt: systemPrompt.trim(), categories, model_key: modelKey,
+        scorer, scorer_model: scorer === "decision" ? scorerModel : "",
       });
       const ran = await apiPost<{ status: string }>(`/redteam/${summary.session_id}/run`, {});
       const d = await apiGet<SessionDetail>(`/redteam/${summary.session_id}/results`);
@@ -150,7 +175,8 @@ export default function RedTeam() {
         return;
       }
       setDetail(d);
-      toast.success(`Ran ${d.attack_count} attacks · ${d.failed} got through.`);
+      const reviewSuffix = d.needs_review > 0 ? ` · ${d.needs_review} need review` : "";
+      toast.success(`Ran ${d.attack_count} attacks · ${d.failed} got through${reviewSuffix}.`);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : String(e));
     } finally {
@@ -198,6 +224,16 @@ export default function RedTeam() {
           </Select>
         </Field>
 
+        <Field label="Scorer">
+          <Select value={scorer} onChange={e => setScorer(e.target.value as "heuristic" | "decision")}>
+            <option value="heuristic">Heuristic (keywords)</option>
+            <option value="decision">Jev (decision)</option>
+          </Select>
+        </Field>
+        {scorer === "decision" && (
+          <DecisionModelSelect value={scorerModel} onChange={setScorerModel} label="Scorer model" />
+        )}
+
         <span className="ds-field-mini" style={{ marginTop: "1rem" }}>Attack categories</span>
         <div className="flex flex-wrap gap-2">
           {ALL_CATEGORIES.map(cat => (
@@ -227,6 +263,9 @@ export default function RedTeam() {
             <span className="body-copy"><strong>{detail.attack_count}</strong> attacks</span>
             <span style={{ color: "var(--success)" }}><CheckCircle size={13} style={{ verticalAlign: "middle", marginRight: 4 }} /><strong>{detail.passed}</strong> passed</span>
             <span style={{ color: "var(--danger)" }}><XCircle size={13} style={{ verticalAlign: "middle", marginRight: 4 }} /><strong>{detail.failed}</strong> failed</span>
+            {detail.needs_review > 0 && (
+              <span style={{ color: "var(--warning)" }}><AlertCircle size={13} style={{ verticalAlign: "middle", marginRight: 4 }} /><strong>{detail.needs_review}</strong> need review</span>
+            )}
             {passRate !== null && (
               <span className={`ds-scorebar__value ${passTone}`} style={{ marginLeft: "auto", fontSize: "0.9rem" }}>{passRate}% pass rate</span>
             )}

@@ -1,7 +1,7 @@
 """Pydantic schemas for red-team endpoints."""
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Dict, List, Literal, Optional
 from pydantic import BaseModel, Field
 
 from redteam.store import CATEGORIES
@@ -11,6 +11,8 @@ class CreateSessionRequest(BaseModel):
     system_prompt: str = Field(..., min_length=1)
     categories: List[str] = Field(default_factory=lambda: list(CATEGORIES))
     model_key: str = ""
+    scorer: Literal["heuristic", "decision"] = "heuristic"
+    scorer_model: str = ""
 
 
 class AttackSchema(BaseModel):
@@ -30,6 +32,9 @@ class AttackResultSchema(BaseModel):
     reason: str
     latency_ms: float
     error: str = ""
+    signals: Dict[str, float] = Field(default_factory=dict)
+    needs_review: bool = False
+    scorer: str = "heuristic"
 
 
 class SessionSummary(BaseModel):
@@ -43,6 +48,9 @@ class SessionSummary(BaseModel):
     failed: int = 0
     created_at: float
     finished_at: Optional[float] = None
+    scorer: str = "heuristic"
+    scorer_model: str = ""
+    needs_review: int = 0
 
 
 class SessionDetail(BaseModel):
@@ -58,3 +66,6 @@ class SessionDetail(BaseModel):
     failed: int = 0
     created_at: float
     finished_at: Optional[float] = None
+    scorer: str = "heuristic"
+    scorer_model: str = ""
+    needs_review: int = 0
