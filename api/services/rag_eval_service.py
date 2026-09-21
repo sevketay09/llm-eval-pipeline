@@ -36,14 +36,19 @@ class RagEvalService:
         self,
         config_path: str = "config/models.yaml",
         embedding_adapter_factory: Optional[Callable[[str, str], Any]] = None,
+        decision_client_factory: Optional[Callable[[str, str], Any]] = None,
     ):
         self.config_path = config_path
         self.embedding_adapter_factory = embedding_adapter_factory or _default_embedding_adapter_factory
+        from decisions.config import build_decision_client
+
+        self.decision_client_factory = decision_client_factory or build_decision_client
         # Embedding adapters are expensive to build (HuggingFace providers load
         # real model weights) and this service is a process-lifetime singleton
         # (see api/routers/rag_eval.py), so cache by model_key instead of
         # rebuilding per request.
         self._embedding_adapters: Dict[str, Any] = {}
+        self._decision_clients: Dict[str, Any] = {}
 
     def _get_embedding_adapter(self, model_key: str) -> Any:
         if model_key not in self._embedding_adapters:
@@ -60,6 +65,15 @@ class RagEvalService:
 
         return embed_fn
 
+    def _build_decision_fn(self, decision_model: Optional[str]):
+        if not decision_model:
+            return None
+        if decision_model not in self._decision_clients:
+            self._decision_clients[decision_model] = self.decision_client_factory(decision_model, self.config_path)
+        from decisions.rag import make_rag_decision_fn
+
+        return make_rag_decision_fn(self._decision_clients[decision_model])
+
     def evaluate(
         self,
         question: str,
@@ -67,6 +81,7 @@ class RagEvalService:
         answer: str,
         expected_answer: str = "",
         embedding_model: Optional[str] = None,
+        decision_model: Optional[str] = None,
     ) -> RagEvalResponse:
         context_texts = [c.text for c in contexts]
         case = {
@@ -76,8 +91,9 @@ class RagEvalService:
             "expected_answer": expected_answer,
         }
 
-        embed_fn = self._build_embed_fn(embedding_model)
-        result = evaluate_rag_case(case, embed_fn=embed_fn)
+        decision_fn = self._build_decision_fn(decision_model)
+        embed_fn = None if decision_fn else self._build_embed_fn(embedding_model)
+        result = evaluate_rag_case(case, embed_fn=embed_fn, decision_fn=decision_fn)
 
         # evaluate_rag_case() returns metrics at the top level (context_precision,
         # context_recall, faithfulness, answer_relevance, fault_isolation), not
@@ -97,6 +113,8 @@ class RagEvalService:
         fault = result.get("fault_isolation", {}).get("fault", "none")
         overall = round(result.get("overall_rag_score", 0.0), 4)
 
+        scoring_mode = "decision" if decision_fn else ("embedding" if embedding_model else "token_overlap")
+
         return RagEvalResponse(
             question=question,
             context_precision=round(cp, 4),
@@ -106,8 +124,9 @@ class RagEvalService:
             answer_relevance=round(ar, 4),
             fault_component=fault,
             overall_score=overall,
-            scoring_mode="embedding" if embedding_model else "token_overlap",
-            embedding_model=embedding_model,
+            scoring_mode=scoring_mode,
+            embedding_model=embedding_model if not decision_fn else None,
+            decision_model=decision_model if decision_fn else None,
             details=result,
         )
 
@@ -115,17 +134,22 @@ class RagEvalService:
         self,
         report: Dict[str, Any],
         embedding_model: Optional[str] = None,
+        decision_model: Optional[str] = None,
     ) -> RagReportEvalResponse:
         """Batch-score every RAG-shaped case already recorded in a saved eval
         report (any test result carrying a contexts/context/retrieved_chunks
         field), aggregated per model. Wraps analysis.rag_eval.evaluate_rag_report."""
-        embed_fn = self._build_embed_fn(embedding_model)
-        result = evaluate_rag_report(report, embed_fn=embed_fn)
+        decision_fn = self._build_decision_fn(decision_model)
+        embed_fn = None if decision_fn else self._build_embed_fn(embedding_model)
+        result = evaluate_rag_report(report, embed_fn=embed_fn, decision_fn=decision_fn)
+
+        scoring_mode = "decision" if decision_fn else ("embedding" if embedding_model else "token_overlap")
 
         return RagReportEvalResponse(
             total_rag_cases=result.get("total_rag_cases", 0),
             models=result.get("models", {}),
             overall_fault_distribution=result.get("overall_fault_distribution", {}),
-            scoring_mode="embedding" if embedding_model else "token_overlap",
-            embedding_model=embedding_model,
+            scoring_mode=scoring_mode,
+            embedding_model=embedding_model if not decision_fn else None,
+            decision_model=decision_model if decision_fn else None,
         )

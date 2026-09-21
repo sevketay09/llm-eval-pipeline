@@ -53,16 +53,26 @@ def get_report_raw(filename: str, svc: ReportService = Depends(get_report_servic
 def get_report_rag_eval(
     filename: str,
     embedding_model: Optional[str] = None,
+    decision_model: Optional[str] = None,
     svc: ReportService = Depends(get_report_service),
     rag_svc: RagEvalService = Depends(get_rag_eval_service),
 ):
     """Batch-score every RAG-shaped case already recorded in this report,
     aggregated per model — see analysis.rag_eval.evaluate_rag_report."""
+    if decision_model:
+        from api.config import get_settings
+        from api.services.decision_support import require_decision_model
+
+        try:
+            require_decision_model(decision_model, get_settings().models_config_path)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
     report = svc.get_report_raw(filename)
     if not report:
         raise HTTPException(404, f"Report '{filename}' not found")
     try:
-        return rag_svc.evaluate_report(report, embedding_model=embedding_model)
+        return rag_svc.evaluate_report(report, embedding_model=embedding_model, decision_model=decision_model)
     except ValueError as exc:
         raise HTTPException(404, str(exc)) from exc
     except Exception as exc:
