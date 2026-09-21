@@ -12,7 +12,7 @@ import {
   Skeleton,
   useToast,
 } from "@/components";
-import { scoreTone } from "@/components";
+import { scoreTone, DecisionModelSelect } from "@/components";
 import { resultsApi, type ReportListItem } from "@/api/client";
 
 const BASE = "/api";
@@ -24,6 +24,7 @@ interface ClusterMember {
   score: number;
   category: string;
   text: string;
+  taxonomy_label?: string | null;
 }
 
 interface Cluster {
@@ -33,6 +34,7 @@ interface Cluster {
   centroid_text: string;
   avg_score: number;
   members: ClusterMember[];
+  taxonomy_label?: string | null;
 }
 
 interface ClusteringResponse {
@@ -41,6 +43,7 @@ interface ClusteringResponse {
   clusters: Cluster[];
   model_breakdown: Record<string, number>;
   category_breakdown: Record<string, number>;
+  taxonomy_breakdown?: Record<string, number>;
 }
 
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
@@ -145,6 +148,9 @@ export default function FailureClustering() {
   const [selectedReport, setSelectedReport] = useState("");
   const [reportText, setReportText] = useState("");
   const [threshold, setThreshold] = useState(0.6);
+  const [labeling, setLabeling] = useState<"keywords" | "decision">("keywords");
+  const [decisionModel, setDecisionModel] = useState("");
+  const [taxonomyText, setTaxonomyText] = useState("");
   const [result, setResult] = useState<ClusteringResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
@@ -172,6 +178,19 @@ export default function FailureClustering() {
 
   async function run() {
     let report: unknown;
+    if (labeling === "decision" && !decisionModel) {
+      toast.error("Pick a decision model for Jev labeling.");
+      return;
+    }
+    let taxonomy: Record<string, string> | undefined;
+    if (labeling === "decision" && taxonomyText.trim()) {
+      try {
+        taxonomy = JSON.parse(taxonomyText);
+      } catch {
+        toast.error("Invalid JSON in custom taxonomy field.");
+        return;
+      }
+    }
     setLoading(true);
     try {
       if (source === "report") {
@@ -188,7 +207,13 @@ export default function FailureClustering() {
           return;
         }
       }
-      const r = await apiPost<ClusteringResponse>("/failure-clustering", { report, threshold });
+      const r = await apiPost<ClusteringResponse>("/failure-clustering", {
+        report,
+        threshold,
+        labeling,
+        decision_model: labeling === "decision" ? decisionModel : undefined,
+        taxonomy,
+      });
       setResult(r);
       toast.success(`Grouped ${r.total_failures} failures into ${r.clusters.length} clusters.`);
     } catch (e: unknown) {
@@ -237,15 +262,39 @@ export default function FailureClustering() {
               Paste JSON
             </button>
           </div>
-          <Field label="Threshold">
-            <Input
-              type="number" min={0} max={1} step={0.05}
-              value={threshold}
-              onChange={e => setThreshold(parseFloat(e.target.value))}
-              style={{ width: 90 }}
-            />
-          </Field>
+          <div style={{ display: "flex", gap: "0.8rem" }}>
+            <Field label="Threshold">
+              <Input
+                type="number" min={0} max={1} step={0.05}
+                value={threshold}
+                onChange={e => setThreshold(parseFloat(e.target.value))}
+                style={{ width: 90 }}
+              />
+            </Field>
+            <Field label="Labeling">
+              <Select value={labeling} onChange={e => setLabeling(e.target.value as "keywords" | "decision")}>
+                <option value="keywords">Keywords</option>
+                <option value="decision">Jev taxonomy</option>
+              </Select>
+            </Field>
+          </div>
         </div>
+
+        {labeling === "decision" && (
+          <div style={{ marginBottom: "0.8rem" }}>
+            <DecisionModelSelect value={decisionModel} onChange={setDecisionModel} />
+            <Field label="Custom taxonomy (optional JSON: {label: description})">
+              <Textarea
+                value={taxonomyText}
+                onChange={e => setTaxonomyText(e.target.value)}
+                rows={3}
+                className="font-mono"
+                placeholder='{"hallucination": "...", "wrong_tool": "..."}'
+                style={{ fontSize: "0.76rem" }}
+              />
+            </Field>
+          </div>
+        )}
 
         {source === "report" ? (
           reportsLoading ? (
@@ -326,6 +375,9 @@ export default function FailureClustering() {
                 <BreakdownBar data={result.model_breakdown} label="By model" />
                 <BreakdownBar data={result.category_breakdown} label="By category" />
               </div>
+              {result.taxonomy_breakdown && Object.keys(result.taxonomy_breakdown).length > 0 && (
+                <BreakdownBar data={result.taxonomy_breakdown} label="By taxonomy (Jev)" />
+              )}
             </>
           )}
         </>
