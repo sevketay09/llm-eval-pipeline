@@ -607,6 +607,18 @@ export interface TraceListResponse {
   total: number;
 }
 
+export interface DecideTraceResponse {
+  signals: Record<string, number | string>;
+  tags: string[];
+  needs_review: boolean;
+}
+
+export interface DecideBatchResponse {
+  decided: number;
+  flagged: number;
+  errors: number;
+}
+
 export const tracesApi = {
   list: (params?: { run_id?: string; tag?: string; limit?: number }) => {
     const q = new URLSearchParams();
@@ -622,6 +634,18 @@ export const tracesApi = {
       `/traces/${encodeURIComponent(traceId)}/eval`,
       { method: "POST" }
     ),
+  decide: (traceId: string, decisionModel: string) =>
+    request<DecideTraceResponse>(`/traces/${encodeURIComponent(traceId)}/decide`, {
+      method: "POST",
+      body: JSON.stringify({ decision_model: decisionModel }),
+    }),
+  decideBatch: (decisionModel: string, traceIds: string[]) =>
+    request<DecideBatchResponse>("/traces/decide-batch", {
+      method: "POST",
+      body: JSON.stringify({ decision_model: decisionModel, trace_ids: traceIds }),
+    }),
+  toHitl: (traceId: string) =>
+    request<{ item_id: string }>(`/traces/${encodeURIComponent(traceId)}/to-hitl`, { method: "POST" }),
 };
 
 // ─── Health ──────────────────────────────────────────────────────────────────

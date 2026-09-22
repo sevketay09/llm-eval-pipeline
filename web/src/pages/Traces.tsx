@@ -14,8 +14,26 @@ import {
   X,
 } from "lucide-react";
 import { tracesApi, Trace, TraceSpan, TraceDetail } from "@/api/client";
-import { PageHeader, Card, Button, Badge, EmptyState, Input } from "@/components";
+import { PageHeader, Card, Button, Badge, EmptyState, Input, Select, DecisionModelSelect, useToast } from "@/components";
 import type { BadgeTone } from "@/components";
+
+const TAG_PRESETS = [
+  { value: "", label: "All" },
+  { value: "needs_review", label: "Needs review" },
+  { value: "risk:pii", label: "risk:pii" },
+  { value: "risk:injection", label: "risk:injection" },
+  { value: "risk:harmful", label: "risk:harmful" },
+  { value: "risk:regulatory", label: "risk:regulatory" },
+  { value: "risk:off_topic", label: "risk:off_topic" },
+  { value: "quality:low", label: "quality:low" },
+];
+
+function tagTone(tag: string): BadgeTone {
+  if (tag.startsWith("risk:")) return "danger";
+  if (tag === "quality:low") return "warning";
+  if (tag === "needs_review") return "warning";
+  return "info";
+}
 
 const SPAN_TONE: Record<string, { tone: BadgeTone; label: string }> = {
   LLM: { tone: "violet", label: "LLM" },
@@ -108,15 +126,18 @@ function buildTree(spans: TraceSpan[]): Array<{ span: TraceSpan; depth: number }
   return spans.slice().sort((a, b) => a.start_ts - b.start_ts).map(span => ({ span, depth: getDepth(span) }));
 }
 
-function DetailPanel({ detail, onEval, evalStatus }: {
+function DetailPanel({ detail, onEval, evalStatus, onSendToHitl }: {
   detail: TraceDetail;
   onEval: (id: string) => void;
   evalStatus: Record<string, "queued" | "error">;
+  onSendToHitl: (id: string) => void;
 }) {
   const [rawSpan, setRawSpan] = useState<TraceSpan | null>(null);
   const { trace, span_count, duration_ms } = detail;
   const tree = buildTree(trace.spans);
   const queued = evalStatus[trace.trace_id] === "queued";
+  const decisions = (trace.metadata?.decisions ?? null) as Record<string, number | string> | null;
+  const needsReview = trace.tags.includes("needs_review");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative" }}>
@@ -128,7 +149,7 @@ function DetailPanel({ detail, onEval, evalStatus }: {
         <div style={{ display: "flex", gap: "0.5rem", flexShrink: 0, alignItems: "center", flexWrap: "wrap" }}>
           <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 3 }}><Layers size={12} />{span_count}</span>
           {duration_ms != null && <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 3 }}><Clock size={12} />{fmt(duration_ms)}</span>}
-          {trace.tags.map(tag => <Badge key={tag} tone="info">{tag}</Badge>)}
+          {trace.tags.map(tag => <Badge key={tag} tone={tagTone(tag)}>{tag}</Badge>)}
           <Button
             icon={queued ? <CheckCircle size={12} /> : <Play size={12} />}
             disabled={queued}
@@ -136,8 +157,24 @@ function DetailPanel({ detail, onEval, evalStatus }: {
           >
             {queued ? "Queued" : "Eval"}
           </Button>
+          {needsReview && (
+            <Button variant="secondary" onClick={() => onSendToHitl(trace.trace_id)}>Send to HITL</Button>
+          )}
         </div>
       </div>
+
+      {decisions && (
+        <div style={{ padding: "0.6rem 1.1rem", borderBottom: "1px solid var(--line)" }}>
+          <span className="ds-field-mini">Signals (Jev)</span>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {Object.entries(decisions).map(([name, value]) => (
+              <span key={name} className="micro-copy">
+                {name}: {typeof value === "number" ? value.toFixed(2) : String(value)}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ flex: 1, overflowY: "auto", padding: "0.5rem 0.75rem" }}>
         {tree.length === 0 ? (
@@ -194,7 +231,13 @@ function TraceListItem({ trace, selected, onClick }: { trace: Trace; selected: b
         <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 2 }}><Layers size={11} /> {trace.spans.length}</span>
         {duration != null && <span className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 2 }}><Clock size={11} /> {fmt(duration)}</span>}
         {trace.tags.slice(0, 2).map(tag => (
-          <span key={tag} className="micro-copy" style={{ display: "flex", alignItems: "center", gap: 2, color: "var(--accent-cool)" }}><Tag size={10} /> {tag}</span>
+          <span
+            key={tag}
+            className="micro-copy"
+            style={{ display: "flex", alignItems: "center", gap: 2, color: tag.startsWith("risk:") || tag === "needs_review" || tag === "quality:low" ? "var(--danger)" : "var(--accent-cool)" }}
+          >
+            <Tag size={10} /> {tag}
+          </span>
         ))}
       </div>
     </div>
@@ -209,7 +252,10 @@ export default function Traces() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [tagFilter, setTagFilter] = useState("");
   const [evalStatus, setEvalStatus] = useState<Record<string, "queued" | "error">>({});
+  const [decisionModel, setDecisionModel] = useState("");
+  const [runningJev, setRunningJev] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const toast = useToast();
 
   const loadTraces = useCallback(async () => {
     try {
@@ -248,6 +294,31 @@ export default function Traces() {
     }
   };
 
+  const handleSendToHitl = async (traceId: string) => {
+    try {
+      await tracesApi.toHitl(traceId);
+      toast.success("Sent to HITL review queue.");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to send to HITL");
+    }
+  };
+
+  const handleRunJevOnVisible = async () => {
+    if (!decisionModel) { toast.error("Select a Jev model first."); return; }
+    setRunningJev(true);
+    try {
+      const ids = traces.map(t => t.trace_id);
+      const result = await tracesApi.decideBatch(decisionModel, ids);
+      toast.success(`Jev decided ${result.decided} trace(s), flagged ${result.flagged}.`);
+      await loadTraces();
+      if (selectedId) tracesApi.get(selectedId).then(setDetail).catch(() => {});
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Jev run failed");
+    } finally {
+      setRunningJev(false);
+    }
+  };
+
   return (
     <div className="page-shell">
       <PageHeader
@@ -256,7 +327,10 @@ export default function Traces() {
         subtitle="Stream live evaluation traces, inspect the span tree, and queue any trace for scoring."
         actions={
           <>
-            <Input placeholder="filter by tag…" value={tagFilter} onChange={e => setTagFilter(e.target.value)} style={{ width: 170 }} />
+            <Select value={tagFilter} onChange={e => setTagFilter(e.target.value)} style={{ width: 150 }}>
+              {TAG_PRESETS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </Select>
+            <Input placeholder="or filter by tag…" value={tagFilter} onChange={e => setTagFilter(e.target.value)} style={{ width: 150 }} />
             <span className="micro-copy">{traces.length} traces</span>
             <button className="ds-icon-button" aria-label="Refresh" onClick={loadTraces}><RefreshCw size={14} /></button>
             <Button variant={autoRefresh ? "primary" : "secondary"} onClick={() => setAutoRefresh(p => !p)}>
@@ -265,6 +339,17 @@ export default function Traces() {
           </>
         }
       />
+
+      <Card>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-end", flexWrap: "wrap" }}>
+          <div style={{ minWidth: 220 }}>
+            <DecisionModelSelect value={decisionModel} onChange={setDecisionModel} label="Jev model" />
+          </div>
+          <Button loading={runningJev} onClick={handleRunJevOnVisible}>
+            Run Jev on visible traces
+          </Button>
+        </div>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-[300px_1fr] items-start">
         {/* List */}
@@ -287,7 +372,7 @@ export default function Traces() {
         {/* Detail */}
         <Card style={{ padding: 0, overflow: "hidden", height: "72vh" }}>
           {detail ? (
-            <DetailPanel detail={detail} onEval={handleEval} evalStatus={evalStatus} />
+            <DetailPanel detail={detail} onEval={handleEval} evalStatus={evalStatus} onSendToHitl={handleSendToHitl} />
           ) : (
             <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <EmptyState icon={Activity} title="Select a trace to inspect spans" />

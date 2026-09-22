@@ -41,3 +41,31 @@ class TraceDetail(BaseModel):
     trace: TraceSchema
     span_count: int
     duration_ms: Optional[float] = None
+
+
+class DecideTraceRequest(BaseModel):
+    decision_model: str = Field(..., min_length=1)
+
+
+class DecideTraceResponse(BaseModel):
+    signals: Dict[str, Any]
+    tags: List[str]
+    needs_review: bool
+
+
+class DecideBatchRequest(BaseModel):
+    decision_model: str = Field(..., min_length=1)
+    trace_ids: Optional[List[str]] = None
+    tag: Optional[str] = None
+    limit: int = Field(200, ge=1, le=2000)
+    force: bool = False
+
+
+class DecideBatchResponse(BaseModel):
+    decided: int
+    flagged: int
+    errors: int
+
+
+class ToHitlResponse(BaseModel):
+    item_id: str
