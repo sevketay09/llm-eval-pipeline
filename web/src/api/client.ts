@@ -434,6 +434,7 @@ export interface CustomDatasetGenerateRequest {
   source_label?: string;
   source_material?: string;
   source_paths?: string[];
+  qc_model?: string;
 }
 
 export interface CustomDatasetImportRequest {
@@ -442,6 +443,7 @@ export interface CustomDatasetImportRequest {
   project_description?: string;
   focus_areas?: string;
   source_label?: string;
+  qc_model?: string;
 }
 
 export interface CustomDatasetReviewStatusUpdateRequest {

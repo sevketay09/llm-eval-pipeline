@@ -280,6 +280,7 @@ class CustomDatasetGenerateRequest(BaseModel):
     source_label: Optional[str] = Field(None, max_length=240)
     source_material: Optional[str] = Field(None, max_length=60000)
     source_paths: list[str] = Field(default_factory=list, max_length=50)
+    qc_model: Optional[str] = Field(None, max_length=120)
 
 
 class CustomDatasetImportRequest(BaseModel):
@@ -288,6 +289,7 @@ class CustomDatasetImportRequest(BaseModel):
     project_description: str = Field("Imported dataset", max_length=12000)
     focus_areas: Optional[str] = Field(None, max_length=400)
     source_label: Optional[str] = Field(None, max_length=240)
+    qc_model: Optional[str] = Field(None, max_length=120)
 
 
 class CustomDatasetReviewStatusUpdateRequest(BaseModel):

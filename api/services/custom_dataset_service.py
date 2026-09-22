@@ -6,7 +6,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from api.config import get_settings
 from api.schemas.evaluations import (
@@ -228,11 +228,42 @@ NONDETERMINISTIC_ANSWER_PATTERNS = (
 class CustomDatasetService:
     """Generate and persist custom QA datasets from a project brief."""
 
-    def __init__(self, datasets_dir: str | None = None):
+    def __init__(
+        self,
+        datasets_dir: str | None = None,
+        config_path: str = "config/models.yaml",
+        decision_client_factory: Callable[[str, str], Any] | None = None,
+    ):
         settings = get_settings()
         self._dir = Path(datasets_dir or settings.generated_datasets_dir)
         self._dir.mkdir(parents=True, exist_ok=True)
         self._workspace_root = Path(settings.workspace_root).resolve()
+        self._config_path = config_path
+        from decisions.config import build_decision_client
+
+        self.decision_client_factory = decision_client_factory or build_decision_client
+        self._decision_clients: dict[str, Any] = {}
+
+    def _run_dataset_qc(
+        self,
+        qc_model: str | None,
+        cases: list[dict[str, Any]],
+        *,
+        source_material: str | None,
+        focus_areas: str | None,
+    ) -> dict[str, int]:
+        if not qc_model:
+            return {}
+        if qc_model not in self._decision_clients:
+            self._decision_clients[qc_model] = self.decision_client_factory(qc_model, self._config_path)
+        from decisions.dataset_qc import qc_cases
+
+        qc_client = self._decision_clients[qc_model]
+        qc_kept, qc_summary = qc_cases(
+            qc_client, cases, source_material=source_material, focus_areas=focus_areas
+        )
+        cases[:] = qc_kept
+        return qc_summary
 
     def generate_dataset(self, request: CustomDatasetGenerateRequest) -> CustomDatasetDetail:
         from pipeline_runner import EvaluationPipeline
@@ -282,6 +313,8 @@ class CustomDatasetService:
                 parsed.get("test_cases", []),
                 request.sample_count,
             )
+            if request.qc_model:
+                filtering_summary["qc_skipped_reason"] = "conversation_not_supported"
             self._annotate_generated_conversation_cases_with_sources(normalized_cases, source_chunks)
             return self._persist_dataset(
                 title=title,
@@ -307,6 +340,14 @@ class CustomDatasetService:
             )
 
         normalized_cases, filtering_summary = self._normalize_cases(parsed.get("test_cases", []), request.sample_count)
+        filtering_summary.update(
+            self._run_dataset_qc(
+                request.qc_model,
+                normalized_cases,
+                source_material=source_material,
+                focus_areas=request.focus_areas,
+            )
+        )
         self._annotate_generated_cases_with_sources(normalized_cases, source_chunks)
         return self._persist_dataset(
             title=title,
@@ -339,8 +380,18 @@ class CustomDatasetService:
         dataset_kind = self._infer_import_dataset_kind(payload, raw_cases)
         if dataset_kind == "conversation":
             normalized_cases, filtering_summary = self._normalize_conversation_cases(raw_cases, len(raw_cases))
+            if request.qc_model:
+                filtering_summary["qc_skipped_reason"] = "conversation_not_supported"
         else:
             normalized_cases, filtering_summary = self._normalize_cases(raw_cases, len(raw_cases))
+            filtering_summary.update(
+                self._run_dataset_qc(
+                    request.qc_model,
+                    normalized_cases,
+                    source_material=None,
+                    focus_areas=request.focus_areas,
+                )
+            )
         title = (request.title or self._extract_title_from_payload(payload) or "Imported Dataset").strip()
         source_label = (request.source_label or title or "Imported JSON").strip()
 

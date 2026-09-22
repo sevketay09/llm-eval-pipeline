@@ -9,6 +9,7 @@ import {
   type ModelListResponse,
   type WorkspaceSourceFile,
 } from "@/api/client";
+import { splitModels } from "@/lib/decision";
 
 type DatasetStageStatus = "completed" | "active" | "pending";
 
@@ -127,6 +128,8 @@ export default function DatasetStudio() {
   const [projectDescription, setProjectDescription] = useState("");
   const [focusAreas, setFocusAreas] = useState("");
   const [sampleCount, setSampleCount] = useState(12);
+  const [decisionModels, setDecisionModels] = useState<string[]>([]);
+  const [qcModel, setQcModel] = useState("");
   const [datasetBusy, setDatasetBusy] = useState(false);
   const [datasetError, setDatasetError] = useState<string | null>(null);
   const [generatedDataset, setGeneratedDataset] = useState<CustomDatasetDetail | null>(null);
@@ -179,6 +182,7 @@ export default function DatasetStudio() {
   useEffect(() => {
     modelsApi.list().then((r) => {
       setModels(r);
+      setDecisionModels(splitModels(r.models).decision);
       if (r.total > 0) {
         setGeneratorModel(Object.keys(r.models)[0]!);
       }
@@ -229,6 +233,7 @@ export default function DatasetStudio() {
         source_label: datasetSourceLabel.trim() || undefined,
         source_material: datasetSourceMaterial.trim() || undefined,
         source_paths: normalizedSourcePaths,
+        qc_model: qcModel || undefined,
       });
       setGeneratedDataset(dataset);
       setSelectedReusableMetricCandidate(dataset.reusable_metric_candidate ?? false);
@@ -256,6 +261,7 @@ export default function DatasetStudio() {
         project_description: projectDescription.trim() || "Imported dataset",
         focus_areas: focusAreas.trim() || undefined,
         source_label: file.name,
+        qc_model: qcModel || undefined,
       });
       setGeneratedDataset(dataset);
       setSelectedReusableMetricCandidate(dataset.reusable_metric_candidate ?? false);
@@ -613,6 +619,26 @@ export default function DatasetStudio() {
             </div>
 
             <div className="control-group">
+              <label className="label">Quality check with Jev (optional)</label>
+              <select
+                value={qcModel}
+                onChange={(e) => setQcModel(e.target.value)}
+                className="control-surface"
+                disabled={datasetKind === "conversation"}
+              >
+                <option value="">Off</option>
+                {decisionModels.map((id) => (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                ))}
+              </select>
+              {datasetKind === "conversation" && (
+                <p className="micro-copy mt-1">Not supported for conversation datasets yet.</p>
+              )}
+            </div>
+
+            <div className="control-group">
               <label className="label">Project Brief</label>
               <textarea
                 value={projectDescription}
@@ -880,6 +906,25 @@ export default function DatasetStudio() {
                                   {filteringSummary.nondeterministic_removed} vague answers removed
                                 </span>
                               )}
+                            {filteringSummary && (filteringSummary.qc_ambiguous_removed ?? 0) > 0 && (
+                              <span className="provider-chip">
+                                {filteringSummary.qc_ambiguous_removed} ambiguous (Jev QC) removed
+                              </span>
+                            )}
+                            {filteringSummary &&
+                              (filteringSummary.qc_nondeterministic_removed ?? 0) > 0 && (
+                                <span className="provider-chip">
+                                  {filteringSummary.qc_nondeterministic_removed} nondeterministic (Jev QC) removed
+                                </span>
+                              )}
+                            {filteringSummary && (filteringSummary.qc_unsupported_removed ?? 0) > 0 && (
+                              <span className="provider-chip">
+                                {filteringSummary.qc_unsupported_removed} unsupported (Jev QC) removed
+                              </span>
+                            )}
+                            {filteringSummary && "qc_skipped_reason" in filteringSummary && (
+                              <span className="provider-chip">Jev QC skipped</span>
+                            )}
                           </div>
                           {datasetTags.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-2">
