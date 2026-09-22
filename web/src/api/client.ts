@@ -890,3 +890,76 @@ export const hitlApi = {
       { method: "POST" }
     ),
 };
+
+// ─── Classifier & Guardrail Bench ─────────────────────────────────────────────
+
+export interface BenchCase {
+  id: string;
+  text: string;
+  label?: string | null;
+  expected_verdict?: string | null;
+  labels?: string[];
+}
+
+export interface GuardrailCategoryConfig {
+  instructions: string;
+  kind: "risk" | "scope";
+  block?: number | null;
+  review?: number | null;
+}
+
+export interface CreateBenchRequest {
+  name: string;
+  mode: "choice" | "guardrail";
+  criteria?: Record<string, string>;
+  instructions?: string;
+  guardrail_categories?: Record<string, GuardrailCategoryConfig>;
+  cases: BenchCase[];
+  decision_model: string;
+  llm_models?: string[];
+  repeats?: number;
+}
+
+export interface ClassifierResult {
+  name: string;
+  kind: "decision" | "llm";
+  model_key: string;
+  metrics: Record<string, any>;
+  error?: string;
+}
+
+export interface BenchSummary {
+  bench_id: string;
+  name: string;
+  mode: string;
+  status: string;
+  case_count: number;
+  classifier_names: string[];
+  created_at: number;
+  finished_at?: number | null;
+  error?: string;
+}
+
+export interface BenchDetail extends BenchSummary {
+  criteria: Record<string, string>;
+  instructions: string;
+  guardrail_categories: Record<string, GuardrailCategoryConfig>;
+  decision_model: string;
+  llm_models: string[];
+  repeats: number;
+  results: ClassifierResult[];
+}
+
+export const classifierBenchApi = {
+  create: (req: CreateBenchRequest) =>
+    request<BenchSummary>("/classifier-bench", { method: "POST", body: JSON.stringify(req) }),
+  run: (benchId: string) =>
+    request<BenchSummary>(`/classifier-bench/${encodeURIComponent(benchId)}/run`, { method: "POST" }),
+  get: (benchId: string) => request<BenchDetail>(`/classifier-bench/${encodeURIComponent(benchId)}`),
+  list: () => request<BenchSummary[]>("/classifier-bench"),
+  importJsonl: (jsonl_text: string) =>
+    request<{ cases: BenchCase[] }>("/classifier-bench/import-jsonl", {
+      method: "POST",
+      body: JSON.stringify({ jsonl_text }),
+    }),
+};

@@ -12,6 +12,7 @@ import {
   BookOpen,
   AlertTriangle,
   BadgeCheck,
+  ListChecks,
   type LucideIcon,
 } from "lucide-react";
 
@@ -34,6 +35,7 @@ export const navGroups: NavGroup[] = [
       { to: "/run", icon: Play, label: "Run" },
       { to: "/datasets", icon: Database, label: "Datasets" },
       { to: "/playground", icon: FlaskConical, label: "Playground" },
+      { to: "/classifier-bench", icon: ListChecks, label: "Classifier Bench" },
     ],
   },
   {
