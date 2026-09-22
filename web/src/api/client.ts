@@ -57,11 +57,26 @@ export interface ModelConfig {
   supports_streaming: boolean;
   supports_response_format?: boolean;
   quirks?: string[];
+  timeout_s?: number;
+  cost_per_mtok_input?: number;
+  cost_per_mtok_output?: number;
 }
 
 export interface ModelListResponse {
   models: Record<string, ModelConfig>;
   total: number;
+}
+
+export interface ModelCapabilities {
+  decision_available: boolean;
+  decision_models: string[];
+  llm_models: string[];
+}
+
+export interface ModelTestResult {
+  ok: boolean;
+  latency_ms: number;
+  error: string | null;
 }
 
 export interface EmbeddingModelConfig {
@@ -80,6 +95,8 @@ export interface EmbeddingModelListResponse {
 export const modelsApi = {
   list: () => request<ModelListResponse>("/models"),
   listEmbeddings: () => request<EmbeddingModelListResponse>("/models/embeddings"),
+  capabilities: () => request<ModelCapabilities>("/models/capabilities"),
+  test: (id: string) => request<ModelTestResult>(`/models/${id}/test`, { method: "POST" }),
   get: (id: string) => request<ModelConfig & { id: string }>(`/models/${id}`),
   create: (id: string, config: Partial<ModelConfig>) =>
     request(`/models/${id}`, { method: "POST", body: JSON.stringify(config) }),
@@ -101,6 +118,8 @@ export interface EvalRunRequest {
   models: string[];
   suite: string;
   judge_model?: string;
+  judge_mode?: "llm" | "decision" | "cascade";
+  decision_model?: string;
   tests?: string[];
   output_path?: string;
   parallel?: boolean;
@@ -415,6 +434,7 @@ export interface CustomDatasetGenerateRequest {
   source_label?: string;
   source_material?: string;
   source_paths?: string[];
+  qc_model?: string;
 }
 
 export interface CustomDatasetImportRequest {
@@ -423,6 +443,7 @@ export interface CustomDatasetImportRequest {
   project_description?: string;
   focus_areas?: string;
   source_label?: string;
+  qc_model?: string;
 }
 
 export interface CustomDatasetReviewStatusUpdateRequest {
@@ -586,6 +607,18 @@ export interface TraceListResponse {
   total: number;
 }
 
+export interface DecideTraceResponse {
+  signals: Record<string, number | string>;
+  tags: string[];
+  needs_review: boolean;
+}
+
+export interface DecideBatchResponse {
+  decided: number;
+  flagged: number;
+  errors: number;
+}
+
 export const tracesApi = {
   list: (params?: { run_id?: string; tag?: string; limit?: number }) => {
     const q = new URLSearchParams();
@@ -601,6 +634,18 @@ export const tracesApi = {
       `/traces/${encodeURIComponent(traceId)}/eval`,
       { method: "POST" }
     ),
+  decide: (traceId: string, decisionModel: string) =>
+    request<DecideTraceResponse>(`/traces/${encodeURIComponent(traceId)}/decide`, {
+      method: "POST",
+      body: JSON.stringify({ decision_model: decisionModel }),
+    }),
+  decideBatch: (decisionModel: string, traceIds: string[]) =>
+    request<DecideBatchResponse>("/traces/decide-batch", {
+      method: "POST",
+      body: JSON.stringify({ decision_model: decisionModel, trace_ids: traceIds }),
+    }),
+  toHitl: (traceId: string) =>
+    request<{ item_id: string }>(`/traces/${encodeURIComponent(traceId)}/to-hitl`, { method: "POST" }),
 };
 
 // ─── Health ──────────────────────────────────────────────────────────────────
@@ -628,6 +673,8 @@ export interface PendingItem {
   secondary_judge_reasoning?: string | null;
   judge_disagreement?: number | null;
   judge_agreement?: number | null;
+  judge_backend?: string | null;
+  judge_confidence?: number | null;
   review_priority: number;
   queue_reason: string;
   owner?: string | null;
@@ -765,6 +812,13 @@ export interface CalibrationInsights {
     best_agreement_version?: string | null;
     lowest_mae_version?: string | null;
   };
+  by_backend?: Record<string, {
+    n: number;
+    mean_absolute_error: number;
+    spearman_rho: number | null;
+    cohens_kappa: number | null;
+    reliability_verdict: string;
+  }>;
   training_data_available: number;
   ready_for_finetuning: boolean;
 }
@@ -859,4 +913,77 @@ export const hitlApi = {
       `/hitl/export-training?min_agreement=${min_agreement}`,
       { method: "POST" }
     ),
+};
+
+// ─── Classifier & Guardrail Bench ─────────────────────────────────────────────
+
+export interface BenchCase {
+  id: string;
+  text: string;
+  label?: string | null;
+  expected_verdict?: string | null;
+  labels?: string[];
+}
+
+export interface GuardrailCategoryConfig {
+  instructions: string;
+  kind: "risk" | "scope";
+  block?: number | null;
+  review?: number | null;
+}
+
+export interface CreateBenchRequest {
+  name: string;
+  mode: "choice" | "guardrail";
+  criteria?: Record<string, string>;
+  instructions?: string;
+  guardrail_categories?: Record<string, GuardrailCategoryConfig>;
+  cases: BenchCase[];
+  decision_model: string;
+  llm_models?: string[];
+  repeats?: number;
+}
+
+export interface ClassifierResult {
+  name: string;
+  kind: "decision" | "llm";
+  model_key: string;
+  metrics: Record<string, any>;
+  error?: string;
+}
+
+export interface BenchSummary {
+  bench_id: string;
+  name: string;
+  mode: string;
+  status: string;
+  case_count: number;
+  classifier_names: string[];
+  created_at: number;
+  finished_at?: number | null;
+  error?: string;
+}
+
+export interface BenchDetail extends BenchSummary {
+  criteria: Record<string, string>;
+  instructions: string;
+  guardrail_categories: Record<string, GuardrailCategoryConfig>;
+  decision_model: string;
+  llm_models: string[];
+  repeats: number;
+  results: ClassifierResult[];
+}
+
+export const classifierBenchApi = {
+  create: (req: CreateBenchRequest) =>
+    request<BenchSummary>("/classifier-bench", { method: "POST", body: JSON.stringify(req) }),
+  run: (benchId: string) =>
+    request<BenchSummary>(`/classifier-bench/${encodeURIComponent(benchId)}/run`, { method: "POST" }),
+  get: (benchId: string) => request<BenchDetail>(`/classifier-bench/${encodeURIComponent(benchId)}`),
+  list: () => request<BenchSummary[]>("/classifier-bench"),
+  importJsonl: (jsonl_text: string) =>
+    request<{ cases: BenchCase[] }>("/classifier-bench/import-jsonl", {
+      method: "POST",
+      body: JSON.stringify({ jsonl_text }),
+    }),
 };

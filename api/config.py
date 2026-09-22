@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     # Opt-in: if set, /api/* requires `Authorization: Bearer <token>`.
     # Unset by default so existing single-user/local usage is unaffected.
     api_auth_token: Optional[str] = None
+    # Opt-in: if set, trace ingest auto-runs decide_batch with this decision
+    # (Jev) model after each ingest. Unset by default (no behavior change).
+    trace_decision_model: Optional[str] = None
 
     model_config = {
         "env_prefix": "EVAL_",

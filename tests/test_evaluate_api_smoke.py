@@ -30,9 +30,11 @@ def _load_evaluate_api_module():
     class FakeEvaluationPipeline:
         instances = []
 
-        def __init__(self, config_path, judge_model_key=None, runtime_overrides=None, run=None):
+        def __init__(self, config_path, judge_model_key=None, judge_mode=None, decision_model_key=None, runtime_overrides=None, run=None):
             self.config_path = config_path
             self.judge_model_key = judge_model_key
+            self.judge_mode = judge_mode
+            self.decision_model_key = decision_model_key
             self.runtime_overrides = runtime_overrides
             self.run = run
             self.calls = []

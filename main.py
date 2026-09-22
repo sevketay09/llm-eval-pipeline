@@ -103,6 +103,22 @@ def main():
     )
 
     parser.add_argument(
+        "--judge-mode",
+        dest="judge_mode",
+        choices=["llm", "decision", "cascade"],
+        default=None,
+        help="Judge backend: llm (default), decision (Jev only), or cascade (Jev, falling back to the LLM judge on low confidence)"
+    )
+
+    parser.add_argument(
+        "--decision-model",
+        dest="decision_model",
+        type=str,
+        default=None,
+        help="Decision (Jev) model key from config/models.yaml, required for --judge-mode decision/cascade"
+    )
+
+    parser.add_argument(
         "--temperature",
         type=float,
         default=None,
@@ -140,6 +156,8 @@ def main():
     pipeline = EvaluationPipeline(
         config_path=args.config,
         judge_model_key=args.judge,
+        judge_mode=args.judge_mode,
+        decision_model_key=args.decision_model,
         runtime_overrides=runtime_overrides
     )
 

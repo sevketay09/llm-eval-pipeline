@@ -43,6 +43,15 @@ from evaluators.nlp_metrics import NLPMetricsEvaluator, is_available as nlp_metr
 from evaluators.quality_judge import QualityJudgeEvaluator, is_quality_available
 from evaluators.agent_judge import AgentJudgeEvaluator, is_agent_eval_available
 from evaluators.groundedness_judge import GroundednessJudgeEvaluator, is_faithfulness_available
+from decisions.cascade import CascadePolicy
+from decisions.judges import (
+    DecisionAgentEvaluator,
+    DecisionComparativeEvaluator,
+    DecisionGroundednessEvaluator,
+    DecisionHallucinationEvaluator,
+    DecisionQualityEvaluator,
+    DecisionSafetyEvaluator,
+)
 from evaluators.embedding_eval import (
     SemanticSimilarityEvaluator,
     RetrievalEvaluator,
@@ -1735,15 +1744,45 @@ def _extract_turn_retrieval_context(turn_payload: Dict[str, Any]) -> Optional[st
     return None
 
 
+def _collect_judge_meta(*evaluator_outputs: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Roll several Decision*Evaluator dict outputs into one judge_meta summary.
+
+    Returns None (key omitted from the result) when none of the given dicts
+    came from a decision backend — keeps llm-mode reports byte-identical.
+    """
+    backends: List[str] = []
+    confidences: List[float] = []
+    escalated = False
+    decision_calls = 0
+    for out in evaluator_outputs:
+        if not isinstance(out, dict) or "judge_backend" not in out:
+            continue
+        backends.append(out["judge_backend"])
+        if isinstance(out.get("judge_confidence"), (int, float)):
+            confidences.append(out["judge_confidence"])
+        if out.get("escalated"):
+            escalated = True
+        decision_calls += 1
+    if not backends:
+        return None
+    return {
+        "backend": "cascade" if escalated else backends[0],
+        "min_confidence": min(confidences) if confidences else None,
+        "escalated": escalated,
+        "decision_calls": decision_calls,
+    }
+
+
 def _evaluate_multi_turn_groundedness(
     turn_results: List[Dict[str, Any]],
     judge_adapter=None,
+    evaluator_factory=None,
 ) -> Optional[Dict[int, Dict[str, Any]]]:
     if not turn_results or not is_faithfulness_available() or judge_adapter is None:
         return None
 
     try:
-        evaluator = GroundednessJudgeEvaluator(judge_adapter)
+        evaluator = evaluator_factory() if evaluator_factory is not None else GroundednessJudgeEvaluator(judge_adapter)
     except Exception as exc:
         logger.warning(f"Failed to initialize GroundednessJudgeEvaluator for multi-turn groundedness: {exc}")
         return None
@@ -1966,7 +2005,7 @@ class EvaluationPipeline:
         if not is_quality_available():
             return None
         try:
-            return QualityJudgeEvaluator(self.judge_adapter)
+            return self._judge_backend(QualityJudgeEvaluator(self.judge_adapter), DecisionQualityEvaluator)
         except Exception as exc:
             logger.warning(f"Failed to initialize QualityJudgeEvaluator: {exc}")
             return None
@@ -1976,7 +2015,7 @@ class EvaluationPipeline:
         if not is_agent_eval_available():
             return None
         try:
-            evaluator = AgentJudgeEvaluator(self.judge_adapter)
+            evaluator = self._judge_backend(AgentJudgeEvaluator(self.judge_adapter), DecisionAgentEvaluator)
             logger.info("Agent Judge Evaluator initialized for agentic test")
             return evaluator
         except Exception as exc:
@@ -2378,6 +2417,8 @@ class EvaluationPipeline:
         config_path: str = "config/models.yaml",
         use_cache: bool = True,
         judge_model_key: str = None,
+        judge_mode: Optional[str] = None,
+        decision_model_key: Optional[str] = None,
         runtime_overrides: Optional[Dict[str, Any]] = None,
         run=None,
     ):
@@ -2408,6 +2449,11 @@ class EvaluationPipeline:
 
         # Store judge model key override
         self._judge_model_key = judge_model_key
+        judge_config = self.config.get("judge_model", {}) or {}
+        self._judge_mode = judge_mode or judge_config.get("mode") or "llm"
+        self._decision_model_key = decision_model_key or judge_config.get("decision_model_key")
+        self.decision_client = None
+        self._cascade_policy = CascadePolicy.from_config(judge_config)
         self.runtime_overrides = {
             key: value
             for key, value in (runtime_overrides or {}).items()
@@ -2505,6 +2551,7 @@ class EvaluationPipeline:
         if len(model_keys) > 1:
             self.results["comparisons"] = self._generate_comparisons(model_keys)
 
+        self._attach_judge_stats()
         self.results = serialize_run_payload(self.results)
 
         self.results["run_metadata"]["result_hash"] = hash_results(self.results)
@@ -2768,6 +2815,12 @@ class EvaluationPipeline:
             "schema_version": STORE_VERSION,
             "run_seed": self.test_config.get("run_seed", 42),
             "judge_model_key": self._judge_model_key or self.config.get("judge_model", {}).get("model_key"),
+            "judge_mode": self._judge_mode,
+            "decision_model_key": self._decision_model_key,
+            "judge_cascade": {
+                "accept_confidence": self._cascade_policy.accept_confidence,
+                "hitl_below": self._cascade_policy.hitl_below,
+            },
             "prompt_version": self.config.get("judge_model", {}).get("prompt_version"),
             "judge_prompt_version": self.config.get("judge_model", {}).get("prompt_version"),
             "metric_version": METRIC_VERSION,
@@ -2859,6 +2912,12 @@ class EvaluationPipeline:
 
         model_config = dict(model_config)
 
+        if not is_embedding and model_config.get("provider") in ("typesafe", "typesafe-mock"):
+            raise ValueError(
+                f"'{model_key}' is a decision (Jev) model; it cannot generate text. "
+                "Use it via --decision-model / judge_mode instead."
+            )
+
         # Apply global runtime overrides for generation models only.
         # Embedding providers do not use these generation params.
         if (not is_embedding) and apply_runtime_overrides and self.runtime_overrides:
@@ -2899,7 +2958,39 @@ class EvaluationPipeline:
         secondary_adapter = self.initialize_model(secondary_key, apply_runtime_overrides=False) if secondary_key else None
         if secondary_key:
             logger.debug(f"Secondary judge model initialized: '{secondary_key}'")
+
+        if self._judge_mode in ("decision", "cascade"):
+            if not self._decision_model_key:
+                raise ValueError(
+                    "judge_mode is 'decision'/'cascade' but no decision model is configured. "
+                    "Set 'judge_model.decision_model_key' in "
+                    f"{self.config_path} or pass decision_model_key explicitly."
+                )
+            from decisions.config import build_decision_client
+
+            logger.info(f"Initializing decision model: '{self._decision_model_key}' (mode={self._judge_mode})")
+            self.decision_client = build_decision_client(self._decision_model_key, self.config_path)
+
         return LLMJudgeEvaluator(self.judge_adapter, secondary_adapter, prompt_version=judge_config.get("prompt_version"))
+
+    def _judge_backend(self, llm_evaluator: Any, decision_cls: type, **kw: Any) -> Any:
+        """Pick the judge implementation for one evaluator according to judge_mode.
+
+        llm: llm_evaluator as-is. decision: decision_cls(self.decision_client).
+        cascade: decision_cls with llm_evaluator as its fallback.
+        """
+        if self.decision_client is None or self._judge_mode == "llm":
+            return llm_evaluator
+        if self._judge_mode == "decision":
+            return decision_cls(self.decision_client, **kw)
+        return decision_cls(self.decision_client, fallback=llm_evaluator, policy=self._cascade_policy, **kw)
+
+    def _attach_judge_stats(self) -> None:
+        """Write judge cost/latency stats into run_metadata, right before save."""
+        if self.decision_client is not None:
+            self.results["run_metadata"]["decision_judge"] = self.decision_client.stats.snapshot()
+        if self.judge_adapter is not None:
+            self.results["run_metadata"]["llm_judge_usage"] = self.judge_adapter.get_stats()
 
     def _normalize_dataset_for_test(
         self,
@@ -3193,7 +3284,7 @@ class EvaluationPipeline:
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         
         # Initialize additional evaluators
-        hallucination_eval = HallucinationEvaluator(self.judge_adapter)
+        hallucination_eval = self._judge_backend(HallucinationEvaluator(self.judge_adapter), DecisionHallucinationEvaluator)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         geval_eval = self._initialize_geval_evaluator()
         quality_eval = self._initialize_quality_evaluator()
@@ -3298,6 +3389,7 @@ class EvaluationPipeline:
                 prompt_alignment_eval = _f_inst.result()
 
             prompt_alignment_metric = _build_prompt_alignment_metric(prompt_alignment_eval)
+            _qa_judge_meta = _collect_judge_meta(hallucination_score)
 
             nlp_scores = {}
             if nlp_eval and _has_expected:
@@ -3347,6 +3439,7 @@ class EvaluationPipeline:
                 },
                 "latency": response['latency'],
                 "tokens": response['usage'],
+                **({"judge_meta": _qa_judge_meta} if _qa_judge_meta else {}),
             }
 
             return result
@@ -4806,7 +4899,13 @@ class EvaluationPipeline:
                     context_score = 0.8
 
             intent_resolution_score, unresolved_intent_summary = _annotate_unresolved_intents(turn_results)
-            groundedness_by_turn = _evaluate_multi_turn_groundedness(turn_results, judge_adapter=self.judge_adapter)
+            groundedness_by_turn = _evaluate_multi_turn_groundedness(
+                turn_results,
+                judge_adapter=self.judge_adapter,
+                evaluator_factory=lambda: self._judge_backend(
+                    GroundednessJudgeEvaluator(self.judge_adapter), DecisionGroundednessEvaluator
+                ),
+            )
             metric_scores, metric_results = _build_multi_turn_metric_results(
                 turn_results,
                 context_score,
@@ -4950,7 +5049,9 @@ class EvaluationPipeline:
         faithfulness_eval = None
         if is_faithfulness_available() and self.judge_adapter:
             try:
-                faithfulness_eval = GroundednessJudgeEvaluator(self.judge_adapter)
+                faithfulness_eval = self._judge_backend(
+                    GroundednessJudgeEvaluator(self.judge_adapter), DecisionGroundednessEvaluator
+                )
                 logger.info("GroundednessJudgeEvaluator initialized for RAG test")
             except Exception as e:
                 logger.warning(f"Failed to initialize GroundednessJudgeEvaluator: {e}")
@@ -5014,6 +5115,8 @@ class EvaluationPipeline:
                 except Exception as e:
                     logger.debug(f"Faithfulness eval failed for item {rag_case.case_id}: {e}")
             
+            _rag_judge_meta = _collect_judge_meta(faithfulness_score)
+
             result = {
                 "id": rag_case.case_id,
                 "category": rag_case.resolved_category,
@@ -5050,6 +5153,7 @@ class EvaluationPipeline:
                     "reasoning": faithfulness_score.get("reasoning", "")
                 }} if faithfulness_score else {}),
                 "latency": response['latency'],
+                **({"judge_meta": _rag_judge_meta} if _rag_judge_meta else {}),
             }
 
             return result
@@ -5130,7 +5234,7 @@ class EvaluationPipeline:
         
         logger.info(f"Starting {test_name} on {model.model_name} with {len(dataset)} items")
         
-        safety_eval = SafetyEvaluator(self.judge_adapter)
+        safety_eval = self._judge_backend(SafetyEvaluator(self.judge_adapter), DecisionSafetyEvaluator)
         instruction_eval = InstructionFollowingEvaluator(self.judge_adapter)
         
         def _process_edge_case_item(item_idx: int, item: Any) -> Optional[Dict[str, Any]]:
@@ -5263,6 +5367,8 @@ class EvaluationPipeline:
                     has_violations=violation_detected,
                 )
             
+            _edge_case_judge_meta = _collect_judge_meta(safety_result, refusal_result)
+
             result = {
                 "id": edge_case.case_id,
                 "category": edge_case.resolved_category,
@@ -5322,7 +5428,8 @@ class EvaluationPipeline:
                 "violation_detected": violation_detected,
                 "injection_detected": injection_detected,
                 "error": response.get('error'),
-                "latency": response['latency']
+                "latency": response['latency'],
+                **({"judge_meta": _edge_case_judge_meta} if _edge_case_judge_meta else {}),
             }
 
             return result
@@ -7282,8 +7389,9 @@ Değerlendirmeni 0-10 arası puan olarak ver."""
         if len(model_keys) > 1:
             self.results["comparisons"] = self._generate_comparisons(model_keys)
 
+        self._attach_judge_stats()
         self.results = serialize_run_payload(self.results)
-        
+
         # Compute result hash for reproducibility
         self.results["run_metadata"]["result_hash"] = hash_results(self.results)
         

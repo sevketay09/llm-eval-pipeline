@@ -11,7 +11,8 @@ import {
   Textarea,
   useToast,
 } from "@/components";
-import { modelsApi } from "@/api/client";
+import { modelsApi, type ModelConfig } from "@/api/client";
+import { isDecisionModel } from "@/lib/decision";
 
 const BASE = "/api";
 
@@ -43,6 +44,7 @@ interface EvalResponse {
 interface EvaluateMetricRequest {
   cases: EvalCase[];
   judge_model?: string;
+  decision_type?: "score" | "noul";
 }
 
 interface EvalCase {
@@ -107,19 +109,23 @@ export default function CustomMetrics() {
   const [evalResult, setEvalResult] = useState<EvalResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [models, setModels] = useState<string[]>([]);
+  const [modelConfigs, setModelConfigs] = useState<Record<string, ModelConfig>>({});
   const [judgeModel, setJudgeModel] = useState("");
+  const [decisionType, setDecisionType] = useState<"score" | "noul">("score");
   const toast = useToast();
+
+  const models = Object.keys(modelConfigs);
+  const judgeIsDecision = judgeModel ? isDecisionModel(modelConfigs[judgeModel] ?? { provider: "" }) : false;
 
   useEffect(() => {
     modelsApi
       .list()
       .then(r => {
+        setModelConfigs(r.models);
         const keys = Object.keys(r.models);
-        setModels(keys);
         setJudgeModel(prev => prev || keys[0] || "");
       })
-      .catch(() => setModels([]));
+      .catch(() => setModelConfigs({}));
   }, []);
 
   async function generate() {
@@ -145,6 +151,7 @@ export default function CustomMetrics() {
     try {
       const body: EvaluateMetricRequest = { cases: validCases };
       if (judgeModel) body.judge_model = judgeModel;
+      if (judgeIsDecision) body.decision_type = decisionType;
       const r = await apiPost<EvalResponse>(`/custom-metrics/${metric.metric_id}/evaluate`, body);
       setEvalResult(r);
       toast.success(`Evaluated ${r.results.length} cases.`);
@@ -231,9 +238,17 @@ export default function CustomMetrics() {
           <Field label="Judge model">
             <Select value={judgeModel} onChange={e => setJudgeModel(e.target.value)}>
               {models.length === 0 && <option value="">No models configured — dry run only</option>}
-              {models.map(m => <option key={m} value={m}>{m}</option>)}
+              {models.map(m => <option key={m} value={m}>{m}{isDecisionModel(modelConfigs[m] ?? { provider: "" }) ? " (Jev)" : ""}</option>)}
             </Select>
           </Field>
+          {judgeIsDecision && (
+            <Field label="Decision question type">
+              <Select value={decisionType} onChange={e => setDecisionType(e.target.value as "score" | "noul")}>
+                <option value="score">Score (0-4 rubric)</option>
+                <option value="noul">Noul (yes/no probability)</option>
+              </Select>
+            </Field>
+          )}
           <div className="flex flex-col gap-3" style={{ marginTop: "0.9rem" }}>
             {cases.map((c, i) => (
               <div key={i} className="panel-quiet" style={{ position: "relative", borderRadius: 18, border: "1px solid var(--line)", padding: "0.85rem" }}>

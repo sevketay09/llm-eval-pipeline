@@ -15,6 +15,7 @@ import Playground from "./pages/Playground";
 import RedTeam from "./pages/RedTeam";
 import CustomMetrics from "./pages/CustomMetrics";
 import RagEval from "./pages/RagEval";
+import ClassifierBench from "./pages/ClassifierBench";
 import FailureClustering from "./pages/FailureClustering";
 import SkillLab from "./pages/SkillLab";
 
@@ -108,6 +109,7 @@ export default function App() {
             <Route path="/redteam" element={<RedTeam />} />
             <Route path="/custom-metrics" element={<CustomMetrics />} />
             <Route path="/rag-eval" element={<RagEval />} />
+            <Route path="/classifier-bench" element={<ClassifierBench />} />
             <Route path="/failures" element={<FailureClustering />} />
             <Route path="/skill-lab" element={<SkillLab />} />
             <Route path="/models" element={<Models />} />

@@ -120,12 +120,40 @@ def summarize(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-class SkillTriggerChecker:
-    """Probes a model with labeled prompts to measure skill-routing quality."""
+THRESHOLD_CURVE_POINTS = (0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
 
-    def __init__(self, adapter: Any, repeats: int = 1):
+
+class SkillTriggerChecker:
+    """Probes a model with labeled prompts to measure skill-routing quality.
+
+    Two backends: an LLM `adapter` (JSON-probed, majority vote over `repeats`
+    trials), or a Jev `decision_client` (single Noul call per prompt, no
+    repeats — Jev is deterministic). Supplying both prefers decision.
+    """
+
+    def __init__(
+        self,
+        adapter: Any = None,
+        repeats: int = 1,
+        decision_client: Any = None,
+        threshold: float = 0.5,
+    ):
+        if adapter is None and decision_client is None:
+            raise ValueError("SkillTriggerChecker requires an adapter or a decision_client")
         self.adapter = adapter
         self.repeats = max(1, int(repeats))
+        self.decision_client = decision_client
+        self.threshold = threshold
+
+    def _probe_decision(self, meta: Dict[str, str], prompt_text: str) -> Optional[float]:
+        from decisions.skill_routing import trigger_probability
+        from decisions.types import DecisionError
+
+        try:
+            return trigger_probability(self.decision_client, meta, prompt_text)
+        except DecisionError as e:
+            logger.warning(f"[skill_trigger] decision probe failed for {prompt_text[:60]!r}: {e}")
+            return None
 
     def _probe_once(self, meta: Dict[str, str], prompt_text: str) -> Optional[bool]:
         # Lazy import: evaluators/__init__ drags in scipy-dependent modules,
@@ -148,6 +176,26 @@ class SkillTriggerChecker:
         return parsed["trigger"]
 
     def probe_prompt(self, meta: Dict[str, str], prompt: Dict[str, Any]) -> Dict[str, Any]:
+        expected = prompt["expected"]
+
+        if self.decision_client is not None:
+            probability = self._probe_decision(meta, prompt["text"])
+            trigger_rate = probability
+            predicted = (probability >= self.threshold) if probability is not None else None
+            trials = 1 if probability is not None else 0
+            result = {
+                "text": prompt["text"],
+                "expected": expected,
+                "predicted": predicted,
+                "trigger_rate": trigger_rate,
+                "trials": trials,
+                "correct": (predicted == bool(expected))
+                if predicted is not None and expected != "ambiguous"
+                else None,
+                "probability": probability,
+            }
+            return result
+
         trials = []
         for _ in range(self.repeats):
             outcome = self._probe_once(meta, prompt["text"])
@@ -155,7 +203,6 @@ class SkillTriggerChecker:
                 trials.append(outcome)
         trigger_rate = round(sum(trials) / len(trials), 4) if trials else None
         predicted = (trigger_rate >= 0.5) if trigger_rate is not None else None
-        expected = prompt["expected"]
         return {
             "text": prompt["text"],
             "expected": expected,
@@ -181,4 +228,34 @@ class SkillTriggerChecker:
                 results.append(self.probe_prompt(meta, {"text": text, "expected": expected}))
             except Exception as e:  # network/adapter faults must not kill the run
                 logger.warning(f"[skill_trigger] probe failed for {text[:60]!r}: {e}")
-        return {"skill": meta, "summary": summarize(results), "results": results}
+
+        summary = summarize(results)
+        if self.decision_client is not None:
+            summary["mode"] = "decision"
+            summary["threshold_curve"] = _threshold_curve(results)
+
+        return {"skill": meta, "summary": summary, "results": results}
+
+
+def _threshold_curve(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Precision/recall/F1 at each candidate threshold, from stored probabilities."""
+    curve = []
+    for t in THRESHOLD_CURVE_POINTS:
+        reclassified = [
+            {
+                "expected": r["expected"],
+                "predicted": (r["probability"] >= t) if r.get("probability") is not None else None,
+            }
+            for r in results
+        ]
+        metrics = routing_metrics(reclassified)
+        curve.append(
+            {
+                "threshold": t,
+                "precision": metrics["precision"],
+                "recall": metrics["recall"],
+                "f1": metrics["f1"],
+                "false_positive_rate": metrics["false_positive_rate"],
+            }
+        )
+    return curve

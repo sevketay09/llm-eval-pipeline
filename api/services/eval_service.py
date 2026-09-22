@@ -137,7 +137,7 @@ class EvalService:
         run.message = "Starting evaluation..."
         self._notify_progress(run)
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         try:
             # Run the blocking pipeline in a thread pool
@@ -228,6 +228,8 @@ class EvalService:
                 tests=request.tests,
                 config_path=settings.models_config_path,
                 judge_model=request.judge_model,
+                judge_mode=request.judge_mode,
+                decision_model=request.decision_model,
                 output_path=output_path,
                 parallel=request.parallel,
                 max_workers=request.max_workers,

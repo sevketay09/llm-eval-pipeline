@@ -20,6 +20,10 @@ class RagEvalRequest(BaseModel):
     # config/models.yaml's embedding_models section. Unset -> unchanged
     # (token-overlap) behavior.
     embedding_model: Optional[str] = None
+    # Decision (Jev) model key from config/models.yaml. Takes priority over
+    # embedding_model when both are given: one Jev call scores all four
+    # metrics at once instead of the lexical/embedding heuristics.
+    decision_model: Optional[str] = None
 
 
 class RagEvalResponse(BaseModel):
@@ -38,6 +42,7 @@ class RagEvalResponse(BaseModel):
     overall_score: float
     scoring_mode: str = "token_overlap"
     embedding_model: Optional[str] = None
+    decision_model: Optional[str] = None
     details: Dict[str, Any] = {}
 
 
@@ -62,3 +67,4 @@ class RagReportEvalResponse(BaseModel):
     overall_fault_distribution: Dict[str, int]
     scoring_mode: str = "token_overlap"
     embedding_model: Optional[str] = None
+    decision_model: Optional[str] = None

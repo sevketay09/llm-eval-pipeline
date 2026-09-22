@@ -8,9 +8,10 @@ from api.schemas.skill_eval import (
     SkillFitRequest,
     SkillFullRequest,
     SkillLintRequest,
+    SkillRouteRequest,
     SkillTriggerRequest,
 )
-from api.services.skill_eval_service import SkillEvalService
+from api.services.skill_eval_service import SkillEvalService, UnsupportedJudgeError
 
 router = APIRouter(prefix="/skill-eval", tags=["skill-eval"])
 
@@ -31,6 +32,8 @@ def lint_skill(req: SkillLintRequest):
 def fit_skill(req: SkillFitRequest):
     try:
         result = _service.fit(req.skill_text, req.task_description, req.judge_model)
+    except UnsupportedJudgeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     if result is None:
@@ -55,6 +58,20 @@ def trigger_skill(req: SkillTriggerRequest):
 def full_skill_eval(req: SkillFullRequest):
     try:
         return _service.full(req.skill_text, req.task_description, req.judge_model, save=req.save)
+    except UnsupportedJudgeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.post("/route", dependencies=[Depends(_llm_rate_limit)])
+def route_skills(req: SkillRouteRequest):
+    try:
+        return _service.route(
+            [s.model_dump() for s in req.skills],
+            [p.model_dump() for p in req.prompts],
+            req.decision_model,
+        )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

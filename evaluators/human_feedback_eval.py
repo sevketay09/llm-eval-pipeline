@@ -485,6 +485,24 @@ class HumanFeedbackEvaluator:
                 "recommendation": "Judge and human raters disagree beyond chance level; review judge prompts against annotated examples"
             })
 
+        by_backend: Dict[str, Any] = {}
+        backend_pairs: Dict[str, list] = {}
+        for ann in annotations:
+            if not (isinstance(ann.llm_judge_score, (int, float)) and isinstance(ann.human_score, (int, float))):
+                continue
+            backend = (ann.metadata or {}).get("judge_backend") or "llm"
+            backend_pairs.setdefault(backend, []).append((ann.llm_judge_score, ann.human_score))
+        for backend, pairs in backend_pairs.items():
+            backend_reliability = compute_judge_reliability(pairs)
+            mae_backend = sum(abs(a - b) for a, b in pairs) / len(pairs)
+            by_backend[backend] = {
+                "n": backend_reliability["n"],
+                "mean_absolute_error": round(mae_backend, 4),
+                "spearman_rho": backend_reliability["spearman_rho"],
+                "cohens_kappa": backend_reliability["cohens_kappa"],
+                "reliability_verdict": backend_reliability["verdict"],
+            }
+
         return {
             "overall_metrics": {
                 "average_agreement": judge_accuracy.get("average_agreement", 0),
@@ -499,6 +517,7 @@ class HumanFeedbackEvaluator:
             "recommendations": recommendations,
             "disagreement_taxonomy": _summarize_disagreement_taxonomy(disagreements),
             "prompt_version_comparison": prompt_version_comparison,
+            "by_backend": by_backend,
             "training_data_available": judge_accuracy.get("total_comparisons", 0),
             "ready_for_finetuning": judge_accuracy.get("total_comparisons", 0) >= 50
         }

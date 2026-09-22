@@ -88,8 +88,13 @@ class _FakePipelineContext:
         self.final_saved_exports = []
         self._run = None
         self._tqdm_position_by_thread = threading.local()
+        self.judge_adapter = None
+        self.decision_client = None
 
     def _attach_ai_commentaries(self, model_keys):
+        return None
+
+    def _attach_judge_stats(self):
         return None
 
     def _build_test_mapping(self):

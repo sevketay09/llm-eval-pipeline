@@ -258,12 +258,26 @@ def label_clusters(
     return clusters
 
 
+def _label_clusters_with_taxonomy(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Replace keyword-extraction labeling with a majority vote over each
+    member's taxonomy_label (set by a classify_fn run before clustering)."""
+    for cluster in clusters:
+        counts = Counter(m.get("taxonomy_label", "other") for m in cluster["members"])
+        majority, majority_count = counts.most_common(1)[0]
+        pct = round(100 * majority_count / len(cluster["members"]))
+        cluster["taxonomy_label"] = majority
+        cluster["label_distribution"] = dict(counts)
+        cluster["label"] = f"{majority} ({pct}%)"
+    return clusters
+
+
 def compute_failure_summary(
     report: dict[str, Any],
     threshold: float = 0.6,
     n_clusters: Optional[int] = None,
     embed_fn: Optional[Callable] = None,
-    label_fn: Optional[Callable] = None
+    label_fn: Optional[Callable] = None,
+    classify_fn: Optional[Callable[[list[dict[str, Any]]], list[dict[str, Any]]]] = None,
 ) -> dict[str, Any]:
     """Orchestrate failure extraction, clustering, and labeling.
 
@@ -272,11 +286,18 @@ def compute_failure_summary(
         threshold: score threshold
         n_clusters: number of clusters
         embed_fn: embedding function
-        label_fn: labeling function
+        label_fn: keyword-extraction labeling function; ignored when
+            classify_fn is given (classify_fn wins over label_fn)
+        classify_fn: Callable[[failures], [{"label","confidence"}, ...]],
+            same order as failures — e.g. decisions.failure_taxonomy's
+            make_classify_fn(). When given, each failure and each cluster is
+            labeled from a fixed taxonomy instead of extracted keywords, and
+            the summary gains "taxonomy_breakdown". None (default) leaves
+            today's output unchanged.
 
     Returns:
         Summary dict with: total_failures, threshold, clusters, model_breakdown,
-        category_breakdown
+        category_breakdown (+ taxonomy_breakdown when classify_fn is given)
     """
     failures = extract_failures(report, threshold)
 
@@ -289,8 +310,17 @@ def compute_failure_summary(
             "category_breakdown": {},
         }
 
+    if classify_fn is not None:
+        classifications = classify_fn(failures)
+        for failure, classification in zip(failures, classifications):
+            failure["taxonomy_label"] = classification.get("label", "other")
+            failure["taxonomy_confidence"] = classification.get("confidence")
+
     clusters = cluster_failures(failures, n_clusters, embed_fn)
-    clusters = label_clusters(clusters, label_fn)
+    if classify_fn is not None:
+        clusters = _label_clusters_with_taxonomy(clusters)
+    else:
+        clusters = label_clusters(clusters, label_fn)
 
     # Model breakdown
     model_breakdown = Counter(f["model"] for f in failures)
@@ -298,13 +328,16 @@ def compute_failure_summary(
     # Category breakdown
     category_breakdown = Counter(f["category"] for f in failures)
 
-    return {
+    summary = {
         "total_failures": len(failures),
         "threshold": threshold,
         "clusters": clusters,
         "model_breakdown": dict(model_breakdown),
         "category_breakdown": dict(category_breakdown),
     }
+    if classify_fn is not None:
+        summary["taxonomy_breakdown"] = dict(Counter(f["taxonomy_label"] for f in failures))
+    return summary
 
 
 def _format_text(summary: dict[str, Any]) -> str:
@@ -332,6 +365,12 @@ def _format_text(summary: dict[str, Any]) -> str:
         sample_texts = [m["text"][:50] for m in cluster["members"][:3]]
         examples = ", ".join(f'"{t}"' for t in sample_texts)
         lines.append(f"  Examples: {examples}")
+        lines.append("")
+
+    if "taxonomy_breakdown" in summary:
+        lines.append("Taxonomy Breakdown:")
+        for label, count in sorted(summary["taxonomy_breakdown"].items(), key=lambda kv: -kv[1]):
+            lines.append(f"  {label}: {count}")
         lines.append("")
 
     return "\n".join(lines)
@@ -373,6 +412,11 @@ def _format_markdown(summary: dict[str, Any]) -> str:
     for category, count in sorted(summary["category_breakdown"].items()):
         lines.append(f"- {category}: {count}\n")
 
+    if "taxonomy_breakdown" in summary:
+        lines.append("\n## Taxonomy Breakdown\n")
+        for label, count in sorted(summary["taxonomy_breakdown"].items(), key=lambda kv: -kv[1]):
+            lines.append(f"- {label}: {count}\n")
+
     return "".join(lines)
 
 
@@ -404,6 +448,12 @@ def main() -> None:
         help="Output format (default: text)"
     )
     parser.add_argument("--output", help="Output file (default: stdout)")
+    parser.add_argument(
+        "--decision-model",
+        default=None,
+        help="Jev decision model key from config/models.yaml — labels failures from a fixed "
+        "taxonomy (decisions.failure_taxonomy) instead of extracted keywords",
+    )
 
     args = parser.parse_args()
 
@@ -411,8 +461,15 @@ def main() -> None:
     with open(args.report) as f:
         report = json.load(f)
 
+    classify_fn = None
+    if args.decision_model:
+        from decisions.config import build_decision_client
+        from decisions.failure_taxonomy import make_classify_fn
+
+        classify_fn = make_classify_fn(build_decision_client(args.decision_model))
+
     # Compute summary
-    summary = compute_failure_summary(report, args.threshold, args.n_clusters)
+    summary = compute_failure_summary(report, args.threshold, args.n_clusters, classify_fn=classify_fn)
 
     # Format
     if args.format == "text":

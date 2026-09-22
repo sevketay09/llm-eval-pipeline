@@ -270,23 +270,38 @@ def isolate_fault(case_result: dict) -> dict:
     }
 
 
-def evaluate_rag_case(case: dict, *, embed_fn=None) -> dict:
-    """Evaluate a single RAG case."""
+def evaluate_rag_case(case: dict, *, embed_fn=None, decision_fn=None) -> dict:
+    """Evaluate a single RAG case.
+
+    decision_fn: optional Callable[[case], dict] — e.g.
+    decisions.rag.make_rag_decision_fn(client) — that scores all four
+    metrics from one Jev call instead of the lexical/embedding functions
+    below. None (default) leaves output unchanged.
+    """
     question = case.get("question", "")
     contexts = case.get("contexts", [])
     answer = case.get("answer", "")
     expected_answer = case.get("expected_answer")
 
-    # Compute metrics
-    cp_result = compute_context_precision(question, contexts, embed_fn=embed_fn)
-    faith_result = compute_faithfulness(answer, contexts, embed_fn=embed_fn)
-    ar_result = compute_answer_relevance(question, answer, embed_fn=embed_fn)
-
-    # Context recall only if expected_answer is provided
-    if expected_answer:
-        cr_result = compute_context_recall(question, contexts, expected_answer, embed_fn=embed_fn)
+    decision_fault = None
+    if decision_fn is not None:
+        decision_result = decision_fn(case)
+        cp_result = decision_result["context_precision"]
+        cr_result = decision_result["context_recall"]
+        faith_result = decision_result["faithfulness"]
+        ar_result = decision_result["answer_relevance"]
+        decision_fault = decision_result["decision_fault"]
     else:
-        cr_result = {"recall": None, "covered_tokens": None, "total_tokens": None}
+        # Compute metrics
+        cp_result = compute_context_precision(question, contexts, embed_fn=embed_fn)
+        faith_result = compute_faithfulness(answer, contexts, embed_fn=embed_fn)
+        ar_result = compute_answer_relevance(question, answer, embed_fn=embed_fn)
+
+        # Context recall only if expected_answer is provided
+        if expected_answer:
+            cr_result = compute_context_recall(question, contexts, expected_answer, embed_fn=embed_fn)
+        else:
+            cr_result = {"recall": None, "covered_tokens": None, "total_tokens": None}
 
     # Fault isolation
     fault_result = isolate_fault({
@@ -295,6 +310,8 @@ def evaluate_rag_case(case: dict, *, embed_fn=None) -> dict:
         "faithfulness": faith_result,
         "answer_relevance": ar_result,
     })
+    if decision_fault is not None:
+        fault_result["decision_fault"] = decision_fault
 
     # Compute overall RAG score (weighted average)
     metrics = [
@@ -324,7 +341,7 @@ def evaluate_rag_case(case: dict, *, embed_fn=None) -> dict:
     }
 
 
-def evaluate_rag_report(report: dict, *, embed_fn=None) -> dict:
+def evaluate_rag_report(report: dict, *, embed_fn=None, decision_fn=None) -> dict:
     """Evaluate entire report: walk models → tests → cases."""
     models_section = report.get("models", {})
     all_rag_evaluations = []
@@ -347,7 +364,7 @@ def evaluate_rag_report(report: dict, *, embed_fn=None) -> dict:
                         case["contexts"] = [case["context"]]
 
                     if "contexts" in case:
-                        rag_eval = evaluate_rag_case(case, embed_fn=embed_fn)
+                        rag_eval = evaluate_rag_case(case, embed_fn=embed_fn, decision_fn=decision_fn)
                         model_rag_cases.append(rag_eval)
                         all_rag_evaluations.append(rag_eval)
 

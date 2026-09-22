@@ -104,6 +104,9 @@ class _FakePipelineContext:
     def _initialize_quality_evaluator(self):
         return None
 
+    def _judge_backend(self, llm_evaluator, decision_cls, **kwargs):
+        return llm_evaluator
+
     def _evaluate_geval_criterion(self, *args, **kwargs):
         return None
 

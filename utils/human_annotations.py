@@ -21,6 +21,15 @@ MEDIUM_DISAGREEMENT_THRESHOLD = 0.2
 PENDING_REVIEWS_FILENAME = "pending_reviews.jsonl"
 METRIC_BACKLOG_FILENAME = "metric_backlog.jsonl"
 
+# Default judge_confidence floor below which a decision-mode/cascade judge's
+# verdict is treated as uncertain. Overridable per run via
+# run_metadata.judge_cascade.hitl_below (see decisions/cascade.CascadePolicy).
+HITL_LOW_CONFIDENCE = 0.60
+# review_priority is an unbounded points score (disagreement contributes up to
+# ~45, see HIGH_DISAGREEMENT_THRESHOLD * 100), not a 0-1 value — a low-confidence
+# decision judge is floored to the same order of magnitude as strong disagreement.
+LOW_CONFIDENCE_PRIORITY_FLOOR = 40.0
+
 
 def _coerce_pending_owner(owner: Any) -> Optional[str]:
     owner_text = str(owner or "").strip()
@@ -1065,6 +1074,7 @@ def create_pending_from_results(
     sample_per_test: int = 5,
     run_id: Optional[str] = None,
     disagreement_only: bool = False,
+    low_confidence_only: bool = False,
 ) -> int:
     """
     Create pending review items from evaluation results.
@@ -1131,6 +1141,10 @@ def create_pending_from_results(
 
     new_items: List[Dict[str, Any]] = []
 
+    hitl_below = ((results.get('run_metadata') or {}).get('judge_cascade') or {}).get(
+        'hitl_below', HITL_LOW_CONFIDENCE
+    )
+
     for model_key, model_data in results.get('models', {}).items():
         for test_name, test_data in model_data.get('tests', {}).items():
             if 'results' not in test_data:
@@ -1151,7 +1165,7 @@ def create_pending_from_results(
                     ''
                 )
 
-                judge_signal = _extract_judge_signal(result)
+                judge_signal = _extract_judge_signal(result, hitl_below=hitl_below)
 
                 stable_result_id = result.get('id', result.get('test_id', f"idx_{result_idx}"))
                 item_id = f"{source_report}|{model_key}|{test_name}|{stable_result_id}"
@@ -1176,6 +1190,8 @@ def create_pending_from_results(
                     "secondary_judge_reasoning": judge_signal["secondary_judge_reasoning"],
                     "judge_disagreement": judge_signal["judge_disagreement"],
                     "judge_agreement": judge_signal["judge_agreement"],
+                    "judge_backend": judge_signal["judge_backend"],
+                    "judge_confidence": judge_signal["judge_confidence"],
                     "review_priority": judge_signal["review_priority"],
                     "queue_reason": judge_signal["queue_reason"],
                     "owner": None,
@@ -1204,6 +1220,13 @@ def create_pending_from_results(
                     item for item in test_candidates
                     if isinstance(item.get("judge_disagreement"), (int, float))
                     and float(item["judge_disagreement"]) > 0.0
+                ]
+
+            if low_confidence_only:
+                test_candidates = [
+                    item for item in test_candidates
+                    if isinstance(item.get("judge_confidence"), (int, float))
+                    and float(item["judge_confidence"]) < hitl_below
                 ]
 
             for item in test_candidates[:sample_per_test]:
@@ -1352,7 +1375,12 @@ def _extract_llm_score(result: Dict[str, Any]) -> float:
     return 0.5  # Default
 
 
-def _extract_judge_signal(result: Dict[str, Any]) -> Dict[str, Any]:
+def _extract_judge_signal(result: Dict[str, Any], hitl_below: float = HITL_LOW_CONFIDENCE) -> Dict[str, Any]:
+    judge_meta = result.get("judge_meta") or {}
+    judge_backend = judge_meta.get("backend")
+    judge_confidence = judge_meta.get("min_confidence")
+    judge_escalated = judge_meta.get("escalated", False)
+
     llm_score = _extract_llm_score(result)
     primary_score = _extract_numeric_path(
         result,
@@ -1448,10 +1476,13 @@ def _extract_judge_signal(result: Dict[str, Any]) -> Dict[str, Any]:
         ],
     )
 
-    review_priority = _compute_review_priority(result, llm_score, disagreement)
-    queue_reason = _build_queue_reason(disagreement, llm_score, result)
+    review_priority = _compute_review_priority(result, llm_score, disagreement, judge_confidence, hitl_below)
+    queue_reason = _build_queue_reason(disagreement, llm_score, result, judge_confidence, hitl_below)
 
     return {
+        "judge_backend": judge_backend,
+        "judge_confidence": judge_confidence,
+        "judge_escalated": judge_escalated,
         "llm_judge_score": llm_score,
         "llm_judge_label": _extract_text_path(
             result,
@@ -1509,14 +1540,29 @@ def _score_to_label(score: Optional[float]) -> str:
     return "YANLIS"
 
 
-def _compute_review_priority(result: Dict[str, Any], llm_score: float, disagreement: Optional[float]) -> float:
+def _compute_review_priority(
+    result: Dict[str, Any],
+    llm_score: float,
+    disagreement: Optional[float],
+    judge_confidence: Optional[float] = None,
+    hitl_below: float = HITL_LOW_CONFIDENCE,
+) -> float:
     disagreement_weight = (disagreement or 0.0) * 100.0
     boundary_weight = max(0.0, 0.3 - abs(llm_score - 0.5)) * 40.0
     schema_penalty = 12.0 if not (result.get("structured_output", {}) or {}).get("is_valid", True) else 0.0
-    return round(disagreement_weight + boundary_weight + schema_penalty, 3)
+    priority = disagreement_weight + boundary_weight + schema_penalty
+    if judge_confidence is not None and judge_confidence < hitl_below:
+        priority = max(priority, LOW_CONFIDENCE_PRIORITY_FLOOR)
+    return round(priority, 3)
 
 
-def _build_queue_reason(result_disagreement: Optional[float], llm_score: float, result: Dict[str, Any]) -> str:
+def _build_queue_reason(
+    result_disagreement: Optional[float],
+    llm_score: float,
+    result: Dict[str, Any],
+    judge_confidence: Optional[float] = None,
+    hitl_below: float = HITL_LOW_CONFIDENCE,
+) -> str:
     tool_reason = _resolve_tool_misuse_queue_reason(result)
     if tool_reason:
         return tool_reason
@@ -1524,6 +1570,9 @@ def _build_queue_reason(result_disagreement: Optional[float], llm_score: float, 
     safety_reason = _resolve_safety_queue_reason(result)
     if safety_reason:
         return safety_reason
+
+    if judge_confidence is not None and judge_confidence < hitl_below:
+        return f"Decision judge is uncertain (confidence {judge_confidence:.2f})"
 
     if result_disagreement is not None:
         if result_disagreement >= HIGH_DISAGREEMENT_THRESHOLD:

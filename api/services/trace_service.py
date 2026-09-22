@@ -71,6 +71,17 @@ class TraceStore:
                 self._store[trace_id] = t.model_copy(update={"tags": list(t.tags) + [tag_value]})
             return True
 
+    async def update_metadata(self, trace_id: str, key: str, value: object) -> bool:
+        """Set one metadata key on an existing trace. Returns False if not found."""
+        async with self._lock:
+            t = self._store.get(trace_id)
+            if t is None:
+                return False
+            new_metadata = dict(t.metadata)
+            new_metadata[key] = value
+            self._store[trace_id] = t.model_copy(update={"metadata": new_metadata})
+            return True
+
     async def delete(self, trace_id: str) -> bool:
         async with self._lock:
             if trace_id not in self._store:

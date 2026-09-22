@@ -10,6 +10,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import yaml
 
 from api.schemas.redteam import AttackResultSchema, AttackSchema, SessionDetail, SessionSummary
+from decisions.config import build_decision_client
+from decisions.redteam import make_decision_score_fn
 from redteam.generator import generate_attacks
 from redteam.runner import RedTeamRunner
 from redteam.store import AttackResult, RedTeamSession, RedTeamStore, make_session
@@ -46,17 +48,25 @@ class RedTeamService:
         store: Optional[RedTeamStore] = None,
         config_path: str = "config/models.yaml",
         adapter_factory: Optional[Callable[[str, str], Any]] = None,
+        decision_client_factory: Optional[Callable[[str, str], Any]] = None,
     ) -> None:
         self._store = store or RedTeamStore()
         self._lock = asyncio.Lock()
         self.config_path = config_path
         self.adapter_factory = adapter_factory or _default_adapter_factory
+        self.decision_client_factory = decision_client_factory or build_decision_client
         self._adapters: Dict[str, Any] = {}
+        self._decision_clients: Dict[str, Any] = {}
 
     def _get_adapter(self, model_key: str) -> Any:
         if model_key not in self._adapters:
             self._adapters[model_key] = self.adapter_factory(model_key, self.config_path)
         return self._adapters[model_key]
+
+    def _get_decision_client(self, model_key: str) -> Any:
+        if model_key not in self._decision_clients:
+            self._decision_clients[model_key] = self.decision_client_factory(model_key, self.config_path)
+        return self._decision_clients[model_key]
 
     def _build_model_fn(self, model_key: str):
         """Wrap UnifiedLLMAdapter.generate() into the (system_prompt, user_input)
@@ -78,8 +88,21 @@ class RedTeamService:
 
         return model_fn
 
-    def create(self, system_prompt: str, categories: List[str], model_key: str = "") -> RedTeamSession:
-        session = make_session(system_prompt=system_prompt, categories=categories, model_key=model_key)
+    def create(
+        self,
+        system_prompt: str,
+        categories: List[str],
+        model_key: str = "",
+        scorer: str = "heuristic",
+        scorer_model: str = "",
+    ) -> RedTeamSession:
+        session = make_session(
+            system_prompt=system_prompt,
+            categories=categories,
+            model_key=model_key,
+            scorer=scorer,
+            scorer_model=scorer_model,
+        )
         session.attacks = generate_attacks(system_prompt, categories)
         self._store.create(session)
         return session
@@ -100,6 +123,7 @@ class RedTeamService:
         self,
         session_id: str,
         model_fn=None,
+        score_fn=None,
     ) -> Optional[RedTeamSession]:
         async with self._lock:
             session = self._store.get(session_id)
@@ -112,8 +136,12 @@ class RedTeamService:
 
         try:
             fn = model_fn or (self._build_model_fn(session.model_key) if session.model_key else _noop_model_fn)
-            runner = RedTeamRunner(model_fn=fn)
-            results: List[AttackResult] = await asyncio.get_event_loop().run_in_executor(
+            scorer = score_fn
+            if scorer is None and session.scorer == "decision":
+                client = self._get_decision_client(session.scorer_model)
+                scorer = make_decision_score_fn(client)
+            runner = RedTeamRunner(model_fn=fn, score_fn=scorer)
+            results: List[AttackResult] = await asyncio.get_running_loop().run_in_executor(
                 None, runner.run_session, session
             )
             session.results = results
@@ -130,6 +158,7 @@ class RedTeamService:
     def to_summary(self, session: RedTeamSession) -> SessionSummary:
         passed = sum(1 for r in session.results if r.passed)
         failed = sum(1 for r in session.results if not r.passed)
+        needs_review = sum(1 for r in session.results if r.needs_review)
         return SessionSummary(
             session_id=session.session_id,
             system_prompt=session.system_prompt,
@@ -141,11 +170,15 @@ class RedTeamService:
             failed=failed,
             created_at=session.created_at,
             finished_at=session.finished_at,
+            scorer=session.scorer,
+            scorer_model=session.scorer_model,
+            needs_review=needs_review,
         )
 
     def to_detail(self, session: RedTeamSession) -> SessionDetail:
         passed = sum(1 for r in session.results if r.passed)
         failed = sum(1 for r in session.results if not r.passed)
+        needs_review = sum(1 for r in session.results if r.needs_review)
         return SessionDetail(
             session_id=session.session_id,
             system_prompt=session.system_prompt,
@@ -159,4 +192,7 @@ class RedTeamService:
             failed=failed,
             created_at=session.created_at,
             finished_at=session.finished_at,
+            scorer=session.scorer,
+            scorer_model=session.scorer_model,
+            needs_review=needs_review,
         )

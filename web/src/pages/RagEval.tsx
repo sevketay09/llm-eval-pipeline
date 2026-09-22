@@ -15,6 +15,7 @@ import {
 } from "@/components";
 import type { BadgeTone } from "@/components";
 import { modelsApi, type EmbeddingModelConfig } from "@/api/client";
+import { splitModels } from "@/lib/decision";
 
 const BASE = "/api";
 
@@ -29,8 +30,10 @@ interface RagEvalResponse {
   overall_score: number;
   scoring_mode: string;
   embedding_model: string | null;
+  decision_model: string | null;
   details: {
     context_precision?: { chunk_scores?: number[] };
+    fault_isolation?: { decision_fault?: { fault: string; confidence: number | null } };
   };
 }
 
@@ -122,7 +125,8 @@ export default function RagEval() {
   const [answer, setAnswer] = useState("");
   const [expected, setExpected] = useState("");
   const [embeddingModels, setEmbeddingModels] = useState<Record<string, EmbeddingModelConfig>>({});
-  const [embeddingModel, setEmbeddingModel] = useState("");
+  const [decisionModels, setDecisionModels] = useState<string[]>([]);
+  const [scoringChoice, setScoringChoice] = useState(""); // "" | `emb:<id>` | `dec:<id>`
   const [result, setResult] = useState<RagEvalResponse | null>(null);
   const [evaluatedContexts, setEvaluatedContexts] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -132,6 +136,7 @@ export default function RagEval() {
     modelsApi.listEmbeddings().then((r) => setEmbeddingModels(r.models)).catch(() => {
       // Non-fatal: the page still works in token-overlap mode without this.
     });
+    modelsApi.list().then((r) => setDecisionModels(splitModels(r.models).decision)).catch(() => {});
   }, []);
 
   async function evaluate() {
@@ -140,12 +145,15 @@ export default function RagEval() {
     if (validCtx.length === 0) { toast.error("Add at least one context chunk."); return; }
     setLoading(true);
     try {
+      const isDecision = scoringChoice.startsWith("dec:");
+      const isEmbedding = scoringChoice.startsWith("emb:");
       const r = await apiPost<RagEvalResponse>("/rag-eval", {
         question: question.trim(),
         contexts: validCtx.map(t => ({ text: t })),
         answer: answer.trim(),
         expected_answer: expected.trim(),
-        embedding_model: embeddingModel || undefined,
+        embedding_model: isEmbedding ? scoringChoice.slice(4) : undefined,
+        decision_model: isDecision ? scoringChoice.slice(4) : undefined,
       });
       setResult(r);
       setEvaluatedContexts(validCtx);
@@ -228,18 +236,24 @@ export default function RagEval() {
 
           <Card>
             <Field label="Scoring model">
-              <Select value={embeddingModel} onChange={e => setEmbeddingModel(e.target.value)}>
+              <Select value={scoringChoice} onChange={e => setScoringChoice(e.target.value)}>
                 <option value="">Token overlap (no embedding model)</option>
                 {Object.keys(embeddingModels).map((id) => (
-                  <option key={id} value={id}>
-                    {id}
+                  <option key={id} value={`emb:${id}`}>
+                    {id} (embedding)
+                  </option>
+                ))}
+                {decisionModels.map((id) => (
+                  <option key={id} value={`dec:${id}`}>
+                    {id} (Jev)
                   </option>
                 ))}
               </Select>
             </Field>
             <p className="micro-copy mt-2">
-              Token overlap (default) compares shared words only — a correct answer phrased
-              differently can score low. Pick an embedding model to score by meaning instead.
+              Token overlap (default) compares shared words only. An embedding model scores by
+              meaning. A Jev model scores all four metrics from a single call and also names
+              the likely fault component itself.
             </p>
           </Card>
 
@@ -271,11 +285,20 @@ export default function RagEval() {
               <MetricRow label="Answer Relevance" score={result.answer_relevance} desc="Answer addresses question" />
               <p className="micro-copy" style={{ marginTop: "0.75rem" }}>
                 Scored via{" "}
-                {result.scoring_mode === "embedding"
+                {result.scoring_mode === "decision"
+                  ? `Jev (${result.decision_model})`
+                  : result.scoring_mode === "embedding"
                   ? `embedding similarity (${result.embedding_model})`
                   : "token overlap"}
                 .
               </p>
+              {result.details.fault_isolation?.decision_fault && (
+                <p className="micro-copy" style={{ marginTop: "0.35rem" }}>
+                  Jev's own fault call: <strong>{result.details.fault_isolation.decision_fault.fault}</strong>
+                  {result.details.fault_isolation.decision_fault.confidence != null &&
+                    ` (${Math.round(result.details.fault_isolation.decision_fault.confidence * 100)}% confidence)`}
+                </p>
+              )}
             </Card>
           ) : null}
           {result && result.details.context_precision?.chunk_scores && (

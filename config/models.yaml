@@ -188,6 +188,16 @@ models:
     extra_body:
       reasoning:
         effort: none
+  demo-jev:
+    provider: typesafe-mock
+    model_name: jev-mock
+    api_key: none
+  jev:
+    provider: typesafe
+    model_name: jev-latest
+    api_key: ${TYPESAFE_API_KEY}
+    timeout_s: 10
+    cost_per_mtok_input: 0.042
 judge_model:
   model_key: demo-model
 

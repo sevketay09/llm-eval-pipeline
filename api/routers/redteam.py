@@ -5,7 +5,9 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from api.config import get_settings
 from api.schemas.redteam import CreateSessionRequest, SessionDetail, SessionSummary
+from api.services.decision_support import require_decision_model
 from api.services.redteam_service import RedTeamService
 
 router = APIRouter(prefix="/redteam", tags=["redteam"])
@@ -22,7 +24,21 @@ def create_session(
     req: CreateSessionRequest,
     svc: Annotated[RedTeamService, Depends(get_service)],
 ):
-    session = svc.create(system_prompt=req.system_prompt, categories=req.categories, model_key=req.model_key)
+    if req.scorer == "decision":
+        if not req.scorer_model:
+            raise HTTPException(400, "scorer_model is required when scorer='decision'")
+        try:
+            require_decision_model(req.scorer_model, get_settings().models_config_path)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    session = svc.create(
+        system_prompt=req.system_prompt,
+        categories=req.categories,
+        model_key=req.model_key,
+        scorer=req.scorer,
+        scorer_model=req.scorer_model,
+    )
     return svc.to_summary(session)
 
 

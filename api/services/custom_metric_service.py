@@ -25,6 +25,41 @@ from evaluators.custom_metric import (
 
 _MAX_METRICS = 200
 
+_METRIC_LEVELS = [
+    ("0", "not at all"),
+    ("1", "slightly"),
+    ("2", "moderately"),
+    ("3", "mostly"),
+    ("4", "fully"),
+]
+
+
+def _evaluate_case_with_decision(client: Any, description: str, case: "EvaluateCaseRequest", decision_type: str) -> "CaseEvalResult":
+    from decisions.types import DecisionError, NoulQ, ScoreQ
+
+    state = (
+        f"QUESTION:\n{case.question}\n\nANSWER:\n{case.answer}\n\n"
+        f"EXPECTED ANSWER:\n{case.expected_answer or '(none)'}"
+    )
+    question = ScoreQ(description, _METRIC_LEVELS) if decision_type == "score" else NoulQ(description)
+
+    try:
+        resp = client.decide(state, {"metric": question})
+        d = resp.answers["metric"]
+    except DecisionError as exc:
+        return CaseEvalResult(
+            question=case.question, answer=case.answer, expected_answer=case.expected_answer, error=str(exc)
+        )
+
+    conf = f"{d.confidence:.2f}" if d.confidence is not None else "n/a"
+    return CaseEvalResult(
+        question=case.question,
+        answer=case.answer,
+        expected_answer=case.expected_answer,
+        score=round(d.value, 4),
+        reasoning=f"[jev] confidence={conf}",
+    )
+
 
 def _default_adapter_factory(model_key: str, config_path: str) -> Any:
     """Build a UnifiedLLMAdapter for `model_key` with ${ENV_VAR} expansion.
@@ -83,20 +118,37 @@ class CustomMetricService:
         self,
         config_path: str = "config/models.yaml",
         adapter_factory: Optional[Callable[[str, str], Any]] = None,
+        decision_client_factory: Optional[Callable[[str, str], Any]] = None,
     ) -> None:
         self._store: Dict[str, _MetricRecord] = {}
         self._order: List[str] = []
         self.config_path = config_path
         self.adapter_factory = adapter_factory or _default_adapter_factory
+        from decisions.config import build_decision_client
+
+        self.decision_client_factory = decision_client_factory or build_decision_client
         # Adapters hold an HTTP client and are cheap to build compared to the
         # embedding adapters (no model weights to load), but this service is
         # still a process-lifetime singleton, so cache by model_key anyway.
         self._adapters: Dict[str, Any] = {}
+        self._decision_clients: Dict[str, Any] = {}
 
     def _get_adapter(self, judge_model: str) -> Any:
         if judge_model not in self._adapters:
             self._adapters[judge_model] = self.adapter_factory(judge_model, self.config_path)
         return self._adapters[judge_model]
+
+    def _get_decision_client(self, judge_model: str) -> Any:
+        if judge_model not in self._decision_clients:
+            self._decision_clients[judge_model] = self.decision_client_factory(judge_model, self.config_path)
+        return self._decision_clients[judge_model]
+
+    def _is_decision_model(self, judge_model: Optional[str]) -> bool:
+        if not judge_model:
+            return False
+        from decisions.config import is_decision_model
+
+        return is_decision_model(judge_model, self.config_path)
 
     def _build_llm_fn(self, judge_model: Optional[str]):
         if not judge_model:
@@ -156,44 +208,52 @@ class CustomMetricService:
         metric_id: str,
         cases: List[EvaluateCaseRequest],
         judge_model: Optional[str] = None,
+        decision_type: str = "score",
         llm_fn=None,
     ) -> EvaluateMetricResponse:
         rec = self._store[metric_id]
+        use_decision = llm_fn is None and self._is_decision_model(judge_model)
 
-        def _noop_llm(messages):
-            return '{"score": null, "reasoning": "No model configured."}'
+        if use_decision:
+            client = self._get_decision_client(judge_model)
+            results = [
+                _evaluate_case_with_decision(client, rec.description, c, decision_type) for c in cases
+            ]
+        else:
+            def _noop_llm(messages):
+                return '{"score": null, "reasoning": "No model configured."}'
 
-        fn = llm_fn or self._build_llm_fn(judge_model) or _noop_llm
+            fn = llm_fn or self._build_llm_fn(judge_model) or _noop_llm
 
-        results: List[CaseEvalResult] = []
-        for c in cases:
-            case_dict = {
-                "question": c.question,
-                "answer": c.answer,
-                "expected_answer": c.expected_answer,
-            }
-            try:
-                filled = _render_prompt(rec.prompt, case_dict)
-                raw = fn([{"role": "user", "content": filled}])
-                parsed = _parse_judge_response(raw)
-                results.append(
-                    CaseEvalResult(
-                        question=c.question,
-                        answer=c.answer,
-                        expected_answer=c.expected_answer,
-                        score=parsed.get("score"),
-                        reasoning=parsed.get("reasoning", ""),
+            results = []
+            for c in cases:
+                case_dict = {
+                    "question": c.question,
+                    "answer": c.answer,
+                    "expected_answer": c.expected_answer,
+                }
+                try:
+                    filled = _render_prompt(rec.prompt, case_dict)
+                    raw = fn([{"role": "user", "content": filled}])
+                    parsed = _parse_judge_response(raw)
+                    results.append(
+                        CaseEvalResult(
+                            question=c.question,
+                            answer=c.answer,
+                            expected_answer=c.expected_answer,
+                            score=parsed.get("score"),
+                            reasoning=parsed.get("reasoning", ""),
+                        )
                     )
-                )
-            except Exception as exc:
-                results.append(
-                    CaseEvalResult(
-                        question=c.question,
-                        answer=c.answer,
-                        expected_answer=c.expected_answer,
-                        error=str(exc),
+                except Exception as exc:
+                    results.append(
+                        CaseEvalResult(
+                            question=c.question,
+                            answer=c.answer,
+                            expected_answer=c.expected_answer,
+                            error=str(exc),
+                        )
                     )
-                )
 
         scored = [r.score for r in results if r.score is not None]
         avg = round(sum(scored) / len(scored), 4) if scored else None

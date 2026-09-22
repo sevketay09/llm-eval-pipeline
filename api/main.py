@@ -16,6 +16,7 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from api.config import get_settings
 from api.routers import (
+    classifier_bench_router,
     custom_datasets_router,
     custom_metrics_router,
     evaluations_router,
@@ -140,6 +141,7 @@ def create_app() -> FastAPI:
     app.include_router(rag_eval_router, prefix="/api")
     app.include_router(failure_clustering_router, prefix="/api")
     app.include_router(skill_eval_router, prefix="/api")
+    app.include_router(classifier_bench_router, prefix="/api")
     app.include_router(ws_router)
 
     @app.get("/api/health")

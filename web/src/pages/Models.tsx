@@ -1,16 +1,36 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Upload, Download } from "lucide-react";
-import { modelsApi, type ModelConfig, type ModelListResponse } from "@/api/client";
+import { Plus, Trash2, Upload, Download, Zap } from "lucide-react";
+import { modelsApi, type ModelConfig, type ModelListResponse, type ModelTestResult } from "@/api/client";
+import { Badge, useToast } from "@/components";
+import { isDecisionModel } from "@/lib/decision";
 
-const PROVIDERS = ["openai", "anthropic", "ollama", "lmstudio", "vllm"];
+const PROVIDERS = ["openai", "anthropic", "ollama", "lmstudio", "vllm", "typesafe"];
 
 export default function Models() {
   const [data, setData] = useState<ModelListResponse | null>(null);
   const [tab, setTab] = useState<"list" | "add" | "import">("list");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [testingId, setTestingId] = useState<string | null>(null);
+  const toast = useToast();
 
   const reload = () => modelsApi.list().then(setData);
+
+  const handleTest = async (id: string) => {
+    setTestingId(id);
+    try {
+      const result: ModelTestResult = await modelsApi.test(id);
+      if (result.ok) {
+        toast.success(`'${id}' responded in ${result.latency_ms.toFixed(0)} ms`);
+      } else {
+        toast.error(result.error || `'${id}' test failed`);
+      }
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Test failed");
+    } finally {
+      setTestingId(null);
+    }
+  };
 
   useEffect(() => {
     reload();
@@ -93,6 +113,18 @@ export default function Models() {
     URL.revokeObjectURL(url);
   };
 
+  const handleProviderChange = (provider: string) => {
+    const wasDecision = isDecisionModel({ provider: newConfig.provider ?? "" });
+    const nowDecision = isDecisionModel({ provider });
+    setNewConfig({
+      ...newConfig,
+      provider,
+      model_name: nowDecision && !wasDecision ? "jev-latest" : newConfig.model_name,
+    });
+  };
+
+  const isNewDecision = isDecisionModel({ provider: newConfig.provider ?? "" });
+
   return (
     <div className="page-shell motion-shell max-w-5xl">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -130,26 +162,47 @@ export default function Models() {
 
       {tab === "list" && data && (
         <div className="motion-stagger-stack space-y-4">
-          {Object.entries(data.models).map(([id, cfg]) => (
-            <div key={id} className="panel-surface panel-quiet flex items-center justify-between gap-4">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="font-medium">{id}</span>
-                  <span className="provider-chip">{cfg.provider}</span>
+          {Object.entries(data.models).map(([id, cfg]) => {
+            const decision = isDecisionModel(cfg);
+            return (
+              <div key={id} className="panel-surface panel-quiet flex items-center justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="font-medium">{id}</span>
+                    <span className="provider-chip">{cfg.provider}</span>
+                    {decision && <Badge tone="violet">Decision</Badge>}
+                  </div>
+                  <p className="body-copy font-mono text-sm">{cfg.model_name}</p>
+                  {decision ? (
+                    <div className="flex flex-wrap gap-4 text-xs muted-copy">
+                      <span>timeout: {cfg.timeout_s ?? 10}s</span>
+                      {cfg.cost_per_mtok_input != null && <span>${cfg.cost_per_mtok_input}/MTok in</span>}
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-4 text-xs muted-copy">
+                      <span>temp: {cfg.temperature}</span>
+                      <span>max_tokens: {cfg.max_tokens}</span>
+                      <span>fn_call: {cfg.supports_function_calling ? "✓" : "✗"}</span>
+                    </div>
+                  )}
                 </div>
-                <p className="body-copy font-mono text-sm">{cfg.model_name}</p>
-                <div className="flex flex-wrap gap-4 text-xs muted-copy">
-                  <span>temp: {cfg.temperature}</span>
-                  <span>max_tokens: {cfg.max_tokens}</span>
-                  <span>fn_call: {cfg.supports_function_calling ? "✓" : "✗"}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleTest(id)}
+                    disabled={testingId === id}
+                    className="button-secondary"
+                  >
+                    <Zap size={14} />
+                    {testingId === id ? "Testing…" : "Test connection"}
+                  </button>
+                  <button onClick={() => handleDelete(id)} className="button-danger">
+                    <Trash2 size={16} />
+                    Remove
+                  </button>
                 </div>
               </div>
-              <button onClick={() => handleDelete(id)} className="button-danger">
-                <Trash2 size={16} />
-                Remove
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -169,7 +222,7 @@ export default function Models() {
               <label className="label">Provider</label>
               <select
                 value={newConfig.provider}
-                onChange={(e) => setNewConfig({ ...newConfig, provider: e.target.value })}
+                onChange={(e) => handleProviderChange(e.target.value)}
                 className="control-surface"
               >
                 {PROVIDERS.map((p) => (
@@ -184,7 +237,7 @@ export default function Models() {
               <input
                 value={newConfig.model_name}
                 onChange={(e) => setNewConfig({ ...newConfig, model_name: e.target.value })}
-                placeholder="gpt-4o"
+                placeholder={isNewDecision ? "jev-latest" : "gpt-4o"}
                 className="control-surface"
               />
             </div>
@@ -193,73 +246,92 @@ export default function Models() {
               <input
                 value={newConfig.api_key}
                 onChange={(e) => setNewConfig({ ...newConfig, api_key: e.target.value })}
-                placeholder="${OPENAI_API_KEY}"
+                placeholder={isNewDecision ? "${TYPESAFE_API_KEY}" : "${OPENAI_API_KEY}"}
                 className="control-surface"
               />
             </div>
-            <div className="control-group">
-              <label className="label">Base URL (optional)</label>
-              <input
-                value={newConfig.base_url}
-                onChange={(e) => setNewConfig({ ...newConfig, base_url: e.target.value })}
-                placeholder="http://localhost:11434/v1"
-                className="control-surface"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
+            {!isNewDecision && (
               <div className="control-group">
-                <label className="label">Temperature</label>
+                <label className="label">Base URL (optional)</label>
                 <input
-                  type="number"
-                  value={newConfig.temperature}
-                  onChange={(e) =>
-                    setNewConfig({ ...newConfig, temperature: parseFloat(e.target.value) })
-                  }
-                  min={0}
-                  max={2}
-                  step={0.1}
+                  value={newConfig.base_url}
+                  onChange={(e) => setNewConfig({ ...newConfig, base_url: e.target.value })}
+                  placeholder="http://localhost:11434/v1"
                   className="control-surface"
                 />
               </div>
+            )}
+            {isNewDecision ? (
               <div className="control-group">
-                <label className="label">Max Tokens</label>
+                <label className="label">Timeout (seconds)</label>
                 <input
                   type="number"
-                  value={newConfig.max_tokens}
-                  onChange={(e) =>
-                    setNewConfig({ ...newConfig, max_tokens: parseInt(e.target.value) })
-                  }
-                  min={256}
-                  max={32768}
-                  step={256}
+                  value={newConfig.timeout_s ?? 10}
+                  onChange={(e) => setNewConfig({ ...newConfig, timeout_s: parseFloat(e.target.value) })}
+                  min={1}
+                  max={120}
+                  step={1}
                   className="control-surface"
                 />
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="control-group">
+                  <label className="label">Temperature</label>
+                  <input
+                    type="number"
+                    value={newConfig.temperature}
+                    onChange={(e) =>
+                      setNewConfig({ ...newConfig, temperature: parseFloat(e.target.value) })
+                    }
+                    min={0}
+                    max={2}
+                    step={0.1}
+                    className="control-surface"
+                  />
+                </div>
+                <div className="control-group">
+                  <label className="label">Max Tokens</label>
+                  <input
+                    type="number"
+                    value={newConfig.max_tokens}
+                    onChange={(e) =>
+                      setNewConfig({ ...newConfig, max_tokens: parseInt(e.target.value) })
+                    }
+                    min={256}
+                    max={32768}
+                    step={256}
+                    className="control-surface"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="button-row">
-            <label className="toggle-card cursor-pointer">
-              <input
-                type="checkbox"
-                checked={newConfig.supports_function_calling}
-                onChange={(e) =>
-                  setNewConfig({ ...newConfig, supports_function_calling: e.target.checked })
-                }
-                className="control-check"
-              />
-              <span>Function Calling</span>
-            </label>
-            <label className="toggle-card cursor-pointer">
-              <input
-                type="checkbox"
-                checked={newConfig.supports_streaming}
-                onChange={(e) => setNewConfig({ ...newConfig, supports_streaming: e.target.checked })}
-                className="control-check"
-              />
-              <span>Streaming</span>
-            </label>
-          </div>
+          {!isNewDecision && (
+            <div className="button-row">
+              <label className="toggle-card cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newConfig.supports_function_calling}
+                  onChange={(e) =>
+                    setNewConfig({ ...newConfig, supports_function_calling: e.target.checked })
+                  }
+                  className="control-check"
+                />
+                <span>Function Calling</span>
+              </label>
+              <label className="toggle-card cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newConfig.supports_streaming}
+                  onChange={(e) => setNewConfig({ ...newConfig, supports_streaming: e.target.checked })}
+                  className="control-check"
+                />
+                <span>Streaming</span>
+              </label>
+            </div>
+          )}
 
           <button onClick={handleCreate} className="button-primary w-fit">
             <Plus size={16} />

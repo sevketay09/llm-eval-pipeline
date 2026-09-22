@@ -58,6 +58,9 @@ class AttackResult:
     reason: str
     latency_ms: float
     error: str = ""
+    signals: Dict[str, float] = field(default_factory=dict)
+    needs_review: bool = False
+    scorer: str = "heuristic"
 
     def to_dict(self) -> Dict:
         return {
@@ -70,6 +73,9 @@ class AttackResult:
             "reason": self.reason,
             "latency_ms": self.latency_ms,
             "error": self.error,
+            "signals": self.signals,
+            "needs_review": self.needs_review,
+            "scorer": self.scorer,
         }
 
     @classmethod
@@ -84,6 +90,9 @@ class AttackResult:
             reason=data["reason"],
             latency_ms=data["latency_ms"],
             error=data.get("error", ""),
+            signals=data.get("signals", {}),
+            needs_review=data.get("needs_review", False),
+            scorer=data.get("scorer", "heuristic"),
         )
 
 
@@ -99,6 +108,8 @@ class RedTeamSession:
     error: str = ""
     created_at: float = field(default_factory=time.time)
     finished_at: Optional[float] = None
+    scorer: str = "heuristic"   # heuristic | decision
+    scorer_model: str = ""
 
     def to_dict(self) -> Dict:
         return {
@@ -112,6 +123,8 @@ class RedTeamSession:
             "error": self.error,
             "created_at": self.created_at,
             "finished_at": self.finished_at,
+            "scorer": self.scorer,
+            "scorer_model": self.scorer_model,
         }
 
     @classmethod
@@ -127,6 +140,8 @@ class RedTeamSession:
             error=data.get("error", ""),
             created_at=data.get("created_at", time.time()),
             finished_at=data.get("finished_at"),
+            scorer=data.get("scorer", "heuristic"),
+            scorer_model=data.get("scorer_model", ""),
         )
 
 
@@ -184,10 +199,14 @@ def make_session(
     categories: List[str],
     model_key: str = "",
     session_id: Optional[str] = None,
+    scorer: str = "heuristic",
+    scorer_model: str = "",
 ) -> RedTeamSession:
     return RedTeamSession(
         session_id=session_id or uuid.uuid4().hex,
         system_prompt=system_prompt,
         categories=categories,
         model_key=model_key,
+        scorer=scorer,
+        scorer_model=scorer_model,
     )

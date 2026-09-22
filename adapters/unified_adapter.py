@@ -27,6 +27,11 @@ class UnifiedLLMAdapter:
         self.config = config
         self.model_key = model_key or config.get("model_key", "unknown")
         self.provider = config.get("provider", "openai")
+        if self.provider in ("typesafe", "typesafe-mock"):
+            raise ValueError(
+                f"'{self.model_key}' is a decision model (provider={self.provider}); "
+                "it cannot generate text. Use decisions.build_decision_client() instead."
+            )
         self.model_name = config["model_name"]
         self.supports_function_calling = config.get("supports_function_calling", False)
         self.supports_response_format = config.get("supports_response_format", True)

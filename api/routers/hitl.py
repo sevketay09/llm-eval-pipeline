@@ -104,6 +104,8 @@ async def submit_annotation(req: SubmitAnnotationRequest):
         raise HTTPException(404, f"Pending item not found: {req.item_id}")
 
     annotation_metadata = dict(target.get("metadata") or {})
+    if target.get("judge_backend"):
+        annotation_metadata["judge_backend"] = target["judge_backend"]
     annotation_metadata["reusable_metric_candidate"] = bool(req.reusable_metric_candidate)
     if req.reusable_metric_candidate:
         annotation_metadata["metric_candidate_source"] = "hitl_review"
@@ -245,6 +247,7 @@ async def generate_pending(req: GeneratePendingRequest):
         _manager,
         sample_per_test=req.sample_per_test,
         run_id=req.run_id,
+        low_confidence_only=req.low_confidence_only,
     )
 
     return {"added_count": added, "report": req.report_filename}

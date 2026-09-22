@@ -51,8 +51,8 @@ Uygulama: **http://localhost:8001**
 
 ## 1. Prerequisites
 
-- Python 3.9+
-- Node.js 18+ and npm
+- Python 3.14+
+- Node.js 20.19+ (or 22.12+) and npm
 - (Optional) API keys for real model calls: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
 
 ## 2. Backend (FastAPI)
@@ -65,7 +65,7 @@ python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements.lock
 
 # (Optional) provide model keys for real evaluations
 export OPENAI_API_KEY=sk-...

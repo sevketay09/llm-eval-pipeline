@@ -1,6 +1,6 @@
 """Pydantic schemas for evaluation runs and results."""
 from pydantic import BaseModel, Field
-from typing import Optional, Any, List, Union
+from typing import Optional, Any, List, Literal, Union
 from datetime import datetime
 
 
@@ -8,6 +8,8 @@ class EvalRunRequest(BaseModel):
     models: list[str] = Field(..., min_length=1, description="Model keys to evaluate")
     suite: str = Field("smoke", description="Test suite name")
     judge_model: Optional[str] = Field(None, description="Judge model override")
+    judge_mode: Optional[Literal["llm", "decision", "cascade"]] = Field(None, description="Judge backend")
+    decision_model: Optional[str] = Field(None, description="Decision (Jev) model key, required for judge_mode decision/cascade")
     tests: Optional[list[str]] = Field(None, description="Subset of tests to run within the suite")
     output_path: Optional[str] = Field(None, description="Optional output path override for exported report artifacts")
     parallel: bool = False
@@ -278,6 +280,7 @@ class CustomDatasetGenerateRequest(BaseModel):
     source_label: Optional[str] = Field(None, max_length=240)
     source_material: Optional[str] = Field(None, max_length=60000)
     source_paths: list[str] = Field(default_factory=list, max_length=50)
+    qc_model: Optional[str] = Field(None, max_length=120)
 
 
 class CustomDatasetImportRequest(BaseModel):
@@ -286,6 +289,7 @@ class CustomDatasetImportRequest(BaseModel):
     project_description: str = Field("Imported dataset", max_length=12000)
     focus_areas: Optional[str] = Field(None, max_length=400)
     source_label: Optional[str] = Field(None, max_length=240)
+    qc_model: Optional[str] = Field(None, max_length=120)
 
 
 class CustomDatasetReviewStatusUpdateRequest(BaseModel):

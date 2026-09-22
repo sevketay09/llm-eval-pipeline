@@ -1,7 +1,6 @@
 """Contract tests: OnlineSampler wiring into TraceStore and eval_trace endpoint."""
 from __future__ import annotations
 import asyncio
-import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from api.routers.traces import router as traces_router, get_store
@@ -9,17 +8,8 @@ from api.services.trace_service import TraceStore, _SAMPLED_TAG
 from tracing.sampler import OnlineSampler
 
 
-@pytest.fixture(autouse=True)
-def fresh_event_loop():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    yield loop
-    loop.close()
-    asyncio.set_event_loop(None)
-
-
 def _run(coro):
-    return asyncio.get_event_loop().run_until_complete(coro)
+    return asyncio.run(coro)
 
 
 def _schema(trace_id: str, tags: list | None = None):

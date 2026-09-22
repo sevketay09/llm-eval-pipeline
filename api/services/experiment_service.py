@@ -129,7 +129,7 @@ class ExperimentService:
         try:
             fn = model_fn or (self._build_model_fn(exp.model_key) if exp.model_key else _noop_model_fn)
             runner = ExperimentRunner(model_fn=fn)
-            results: List[VariantResult] = await asyncio.get_event_loop().run_in_executor(
+            results: List[VariantResult] = await asyncio.get_running_loop().run_in_executor(
                 None, runner.run, exp
             )
             exp.results = results
