@@ -16,11 +16,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import math
 import re
 import sys
 from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -74,6 +77,7 @@ class TrajectoryResult:
     goal_achieved: bool            # completion >= 0.6
     turn_by_turn: List[Dict[str, Any]]
     summary: str
+    decision_signals: Optional[Dict[str, Any]] = None
 
 
 # ---------------------------------------------------------------------------
@@ -193,6 +197,7 @@ def simulate_conversation(
     user_fn: Optional[Callable[[List[Dict[str, str]], Persona, int], str]] = None,
     max_turns: Optional[int] = None,
     system_prompt: Optional[str] = None,
+    stop_fn: Optional[Callable[[List[Dict[str, str]], Persona], bool]] = None,
 ) -> Trajectory:
     """Run a simulated conversation and return the full trajectory."""
     _user_fn = user_fn if user_fn is not None else _default_user_fn
@@ -230,6 +235,20 @@ def simulate_conversation(
             goal_coverage=round(coverage, 4),
         ))
 
+        if stop_fn is not None:
+            try:
+                should_stop = stop_fn(messages, persona)
+            except Exception as exc:  # noqa: BLE001 — stop_fn failure must not abort the run
+                logger.warning("stop_fn raised, ignoring: %s", exc)
+                should_stop = False
+            if should_stop:
+                return Trajectory(
+                    persona=asdict(persona),
+                    turns=turns,
+                    terminated_early=True,
+                    termination_reason="goal_completed",
+                )
+
         # Early termination: goal fully covered
         if coverage >= 1.0 and t >= 1:
             return Trajectory(
@@ -249,11 +268,16 @@ def simulate_conversation(
 def evaluate_trajectory(
     trajectory: Trajectory,
     goal_eval_fn: Optional[Callable[[str, str], float]] = None,
+    trajectory_eval_fn: Optional[Callable[[Trajectory], Dict[str, Any]]] = None,
 ) -> TrajectoryResult:
     """
     Evaluate a trajectory.
 
     goal_eval_fn(goal, full_agent_text) -> float (0–1) overrides keyword scoring.
+    trajectory_eval_fn(trajectory) -> dict (decisions.conversation.make_trajectory_eval_fn's
+    shape) overrides both goal_eval_fn and keyword/Jaccard scoring for goal
+    completion, coherence and relevance in one call; its raw output is kept
+    as `decision_signals`. Wins over goal_eval_fn if both are given.
     """
     persona_data = trajectory.persona
     persona_name = persona_data.get("name", "unknown")
@@ -278,7 +302,11 @@ def evaluate_trajectory(
     all_agent = trajectory.all_agent_text
 
     # 1. Goal completion
-    if goal_eval_fn is not None:
+    decision_signals: Optional[Dict[str, Any]] = None
+    if trajectory_eval_fn is not None:
+        decision_signals = trajectory_eval_fn(trajectory)
+        goal_completion = float(decision_signals["goal_completion"])
+    elif goal_eval_fn is not None:
         goal_completion = float(goal_eval_fn(goal, all_agent))
     else:
         goal_completion = _keyword_coverage(goal_keywords, all_agent)
@@ -307,6 +335,10 @@ def evaluate_trajectory(
         rel = _keyword_coverage(goal_keywords, turn.agent_response)
         relevance_scores.append(rel)
     avg_relevance = sum(relevance_scores) / len(relevance_scores)
+
+    if decision_signals is not None:
+        trajectory_coherence = float(decision_signals["coherence"])
+        avg_relevance = float(decision_signals["relevance"])
 
     # 4. Efficiency — goal completion adjusted for turns used
     # max_turns from persona
@@ -350,6 +382,7 @@ def evaluate_trajectory(
         goal_achieved=goal_achieved,
         turn_by_turn=turn_by_turn,
         summary=summary,
+        decision_signals=decision_signals,
     )
 
 
@@ -363,14 +396,18 @@ def run_simulation_suite(
     user_fn: Optional[Callable] = None,
     system_prompt: Optional[str] = None,
     goal_eval_fn: Optional[Callable] = None,
+    trajectory_eval_fn: Optional[Callable[[Trajectory], Dict[str, Any]]] = None,
+    stop_fn: Optional[Callable[[List[Dict[str, str]], Persona], bool]] = None,
 ) -> Dict[str, Any]:
     """Run all personas and return aggregated report."""
     results: List[Dict[str, Any]] = []
     for persona in personas:
         traj = simulate_conversation(
-            agent_fn, persona, user_fn=user_fn, system_prompt=system_prompt
+            agent_fn, persona, user_fn=user_fn, system_prompt=system_prompt, stop_fn=stop_fn
         )
-        result = evaluate_trajectory(traj, goal_eval_fn=goal_eval_fn)
+        result = evaluate_trajectory(
+            traj, goal_eval_fn=goal_eval_fn, trajectory_eval_fn=trajectory_eval_fn
+        )
         results.append(asdict(result))
 
     if not results:
@@ -494,12 +531,34 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         help="Override persona max_turns",
     )
     p.add_argument("--demo", action="store_true", help="Run demo with built-in persona")
+    p.add_argument(
+        "--decision-model",
+        default=None,
+        help="Jev decision model key from config/models.yaml — evaluates each trajectory "
+        "with a single call (decisions.conversation) instead of keyword/Jaccard heuristics",
+    )
+    p.add_argument(
+        "--early-stop",
+        action="store_true",
+        help="With --decision-model, stop a conversation as soon as Jev judges the goal completed",
+    )
     return p
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = _build_arg_parser()
     args = parser.parse_args(argv)
+
+    trajectory_eval_fn = None
+    stop_fn = None
+    if args.decision_model:
+        from decisions.config import build_decision_client
+        from decisions.conversation import make_stop_fn, make_trajectory_eval_fn
+
+        decision_client = build_decision_client(args.decision_model)
+        trajectory_eval_fn = make_trajectory_eval_fn(decision_client)
+        if args.early_stop:
+            stop_fn = make_stop_fn(decision_client)
 
     if args.demo:
         personas = [
@@ -516,7 +575,9 @@ def main(argv: Optional[List[str]] = None) -> int:
                 max_turns=5,
             ),
         ]
-        report = run_simulation_suite(personas, _demo_agent_fn)
+        report = run_simulation_suite(
+            personas, _demo_agent_fn, trajectory_eval_fn=trajectory_eval_fn, stop_fn=stop_fn
+        )
         if args.format == "json":
             print(json.dumps(report, ensure_ascii=False, indent=2))
         else:
@@ -549,6 +610,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         personas,
         _demo_agent_fn,
         system_prompt=None,
+        trajectory_eval_fn=trajectory_eval_fn,
+        stop_fn=stop_fn,
     )
 
     if args.output:
